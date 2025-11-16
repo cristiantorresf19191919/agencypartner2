@@ -214,7 +214,12 @@ export default function AgentesPage() {
             Historias de <strong>impacto real</strong>
           </>
         }
-        subtitle="Más de 100 estudiantes y profesionales han transformado su carrera y proyectos con nuestra mentoría."
+        subtitle={
+          <>
+            Más de 100 estudiantes y profesionales han transformado su carrera y
+            proyectos con nuestra mentoría.
+          </>
+        }
         cases={mentoringCases}
       />
       <Contact />
