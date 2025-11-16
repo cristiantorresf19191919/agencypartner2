@@ -1,5 +1,5 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 // We use NEXT_PUBLIC_ env vars so this can run safely in the browser.
 const firebaseConfig = {
@@ -11,11 +11,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-function createFirebaseApp() {
+function createFirebaseApp(): FirebaseApp {
   if (!firebaseConfig.apiKey) {
     // In dev, it's helpful to see a warning instead of crashing.
     console.warn(
-      '[firebase] Missing NEXT_PUBLIC_FIREBASE_* env vars. The contact form will fail to save submissions.'
+      '[firebase] Missing NEXT_PUBLIC_FIREBASE_* env vars. The contact form will fail to save submissions.',
     );
   }
 
@@ -26,6 +26,6 @@ function createFirebaseApp() {
 }
 
 const app = createFirebaseApp();
-export const db = getFirestore(app);
+export const db: Firestore = getFirestore(app);
 
 
