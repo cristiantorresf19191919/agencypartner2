@@ -17,7 +17,13 @@ export default function Home() {
       <Hero />
       <ServicesOverview />
       <Pricing />
-      <FAQ />
+      <FAQ
+        title={
+          <>
+            Preguntas <strong>Frecuentes</strong>
+          </>
+        }
+      />
       <Portfolio />
       <Contact />
       <Footer />

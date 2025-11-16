@@ -253,8 +253,11 @@ export async function POST(request: NextRequest) {
             console.log(`Successfully generated response using ${modelName}`);
             break;
           }
-        } catch (modelError) {
-          console.log(`Model ${modelName} failed:`, modelError?.message);
+        } catch (modelError: unknown) {
+          const modelErrorMessage =
+            (modelError as { message?: string })?.message ??
+            String(modelError);
+          console.log(`Model ${modelName} failed:`, modelErrorMessage);
           if (modelName === modelsToTry[modelsToTry.length - 1]) {
             throw modelError;
           }
@@ -271,12 +274,18 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString(),
         messageId: Date.now().toString(),
       });
-    } catch (geminiError) {
+    } catch (geminiError: unknown) {
       console.error('Gemini API error:', geminiError);
-      console.error('Error details:', JSON.stringify(geminiError, null, 2));
+      try {
+        console.error('Error details:', JSON.stringify(geminiError, null, 2));
+      } catch {
+        // Ignore JSON stringify failures
+      }
 
       const errorMessage =
-        geminiError?.message || geminiError?.toString() || 'Error desconocido';
+        (geminiError as { message?: string })?.message ||
+        String(geminiError) ||
+        'Error desconocido';
 
       return NextResponse.json(
         {

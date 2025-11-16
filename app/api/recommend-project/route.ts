@@ -180,10 +180,12 @@ ${answersText}`;
           );
           break;
         }
-      } catch (modelError) {
+      } catch (modelError: unknown) {
+        const modelErrorMessage =
+          (modelError as { message?: string })?.message ?? String(modelError);
         console.log(
           `[recommend-project] Model ${modelName} failed:`,
-          modelError?.message,
+          modelErrorMessage,
         );
         if (modelName === modelsToTry[modelsToTry.length - 1]) {
           throw modelError;

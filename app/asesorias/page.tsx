@@ -16,6 +16,7 @@ const mentoringPlans = [
     iconColor: 'yellow',
     tag: 'Resuelve tus dudas puntuales',
     price: '$120,000',
+    oldPrice: '$150,000',
     currency: 'COP',
     features: [
       '1 sesión personalizada (60 min)',
@@ -33,6 +34,7 @@ const mentoringPlans = [
     iconColor: 'green',
     tag: 'Acompañamiento y evolución constante',
     price: '$390,000',
+    oldPrice: '$450,000',
     currency: 'COP/mes',
     featured: true,
     features: [
@@ -52,6 +54,7 @@ const mentoringPlans = [
     iconColor: 'teal',
     tag: 'Aprende lo que realmente necesitas',
     price: '$150,000',
+    oldPrice: '$180,000',
     currency: 'COP/sesión',
     features: [
       'Temas a la medida (JS, Python, Kotlin, etc.)',
@@ -69,6 +72,7 @@ const mentoringPlans = [
     iconColor: 'purple',
     tag: 'Mejora tu software con expertos',
     price: '$250,000',
+    oldPrice: '$300,000',
     currency: 'COP',
     features: [
       'Análisis de arquitectura',
@@ -210,7 +214,12 @@ export default function AsesoriasPage() {
             Historias de <strong>impacto real</strong>
           </>
         }
-        subtitle="Más de 100 estudiantes y profesionales han transformado su carrera y proyectos con nuestra mentoría."
+        subtitle={
+          <>
+            Más de 100 estudiantes y profesionales han transformado su carrera y
+            proyectos con nuestra mentoría.
+          </>
+        }
         cases={mentoringCases}
       />
       <Contact />
