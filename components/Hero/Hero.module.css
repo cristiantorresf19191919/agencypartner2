@@ -1,0 +1,237 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--purple-1) 0%, var(--purple-2) 45%, var(--dark-blue) 100%);
+  padding: var(--space-2xl) var(--space-sm);
+  text-align: center;
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-sm);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.pill i {
+  color: #35E4B2;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 800;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.heroTitle strong {
+  position: relative;
+  display: inline-block;
+}
+
+.heroTitle strong::after {
+  content: '';
+  position: absolute;
+   bottom: 0.05em;
+  left: 0;
+  right: 0;
+  height: 0.05em;
+  background: linear-gradient(90deg, var(--pink-1) 0%, var(--teal-1) 100%);
+  border-radius: 999px;
+  transform: scaleX(0.3);
+  transform-origin: center;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.heroTitle:hover strong::after {
+  transform: scaleX(1);
+  opacity: 0.9;
+}
+
+.floatingBanner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: rgba(35, 36, 58, 0.6);
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  animation: float 3s ease-in-out infinite;
+}
+
+[data-theme="dark"] .floatingBanner {
+  background: rgba(35, 36, 58, 0.8);
+}
+
+.floatingBanner i {
+  font-size: 1.2rem;
+  color: #35E4B2;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.heroSubtitle {
+  font-size: 1.35rem;
+  max-width: 700px;
+  margin: 0 auto 2.5rem auto;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+}
+
+.heroFeatures {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin: 3rem 0;
+  flex-wrap: wrap;
+}
+
+.heroStat {
+  text-align: center;
+}
+
+.heroStatValue {
+  display: block;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroStatLabel {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.heroButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.ctaButtonPrimary {
+  display: inline-block;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  color: white;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(160, 106, 249, 0.3);
+}
+
+.ctaButtonPrimary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(160, 106, 249, 0.4);
+}
+
+.ctaButtonSecondary {
+  display: inline-block;
+  padding: 14px 32px;
+  background: white;
+  color: #a06af9;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ctaButtonSecondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 80vh;
+    padding: var(--space-xl) var(--space-sm);
+  }
+
+  .heroTitle {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .heroSubtitle {
+    font-size: 1.05rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .floatingBanner {
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .heroFeatures {
+    gap: 2rem;
+  }
+
+  .heroStatValue {
+    font-size: 2.5rem;
+  }
+
+  .heroButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ctaButtonPrimary,
+  .ctaButtonSecondary {
+    text-align: center;
+  }
+}
+

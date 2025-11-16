@@ -1,0 +1,254 @@
+.features {
+  background-color: var(--white);
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+}
+
+[data-theme="dark"] .features {
+  background: #181c22;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(160, 106, 249, 0.1);
+  border-radius: 50px;
+  color: var(--purple-1);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.sectionTitle strong {
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sectionSubtitle {
+  max-width: 700px;
+  margin: 0 auto 3rem auto;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.pricingCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 3rem auto 0;
+  align-items: start;
+}
+
+.pricingCard {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(160, 106, 249, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .pricingCard {
+  background: #23243a;
+  color: white;
+}
+
+.pricingCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #a06af9 0%, #8e44ad 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.pricingCard:hover::before {
+  transform: scaleX(1);
+}
+
+.pricingCard.featured {
+  transform: scale(1.05);
+  box-shadow: 0 8px 32px rgba(160, 106, 249, 0.3);
+  border: 2px solid #a06af9;
+}
+
+.pricingCard.featured::before {
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  transform: scaleX(1);
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.cardIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  font-size: 1.5rem;
+}
+
+.cardIcon.purple {
+  background-color: #f2eefc;
+  color: #8A54F8;
+}
+
+.cardIcon.pink {
+  background-color: #fceef5;
+  color: #F8549B;
+}
+
+.cardIcon.teal {
+  background-color: #eafcf6;
+  color: #2EDC9B;
+}
+
+.pricingCard h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.tag {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.featuresList {
+  background: #f8f5ff;
+  border-radius: 12px;
+  padding: 1.2rem;
+  list-style: none;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+[data-theme="dark"] .featuresList {
+  background: rgba(160, 106, 249, 0.1);
+}
+
+.featuresList li {
+  padding: 0.5rem 0;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.featuresList i {
+  color: #35E4B2;
+  margin-right: 0.5rem;
+}
+
+.priceContainer {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.priceContainer span del {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.priceContainer strong {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.currency {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.ctaButton {
+  display: block;
+  width: 100%;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  color: white;
+  margin-top: 1rem;
+}
+
+.ctaButton.purple {
+  background: linear-gradient(135deg, #a06af9 0%, #8e44ad 100%);
+}
+
+.ctaButton.pink {
+  background: linear-gradient(135deg, #f8549b 0%, #a06af9 100%);
+}
+
+.ctaButton.teal {
+  background: linear-gradient(135deg, #35E4B2 0%, #20c997 100%);
+}
+
+.ctaButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.consultCta {
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.consultCta p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.ctaButtonSecondary {
+  display: inline-block;
+  padding: 14px 32px;
+  background: white;
+  color: #a06af9;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(160, 106, 249, 0.2);
+}
+
+.ctaButtonSecondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(160, 106, 249, 0.3);
+}
+
+@media (max-width: 768px) {
+  .pricingCards {
+    grid-template-columns: 1fr;
+  }
+
+  .pricingCard.featured {
+    transform: scale(1);
+  }
+}
+

@@ -1,0 +1,153 @@
+.services {
+  padding: var(--space-2xl) var(--space-md);
+  background: var(--background);
+  text-align: center;
+}
+
+[data-theme="dark"] .services {
+  background: #181c22;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(160, 106, 249, 0.1);
+  border-radius: 50px;
+  color: var(--purple-1);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.sectionTitle strong {
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sectionSubtitle {
+  max-width: 700px;
+  margin: 0 auto 3rem auto;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.serviceCard {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: left;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .serviceCard {
+  background: #23243a;
+  color: white;
+}
+
+.serviceCard.green {
+  background: linear-gradient(135deg, #2EDC9B 0%, #1cc7b6 100%);
+  color: white;
+}
+
+.serviceCard.blue {
+  background: linear-gradient(135deg, #3a8ef6 0%, #5ad0ff 100%);
+  color: white;
+}
+
+.serviceCard.purple {
+  background: linear-gradient(135deg, #8A54F8 0%, #b07cff 100%);
+  color: white;
+}
+
+.serviceCard.orange {
+  background: linear-gradient(135deg, #FFB86C 0%, #ff8c42 100%);
+  color: white;
+}
+
+.serviceCard.teal {
+  background: linear-gradient(135deg, #1cc7b6 0%, #2EDC9B 100%);
+  color: white;
+}
+
+.serviceCard.pink {
+  background: linear-gradient(135deg, #F8549B 0%, #ffb6d5 100%);
+  color: white;
+}
+
+.cardIcon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.serviceCard h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.serviceCard p {
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.featuresList {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 1.2rem;
+  list-style: none;
+  margin: 0;
+}
+
+[data-theme="dark"] .featuresList {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.featuresList li {
+  padding: 0.5rem 0;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.featuresList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: white;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .cardsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+

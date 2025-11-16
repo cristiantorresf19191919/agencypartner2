@@ -1,0 +1,510 @@
+/* Recommendation view for software project advisor.
+ * Based on the massage recommendation UI, adapted for digital products & tech stacks.
+ */
+
+.recommendationContainer {
+  padding: var(--spacing-lg);
+  animation: fadeInRecommendation 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.96) 0%,
+    rgba(15, 23, 42, 0.98) 40%,
+    rgba(15, 23, 42, 0.98) 100%
+  );
+  position: relative;
+}
+
+.recommendationContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 280px;
+  background: radial-gradient(
+    circle at 0% 0%,
+    rgba(56, 189, 248, 0.25) 0%,
+    transparent 60%
+  ),
+  radial-gradient(
+    circle at 100% 0%,
+    rgba(45, 212, 191, 0.2) 0%,
+    transparent 55%
+  );
+  z-index: 0;
+}
+
+@keyframes fadeInRecommendation {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.recommendationHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.recommendationIcon {
+  width: 104px;
+  height: 104px;
+  background: radial-gradient(circle at 30% 20%, #bef264, transparent 55%),
+  radial-gradient(circle at 75% 80%, #22c55e, transparent 55%),
+  linear-gradient(135deg, #0f172a, #020617);
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2.5rem;
+  color: #ecfeff;
+  box-shadow:
+    0 18px 50px rgba(15, 23, 42, 0.8),
+    0 0 0 1px rgba(148, 163, 184, 0.3);
+  animation: iconFloat 4s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.recommendationIcon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    rgba(56, 189, 248, 0.5),
+    transparent,
+    rgba(22, 163, 74, 0.6),
+    transparent,
+    rgba(56, 189, 248, 0.5)
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.03);
+  }
+}
+
+.recommendationTitle {
+  font-family: var(--font-serif);
+  font-size: 2.3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #e5e7eb, #f9fafb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.4px;
+  position: relative;
+}
+
+.recommendationSubtitle {
+  font-size: 1rem;
+  color: #9ca3af;
+  margin: 0;
+  font-weight: 400;
+}
+
+.recommendationContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.mainRecommendationCard {
+  background: radial-gradient(
+    circle at 0% 0%,
+    rgba(56, 189, 248, 0.15),
+    transparent 60%
+  ),
+  radial-gradient(
+    circle at 100% 100%,
+    rgba(22, 163, 74, 0.2),
+    transparent 60%
+  ),
+  linear-gradient(135deg, #020617, #020617);
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow:
+    0 18px 60px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.mainRecommendationCard::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.28) 0%,
+    transparent 65%
+  );
+  opacity: 0.9;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cardIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #22c55e, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ecfdf5;
+  font-size: 1.25rem;
+  box-shadow:
+    0 10px 30px rgba(22, 163, 74, 0.5),
+    0 0 0 1px rgba(22, 101, 52, 0.7);
+}
+
+.cardHeaderText {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cardLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a5b4fc;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  color: #e5e7eb;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badgeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+}
+
+.fieldGroup {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr);
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.fieldColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.fieldLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.fieldValue {
+  font-size: 0.98rem;
+  color: #e5e7eb;
+}
+
+.fieldValueStrong {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.pill {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  font-size: 0.78rem;
+  color: #e5e7eb;
+}
+
+.tag {
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(22, 163, 74, 0.18);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  font-size: 0.78rem;
+  color: #bbf7d0;
+}
+
+.section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed rgba(75, 85, 99, 0.7);
+  position: relative;
+  z-index: 1;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.sectionHeader i {
+  font-size: 1rem;
+  color: #22c55e;
+}
+
+.sectionTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.sectionBody {
+  font-size: 0.95rem;
+  color: #cbd5f5;
+  line-height: 1.7;
+}
+
+.list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.listItem {
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.warning {
+  background: radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.08), transparent 60%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(248, 250, 252, 0.08);
+}
+
+.warningHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.45rem;
+}
+
+.warningHeader i {
+  font-size: 1rem;
+  color: #f97316;
+}
+
+.warningTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fed7aa;
+}
+
+.warningText {
+  font-size: 0.9rem;
+  color: #fbbf24;
+}
+
+.recommendationActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.resetButton,
+.closeRecButton {
+  padding: 0.9rem 2.4rem;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.resetButton {
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.8),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+.resetButton::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(148, 163, 184, 0.18), transparent 55%);
+  transform: translate(-50%, -50%);
+  transition: width 0.45s ease, height 0.45s ease;
+}
+
+.resetButton:hover::before {
+  width: 260px;
+  height: 260px;
+}
+
+.resetButton:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 45px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 1);
+}
+
+.closeRecButton {
+  background: radial-gradient(circle at 0% 0%, #22c55e, #16a34a);
+  color: #ecfdf5;
+  box-shadow:
+    0 14px 45px rgba(22, 163, 74, 0.6),
+    0 0 0 1px rgba(22, 101, 52, 0.9);
+}
+
+.closeRecButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  );
+  transition: left 0.55s ease;
+}
+
+.closeRecButton:hover::before {
+  left: 120%;
+}
+
+.closeRecButton:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 18px 55px rgba(22, 163, 74, 0.75),
+    0 0 0 1px rgba(22, 101, 52, 1);
+}
+
+.closeRecButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 1024px) {
+  .recommendationContainer {
+    padding: 2rem 1.5rem;
+  }
+  .recommendationTitle {
+    font-size: 2rem;
+  }
+  .recommendationIcon {
+    width: 96px;
+    height: 96px;
+    font-size: 2.2rem;
+  }
+  .fieldGroup {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .recommendationTitle {
+    font-size: 1.75rem;
+  }
+  .recommendationSubtitle {
+    font-size: 0.95rem;
+  }
+  .mainRecommendationCard {
+    padding: 1.5rem;
+  }
+  .recommendationActions {
+    flex-direction: column;
+  }
+  .resetButton,
+  .closeRecButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
