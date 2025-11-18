@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // System prompt para el asistente de OptimusAgency
 const SYSTEM_PROMPT = `Eres el asistente de OptimusAgency 💻⚡
@@ -190,6 +190,92 @@ const getApiKey = () => {
   return process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 };
 
+// Cache for available models (refresh every 5 minutes)
+let modelsCache: { models: string[]; timestamp: number } | null = null;
+const MODELS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * List available models and return those that support generateContent
+ * Uses caching to avoid calling the API on every request
+ */
+async function getAvailableModels(apiKey: string): Promise<string[]> {
+  // Check cache first
+  if (modelsCache && Date.now() - modelsCache.timestamp < MODELS_CACHE_TTL) {
+    console.log('Using cached models:', modelsCache.models);
+    return modelsCache.models;
+  }
+
+  try {
+    console.log('Fetching available models from API...');
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Failed to list models:', response.status, response.statusText);
+      // Fallback to known free tier models
+      const fallback = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
+      modelsCache = { models: fallback, timestamp: Date.now() };
+      return fallback;
+    }
+
+    const data = await response.json();
+    const availableModels: string[] = [];
+
+    if (data.models && Array.isArray(data.models)) {
+      for (const model of data.models) {
+        // Check if model supports generateContent and is available for free tier
+        if (
+          model.supportedGenerationMethods?.includes('generateContent') &&
+          model.name &&
+          !model.name.includes('vision') && // Skip vision-only models
+          !model.name.includes('embedding') && // Skip embedding-only models
+          !model.name.includes('multimodal') // Skip multimodal-only models
+        ) {
+          // Extract just the model name (remove 'models/' prefix if present)
+          const modelName = model.name.replace('models/', '');
+          availableModels.push(modelName);
+          
+          // Log model details for debugging
+          console.log(`Found model: ${modelName}`, {
+            displayName: model.displayName,
+            supportedMethods: model.supportedGenerationMethods,
+          });
+        }
+      }
+    }
+
+    // Sort models: prefer flash models (faster, free tier friendly) first
+    availableModels.sort((a, b) => {
+      if (a.includes('flash') && !b.includes('flash')) return -1;
+      if (!a.includes('flash') && b.includes('flash')) return 1;
+      return a.localeCompare(b);
+    });
+
+    console.log('Available models for generateContent:', availableModels);
+    
+    const finalModels = availableModels.length > 0 
+      ? availableModels 
+      : ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']; // Fallback
+    
+    // Cache the results
+    modelsCache = { models: finalModels, timestamp: Date.now() };
+    return finalModels;
+  } catch (error) {
+    console.error('Error listing models:', error);
+    // Fallback to known free tier models
+    const fallback = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
+    modelsCache = { models: fallback, timestamp: Date.now() };
+    return fallback;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -213,44 +299,57 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // Inicializar Gemini (nuevo SDK)
-      const genAI = new GoogleGenAI({ apiKey });
+      // Inicializar Gemini con el SDK oficial
+      const genAI = new GoogleGenerativeAI(apiKey);
 
-      // Construir prompt completo
-      let fullPrompt = SYSTEM_PROMPT + '\n\n';
+      // Obtener modelos disponibles que soportan generateContent
+      const modelsToTry = await getAvailableModels(apiKey);
+      console.log('Using available models:', modelsToTry);
 
+      // Construir el historial de conversación para el SDK oficial
+      const chatHistory: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+      
       if (Array.isArray(history) && history.length > 0) {
-        fullPrompt += 'Historial de conversación:\n';
         history.forEach((msg) => {
-          if (msg.role === 'user') {
-            fullPrompt += `Usuario: ${msg.parts?.[0]?.text || ''}\n`;
-          } else if (msg.role === 'assistant') {
-            fullPrompt += `Asistente: ${msg.parts?.[0]?.text || ''}\n`;
-          }
+          chatHistory.push({
+            role: msg.role === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.parts?.[0]?.text || '' }],
+          });
+        });
+      }
+
+      // Construir el prompt completo con historial (fuera del loop para reutilizarlo)
+      let fullPrompt = SYSTEM_PROMPT + '\n\n';
+      
+      if (chatHistory.length > 0) {
+        fullPrompt += 'Historial de conversación:\n';
+        chatHistory.forEach((msg) => {
+          const roleLabel = msg.role === 'user' ? 'Usuario' : 'Asistente';
+          fullPrompt += `${roleLabel}: ${msg.parts[0]?.text || ''}\n`;
         });
         fullPrompt += '\n';
       }
-
+      
       fullPrompt += `Usuario: ${message.trim()}\n\nAsistente:`;
 
-      // Modelos con fallback: usamos solo el modelo gratis disponible en tu cuenta
-      const modelsToTry = ['gemini-2.0-flash'];
-
-      let result;
       let aiResponse = '';
+      let successfulModel: string | null = null;
 
       for (const modelName of modelsToTry) {
         try {
-          console.log(`Attempting to use model: ${modelName}`);
-          result = await genAI.models.generateContent({
+          console.log(`[Chat] Attempting to use model: ${modelName}`);
+          const model = genAI.getGenerativeModel({ 
             model: modelName,
-            contents: fullPrompt,
           });
 
-          aiResponse = result?.text || '';
+          // Usar generateContent con el prompt completo
+          const result = await model.generateContent(fullPrompt);
+          aiResponse = result.response.text();
 
           if (aiResponse) {
-            console.log(`Successfully generated response using ${modelName}`);
+            successfulModel = modelName;
+            console.log(`✅ [Chat] SUCCESS! Successfully generated response using model: ${modelName}`);
+            console.log(`📊 [Chat] Model ${modelName} worked and returned ${aiResponse.length} characters`);
             break;
           }
         } catch (modelError: unknown) {
@@ -258,6 +357,52 @@ export async function POST(request: NextRequest) {
             (modelError as { message?: string })?.message ??
             String(modelError);
           console.log(`Model ${modelName} failed:`, modelErrorMessage);
+          
+          // Si es un error 404, el modelo no está disponible - intentar REST API directo
+          if (modelErrorMessage.includes('404') || modelErrorMessage.includes('not found')) {
+            console.log(`Model ${modelName} not available, trying REST API fallback...`);
+            try {
+              const restResponse = await fetch(
+                `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    contents: [{
+                      parts: [{ text: fullPrompt }]
+                    }]
+                  })
+                }
+              );
+              
+              if (restResponse.ok) {
+                const restData = await restResponse.json();
+                aiResponse = restData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                if (aiResponse) {
+                  console.log('REST API fallback succeeded');
+                  break;
+                }
+              } else {
+                const errorData = await restResponse.json().catch(() => ({}));
+                console.log('REST API error:', errorData);
+              }
+            } catch (restError) {
+              console.log('REST API fallback also failed:', restError);
+            }
+            
+            // Si el REST API también falló, lanzar el error original
+            if (!aiResponse) {
+              throw modelError;
+            }
+            break;
+          }
+          
+          // Si es un error de quota, esperar un poco antes de intentar el siguiente
+          if (modelErrorMessage.includes('429') || modelErrorMessage.includes('quota')) {
+            console.log('Rate limit hit, waiting before next attempt...');
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+          }
+          
           if (modelName === modelsToTry[modelsToTry.length - 1]) {
             throw modelError;
           }
@@ -267,6 +412,10 @@ export async function POST(request: NextRequest) {
 
       if (!aiResponse) {
         throw new Error('No se pudo generar una respuesta con ningún modelo disponible.');
+      }
+
+      if (successfulModel) {
+        console.log(`🎉 [Chat] Final result: Used model "${successfulModel}" successfully`);
       }
 
       return NextResponse.json({
@@ -286,6 +435,22 @@ export async function POST(request: NextRequest) {
         (geminiError as { message?: string })?.message ||
         String(geminiError) ||
         'Error desconocido';
+
+      // Check if it's an API key error
+      if (
+        errorMessage.includes('API key') ||
+        errorMessage.includes('INVALID_ARGUMENT') ||
+        errorMessage.includes('API_KEY')
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              'Error de configuración: La clave de API de Gemini no es válida. Por favor, verifica tu archivo .env.local y reinicia el servidor.',
+            details: 'API key inválida o no configurada correctamente',
+          },
+          { status: 500 },
+        );
+      }
 
       return NextResponse.json(
         {

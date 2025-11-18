@@ -1,9 +1,12 @@
 import { ReactNode } from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { ProjectAdvisorProvider } from '@/contexts/ProjectAdvisorContext';
+import { FABProvider } from '@/contexts/FABContext';
 import '@/styles/globals.css';
 import Script from 'next/script';
 import FloatingChat from '@/components/Chatbot/FloatingChat';
+import { ProjectAdvisorWrapper } from '@/components/ProjectAdvisor/ProjectAdvisorWrapper';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -42,8 +45,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body suppressHydrationWarning>
         <ThemeProvider>
           <LanguageProvider>
-            {children}
-            <FloatingChat />
+            <ProjectAdvisorProvider>
+              <FABProvider>
+                {children}
+                <FloatingChat />
+                <ProjectAdvisorWrapper />
+              </FABProvider>
+            </ProjectAdvisorProvider>
           </LanguageProvider>
         </ThemeProvider>
         <Script

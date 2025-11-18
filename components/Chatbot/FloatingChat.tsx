@@ -4,9 +4,32 @@ import { useState, useEffect, useRef } from 'react';
 import { Drawer, IconButton, TextField, Box, Typography, Avatar, CircularProgress } from '@mui/material';
 import { Send, Close, SmartToy, OpenInFull, CloseFullscreen } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useFAB } from '@/contexts/FABContext';
 import styles from './FloatingChat.module.css';
 
-function formatTime(date) {
+type AnimationState = 'idle' | 'pulse' | 'wave' | 'blink';
+
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'ai';
+  timestamp: Date;
+}
+
+interface ChatHistoryItem {
+  role: 'user' | 'assistant';
+  parts: Array<{ text: string }>;
+}
+
+interface ChatApiResponse {
+  response?: string;
+  error?: string;
+  details?: string;
+  timestamp?: string;
+  messageId?: string;
+}
+
+function formatTime(date: Date): string {
   try {
     return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   } catch {
@@ -15,16 +38,17 @@ function formatTime(date) {
 }
 
 export default function FloatingChat() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [animationState, setAnimationState] = useState('idle'); // 'idle' | 'pulse' | 'wave' | 'blink'
+  const { isOpen: fabIsOpen } = useFAB();
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [isMaximized, setIsMaximized] = useState<boolean>(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputMessage, setInputMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [animationState, setAnimationState] = useState<AnimationState>('idle');
 
-  const messagesEndRef = useRef(null);
-  const lastActivityRef = useRef(new Date());
-  const animationTimeoutRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastActivityRef = useRef<Date>(new Date());
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (drawerOpen && messages.length === 0) {
@@ -53,7 +77,7 @@ export default function FloatingChat() {
         const timeSinceActivity = now.getTime() - lastActivityRef.current.getTime();
         const isInactive = timeSinceActivity > 180000; // 3 minutos
 
-        let nextAnimationDelay;
+        let nextAnimationDelay: number;
         if (isInactive) {
           nextAnimationDelay = 30000 + Math.random() * 30000; // 30–60s
         } else {
@@ -61,7 +85,7 @@ export default function FloatingChat() {
         }
 
         animationTimeoutRef.current = setTimeout(() => {
-          const animations = ['pulse', 'wave', 'blink'];
+          const animations: AnimationState[] = ['pulse', 'wave', 'blink'];
           const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
           setAnimationState(randomAnimation);
           setTimeout(() => {
@@ -106,11 +130,11 @@ export default function FloatingChat() {
     };
   }, []);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (): Promise<void> => {
     if (!inputMessage.trim() || isLoading) return;
 
     const text = inputMessage.trim();
-    const userMessage = {
+    const userMessage: Message = {
       id: Date.now().toString(),
       text,
       sender: 'user',
@@ -123,7 +147,7 @@ export default function FloatingChat() {
     lastActivityRef.current = new Date();
 
     try {
-      const payloadHistory = messages.map((m) => ({
+      const payloadHistory: ChatHistoryItem[] = messages.map((m) => ({
         role: m.sender === 'user' ? 'user' : 'assistant',
         parts: [{ text: m.text }],
       }));
@@ -140,13 +164,23 @@ export default function FloatingChat() {
       });
 
       if (!res.ok) {
-        throw new Error('Error al enviar mensaje');
+        const errorData = (await res.json().catch(() => ({}))) as ChatApiResponse;
+        const errorMsg =
+          errorData.error ||
+          errorData.details ||
+          'Error al enviar mensaje';
+        throw new Error(errorMsg);
       }
 
-      const data = await res.json();
+      const data = (await res.json()) as ChatApiResponse;
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
       const responseText = data.response || 'Lo siento, no pude procesar tu mensaje en este momento.';
 
-      const aiMessage = {
+      const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: responseText,
         sender: 'ai',
@@ -156,7 +190,7 @@ export default function FloatingChat() {
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error enviando mensaje al chatbot:', error);
-      const errorMessage = {
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo en unos segundos.',
         sender: 'ai',
@@ -168,7 +202,7 @@ export default function FloatingChat() {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleSendMessage();
@@ -182,6 +216,14 @@ export default function FloatingChat() {
         onClick={() => setDrawerOpen(true)}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.96 }}
+        animate={{
+          y: fabIsOpen ? -90 : 0,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+        }}
         aria-label="Abrir asistente OptimusAgency"
       >
         <SmartToy className={styles.chatIcon} />
@@ -301,7 +343,7 @@ export default function FloatingChat() {
               maxRows={4}
               placeholder="Cuéntame qué quieres construir o qué duda tienes…"
               value={inputMessage}
-              onChange={(event) => setInputMessage(event.target.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setInputMessage(event.target.value)}
               onKeyDown={handleKeyPress}
               disabled={isLoading}
               className={styles.chatInput}
@@ -351,5 +393,4 @@ export default function FloatingChat() {
     </>
   );
 }
-
 

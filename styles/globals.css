@@ -47,6 +47,27 @@
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  /* Project Advisor Component Variables */
+  --bg-white: #ffffff;
+  --bg-champagne: #f5f1e8;
+  --primary-green: #075257;
+  --primary-green-dark: #053a3d;
+  --primary-green-light: #0a6b72;
+  --primary-green-soft: rgba(7, 82, 87, 0.1);
+  --primary-dark: #23243a;
+  --text-light: #ffffff;
+  --text-medium: #6b7280;
+  --text-gray: #9ca3af;
+  --border-light: rgba(0, 0, 0, 0.1);
+  --border-medium: rgba(0, 0, 0, 0.2);
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --font-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 /* Dark Mode Variables */

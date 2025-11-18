@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useFAB } from '@/contexts/FABContext';
 import styles from './FAB.module.css';
 
 const FAB = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, setIsOpen } = useFAB();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
 

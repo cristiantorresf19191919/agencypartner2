@@ -3,12 +3,26 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useProjectAdvisor } from '@/contexts/ProjectAdvisorContext';
 import styles from './MobileMenu.module.css';
 
-const MobileMenu = ({ isOpen, onClose }) => {
-  const { theme, toggleTheme } = useTheme();
+interface MobileMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-  const navItems = [
+interface NavItem {
+  href: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
+  const { theme, toggleTheme } = useTheme();
+  const { openAdvisor } = useProjectAdvisor();
+
+  const navItems: NavItem[] = [
     {
       href: '#faq',
       icon: 'fas fa-question-circle',
@@ -35,13 +49,18 @@ const MobileMenu = ({ isOpen, onClose }) => {
     },
   ];
 
-  const handleLinkClick = (href) => {
+  const handleLinkClick = (href: string) => {
     if (href.startsWith('#')) {
       const target = document.querySelector(href);
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
       }
     }
+    onClose();
+  };
+
+  const handleAdvisorClick = () => {
+    openAdvisor();
     onClose();
   };
 
@@ -82,7 +101,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
       opacity: 0,
       x: -20,
     },
-    open: (index) => ({
+    open: (index: number) => ({
       opacity: 1,
       x: 0,
       transition: {
@@ -170,6 +189,36 @@ const MobileMenu = ({ isOpen, onClose }) => {
                   )}
                 </motion.div>
               ))}
+              <motion.div
+                className={styles.navItem}
+                variants={itemVariants}
+                custom={navItems.length}
+                initial="closed"
+                animate="open"
+              >
+                <button
+                  className={styles.navLink}
+                  onClick={handleAdvisorClick}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    width: '100%',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div className={styles.navContent}>
+                    <div className={styles.navIcon}>
+                      <i className="fas fa-robot"></i>
+                    </div>
+                    <div className={styles.navText}>
+                      <span className={styles.title}>Asesor de Proyecto</span>
+                      <span className={styles.description}>Recomendación personalizada</span>
+                    </div>
+                  </div>
+                  <i className={`fas fa-chevron-right ${styles.arrow}`}></i>
+                </button>
+              </motion.div>
             </nav>
 
             <div className={styles.themeSwitcher}>

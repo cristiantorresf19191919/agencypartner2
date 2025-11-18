@@ -1,9 +1,84 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
   PERSONAL_SYSTEM_PROMPT,
   CORPORATE_SYSTEM_PROMPT,
 } from '@/lib/softwareAdvisorPrompts';
+
+// Cache for available models (refresh every 5 minutes)
+let modelsCache: { models: string[]; timestamp: number } | null = null;
+const MODELS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * List available models and return those that support generateContent
+ * Uses caching to avoid calling the API on every request
+ */
+async function getAvailableModels(apiKey: string): Promise<string[]> {
+  // Check cache first
+  if (modelsCache && Date.now() - modelsCache.timestamp < MODELS_CACHE_TTL) {
+    console.log('[recommend-project] Using cached models:', modelsCache.models);
+    return modelsCache.models;
+  }
+
+  try {
+    console.log('[recommend-project] Fetching available models from API...');
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error('[recommend-project] Failed to list models:', response.status, response.statusText);
+      const fallback = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
+      modelsCache = { models: fallback, timestamp: Date.now() };
+      return fallback;
+    }
+
+    const data = await response.json();
+    const availableModels: string[] = [];
+
+    if (data.models && Array.isArray(data.models)) {
+      for (const model of data.models) {
+        if (
+          model.supportedGenerationMethods?.includes('generateContent') &&
+          model.name &&
+          !model.name.includes('vision') &&
+          !model.name.includes('embedding') &&
+          !model.name.includes('multimodal')
+        ) {
+          const modelName = model.name.replace('models/', '');
+          availableModels.push(modelName);
+        }
+      }
+    }
+
+    // Sort models: prefer flash models first
+    availableModels.sort((a, b) => {
+      if (a.includes('flash') && !b.includes('flash')) return -1;
+      if (!a.includes('flash') && b.includes('flash')) return 1;
+      return a.localeCompare(b);
+    });
+
+    console.log('[recommend-project] Available models:', availableModels);
+    
+    const finalModels = availableModels.length > 0 
+      ? availableModels 
+      : ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
+    
+    modelsCache = { models: finalModels, timestamp: Date.now() };
+    return finalModels;
+  } catch (error) {
+    console.error('[recommend-project] Error listing models:', error);
+    const fallback = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro'];
+    modelsCache = { models: fallback, timestamp: Date.now() };
+    return fallback;
+  }
+}
 
 /**
  * @typedef {'persona' | 'empresa'} ServiceType
@@ -151,32 +226,30 @@ ${responseLabel} (ordenadas cronológicamente):
 
 ${answersText}`;
 
-    const genAI = new GoogleGenAI({ apiKey });
+    const genAI = new GoogleGenerativeAI(apiKey);
 
-    const modelsToTry = [
-      'gemini-1.5-flash',
-      'gemini-1.5-pro',
-      'gemini-2.0-flash-exp',
-    ];
+    // Obtener modelos disponibles que soportan generateContent
+    const modelsToTry = await getAvailableModels(apiKey);
+    console.log('[recommend-project] Using available models:', modelsToTry);
 
     let aiResponse = '';
+    let successfulModel: string | null = null;
 
     for (const modelName of modelsToTry) {
       try {
         console.log(`[recommend-project] Attempting to use model: ${modelName}`);
 
-        const result = await genAI.models.generateContent({
-          model: modelName,
-          contents: fullPrompt,
-        });
-
-        // SDK puede exponer el texto de formas distintas
-        // @ts-ignore
-        aiResponse = result.text || result.response?.text?.() || '';
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(fullPrompt);
+        aiResponse = result.response.text();
 
         if (aiResponse) {
+          successfulModel = modelName;
           console.log(
-            `[recommend-project] Successfully generated response using ${modelName}`,
+            `✅ [recommend-project] SUCCESS! Successfully generated response using model: ${modelName}`,
+          );
+          console.log(
+            `📊 [recommend-project] Model ${modelName} worked and returned ${aiResponse.length} characters`,
           );
           break;
         }
@@ -187,6 +260,13 @@ ${answersText}`;
           `[recommend-project] Model ${modelName} failed:`,
           modelErrorMessage,
         );
+        
+        // Si es un error de quota, esperar un poco antes de intentar el siguiente
+        if (modelErrorMessage.includes('429') || modelErrorMessage.includes('quota')) {
+          console.log('[recommend-project] Rate limit hit, waiting before next attempt...');
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+        
         if (modelName === modelsToTry[modelsToTry.length - 1]) {
           throw modelError;
         }
@@ -196,6 +276,12 @@ ${answersText}`;
     if (!aiResponse) {
       throw new Error(
         'No se pudo generar una respuesta con ningún modelo disponible.',
+      );
+    }
+
+    if (successfulModel) {
+      console.log(
+        `🎉 [recommend-project] Final result: Used model "${successfulModel}" successfully`,
       );
     }
 
