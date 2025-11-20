@@ -1,14 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebaseClient';
 import styles from './Contact.module.css';
 import LoadingOverlay from './LoadingOverlay';
 
-const Contact = () => {
-  const [formData, setFormData] = useState({
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  projectType: string;
+  budget: string;
+  timeline: string;
+  message: string;
+}
+
+interface Toast {
+  type: 'success' | 'error';
+  message: string;
+}
+
+const Contact = (): JSX.Element => {
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
@@ -19,15 +35,15 @@ const Contact = () => {
     message: '',
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toast, setToast] = useState(null); // { type: 'success' | 'error', message: string }
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [toast, setToast] = useState<Toast | null>(null);
 
-  const showToast = (type, message) => {
+  const showToast = (type: 'success' | 'error', message: string): void => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 4000);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (isSubmitting) return;
 
@@ -63,7 +79,7 @@ const Contact = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -217,7 +233,7 @@ const Contact = () => {
               id="message"
               name="message"
               placeholder="Describe tu negocio, objetivos, público objetivo, funcionalidades específicas que necesitas..."
-              rows="5"
+              rows={5}
               value={formData.message}
               onChange={handleChange}
             ></textarea>

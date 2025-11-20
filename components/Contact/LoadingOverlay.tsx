@@ -3,7 +3,16 @@
 import { useEffect, useState } from 'react';
 import styles from './LoadingOverlay.module.css';
 
-const loadingTips = [
+interface LoadingTip {
+  icon: string;
+  text: string;
+}
+
+interface LoadingOverlayProps {
+  show: boolean;
+}
+
+const loadingTips: LoadingTip[] = [
   {
     icon: '<i class="fa-solid fa-lightbulb"></i>',
     text: 'Mientras preparamos tu propuesta, piensa en los objetivos más importantes de tu proyecto.',
@@ -22,8 +31,8 @@ const loadingTips = [
   },
 ];
 
-export default function LoadingOverlay({ show }) {
-  const [currentTip, setCurrentTip] = useState(0);
+const LoadingOverlay = ({ show }: LoadingOverlayProps): JSX.Element | null => {
+  const [currentTip, setCurrentTip] = useState<number>(0);
 
   useEffect(() => {
     if (!show) return;
@@ -56,6 +65,7 @@ export default function LoadingOverlay({ show }) {
       </div>
     </div>
   );
-}
+};
 
+export default LoadingOverlay;
 

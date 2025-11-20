@@ -1,9 +1,33 @@
 'use client';
 
+import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Portfolio.module.css';
 
-const defaultCases = [
+interface PortfolioStat {
+  icon: string;
+  value: string;
+  label: string;
+}
+
+interface PortfolioCase {
+  title: string;
+  description: string;
+  image: string;
+  link: string;
+  stats: PortfolioStat[];
+}
+
+interface PortfolioProps {
+  sectionId?: string;
+  pillIconClass?: string;
+  pillText?: string;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  cases?: PortfolioCase[];
+}
+
+const defaultCases: PortfolioCase[] = [
   {
     title: 'AuraSpa',
     description: 'Plataforma web para reserva de servicios terapéuticos a domicilio, con sistema de reservas intuitivo y profesional',
@@ -57,7 +81,7 @@ const Portfolio = ({
     </>
   ),
   cases = defaultCases,
-}) => {
+}: PortfolioProps): JSX.Element => {
   return (
     <section id={sectionId} className={styles.portfolio}>
       <motion.div

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './Footer.module.css';
 
-const Footer = () => {
+const Footer = (): JSX.Element => {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerWave}>
