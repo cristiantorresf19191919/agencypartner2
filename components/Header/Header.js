@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
+import { ProjectAdvisorStepper } from '@/components/ProjectAdvisor/ProjectAdvisorStepper';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [advisorOpen, setAdvisorOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,6 +89,18 @@ const Header = () => {
               </li>
             ))}
           </ul>
+
+          <button
+            type="button"
+            className={styles.advisorCta}
+            onClick={() => setAdvisorOpen(true)}
+          >
+            <span className={styles.advisorCtaGlow} />
+            <span className={styles.advisorCtaInner}>
+              <i className="fa-solid fa-wand-magic-sparkles" />
+              <span className={styles.advisorCtaText}>Planear mi proyecto con IA</span>
+            </span>
+          </button>
         </nav>
 
         <div className={styles.headerWaveContainer}>
@@ -130,6 +144,7 @@ const Header = () => {
       </header>
 
       <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <ProjectAdvisorStepper open={advisorOpen} onClose={() => setAdvisorOpen(false)} />
     </>
   );
 };

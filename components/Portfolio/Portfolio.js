@@ -5,35 +5,36 @@ import styles from './Portfolio.module.css';
 
 const defaultCases = [
   {
-    title: 'RestauranTech',
-    description: 'Landing page para startup de delivery que aumentó conversiones en 340%',
-    image:
-      'https://images.unsplash.com/photo-1542744095-291d1f67b221?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max',
+    title: 'AuraSpa',
+    description: 'Plataforma web para reserva de servicios terapéuticos a domicilio, con sistema de reservas intuitivo y profesional',
+    image: '/images/portfolio/auraspa.png',
+    link: 'https://yakelinbustamante.netlify.app/',
     stats: [
-      { icon: 'fas fa-arrow-up-trending', value: '+340%', label: 'Conversión' },
-      { icon: 'far fa-eye', value: '50K', label: 'Visitas' },
-      { icon: 'fas fa-dollar-sign', value: '$25K', label: 'Ingresos' },
+      { icon: 'fas fa-spa', value: '100%', label: 'Satisfacción' },
+      { icon: 'far fa-eye', value: '15K+', label: 'Visitas' },
+      { icon: 'fas fa-calendar-check', value: '500+', label: 'Reservas' },
     ],
   },
   {
-    title: 'FitnessPro',
-    description: 'Tienda online de suplementos deportivos con sistema de suscripciones',
-    image:
-      'https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max',
+    title: 'SolCity',
+    description: 'Sistemas solares fotovoltaicos a medida para hogares y empresas en Colombia. Calculadora de ahorro y cotizaciones en línea',
+    image: '/images/portfolio/solcity.png',
+    link: 'https://solaroptimus.netlify.app/',
     stats: [
-      { icon: 'fas fa-arrow-up-trending', value: '+280%', label: 'Conversión' },
-      { icon: 'far fa-eye', value: '100K', label: 'Visitas' },
-      { icon: 'fas fa-dollar-sign', value: '$45K', label: 'Ingresos' },
+      { icon: 'fas fa-solar-panel', value: '15+ MW', label: 'Instalados' },
+      { icon: 'far fa-eye', value: '30K+', label: 'Visitas' },
+      { icon: 'fas fa-users', value: '500+', label: 'Clientes' },
     ],
   },
   {
-    title: 'EduTech Solutions',
-    description: 'Plataforma educativa que conecta estudiantes con tutores especializados',
-    image: 'https://epicwebsol.com/wp-content/uploads/2013/09/co03.jpg',
+    title: 'Yakeline Contadora',
+    description: 'Asesoría contable y tributaria profesional. Optimización fiscal, manejo de casos DIAN y protección patrimonial para empresas',
+    image: '/images/portfolio/yakeline.png',
+    link: 'https://yakelinbustamante.netlify.app/',
     stats: [
-      { icon: 'fas fa-arrow-up-trending', value: '+220%', label: 'Conversión' },
-      { icon: 'far fa-eye', value: '75K', label: 'Visitas' },
-      { icon: 'fas fa-dollar-sign', value: '$35K', label: 'Ingresos' },
+      { icon: 'fas fa-chart-line', value: '10+', label: 'Años exp.' },
+      { icon: 'far fa-eye', value: '25K+', label: 'Visitas' },
+      { icon: 'fas fa-briefcase', value: '200+', label: 'Clientes' },
     ],
   },
 ];
@@ -94,8 +95,11 @@ const Portfolio = ({
         transition={{ staggerChildren: 0.2 }}
       >
         {cases.map((caseItem, index) => (
-          <motion.div
+          <motion.a
             key={index}
+            href={caseItem.link}
+            target="_blank"
+            rel="noopener noreferrer"
             className={styles.portfolioItem}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -119,7 +123,7 @@ const Portfolio = ({
                 </div>
               ))}
             </div>
-          </motion.div>
+          </motion.a>
         ))}
       </motion.div>
     </section>

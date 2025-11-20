@@ -482,7 +482,7 @@ export function ProjectAdvisorStepper({ open, onClose }) {
               <div className={styles.optionsContainer}>
                 {currentQuestion.options.map((option) => {
                   const value = option;
-                  const multiple = false; // Gemini options are treated as single-choice for simplicity
+                  const multiple = false; // For ahora tratamos todas como single-choice
                   const selected = isOptionSelected(value, multiple);
                   return (
                     <button
@@ -507,16 +507,11 @@ export function ProjectAdvisorStepper({ open, onClose }) {
                 })}
               </div>
             ) : (
-              <textarea
-                className={styles.openTextArea}
-                placeholder="Escribe tu respuesta con tus propias palabras…"
-                value={currentAnswer}
-                onChange={(e) => {
-                  setCurrentAnswer(e.target.value);
-                  setError(null);
-                }}
-                rows={4}
-              />
+              <div className={styles.errorMessage}>
+                <i className="fa-solid fa-exclamation-triangle" />
+                No se pudieron cargar opciones para esta pregunta. Intenta de nuevo o cierra el
+                asistente e inténtalo más tarde.
+              </div>
             )}
           </div>
           {error && (

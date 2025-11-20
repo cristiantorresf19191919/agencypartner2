@@ -153,44 +153,27 @@ ${answersText}`;
 
     const genAI = new GoogleGenAI({ apiKey });
 
-    const modelsToTry = [
-      'gemini-1.5-flash',
-      'gemini-1.5-pro',
-      'gemini-2.0-flash-exp',
-    ];
-
     let aiResponse = '';
 
-    for (const modelName of modelsToTry) {
-      try {
-        console.log(`[recommend-project] Attempting to use model: ${modelName}`);
+    try {
+      console.log('[recommend-project] Using model: gemini-2.0-flash');
 
-        const result = await genAI.models.generateContent({
-          model: modelName,
-          contents: fullPrompt,
-        });
+      const result = await genAI.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: fullPrompt,
+      });
 
-        // SDK puede exponer el texto de formas distintas
-        // @ts-ignore
-        aiResponse = result.text || result.response?.text?.() || '';
-
-        if (aiResponse) {
-          console.log(
-            `[recommend-project] Successfully generated response using ${modelName}`,
-          );
-          break;
-        }
-      } catch (modelError: unknown) {
-        const modelErrorMessage =
-          (modelError as { message?: string })?.message ?? String(modelError);
-        console.log(
-          `[recommend-project] Model ${modelName} failed:`,
-          modelErrorMessage,
-        );
-        if (modelName === modelsToTry[modelsToTry.length - 1]) {
-          throw modelError;
-        }
-      }
+      // SDK puede exponer el texto de formas distintas
+      // @ts-ignore
+      aiResponse = result.text || result.response?.text?.() || '';
+    } catch (modelError: unknown) {
+      const modelErrorMessage =
+        (modelError as { message?: string })?.message ?? String(modelError);
+      console.log(
+        '[recommend-project] Model gemini-2.0-flash failed:',
+        modelErrorMessage,
+      );
+      throw modelError;
     }
 
     if (!aiResponse) {

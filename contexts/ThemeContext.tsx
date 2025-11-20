@@ -39,13 +39,13 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   useEffect(() => {
     setMounted(true);
-    // Default to dark mode per user preference
-    const savedTheme =
-      (typeof window !== 'undefined' &&
-        window.localStorage.getItem('theme')) ||
-      'dark';
-    const initialTheme = (savedTheme as Theme) || 'dark';
+    // Always default to dark mode
+    const initialTheme: Theme = 'dark';
     setTheme(initialTheme);
+    // Set dark theme in localStorage
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('theme', 'dark');
+    }
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', initialTheme);
     }
