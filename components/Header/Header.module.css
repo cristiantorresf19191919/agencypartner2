@@ -284,9 +284,21 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  [data-theme="dark"] .header {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
   .nav {
-    padding: 0.8rem 1rem;
-    justify-content: center;
+    padding: 1rem 1.25rem;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    min-height: 64px;
   }
 
   .navLinks {
@@ -298,17 +310,94 @@
   }
 
   .logo {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+
+  .logo i {
+    font-size: 1.5rem;
   }
 
   .mobileMenuToggle {
     display: flex;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 24px;
+    z-index: 10001;
+    padding: 0;
+    margin: 0;
+  }
+
+  .hamburgerLine {
+    width: 100%;
+    height: 3px;
+    background: var(--text-dark);
+    border-radius: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="dark"] .hamburgerLine {
+    background: #fff;
+  }
+
+  .mobileMenuToggle.active .hamburgerLine:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+    background: var(--text-dark);
+  }
+
+  [data-theme="dark"] .mobileMenuToggle.active .hamburgerLine:nth-child(1) {
+    background: #fff;
+  }
+
+  .mobileMenuToggle.active .hamburgerLine:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .mobileMenuToggle.active .hamburgerLine:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+    background: var(--text-dark);
+  }
+
+  [data-theme="dark"] .mobileMenuToggle.active .hamburgerLine:nth-child(3) {
+    background: #fff;
   }
 
   .headerWaveContainer {
-    bottom: 73px;
+    bottom: 64px;
+  }
+
+  .scrolled .logo {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav {
+    padding: 0.9rem 1rem;
+    min-height: 60px;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .logo i {
+    font-size: 1.3rem;
+  }
+
+  .mobileMenuToggle {
+    width: 28px;
+    height: 22px;
+  }
+
+  .headerWaveContainer {
+    bottom: 60px;
   }
 }
