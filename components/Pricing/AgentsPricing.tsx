@@ -3,8 +3,21 @@
 import { motion } from 'framer-motion';
 import styles from './Pricing.module.css';
 
+interface Agent {
+  name: string;
+  icon: string;
+  iconColor: string;
+  tag: string;
+  price: string;
+  currency: string;
+  features: string[];
+  buttonText: string;
+  buttonGradient: string;
+  featured: boolean;
+}
+
 const AgentsPricing = () => {
-  const agents = [
+  const agents: Agent[] = [
     {
       name: 'Agente de Soporte',
       icon: 'bi bi-headset',
@@ -153,5 +166,4 @@ const AgentsPricing = () => {
 };
 
 export default AgentsPricing;
-
 

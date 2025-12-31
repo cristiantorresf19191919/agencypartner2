@@ -43,7 +43,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <ThemeProvider>
           <LanguageProvider>
             {children}
-            <FloatingChat />
+            <FloatingChat />an my mac 
           </LanguageProvider>
         </ThemeProvider>
         <Script

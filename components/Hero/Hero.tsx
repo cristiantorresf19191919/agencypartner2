@@ -2,67 +2,87 @@
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Hero.module.css';
 
-const AgentsHero = () => {
-  const particlesRef = useRef(null);
-  const statResolucionRef = useRef(null);
-  const statDisponibilidadRef = useRef(null);
-  const statProcesosRef = useRef(null);
+interface WindowWithParticlesJS extends Window {
+  particlesJS?: (id: string, config: unknown) => void;
+}
+
+const Hero = () => {
+  const { language, t } = useLanguage();
+  const particlesRef = useRef<HTMLDivElement>(null);
+  const statProyectosRef = useRef<HTMLSpanElement>(null);
+  const statSatisfaccionRef = useRef<HTMLSpanElement>(null);
+  const statEntregaRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     // Initialize particles.js
-    if (typeof window !== 'undefined' && window.particlesJS && particlesRef.current) {
-      window.particlesJS('particles-hero-agentes', {
+    if (typeof window !== 'undefined' && (window as WindowWithParticlesJS).particlesJS && particlesRef.current) {
+      (window as WindowWithParticlesJS).particlesJS!('particles-hero', {
         particles: {
-          number: { value: 80 },
+          number: { value: 100 },
           color: { value: '#a06af9' },
           shape: { type: 'circle' },
-          opacity: { value: 0.4, random: true },
+          opacity: { value: 0.6, random: true },
           size: { value: 3, random: true },
           line_linked: {
             enable: true,
-            distance: 130,
-            color: '#ffffff',
-            opacity: 0.25,
+            distance: 150,
+            color: '#a06af9',
+            opacity: 0.2,
             width: 1,
           },
           move: {
             enable: true,
-            speed: 1.5,
+            speed: 0.6,
             direction: 'none',
             random: true,
             straight: false,
             out_mode: 'out',
             bounce: false,
+            attract: {
+              enable: false,
+            },
           },
         },
         interactivity: {
           detect_on: 'canvas',
           events: {
-            onhover: { enable: true, mode: 'repulse' },
-            onclick: { enable: false },
+            onhover: { enable: true, mode: 'grab' },
+            onclick: { enable: true, mode: 'push' },
             resize: true,
           },
           modes: {
-            repulse: { distance: 90, duration: 0.4 },
+            grab: {
+              distance: 150,
+              line_linked: {
+                opacity: 0.4,
+              },
+            },
+            push: {
+              particles_nb: 4,
+            },
           },
         },
         retina_detect: true,
       });
     }
 
-    const animateNumber = (ref, end, suffix = '') => {
+    // Animate stats
+    const animateNumber = (ref: React.RefObject<HTMLSpanElement>, end: number, suffix: string = ''): void => {
       if (!ref.current) return;
       let current = 0;
-      const increment = end / 60;
+      const increment = end / 60; // 60 frames
       const timer = setInterval(() => {
         current += increment;
         if (current >= end) {
           current = end;
           clearInterval(timer);
         }
-        ref.current.textContent = Math.floor(current) + suffix;
+        if (ref.current) {
+          ref.current.textContent = Math.floor(current) + suffix;
+        }
       }, 1000 / 60);
     };
 
@@ -70,12 +90,13 @@ const AgentsHero = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (entry.target.id === 'stat-resolucion') {
-              animateNumber(statResolucionRef, 90, '%');
-            } else if (entry.target.id === 'stat-disponibilidad') {
-              animateNumber(statDisponibilidadRef, 24, '/7');
-            } else if (entry.target.id === 'stat-procesos') {
-              animateNumber(statProcesosRef, 50, '+');
+            if (entry.target.id === 'stat-proyectos') {
+              animateNumber(statProyectosRef, 15, '+');
+            } else if (entry.target.id === 'stat-satisfaccion') {
+              animateNumber(statSatisfaccionRef, 98, '%');
+            } else if (entry.target.id === 'stat-entrega') {
+              const suffix = language === 'en' ? ' days' : ' días';
+              animateNumber(statEntregaRef, 7, suffix);
             }
             statsObserver.unobserve(entry.target);
           }
@@ -84,7 +105,7 @@ const AgentsHero = () => {
       { threshold: 0.5 }
     );
 
-    [statResolucionRef, statDisponibilidadRef, statProcesosRef].forEach((ref) => {
+    [statProyectosRef, statSatisfaccionRef, statEntregaRef].forEach((ref) => {
       if (ref.current) statsObserver.observe(ref.current);
     });
 
@@ -133,8 +154,8 @@ const AgentsHero = () => {
 
   return (
     <section className={styles.hero}>
-      <div id="particles-hero-agentes" ref={particlesRef} className={styles.particles}></div>
-
+      <div id="particles-hero" ref={particlesRef} className={styles.particles}></div>
+      
       <div className={styles.heroContent}>
         <motion.div
           className={styles.pill}
@@ -142,7 +163,7 @@ const AgentsHero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <i className="fas fa-robot"></i> Agentes Virtuales Inteligentes
+          <i className="fas fa-bolt"></i> {t('hero-pill')}
         </motion.div>
 
         <motion.h1
@@ -150,10 +171,8 @@ const AgentsHero = () => {
           variants={titleVariants}
           initial="hidden"
           animate="visible"
-        >
-          Automatiza tu negocio con <strong>agentes virtuales</strong> que atienden, venden y
-          resuelven <strong>24/7</strong>
-        </motion.h1>
+          dangerouslySetInnerHTML={{ __html: t('hero-title') }}
+        />
 
         <motion.div
           className={styles.floatingBanner}
@@ -162,8 +181,8 @@ const AgentsHero = () => {
           animate="visible"
           whileHover={{ scale: 1.02 }}
         >
-          <i className="fas fa-brain"></i>
-          <span>Soluciones de IA para atención al cliente, ventas y procesos internos</span>
+          <i className="fas fa-route"></i>
+          <span>{t('hero-banner')}</span>
         </motion.div>
 
         <motion.p
@@ -172,8 +191,7 @@ const AgentsHero = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
         >
-          Implementamos agentes virtuales entrenados con la información de tu negocio para que
-          respondan, automaticen y escalen tu operación sin sumar más horas humanas.
+          {t('hero-subtitle')}
         </motion.p>
 
         <motion.div
@@ -184,34 +202,22 @@ const AgentsHero = () => {
           viewport={{ once: true }}
         >
           <motion.div className={styles.heroStat} variants={statVariants}>
-            <span
-              className={styles.heroStatValue}
-              id="stat-resolucion"
-              ref={statResolucionRef}
-            >
+            <span className={styles.heroStatValue} id="stat-proyectos" ref={statProyectosRef}>
               0
             </span>
-            <div className={styles.heroStatLabel}>Tasa de resolución</div>
+            <div className={styles.heroStatLabel}>{t('stat-proyectos-label')}</div>
           </motion.div>
           <motion.div className={styles.heroStat} variants={statVariants}>
-            <span
-              className={styles.heroStatValue}
-              id="stat-disponibilidad"
-              ref={statDisponibilidadRef}
-            >
+            <span className={styles.heroStatValue} id="stat-satisfaccion" ref={statSatisfaccionRef}>
               0
             </span>
-            <div className={styles.heroStatLabel}>Disponibilidad</div>
+            <div className={styles.heroStatLabel}>{t('stat-satisfaccion-label')}</div>
           </motion.div>
           <motion.div className={styles.heroStat} variants={statVariants}>
-            <span
-              className={styles.heroStatValue}
-              id="stat-procesos"
-              ref={statProcesosRef}
-            >
+            <span className={styles.heroStatValue} id="stat-entrega" ref={statEntregaRef}>
               0
             </span>
-            <div className={styles.heroStatLabel}>Procesos automatizados</div>
+            <div className={styles.heroStatLabel}>{t('stat-entrega-label')}</div>
           </motion.div>
         </motion.div>
 
@@ -222,10 +228,10 @@ const AgentsHero = () => {
           transition={{ delay: 0.8, duration: 0.6 }}
         >
           <a href="#contacto" className={styles.ctaButtonPrimary}>
-            Crear mi agente virtual
+            {t('cta-start')}
           </a>
-          <a href="#servicios-agentes" className={styles.ctaButtonSecondary}>
-            Ver soluciones
+          <a href="#servicios" className={styles.ctaButtonSecondary}>
+            {t('cta-services')}
           </a>
         </motion.div>
       </div>
@@ -233,6 +239,5 @@ const AgentsHero = () => {
   );
 };
 
-export default AgentsHero;
-
+export default Hero;
 

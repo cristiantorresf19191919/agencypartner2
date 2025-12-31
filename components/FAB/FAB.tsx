@@ -7,15 +7,15 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './FAB.module.css';
 
 const FAB = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
 
-  const toggleFAB = () => {
+  const toggleFAB = (): void => {
     setIsOpen(!isOpen);
   };
 
-  const handleAction = (action, e) => {
+  const handleAction = (action: 'theme' | 'language', e?: React.MouseEvent<HTMLButtonElement>): void => {
     if (action === 'theme') {
       e?.preventDefault();
       toggleTheme();
@@ -29,7 +29,7 @@ const FAB = () => {
   };
 
   // Radial fan positions (135° arc, counterclockwise from top) – closer to main FAB
-  const fabPositions = [
+  const fabPositions: Array<{ x: number; y: number }> = [
     { x: -85, y: -30 }, // Language (top-left)
     { x: -45, y: -75 }, // Theme (top)
     { x: 15, y: -85 },  // WhatsApp (top-right)
@@ -37,28 +37,29 @@ const FAB = () => {
 
   const fabVariants = {
     closed: {
-      scale: 0.6,
+      scale: 0,
       opacity: 0,
       x: 0,
       y: 0,
-      filter: 'blur(4px)',
+      filter: 'blur(8px)',
       transition: {
-        duration: 0.18,
-        ease: [0.33, 0.0, 0.2, 1],
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
-    open: (index) => ({
+    open: (index: number) => ({
       scale: 1,
       opacity: 1,
       x: fabPositions[index].x,
       y: fabPositions[index].y,
       filter: 'blur(0px)',
       transition: {
-        delay: index * 0.06,
-        type: 'spring',
-        stiffness: 7980,
-        damping: 24,
-        mass: 0.9,
+        delay: index * 0.04,
+        type: 'spring' as const,
+        stiffness: 500,
+        damping: 25,
+        mass: 0.8,
+        velocity: 2,
       },
     }),
   };
@@ -120,7 +121,10 @@ const FAB = () => {
         <motion.i
           className="fas fa-plus"
           animate={{ rotate: isOpen ? 45 : 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ 
+            duration: 0.25,
+            ease: [0.4, 0, 0.2, 1] as const
+          }}
         />
       </motion.button>
     </div>

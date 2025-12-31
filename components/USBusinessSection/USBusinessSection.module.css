@@ -1,0 +1,466 @@
+.usBusinessSection {
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .usBusinessSection {
+  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+}
+
+.usBusinessSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(29, 78, 216, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(34, 197, 94, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero Content */
+.heroContent {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%);
+  border-radius: 50px;
+  color: #1d4ed8;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(29, 78, 216, 0.2);
+}
+
+[data-theme="dark"] .badge {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%);
+  color: #60a5fa;
+  border-color: rgba(29, 78, 216, 0.3);
+}
+
+.badge i {
+  font-size: 1rem;
+}
+
+.mainTitle {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .mainTitle {
+  color: #f1f5f9;
+}
+
+.gradientText {
+  background: linear-gradient(135deg, #1d4ed8 0%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: #64748b;
+}
+
+[data-theme="dark"] .subtitle {
+  color: #94a3b8;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.statCard {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(29, 78, 216, 0.1);
+}
+
+[data-theme="dark"] .statCard {
+  background: #1e293b;
+  border-color: rgba(29, 78, 216, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(29, 78, 216, 0.15);
+}
+
+.statIcon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1d4ed8 0%, #22c55e 100%);
+  border-radius: 16px;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.statValue {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1d4ed8 0%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .statLabel {
+  color: #94a3b8;
+}
+
+/* Benefits Grid */
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 5rem;
+}
+
+.benefitCard {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(29, 78, 216, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .benefitCard {
+  background: #1e293b;
+  border-color: rgba(29, 78, 216, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.benefitCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1d4ed8 0%, #22c55e 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.benefitCard:hover::before {
+  opacity: 1;
+}
+
+.benefitCard:hover {
+  box-shadow: 0 12px 40px rgba(29, 78, 216, 0.2);
+  border-color: rgba(29, 78, 216, 0.3);
+}
+
+.benefitIcon {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%);
+  border-radius: 18px;
+  color: #1d4ed8;
+  font-size: 2rem;
+}
+
+[data-theme="dark"] .benefitIcon {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%);
+  color: #60a5fa;
+}
+
+.benefitTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .benefitTitle {
+  color: #f1f5f9;
+}
+
+.benefitDescription {
+  color: #64748b;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+[data-theme="dark"] .benefitDescription {
+  color: #94a3b8;
+}
+
+/* Use Cases Section */
+.useCasesSection {
+  margin-bottom: 5rem;
+}
+
+.useCasesTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .useCasesTitle {
+  color: #f1f5f9;
+}
+
+.useCasesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.useCaseCard {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.05) 0%, rgba(34, 197, 94, 0.05) 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(29, 78, 216, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+[data-theme="dark"] .useCaseCard {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%);
+  border-color: rgba(29, 78, 216, 0.25);
+}
+
+.useCaseCard:hover {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%);
+  border-color: rgba(29, 78, 216, 0.3);
+  box-shadow: 0 8px 30px rgba(29, 78, 216, 0.15);
+}
+
+[data-theme="dark"] .useCaseCard:hover {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%);
+}
+
+.useCaseNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #22c55e 100%);
+  color: white;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.useCaseTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .useCaseTitle {
+  color: #f1f5f9;
+}
+
+.useCaseDescription {
+  color: #64748b;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+[data-theme="dark"] .useCaseDescription {
+  color: #94a3b8;
+}
+
+/* CTA Section */
+.ctaSection {
+  background: linear-gradient(135deg, #1d4ed8 0%, #22c55e 100%);
+  border-radius: 32px;
+  padding: 4rem 3rem;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(29, 78, 216, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaSection::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 1;
+}
+
+.ctaTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.ctaDescription {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: white;
+  color: #1d4ed8;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.ctaPrimary i {
+  transition: transform 0.3s ease;
+}
+
+.ctaPrimary:hover i {
+  transform: translateX(5px);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.ctaSecondary:hover {
+  background: white;
+  color: #1d4ed8;
+  transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+  .usBusinessSection {
+    padding: 4rem 1.5rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .useCasesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaSection {
+    padding: 3rem 2rem;
+  }
+
+  .ctaButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

@@ -1,6 +1,7 @@
 // Translations extracted from index.html
 const translations = {
   es: {
+    'hero-pill': 'Desarrollo Web Profesional',
     'hero-title':
       'Convierte <strong>clics</strong> en clientes en <strong>14&nbsp;días</strong>',
     'hero-banner': 'Lleva tu negocio a vender 24/7 desde el día 1',
@@ -33,6 +34,7 @@ const translations = {
     // Add all other translations from index.html
   },
   en: {
+    'hero-pill': 'Professional Web Development',
     'hero-title':
       'Turn <strong>clicks</strong> into clients in <strong>14&nbsp;days</strong>',
     'hero-banner': 'Get your business selling 24/7 from day one',

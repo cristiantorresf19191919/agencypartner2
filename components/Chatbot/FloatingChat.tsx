@@ -6,7 +6,16 @@ import { Send, Close, SmartToy, OpenInFull, CloseFullscreen } from '@mui/icons-m
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './FloatingChat.module.css';
 
-function formatTime(date) {
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'ai';
+  timestamp: Date;
+}
+
+type AnimationState = 'idle' | 'pulse' | 'wave' | 'blink';
+
+function formatTime(date: Date): string {
   try {
     return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   } catch {
@@ -15,16 +24,16 @@ function formatTime(date) {
 }
 
 export default function FloatingChat() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [animationState, setAnimationState] = useState('idle'); // 'idle' | 'pulse' | 'wave' | 'blink'
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [isMaximized, setIsMaximized] = useState<boolean>(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputMessage, setInputMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [animationState, setAnimationState] = useState<AnimationState>('idle');
 
-  const messagesEndRef = useRef(null);
-  const lastActivityRef = useRef(new Date());
-  const animationTimeoutRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastActivityRef = useRef<Date>(new Date());
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (drawerOpen && messages.length === 0) {
@@ -45,7 +54,7 @@ export default function FloatingChat() {
 
   useEffect(() => {
     if (!drawerOpen) {
-      const scheduleNextAnimation = () => {
+      const scheduleNextAnimation = (): void => {
         if (animationTimeoutRef.current) {
           clearTimeout(animationTimeoutRef.current);
         }
@@ -53,7 +62,7 @@ export default function FloatingChat() {
         const timeSinceActivity = now.getTime() - lastActivityRef.current.getTime();
         const isInactive = timeSinceActivity > 180000; // 3 minutos
 
-        let nextAnimationDelay;
+        let nextAnimationDelay: number;
         if (isInactive) {
           nextAnimationDelay = 30000 + Math.random() * 30000; // 30–60s
         } else {
@@ -61,7 +70,7 @@ export default function FloatingChat() {
         }
 
         animationTimeoutRef.current = setTimeout(() => {
-          const animations = ['pulse', 'wave', 'blink'];
+          const animations: AnimationState[] = ['pulse', 'wave', 'blink'];
           const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
           setAnimationState(randomAnimation);
           setTimeout(() => {
@@ -87,7 +96,7 @@ export default function FloatingChat() {
   }, [drawerOpen]);
 
   useEffect(() => {
-    const handleActivity = () => {
+    const handleActivity = (): void => {
       lastActivityRef.current = new Date();
     };
 
@@ -106,11 +115,11 @@ export default function FloatingChat() {
     };
   }, []);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (): Promise<void> => {
     if (!inputMessage.trim() || isLoading) return;
 
     const text = inputMessage.trim();
-    const userMessage = {
+    const userMessage: Message = {
       id: Date.now().toString(),
       text,
       sender: 'user',
@@ -146,7 +155,7 @@ export default function FloatingChat() {
       const data = await res.json();
       const responseText = data.response || 'Lo siento, no pude procesar tu mensaje en este momento.';
 
-      const aiMessage = {
+      const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: responseText,
         sender: 'ai',
@@ -156,7 +165,7 @@ export default function FloatingChat() {
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error enviando mensaje al chatbot:', error);
-      const errorMessage = {
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo en unos segundos.',
         sender: 'ai',
@@ -168,7 +177,7 @@ export default function FloatingChat() {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleSendMessage();
@@ -351,5 +360,4 @@ export default function FloatingChat() {
     </>
   );
 }
-
 

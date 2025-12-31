@@ -3,8 +3,16 @@
 import { motion } from 'framer-motion';
 import styles from './ServicesOverview.module.css';
 
+interface Service {
+  title: string;
+  icon: string;
+  gradient: string;
+  description: string;
+  features: string[];
+}
+
 const ServicesOverview = () => {
-  const services = [
+  const services: Service[] = [
     {
       title: 'Landing Pages',
       icon: 'fas fa-globe',

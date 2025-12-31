@@ -51,6 +51,44 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       if (typeof document !== 'undefined') {
         document.documentElement.lang = savedLang;
       }
+
+      // Listen for language changes from other parts of the app
+      const handleLanguageChange = () => {
+        const currentLang =
+          (window.localStorage.getItem('language') as SupportedLanguage) || 'es';
+        // Force state update to trigger re-renders
+        setLanguageState((prevLang) => {
+          if (prevLang !== currentLang) {
+            return currentLang;
+          }
+          return prevLang;
+        });
+        if (typeof document !== 'undefined') {
+          document.documentElement.lang = currentLang;
+        }
+        // Also update any elements with data-translate attribute (for non-React content)
+        if (typeof document !== 'undefined') {
+          document.querySelectorAll('[data-translate]').forEach((element) => {
+            const key = element.getAttribute('data-translate');
+            if (key && translations[currentLang] && translations[currentLang][key]) {
+              if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                (element as HTMLInputElement).placeholder = translations[currentLang][key];
+              } else {
+                element.textContent = translations[currentLang][key];
+              }
+            }
+          });
+        }
+      };
+
+      // Listen to both window and document events
+      window.addEventListener('languageChanged', handleLanguageChange);
+      document.addEventListener('languageChanged', handleLanguageChange);
+
+      return () => {
+        window.removeEventListener('languageChanged', handleLanguageChange);
+        document.removeEventListener('languageChanged', handleLanguageChange);
+      };
     }
   }, []);
 
@@ -58,9 +96,13 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     setLanguageState(lang);
     if (typeof window !== 'undefined') {
       window.localStorage.setItem('language', lang);
+      // Dispatch custom event for language change
+      window.dispatchEvent(new CustomEvent('languageChanged'));
     }
     if (typeof document !== 'undefined') {
       document.documentElement.lang = lang;
+      // Dispatch custom event for language change
+      document.dispatchEvent(new CustomEvent('languageChanged'));
     }
   };
 

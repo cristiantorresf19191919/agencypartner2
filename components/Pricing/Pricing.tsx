@@ -2,8 +2,34 @@
 
 import { motion } from 'framer-motion';
 import styles from './Pricing.module.css';
+import { ReactNode } from 'react';
 
-const defaultPlans = [
+interface Plan {
+  name: string;
+  icon: string;
+  iconColor: string;
+  tag: string;
+  price: string;
+  oldPrice?: string;
+  currency: string;
+  featured?: boolean;
+  features: string[];
+  buttonText: string;
+  buttonGradient: string;
+}
+
+interface PricingProps {
+  sectionId?: string;
+  pillIconClass?: string;
+  pillText?: string;
+  title?: ReactNode;
+  subtitle?: string;
+  plans?: Plan[];
+  consultText?: string;
+  consultCtaText?: string;
+}
+
+const defaultPlans: Plan[] = [
   {
     name: 'Starter',
     icon: 'bi bi-rocket',
@@ -79,7 +105,7 @@ const Pricing = ({
   plans = defaultPlans,
   consultText = '¿No estás seguro cuál es la mejor opción para tu negocio?',
   consultCtaText = 'Recibir Asesoría Gratuita',
-}) => {
+}: PricingProps) => {
   return (
     <section id={sectionId} className={styles.features}>
       <motion.div

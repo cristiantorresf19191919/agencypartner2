@@ -3,13 +3,28 @@
 import { useMemo } from 'react';
 import styles from './ProjectRecommendation.module.css';
 
-/**
- * Props:
- * - recommendation: string
- * - onReset: () => void
- * - onClose: () => void
- */
-export function ProjectRecommendation({ recommendation, onReset, onClose }) {
+interface ProjectRecommendationProps {
+  recommendation: string;
+  onReset: () => void;
+  onClose: () => void;
+}
+
+interface ParsedRecommendation {
+  solutionType: string;
+  technologies: string;
+  technologiesPills: string[];
+  scope: string;
+  time: string;
+  complexity: string;
+  phases: string;
+  reason: string;
+  alternatives: string[];
+  risks: string;
+  notes: string;
+  raw: string;
+}
+
+export function ProjectRecommendation({ recommendation, onReset, onClose }: ProjectRecommendationProps) {
   const parsed = useMemo(() => parseRecommendation(recommendation), [recommendation]);
 
   return (
@@ -170,10 +185,10 @@ export function ProjectRecommendation({ recommendation, onReset, onClose }) {
   );
 }
 
-function parseRecommendation(text) {
+function parseRecommendation(text: string): ParsedRecommendation {
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
 
-  const getValueAfterLabel = (labelVariants) => {
+  const getValueAfterLabel = (labelVariants: string[]): string => {
     for (const line of lines) {
       for (const label of labelVariants) {
         if (line.toLowerCase().startsWith(label.toLowerCase())) {
@@ -222,7 +237,7 @@ function parseRecommendation(text) {
       .map((t) => t.trim())
       .filter((t) => t.length > 0) || [];
 
-  const alternatives = [];
+  const alternatives: string[] = [];
   if (alternativesBlock) {
     alternatives.push(
       ...alternativesBlock
@@ -247,5 +262,4 @@ function parseRecommendation(text) {
     raw: text,
   };
 }
-
 

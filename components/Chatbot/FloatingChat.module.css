@@ -1,6 +1,6 @@
 .floatingButton {
   position: fixed;
-  bottom: 96px;
+  bottom: 2rem;
   right: 2rem;
   width: 60px;
   height: 60px;
@@ -332,7 +332,7 @@
   .floatingButton {
     width: 56px;
     height: 56px;
-    bottom: 88px;
+    bottom: 1.5rem;
     right: 1.5rem;
   }
 
@@ -353,7 +353,7 @@
   .floatingButton {
     width: 52px;
     height: 52px;
-    bottom: 76px;
+    bottom: 1.5rem;
     right: 1.5rem;
   }
 

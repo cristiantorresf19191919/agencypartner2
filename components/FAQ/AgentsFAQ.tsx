@@ -4,10 +4,15 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './FAQ.module.css';
 
-const AgentsFAQ = () => {
-  const [openIndex, setOpenIndex] = useState(null);
+interface FAQItem {
+  question: string;
+  answer: string;
+}
 
-  const faqs = [
+const AgentsFAQ = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const faqs: FAQItem[] = [
     {
       question: '¿Cómo "aprende" el agente sobre mi negocio?',
       answer:
@@ -30,7 +35,7 @@ const AgentsFAQ = () => {
     },
   ];
 
-  const toggleAccordion = (index) => {
+  const toggleAccordion = (index: number): void => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
@@ -47,7 +52,7 @@ const AgentsFAQ = () => {
             className={`${styles.accordionItem} ${openIndex === index ? styles.open : ''}`}
             layout
             transition={{
-              layout: { duration: 0.28, ease: [0.22, 0.61, 0.36, 1] },
+              layout: { duration: 0.28, ease: [0.22, 0.61, 0.36, 1] as const },
             }}
           >
             <button
@@ -67,7 +72,7 @@ const AgentsFAQ = () => {
                   initial={{ opacity: 0, scaleY: 0.9 }}
                   animate={{ opacity: 1, scaleY: 1 }}
                   exit={{ opacity: 0, scaleY: 0.9 }}
-                  transition={{ duration: 0.24, ease: [0.22, 0.61, 0.36, 1] }}
+                  transition={{ duration: 0.24, ease: [0.22, 0.61, 0.36, 1] as const }}
                   style={{ originY: 0 }}
                 >
                   {faq.answer}
@@ -89,5 +94,4 @@ const AgentsFAQ = () => {
 };
 
 export default AgentsFAQ;
-
 

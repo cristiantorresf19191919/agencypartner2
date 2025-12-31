@@ -1,6 +1,6 @@
 .fabContainer {
   position: fixed;
-  bottom: 2rem;
+  bottom: 96px;
   right: 2rem;
   z-index: 1000;
   pointer-events: none;
@@ -86,7 +86,7 @@
 
 @media (max-width: 768px) {
   .fabContainer {
-    bottom: 1.5rem;
+    bottom: 88px;
     right: 1.5rem;
   }
 }

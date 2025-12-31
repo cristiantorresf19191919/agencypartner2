@@ -4,28 +4,41 @@ import { useEffect, useMemo, useState } from 'react';
 import styles from './ProjectAdvisorStepper.module.css';
 import { ProjectRecommendation } from './ProjectRecommendation';
 
-/**
- * Props:
- * - open: boolean
- * - onClose: () => void
- */
-export function ProjectAdvisorStepper({ open, onClose }) {
-  const [serviceType, setServiceType] = useState(null); // 'persona' | 'empresa'
-  const [steps, setSteps] = useState([]); // { question, options }[]
-  const [answers, setAnswers] = useState([]); // string[]
-  const [currentAnswer, setCurrentAnswer] = useState(''); // selected answer for current question
-  const [isLoading, setIsLoading] = useState(false);
-  const [recommendation, setRecommendation] = useState(null);
-  const [error, setError] = useState(null);
-  const [currentTip, setCurrentTip] = useState(0);
-  const [previousRecommendation, setPreviousRecommendation] = useState(null);
-  const [showPreviousChoice, setShowPreviousChoice] = useState(false);
+interface ProjectAdvisorStepperProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+type ServiceType = 'persona' | 'empresa' | null;
+type StepState = 'completed' | 'active' | 'inactive';
+
+interface Step {
+  question: string;
+  options: string[];
+}
+
+interface LoadingTip {
+  icon: string;
+  text: string;
+}
+
+export function ProjectAdvisorStepper({ open, onClose }: ProjectAdvisorStepperProps) {
+  const [serviceType, setServiceType] = useState<ServiceType>(null);
+  const [steps, setSteps] = useState<Step[]>([]);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [currentAnswer, setCurrentAnswer] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [recommendation, setRecommendation] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [currentTip, setCurrentTip] = useState<number>(0);
+  const [previousRecommendation, setPreviousRecommendation] = useState<string | null>(null);
+  const [showPreviousChoice, setShowPreviousChoice] = useState<boolean>(false);
 
   const STORAGE_KEY_PERSONAL = 'project_advisor_recommendation_persona';
   const STORAGE_KEY_CORPORATE = 'project_advisor_recommendation_empresa';
   const MAX_QUESTIONS = 10;
 
-  const loadingTips = useMemo(
+  const loadingTips: LoadingTip[] = useMemo(
     () => [
       {
         icon: 'fa-solid fa-diagram-project',
@@ -93,19 +106,20 @@ export function ProjectAdvisorStepper({ open, onClose }) {
   useEffect(() => {
     if (!serviceType || !open || steps.length > 0 || recommendation) return;
     fetchNext({ answers: [], serviceType });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceType, open, steps.length, recommendation]);
 
   const currentStepIndex = steps.length > 0 ? steps.length - 1 : 0;
   const currentQuestion = steps[currentStepIndex] || null;
   const canGoNext = !!currentAnswer && !isLoading;
 
-  const getStepState = (index) => {
+  const getStepState = (index: number): StepState => {
     if (index < currentStepIndex) return 'completed';
     if (index === currentStepIndex) return 'active';
     return 'inactive';
   };
 
-  const handleOptionSelect = (value, multiple) => {
+  const handleOptionSelect = (value: string, multiple: boolean): void => {
     setError(null);
     if (!multiple) {
       setCurrentAnswer(value);
@@ -117,7 +131,7 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     setCurrentAnswer(next.join(', '));
   };
 
-  const isOptionSelected = (value, multiple) => {
+  const isOptionSelected = (value: string, multiple: boolean): boolean => {
     if (!currentAnswer) return false;
     if (multiple) {
       return currentAnswer
@@ -128,7 +142,7 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     return currentAnswer === value;
   };
 
-  const handleNext = () => {
+  const handleNext = (): void => {
     if (!currentQuestion) return;
     if (!currentAnswer || !currentAnswer.trim()) {
       setError('Por favor, selecciona o escribe una respuesta antes de continuar.');
@@ -138,7 +152,7 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     fetchNext({ answers: nextAnswers, serviceType: serviceType || 'persona' });
   };
 
-  const fetchNext = async ({ answers: nextAnswers, serviceType }) => {
+  const fetchNext = async ({ answers: nextAnswers, serviceType }: { answers: string[]; serviceType: ServiceType }): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -153,13 +167,13 @@ export function ProjectAdvisorStepper({ open, onClose }) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Error al obtener la recomendación.');
+        throw new Error((data as { error?: string }).error || 'Error al obtener la recomendación.');
       }
 
       const data = await res.json();
 
       if (data.type === 'question') {
-        const newStep = {
+        const newStep: Step = {
           question: data.question,
           options: data.options || [],
         };
@@ -182,7 +196,7 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     } catch (err) {
       console.error('[ProjectAdvisorStepper] Error:', err);
       setError(
-        err?.message ||
+        (err as Error)?.message ||
           'Error al procesar tu solicitud. Por favor, inténtalo de nuevo en unos segundos.',
       );
     } finally {
@@ -190,14 +204,14 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     }
   };
 
-  const scrollModalToTop = () => {
+  const scrollModalToTop = (): void => {
     const modal = document.querySelector(`.${styles.modal}`);
     if (modal) {
       modal.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const handleBack = () => {
+  const handleBack = (): void => {
     if (steps.length <= 1) return;
     const newSteps = steps.slice(0, -1);
     const newAnswers = answers.slice(0, -1);
@@ -208,7 +222,7 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     scrollModalToTop();
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setSteps([]);
     setAnswers([]);
     setCurrentAnswer('');
@@ -218,20 +232,20 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     scrollModalToTop();
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     handleReset();
     setServiceType(null);
     onClose?.();
   };
 
-  const handleViewPrevious = () => {
+  const handleViewPrevious = (): void => {
     if (previousRecommendation) {
       setRecommendation(previousRecommendation);
       setShowPreviousChoice(false);
     }
   };
 
-  const handleStartNew = () => {
+  const handleStartNew = (): void => {
     setShowPreviousChoice(false);
     setRecommendation(null);
     setSteps([]);
@@ -550,5 +564,4 @@ export function ProjectAdvisorStepper({ open, onClose }) {
     </div>
   );
 }
-
 

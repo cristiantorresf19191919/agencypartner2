@@ -3,8 +3,19 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './FAQ.module.css';
+import { ReactNode } from 'react';
 
-const defaultFaqs = [
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface FAQProps {
+  faqs?: FAQItem[];
+  title?: ReactNode;
+}
+
+const defaultFaqs: FAQItem[] = [
   {
     question: '¿Cuánto tiempo toma desarrollar mi proyecto?',
     answer:
@@ -57,10 +68,10 @@ const defaultFaqs = [
   },
 ];
 
-const FAQ = ({ faqs = defaultFaqs, title }) => {
-  const [openIndex, setOpenIndex] = useState(null);
+const FAQ = ({ faqs = defaultFaqs, title }: FAQProps) => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggleAccordion = (index) => {
+  const toggleAccordion = (index: number): void => {
     setOpenIndex(openIndex === index ? null : index);
   };
 

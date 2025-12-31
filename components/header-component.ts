@@ -4,12 +4,16 @@ class HeaderComponent extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     this.render();
     this.initializeEventListeners();
   }
 
-  render() {
+  private render(): void {
+    if (!this.shadowRoot) {
+      return;
+    }
+    
     this.shadowRoot.innerHTML = `
       <style>
         /* Reset styles */
@@ -377,13 +381,15 @@ class HeaderComponent extends HTMLElement {
     `;
   }
 
-  initializeEventListeners() {
-    const mobileMenuToggle = this.shadowRoot.querySelector('#mobile-menu-toggle');
-    const mobileMenuClose = this.shadowRoot.querySelector('#mobile-menu-close');
-    const mobileMenuOverlay = this.shadowRoot.querySelector('#mobile-menu-overlay');
+  private initializeEventListeners(): void {
+    const mobileMenuToggle = this.shadowRoot.querySelector('#mobile-menu-toggle') as HTMLButtonElement | null;
+    const mobileMenuClose = this.shadowRoot.querySelector('#mobile-menu-close') as HTMLButtonElement | null;
+    const mobileMenuOverlay = this.shadowRoot.querySelector('#mobile-menu-overlay') as HTMLDivElement | null;
+
+    if (!mobileMenuToggle || !mobileMenuClose || !mobileMenuOverlay) return;
 
     // Function to open mobile menu with animation
-    const openMobileMenu = (e) => {
+    const openMobileMenu = (e: MouseEvent): void => {
       e.stopPropagation();
       
       // Get toggle button position for animation origin
@@ -407,7 +413,7 @@ class HeaderComponent extends HTMLElement {
     };
     
     // Function to close mobile menu with animation
-    const closeMobileMenu = () => {
+    const closeMobileMenu = (): void => {
       const rect = mobileMenuToggle.getBoundingClientRect();
       const originX = rect.left + rect.width / 2;
       const originY = rect.top + rect.height / 2;
@@ -425,30 +431,25 @@ class HeaderComponent extends HTMLElement {
     };
 
     // Event listeners
-    if (mobileMenuToggle) {
-      mobileMenuToggle.addEventListener('click', openMobileMenu);
-    }
-    
-    if (mobileMenuClose) {
-      mobileMenuClose.addEventListener('click', closeMobileMenu);
-    }
+    mobileMenuToggle.addEventListener('click', openMobileMenu);
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
     
     // Close menu when clicking outside
-    mobileMenuOverlay.addEventListener('click', (e) => {
+    mobileMenuOverlay.addEventListener('click', (e: MouseEvent) => {
       if (e.target === mobileMenuOverlay) {
         closeMobileMenu();
       }
     });
     
     // Close menu on escape key
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Escape' && mobileMenuOverlay.classList.contains('active')) {
         closeMobileMenu();
       }
     });
 
     // Close menu when clicking on nav links
-    this.shadowRoot.querySelectorAll('.mobile-menu-nav-link').forEach(link => {
+    this.shadowRoot.querySelectorAll('.mobile-menu-nav-link').forEach((link) => {
       link.addEventListener('click', () => {
         closeMobileMenu();
       });
@@ -458,3 +459,4 @@ class HeaderComponent extends HTMLElement {
 
 // Define the web component
 customElements.define('header-component', HeaderComponent);
+

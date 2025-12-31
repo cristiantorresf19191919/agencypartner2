@@ -3,12 +3,30 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './MobileMenu.module.css';
 
-const MobileMenu = ({ isOpen, onClose }) => {
-  const { theme, toggleTheme } = useTheme();
+interface MobileMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-  const navItems = [
+interface NavItem {
+  href: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'es' ? 'en' : 'es');
+  };
+
+  const navItems: NavItem[] = [
     {
       href: '#faq',
       icon: 'fas fa-question-circle',
@@ -35,7 +53,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
     },
   ];
 
-  const handleLinkClick = (href) => {
+  const handleLinkClick = (href: string): void => {
     if (href.startsWith('#')) {
       const target = document.querySelector(href);
       if (target) {
@@ -50,14 +68,14 @@ const MobileMenu = ({ isOpen, onClose }) => {
       clipPath: 'circle(0px at 0px 0px)',
       transition: {
         duration: 0.6,
-        ease: [0.4, 0, 0.2, 1],
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     open: {
       clipPath: 'circle(150vh at 0px 0px)',
       transition: {
         duration: 0.6,
-        ease: [0.4, 0, 0.2, 1],
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
   };
@@ -82,7 +100,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
       opacity: 0,
       x: -20,
     },
-    open: (index) => ({
+    open: (index: number) => ({
       opacity: 1,
       x: 0,
       transition: {
@@ -172,30 +190,58 @@ const MobileMenu = ({ isOpen, onClose }) => {
               ))}
             </nav>
 
-            <div className={styles.themeSwitcher}>
-              <div className={styles.themeContainer}>
-                <div className={styles.themeLabel}>
-                  <div className={styles.themeIconContainer}>
-                    <i className={`fas fa-sun ${styles.lightIcon}`}></i>
-                    <i className={`fas fa-moon ${styles.darkIcon}`}></i>
+            <div className={styles.switchers}>
+              <div className={styles.themeSwitcher}>
+                <div className={styles.themeContainer}>
+                  <div className={styles.themeLabel}>
+                    <div className={styles.themeIconContainer}>
+                      <i className={`fas fa-sun ${styles.lightIcon}`}></i>
+                      <i className={`fas fa-moon ${styles.darkIcon}`}></i>
+                    </div>
+                    <span>Tema</span>
                   </div>
-                  <span>Tema</span>
+                  <button
+                    className={styles.themeButton}
+                    onClick={toggleTheme}
+                    aria-label="Cambiar tema"
+                  >
+                    <div
+                      className={`${styles.btnCircle} ${theme === 'dark' ? styles.active : ''}`}
+                    ></div>
+                    <input
+                      type="checkbox"
+                      className={styles.checkbox}
+                      checked={theme === 'dark'}
+                      readOnly
+                    />
+                  </button>
                 </div>
-                <button
-                  className={styles.themeButton}
-                  onClick={toggleTheme}
-                  aria-label="Cambiar tema"
-                >
-                  <div
-                    className={`${styles.btnCircle} ${theme === 'dark' ? styles.active : ''}`}
-                  ></div>
-                  <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    checked={theme === 'dark'}
-                    readOnly
-                  />
-                </button>
+              </div>
+
+              <div className={styles.languageSwitcher}>
+                <div className={styles.languageContainer}>
+                  <div className={styles.languageLabel}>
+                    <div className={styles.languageIconContainer}>
+                      <i className="fas fa-globe"></i>
+                    </div>
+                    <span>Idioma</span>
+                  </div>
+                  <button
+                    className={styles.languageButton}
+                    onClick={toggleLanguage}
+                    aria-label={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
+                  >
+                    <motion.span
+                      key={language}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.2 }}
+                      className={styles.languageText}
+                    >
+                      {language === 'es' ? 'EN' : 'ES'}
+                    </motion.span>
+                  </button>
+                </div>
               </div>
             </div>
 

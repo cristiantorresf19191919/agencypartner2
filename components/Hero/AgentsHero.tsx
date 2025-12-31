@@ -4,34 +4,38 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Hero.module.css';
 
-const Hero = () => {
-  const particlesRef = useRef(null);
-  const statProyectosRef = useRef(null);
-  const statSatisfaccionRef = useRef(null);
-  const statEntregaRef = useRef(null);
+interface WindowWithParticlesJS extends Window {
+  particlesJS?: (id: string, config: unknown) => void;
+}
+
+const AgentsHero = () => {
+  const particlesRef = useRef<HTMLDivElement>(null);
+  const statResolucionRef = useRef<HTMLSpanElement>(null);
+  const statDisponibilidadRef = useRef<HTMLSpanElement>(null);
+  const statProcesosRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     // Initialize particles.js
-    if (typeof window !== 'undefined' && window.particlesJS && particlesRef.current) {
-      window.particlesJS('particles-hero', {
+    if (typeof window !== 'undefined' && (window as WindowWithParticlesJS).particlesJS && particlesRef.current) {
+      (window as WindowWithParticlesJS).particlesJS!('particles-hero-agentes', {
         particles: {
           number: { value: 80 },
           color: { value: '#a06af9' },
           shape: { type: 'circle' },
-          opacity: { value: 0.5, random: true },
+          opacity: { value: 0.4, random: true },
           size: { value: 3, random: true },
           line_linked: {
             enable: true,
-            distance: 150,
-            color: '#a06af9',
-            opacity: 0.2,
+            distance: 130,
+            color: '#ffffff',
+            opacity: 0.25,
             width: 1,
           },
           move: {
             enable: true,
-            speed: 2,
+            speed: 1.5,
             direction: 'none',
-            random: false,
+            random: true,
             straight: false,
             out_mode: 'out',
             bounce: false,
@@ -41,26 +45,30 @@ const Hero = () => {
           detect_on: 'canvas',
           events: {
             onhover: { enable: true, mode: 'repulse' },
-            onclick: { enable: true, mode: 'push' },
+            onclick: { enable: false },
             resize: true,
+          },
+          modes: {
+            repulse: { distance: 90, duration: 0.4 },
           },
         },
         retina_detect: true,
       });
     }
 
-    // Animate stats
-    const animateNumber = (ref, end, suffix = '') => {
+    const animateNumber = (ref: React.RefObject<HTMLSpanElement>, end: number, suffix: string = ''): void => {
       if (!ref.current) return;
       let current = 0;
-      const increment = end / 60; // 60 frames
+      const increment = end / 60;
       const timer = setInterval(() => {
         current += increment;
         if (current >= end) {
           current = end;
           clearInterval(timer);
         }
-        ref.current.textContent = Math.floor(current) + suffix;
+        if (ref.current) {
+          ref.current.textContent = Math.floor(current) + suffix;
+        }
       }, 1000 / 60);
     };
 
@@ -68,12 +76,12 @@ const Hero = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (entry.target.id === 'stat-proyectos') {
-              animateNumber(statProyectosRef, 15, '+');
-            } else if (entry.target.id === 'stat-satisfaccion') {
-              animateNumber(statSatisfaccionRef, 98, '%');
-            } else if (entry.target.id === 'stat-entrega') {
-              animateNumber(statEntregaRef, 7, ' días');
+            if (entry.target.id === 'stat-resolucion') {
+              animateNumber(statResolucionRef, 90, '%');
+            } else if (entry.target.id === 'stat-disponibilidad') {
+              animateNumber(statDisponibilidadRef, 24, '/7');
+            } else if (entry.target.id === 'stat-procesos') {
+              animateNumber(statProcesosRef, 50, '+');
             }
             statsObserver.unobserve(entry.target);
           }
@@ -82,7 +90,7 @@ const Hero = () => {
       { threshold: 0.5 }
     );
 
-    [statProyectosRef, statSatisfaccionRef, statEntregaRef].forEach((ref) => {
+    [statResolucionRef, statDisponibilidadRef, statProcesosRef].forEach((ref) => {
       if (ref.current) statsObserver.observe(ref.current);
     });
 
@@ -131,8 +139,8 @@ const Hero = () => {
 
   return (
     <section className={styles.hero}>
-      <div id="particles-hero" ref={particlesRef} className={styles.particles}></div>
-      
+      <div id="particles-hero-agentes" ref={particlesRef} className={styles.particles}></div>
+
       <div className={styles.heroContent}>
         <motion.div
           className={styles.pill}
@@ -140,7 +148,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <i className="fas fa-bolt"></i> Desarrollo Web Profesional
+          <i className="fas fa-robot"></i> Agentes Virtuales Inteligentes
         </motion.div>
 
         <motion.h1
@@ -149,7 +157,8 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
         >
-          Convierte <strong>clics</strong> en clientes en <strong>14&nbsp;días</strong>
+          Automatiza tu negocio con <strong>agentes virtuales</strong> que atienden, venden y
+          resuelven <strong>24/7</strong>
         </motion.h1>
 
         <motion.div
@@ -159,8 +168,8 @@ const Hero = () => {
           animate="visible"
           whileHover={{ scale: 1.02 }}
         >
-          <i className="fas fa-route"></i>
-          <span>Lleva tu negocio a vender 24/7 desde el día 1</span>
+          <i className="fas fa-brain"></i>
+          <span>Soluciones de IA para atención al cliente, ventas y procesos internos</span>
         </motion.div>
 
         <motion.p
@@ -169,7 +178,8 @@ const Hero = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
         >
-          Desarrollo web profesional para tu negocio
+          Implementamos agentes virtuales entrenados con la información de tu negocio para que
+          respondan, automaticen y escalen tu operación sin sumar más horas humanas.
         </motion.p>
 
         <motion.div
@@ -180,22 +190,34 @@ const Hero = () => {
           viewport={{ once: true }}
         >
           <motion.div className={styles.heroStat} variants={statVariants}>
-            <span className={styles.heroStatValue} id="stat-proyectos" ref={statProyectosRef}>
+            <span
+              className={styles.heroStatValue}
+              id="stat-resolucion"
+              ref={statResolucionRef}
+            >
               0
             </span>
-            <div className={styles.heroStatLabel}>Proyectos completados</div>
+            <div className={styles.heroStatLabel}>Tasa de resolución</div>
           </motion.div>
           <motion.div className={styles.heroStat} variants={statVariants}>
-            <span className={styles.heroStatValue} id="stat-satisfaccion" ref={statSatisfaccionRef}>
+            <span
+              className={styles.heroStatValue}
+              id="stat-disponibilidad"
+              ref={statDisponibilidadRef}
+            >
               0
             </span>
-            <div className={styles.heroStatLabel}>Satisfacción del cliente</div>
+            <div className={styles.heroStatLabel}>Disponibilidad</div>
           </motion.div>
           <motion.div className={styles.heroStat} variants={statVariants}>
-            <span className={styles.heroStatValue} id="stat-entrega" ref={statEntregaRef}>
+            <span
+              className={styles.heroStatValue}
+              id="stat-procesos"
+              ref={statProcesosRef}
+            >
               0
             </span>
-            <div className={styles.heroStatLabel}>Entrega promedio</div>
+            <div className={styles.heroStatLabel}>Procesos automatizados</div>
           </motion.div>
         </motion.div>
 
@@ -206,10 +228,10 @@ const Hero = () => {
           transition={{ delay: 0.8, duration: 0.6 }}
         >
           <a href="#contacto" className={styles.ctaButtonPrimary}>
-            Empezar mi proyecto
+            Crear mi agente virtual
           </a>
-          <a href="#servicios" className={styles.ctaButtonSecondary}>
-            Ver nuestros servicios
+          <a href="#servicios-agentes" className={styles.ctaButtonSecondary}>
+            Ver soluciones
           </a>
         </motion.div>
       </div>
@@ -217,5 +239,5 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default AgentsHero;
 

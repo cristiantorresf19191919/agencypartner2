@@ -3,18 +3,30 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
 import { ProjectAdvisorStepper } from '@/components/ProjectAdvisor/ProjectAdvisorStepper';
 
+interface NavLink {
+  href: string;
+  label: string;
+  gradient?: boolean;
+}
+
 const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [advisorOpen, setAdvisorOpen] = useState(false);
+  const { language, setLanguage } = useLanguage();
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [advisorOpen, setAdvisorOpen] = useState<boolean>(false);
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'es' ? 'en' : 'es');
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const docHeight = document.documentElement.scrollHeight;
       const windowHeight = window.innerHeight;
@@ -30,7 +42,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { href: '#faq', label: 'FAQ' },
     { href: '#contacto', label: 'Contacto' },
     { href: '/asesorias', label: 'Asesorías', gradient: true },
@@ -90,17 +102,37 @@ const Header = () => {
             ))}
           </ul>
 
-          <button
-            type="button"
-            className={styles.advisorCta}
-            onClick={() => setAdvisorOpen(true)}
-          >
-            <span className={styles.advisorCtaGlow} />
-            <span className={styles.advisorCtaInner}>
-              <i className="fa-solid fa-wand-magic-sparkles" />
-              <span className={styles.advisorCtaText}>Planear mi proyecto con IA</span>
-            </span>
-          </button>
+          <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={styles.languageSwitcher}
+              onClick={toggleLanguage}
+              aria-label={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
+            >
+              <motion.span
+                key={language}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className={styles.languageLabel}
+              >
+                {language === 'es' ? 'EN' : 'ES'}
+              </motion.span>
+            </button>
+
+            <button
+              type="button"
+              className={styles.advisorCta}
+              onClick={() => setAdvisorOpen(true)}
+            >
+              <span className={styles.advisorCtaGlow} />
+              <span className={styles.advisorCtaInner}>
+                <i className="fa-solid fa-wand-magic-sparkles" />
+                <span className={styles.advisorCtaText}>Planear mi proyecto con IA</span>
+              </span>
+            </button>
+          </div>
         </nav>
 
         <div className={styles.headerWaveContainer}>
