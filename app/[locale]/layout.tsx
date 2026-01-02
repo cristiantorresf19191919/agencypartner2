@@ -79,7 +79,7 @@ const metadataByLocale: Record<Locale, Metadata> = {
       locale: 'en_US',
       images: [
         {
-          url: '/images/portfolio/marketingImage.png',
+          url: '/images/portfolio/marketingimageenglish.png',
           width: 1200,
           height: 630,
           alt: 'Optimus Agency - Professional Web Development',
@@ -91,7 +91,7 @@ const metadataByLocale: Record<Locale, Metadata> = {
       title: 'Optimus Agency | Professional Web Development',
       description:
         'Convert clicks into clients in 14 days. Professional web development to get your business selling 24/7 from day 1.',
-      images: ['/images/portfolio/marketingImage.png'],
+      images: ['/images/portfolio/marketingimageenglish.png'],
     },
     alternates: {
       canonical: '/en',
