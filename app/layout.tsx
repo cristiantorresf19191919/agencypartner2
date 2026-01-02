@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: 'Optimus Agency | Desarrollo Web Profesional',
   description:
     'Transformamos ideas en experiencias digitales impactantes. Diseño web, desarrollo y SEO para llevar tu negocio al siguiente nivel.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://agencypartner2.netlify.app'),
 };
 
 type RootLayoutProps = {
