@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import styles from './ServicesOverview.module.css';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Service {
   title: string;
@@ -12,48 +13,80 @@ interface Service {
 }
 
 const ServicesOverview = () => {
+  const { language, t } = useLanguage();
+
   const services: Service[] = [
     {
-      title: 'Landing Pages',
+      title: t('service-landing-title'),
       icon: 'fas fa-globe',
       gradient: 'green',
-      description: 'Páginas de aterrizaje optimizadas para conversión con diseño responsivo y carga ultrarrápida.',
-      features: ['Diseño responsivo', 'SEO optimizado', 'Análisis integrado', 'Formularios de contacto'],
+      description: t('service-landing-desc'),
+      features: [
+        t('service-landing-feature-1'),
+        t('service-landing-feature-2'),
+        t('service-landing-feature-3'),
+        t('service-landing-feature-4'),
+      ],
     },
     {
-      title: 'Aplicaciones Web',
+      title: t('service-apps-title'),
       icon: 'fas fa-code',
       gradient: 'blue',
-      description: 'Aplicaciones web completas con funcionalidades avanzadas y experiencia de usuario excepcional.',
-      features: ['React/Vue/Angular', 'Backend personalizado', 'Base de datos', 'Autenticación'],
+      description: t('service-apps-desc'),
+      features: [
+        t('service-apps-feature-1'),
+        t('service-apps-feature-2'),
+        t('service-apps-feature-3'),
+        t('service-apps-feature-4'),
+      ],
     },
     {
-      title: 'Sitios Corporativos',
+      title: t('service-corporate-title'),
       icon: 'fas fa-mobile-alt',
       gradient: 'purple',
-      description: 'Sitios web empresariales que reflejan la profesionalidad y valores de tu marca.',
-      features: ['CMS personalizado', 'Múltiples idiomas', 'Integración social', 'Blog incorporado'],
+      description: t('service-corporate-desc'),
+      features: [
+        t('service-corporate-feature-1'),
+        t('service-corporate-feature-2'),
+        t('service-corporate-feature-3'),
+        t('service-corporate-feature-4'),
+      ],
     },
     {
-      title: 'E-commerce',
+      title: t('service-ecommerce-title'),
       icon: 'fas fa-bolt',
       gradient: 'orange',
-      description: 'Tiendas online completas con pasarelas de pago y gestión de inventario integrada.',
-      features: ['Carrito de compras', 'Pagos seguros', 'Gestión de stock', 'Panel de admin'],
+      description: t('service-ecommerce-desc'),
+      features: [
+        t('service-ecommerce-feature-1'),
+        t('service-ecommerce-feature-2'),
+        t('service-ecommerce-feature-3'),
+        t('service-ecommerce-feature-4'),
+      ],
     },
     {
-      title: 'Plataformas SaaS',
+      title: t('service-saas-title'),
       icon: 'fas fa-users',
       gradient: 'teal',
-      description: 'Plataformas de software como servicio escalables con dashboard y gestión de usuarios.',
-      features: ['Multi-tenancy', 'Subscripciones', 'API REST', 'Dashboard analytics'],
+      description: t('service-saas-desc'),
+      features: [
+        t('service-saas-feature-1'),
+        t('service-saas-feature-2'),
+        t('service-saas-feature-3'),
+        t('service-saas-feature-4'),
+      ],
     },
     {
-      title: 'Mantenimiento',
+      title: t('service-maintenance-title'),
       icon: 'fas fa-shield-alt',
       gradient: 'pink',
-      description: 'Soporte continuo, actualizaciones de seguridad y optimizaciones de rendimiento.',
-      features: ['Soporte 24/7', 'Backups automáticos', 'Actualizaciones', 'Monitoreo'],
+      description: t('service-maintenance-desc'),
+      features: [
+        t('service-maintenance-feature-1'),
+        t('service-maintenance-feature-2'),
+        t('service-maintenance-feature-3'),
+        t('service-maintenance-feature-4'),
+      ],
     },
   ];
 
@@ -84,7 +117,7 @@ const ServicesOverview = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
-        <i className="fas fa-cubes"></i> ¿Qué podemos crear para tu negocio?
+        <i className="fas fa-cubes"></i> {t('services-pill')}
       </motion.div>
       
       <motion.h2
@@ -92,9 +125,8 @@ const ServicesOverview = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-      >
-        Soluciones <strong>Digitales</strong> a tu Medida
-      </motion.h2>
+        dangerouslySetInnerHTML={{ __html: t('services-title') }}
+      />
       
       <motion.p
         className={styles.sectionSubtitle}
@@ -102,7 +134,7 @@ const ServicesOverview = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
-        Desarrollo web profesional para cada necesidad: desde landing pages hasta plataformas SaaS y mantenimiento continuo.
+        {t('services-subtitle')}
       </motion.p>
 
       <motion.div
@@ -120,7 +152,7 @@ const ServicesOverview = () => {
             whileHover={{ scale: 1.03, y: -5 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={styles.cardIcon}>
+            <div className={styles.cardIcon} aria-hidden="true" role="presentation">
               <i className={service.icon}></i>
             </div>
             <h3>{service.title}</h3>

@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Portfolio.module.css';
 
 interface PortfolioStat {
@@ -27,38 +28,38 @@ interface PortfolioProps {
   cases?: PortfolioCase[];
 }
 
-const defaultCases: PortfolioCase[] = [
+const getDefaultCases = (t: (key: string) => string): PortfolioCase[] => [
   {
-    title: 'AuraSpa',
-    description: 'Plataforma web para reserva de servicios terapéuticos a domicilio, con sistema de reservas intuitivo y profesional',
+    title: t('portfolio-auraspa-title'),
+    description: t('portfolio-auraspa-desc'),
     image: '/images/portfolio/auraspa.png',
     link: 'https://yakelinbustamante.netlify.app/',
     stats: [
-      { icon: 'fas fa-spa', value: '100%', label: 'Satisfacción' },
-      { icon: 'far fa-eye', value: '15K+', label: 'Visitas' },
-      { icon: 'fas fa-calendar-check', value: '500+', label: 'Reservas' },
+      { icon: 'fas fa-spa', value: '100%', label: t('portfolio-auraspa-stat-1-label') },
+      { icon: 'far fa-eye', value: '15K+', label: t('portfolio-auraspa-stat-2-label') },
+      { icon: 'fas fa-calendar-check', value: '500+', label: t('portfolio-auraspa-stat-3-label') },
     ],
   },
   {
-    title: 'SolCity',
-    description: 'Sistemas solares fotovoltaicos a medida para hogares y empresas en Colombia. Calculadora de ahorro y cotizaciones en línea',
+    title: t('portfolio-solcity-title'),
+    description: t('portfolio-solcity-desc'),
     image: '/images/portfolio/solcity.png',
     link: 'https://solaroptimus.netlify.app/',
     stats: [
-      { icon: 'fas fa-solar-panel', value: '15+ MW', label: 'Instalados' },
-      { icon: 'far fa-eye', value: '30K+', label: 'Visitas' },
-      { icon: 'fas fa-users', value: '500+', label: 'Clientes' },
+      { icon: 'fas fa-solar-panel', value: '15+ MW', label: t('portfolio-solcity-stat-1-label') },
+      { icon: 'far fa-eye', value: '30K+', label: t('portfolio-solcity-stat-2-label') },
+      { icon: 'fas fa-users', value: '500+', label: t('portfolio-solcity-stat-3-label') },
     ],
   },
   {
-    title: 'Yakeline Contadora',
-    description: 'Asesoría contable y tributaria profesional. Optimización fiscal, manejo de casos DIAN y protección patrimonial para empresas',
+    title: t('portfolio-yakeline-title'),
+    description: t('portfolio-yakeline-desc'),
     image: '/images/portfolio/yakeline.png',
     link: 'https://yakelinbustamante.netlify.app/',
     stats: [
-      { icon: 'fas fa-chart-line', value: '10+', label: 'Años exp.' },
-      { icon: 'far fa-eye', value: '25K+', label: 'Visitas' },
-      { icon: 'fas fa-briefcase', value: '200+', label: 'Clientes' },
+      { icon: 'fas fa-chart-line', value: '10+', label: t('portfolio-yakeline-stat-1-label') },
+      { icon: 'far fa-eye', value: '25K+', label: t('portfolio-yakeline-stat-2-label') },
+      { icon: 'fas fa-briefcase', value: '200+', label: t('portfolio-yakeline-stat-3-label') },
     ],
   },
 ];
@@ -66,22 +67,22 @@ const defaultCases: PortfolioCase[] = [
 const Portfolio = ({
   sectionId = 'casos-de-exito',
   pillIconClass = 'fas fa-chart-line',
-  pillText = 'Casos de Éxito',
-  title = (
-    <>
-      Lo que hemos hecho para
-      <br />
-      <strong>otros negocios como el tuyo</strong>
-    </>
-  ),
-  subtitle = (
-    <>
-      Más de <strong>120 casos de éxito</strong> respaldan nuestro enfoque en{' '}
-      <strong>resultados reales</strong> y medibles.
-    </>
-  ),
-  cases = defaultCases,
+  pillText,
+  title,
+  subtitle,
+  cases,
 }: PortfolioProps): JSX.Element => {
+  const { t } = useLanguage();
+  
+  const defaultPillText = pillText || t('portfolio-pill');
+  const defaultTitle = title || (
+    <span dangerouslySetInnerHTML={{ __html: t('portfolio-title') }} />
+  );
+  const defaultSubtitle = subtitle || (
+    <span dangerouslySetInnerHTML={{ __html: t('portfolio-subtitle') }} />
+  );
+  const defaultCases = cases || getDefaultCases(t);
+
   return (
     <section id={sectionId} className={styles.portfolio}>
       <motion.div
@@ -90,7 +91,7 @@ const Portfolio = ({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
-        <i className={pillIconClass}></i> {pillText}
+        <i className={pillIconClass}></i> {defaultPillText}
       </motion.div>
 
       <motion.h2
@@ -99,7 +100,7 @@ const Portfolio = ({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
-        {title}
+        {defaultTitle}
       </motion.h2>
 
       <motion.p
@@ -108,7 +109,7 @@ const Portfolio = ({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
-        {subtitle}
+        {defaultSubtitle}
       </motion.p>
 
       <motion.div
@@ -118,7 +119,7 @@ const Portfolio = ({
         viewport={{ once: true }}
         transition={{ staggerChildren: 0.2 }}
       >
-        {cases.map((caseItem, index) => (
+        {defaultCases.map((caseItem, index) => (
           <motion.a
             key={index}
             href={caseItem.link}

@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useLocale } from '@/lib/useLocale';
 import styles from './Footer.module.css';
 
 const Footer = (): JSX.Element => {
+  const { createLocalizedPath } = useLocale();
+  
   return (
     <footer className={styles.footer}>
       <div className={styles.footerWave}>
@@ -45,7 +48,7 @@ const Footer = (): JSX.Element => {
       </div>
       <div className={styles.footerContainer}>
         <div className={styles.footerAbout}>
-          <Link href="/" className={styles.logo}>
+          <Link href={createLocalizedPath('/')} className={styles.logo}>
             <i className="fas fa-code"></i> OptimusAgency
           </Link>
           <p>
@@ -60,10 +63,10 @@ const Footer = (): JSX.Element => {
           <div className={styles.footerLinks}>
             <Link href="#">Política de Privacidad</Link>
             <Link href="#">Términos de Servicio</Link>
-            <Link href="/asesorias" className={styles.gradientLink}>
+            <Link href={createLocalizedPath('/asesorias')} className={styles.gradientLink}>
               Asesorías
             </Link>
-            <Link href="/agentes" className={styles.gradientLink}>
+            <Link href={createLocalizedPath('/agentes')} className={styles.gradientLink}>
               Agentes
             </Link>
           </div>

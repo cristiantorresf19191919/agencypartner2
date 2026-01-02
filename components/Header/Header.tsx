@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocale } from '@/lib/useLocale';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
 import { ProjectAdvisorStepper } from '@/components/ProjectAdvisor/ProjectAdvisorStepper';
@@ -16,6 +17,7 @@ interface NavLink {
 
 const Header = () => {
   const { language, setLanguage } = useLanguage();
+  const { createLocalizedPath } = useLocale();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -69,7 +71,7 @@ const Header = () => {
             <span className={styles.hamburgerLine}></span>
           </button>
 
-          <Link href="/" className={styles.logo}>
+          <Link href={createLocalizedPath('/')} className={styles.logo}>
             <i className="fas fa-code"></i> Optimus<strong>Agency</strong>
           </Link>
 
@@ -92,7 +94,7 @@ const Header = () => {
                   </a>
                 ) : (
                   <Link
-                    href={link.href}
+                    href={createLocalizedPath(link.href)}
                     className={link.gradient ? styles.gradientLink : ''}
                   >
                     {link.label}

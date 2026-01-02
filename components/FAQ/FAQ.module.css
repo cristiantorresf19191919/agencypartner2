@@ -8,6 +8,19 @@
   background: #181c22;
 }
 
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(160, 106, 249, 0.1);
+  border-radius: 50px;
+  color: var(--purple-1);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
 .sectionTitle {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
@@ -22,140 +35,271 @@
   background-clip: text;
 }
 
-.accordion {
-  max-width: 800px;
-  margin: 3rem auto 0 auto;
+.faqGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
   text-align: left;
 }
 
-.accordionItem {
+.faqCard {
   background: var(--white);
-  border-radius: 18px;
-  margin-bottom: 1.1rem;
-  border: 1px solid rgba(160, 106, 249, 0.18);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+  border-radius: 20px;
+  border: 2px solid rgba(160, 106, 249, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  transition:
-    transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-    box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-    border-color 0.25s ease,
-    background 0.25s ease;
-  will-change: transform, box-shadow;
+  cursor: pointer;
 }
 
-[data-theme="dark"] .accordionItem {
+[data-theme="dark"] .faqCard {
   background: #23243a;
+  border-color: rgba(160, 106, 249, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.accordionItem.open {
-  background: #f8f5ff;
-  box-shadow: 0 16px 50px rgba(15, 23, 42, 0.25);
-  transform: translateY(-2px);
-  border-color: rgba(160, 106, 249, 0.6);
-}
-
-[data-theme="dark"] .accordionItem.open {
-  background: #292a3a;
-}
-
-.accordionItem.open::before {
+.faqCard::before {
   content: '';
   position: absolute;
-  left: 0;
   top: 0;
-  bottom: 0;
-  width: 5px;
-  background: linear-gradient(180deg, #a06af9 0%, #35E4B2 100%);
-  border-radius: 5px 0 0 5px;
-  z-index: 2;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #a06af9 0%, #35E4B2 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  transform-origin: left;
 }
 
-.accordionTrigger {
-  width: 100%;
-  padding: 1.4rem 2.5rem 1.4rem 2.2rem;
+.faqCard:hover::before,
+.faqCard.open::before {
+  transform: scaleX(1);
+}
+
+.faqCard.open {
+  border-color: rgba(160, 106, 249, 0.4);
+  box-shadow: 0 8px 30px rgba(160, 106, 249, 0.2);
+  background: linear-gradient(135deg, rgba(160, 106, 249, 0.05) 0%, rgba(53, 228, 178, 0.05) 100%);
+}
+
+[data-theme="dark"] .faqCard.open {
+  background: linear-gradient(135deg, rgba(160, 106, 249, 0.1) 0%, rgba(53, 228, 178, 0.1) 100%);
+}
+
+.cardHeader {
+  padding: 1.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.iconContainer {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(160, 106, 249, 0.15) 0%, rgba(53, 228, 178, 0.15) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a06af9;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faqCard.open .iconContainer {
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  color: white;
+  transform: scale(1.1);
+}
+
+.cardTrigger {
+  flex: 1;
   background: none;
   border: none;
   text-align: left;
-  font-size: 1.18rem;
-  font-weight: 700;
-  color: var(--text-primary);
   cursor: pointer;
+  padding: 0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1.2rem;
-  letter-spacing: 0.01em;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.accordionTrigger:hover {
+.cardTrigger h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+  transition: color 0.3s ease;
+}
+
+.faqCard.open .cardTrigger h3 {
   color: #a06af9;
 }
 
 .chevron {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 8px;
+  background: rgba(160, 106, 249, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #a06af9;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.85rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
 }
 
-.accordionItem.open .chevron {
-  transform: rotate(90deg);
-  color: #35E4B2;
+.faqCard.open .chevron {
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  color: white;
+  transform: rotate(180deg);
 }
 
-.accordionContent {
-  padding: 0 2.2rem;
+.cardContent {
+  overflow: hidden;
+}
+
+.answerContent {
+  padding: 0 1.75rem 1.75rem 1.75rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.answerIcon {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #35E4B2 0%, #20c997 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.answerContent p {
   color: var(--text-secondary);
   line-height: 1.7;
-  font-size: 1.08rem;
-  overflow: hidden;
-  background: rgba(160, 106, 249, 0.07);
-  transform-origin: top;
+  font-size: 1rem;
+  margin: 0;
 }
 
-[data-theme="dark"] .accordionContent {
-  background: rgba(160, 106, 249, 0.13);
+[data-theme="dark"] .answerContent p {
   color: #e9ecef;
-}
-
-.accordionItem.open .accordionContent {
-  padding: 1.3rem 2.2rem 1.7rem 2.2rem;
-  background: rgba(160, 106, 249, 0.13);
-  border-radius: 0 0 16px 16px;
 }
 
 .faqContact {
   margin-top: 4rem;
   text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(160, 106, 249, 0.05) 0%, rgba(53, 228, 178, 0.05) 100%);
+  border-radius: 20px;
+  border: 2px solid rgba(160, 106, 249, 0.15);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+[data-theme="dark"] .faqContact {
+  background: linear-gradient(135deg, rgba(160, 106, 249, 0.1) 0%, rgba(53, 228, 178, 0.1) 100%);
+  border-color: rgba(160, 106, 249, 0.25);
 }
 
 .faqContact p {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   font-size: 1.1rem;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .ctaButton {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 14px 32px;
-  background: white;
-  color: #a06af9;
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  color: white;
   border-radius: 50px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  border: 1px solid rgba(160, 106, 249, 0.2);
+  box-shadow: 0 4px 15px rgba(160, 106, 249, 0.3);
+  font-size: 1rem;
 }
 
 .ctaButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(160, 106, 249, 0.3);
+  box-shadow: 0 8px 25px rgba(160, 106, 249, 0.4);
 }
 
-@media (max-width: 600px) {
-  .accordionTrigger,
-  .accordionContent {
-    padding-left: 1rem;
-    padding-right: 1rem;
+.ctaButton i {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+  .faqGrid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
   }
 }
 
+@media (max-width: 768px) {
+  .faqGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .cardHeader {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .iconContainer {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 1.1rem;
+  }
+
+  .cardTrigger h3 {
+    font-size: 1rem;
+  }
+
+  .answerContent {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+
+  .faqContact {
+    padding: 1.5rem;
+    margin-top: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardHeader {
+    padding: 1.25rem;
+  }
+
+  .answerContent {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .answerIcon {
+    align-self: flex-start;
+  }
+}

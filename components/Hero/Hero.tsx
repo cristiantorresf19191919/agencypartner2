@@ -227,10 +227,28 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <a href="#contacto" className={styles.ctaButtonPrimary}>
-            {t('cta-start')}
+          <a 
+            href="#contacto" 
+            className={styles.ctaButtonPrimary}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                const { trackCTAClick } = require('@/lib/analytics');
+                trackCTAClick('hero_primary', 'hero_section');
+              }
+            }}
+          >
+            <i className="fas fa-rocket"></i> {t('cta-start')}
           </a>
-          <a href="#servicios" className={styles.ctaButtonSecondary}>
+          <a 
+            href="#servicios" 
+            className={styles.ctaButtonSecondary}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                const { trackCTAClick } = require('@/lib/analytics');
+                trackCTAClick('hero_secondary', 'hero_section');
+              }
+            }}
+          >
             {t('cta-services')}
           </a>
         </motion.div>

@@ -8,7 +8,9 @@ import {
   useState,
   ReactNode,
 } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import translations from '@/lib/translations';
+import { getLocaleFromPathname, addLocaleToPathname, type Locale } from '@/lib/i18n';
 
 type SupportedLanguage = 'es' | 'en';
 
@@ -39,70 +41,28 @@ type LanguageProviderProps = {
 };
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
+  const pathname = usePathname();
+  const router = useRouter();
   const [language, setLanguageState] = useState<SupportedLanguage>('es');
   const [mounted, setMounted] = useState(false);
 
+  // Initialize and sync language with URL pathname
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
-      const savedLang =
-        (window.localStorage.getItem('language') as SupportedLanguage) || 'es';
-      setLanguageState(savedLang);
+    if (typeof window !== 'undefined' && pathname) {
+      const localeFromPath = getLocaleFromPathname(pathname);
+      setLanguageState(localeFromPath);
       if (typeof document !== 'undefined') {
-        document.documentElement.lang = savedLang;
+        document.documentElement.lang = localeFromPath;
       }
-
-      // Listen for language changes from other parts of the app
-      const handleLanguageChange = () => {
-        const currentLang =
-          (window.localStorage.getItem('language') as SupportedLanguage) || 'es';
-        // Force state update to trigger re-renders
-        setLanguageState((prevLang) => {
-          if (prevLang !== currentLang) {
-            return currentLang;
-          }
-          return prevLang;
-        });
-        if (typeof document !== 'undefined') {
-          document.documentElement.lang = currentLang;
-        }
-        // Also update any elements with data-translate attribute (for non-React content)
-        if (typeof document !== 'undefined') {
-          document.querySelectorAll('[data-translate]').forEach((element) => {
-            const key = element.getAttribute('data-translate');
-            if (key && translations[currentLang] && translations[currentLang][key]) {
-              if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                (element as HTMLInputElement).placeholder = translations[currentLang][key];
-              } else {
-                element.textContent = translations[currentLang][key];
-              }
-            }
-          });
-        }
-      };
-
-      // Listen to both window and document events
-      window.addEventListener('languageChanged', handleLanguageChange);
-      document.addEventListener('languageChanged', handleLanguageChange);
-
-      return () => {
-        window.removeEventListener('languageChanged', handleLanguageChange);
-        document.removeEventListener('languageChanged', handleLanguageChange);
-      };
     }
-  }, []);
+  }, [pathname]);
 
   const setLanguage = (lang: SupportedLanguage) => {
-    setLanguageState(lang);
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('language', lang);
-      // Dispatch custom event for language change
-      window.dispatchEvent(new CustomEvent('languageChanged'));
-    }
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = lang;
-      // Dispatch custom event for language change
-      document.dispatchEvent(new CustomEvent('languageChanged'));
+    // Update URL to reflect language change - the useEffect will sync the state
+    if (pathname) {
+      const newPath = addLocaleToPathname(pathname, lang);
+      router.push(newPath);
     }
   };
 

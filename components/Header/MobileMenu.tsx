@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocale } from '@/lib/useLocale';
 import styles from './MobileMenu.module.css';
 
 interface MobileMenuProps {
@@ -21,6 +22,7 @@ interface NavItem {
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const { createLocalizedPath } = useLocale();
 
   const toggleLanguage = () => {
     setLanguage(language === 'es' ? 'en' : 'es');
@@ -173,7 +175,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                       <i className={`fas fa-chevron-right ${styles.arrow}`}></i>
                     </a>
                   ) : (
-                    <Link href={item.href} className={styles.navLink} onClick={onClose}>
+                    <Link href={createLocalizedPath(item.href)} className={styles.navLink} onClick={onClose}>
                       <div className={styles.navContent}>
                         <div className={styles.navIcon}>
                           <i className={item.icon}></i>

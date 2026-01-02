@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebaseClient';
 import styles from './Contact.module.css';
 import LoadingOverlay from './LoadingOverlay';
+import { trackFormStart, trackFormSubmit } from '@/lib/analytics';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface FormData {
   name: string;
@@ -24,6 +26,7 @@ interface Toast {
 }
 
 const Contact = (): JSX.Element => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -37,6 +40,11 @@ const Contact = (): JSX.Element => {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [toast, setToast] = useState<Toast | null>(null);
+
+  useEffect(() => {
+    // Track when user starts interacting with form
+    trackFormStart('contact_form');
+  }, []);
 
   const showToast = (type: 'success' | 'error', message: string): void => {
     setToast({ type, message });
@@ -67,13 +75,12 @@ const Contact = (): JSX.Element => {
         message: '',
       });
 
-      showToast('success', '¡Gracias! Recibimos tu mensaje y te contactaremos en menos de 24 horas.');
+      trackFormSubmit('contact_form', true);
+      showToast('success', t('contact-toast-success'));
     } catch (error) {
       console.error('Error guardando contacto en Firebase:', error);
-      showToast(
-        'error',
-        'Ups, algo salió mal al enviar el formulario. Intenta nuevamente en unos segundos.'
-      );
+      trackFormSubmit('contact_form', false);
+      showToast('error', t('contact-toast-error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -94,7 +101,7 @@ const Contact = (): JSX.Element => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
-        <i className="far fa-paper-plane"></i> Empezá Tu Proyecto
+        <i className="far fa-paper-plane"></i> {t('contact-pill')}
       </motion.div>
 
       <motion.h2
@@ -102,21 +109,26 @@ const Contact = (): JSX.Element => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-      >
-        ¿Listo para dar el
-        <br />
-        <strong>siguiente paso?</strong>
-      </motion.h2>
+        dangerouslySetInnerHTML={{ __html: t('contact-title') }}
+      />
 
       <motion.p
         className={styles.sectionSubtitle}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
+        dangerouslySetInnerHTML={{ __html: t('contact-subtitle') }}
+      />
+
+      <motion.div
+        className={styles.urgencyBanner}
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
       >
-        Completa el formulario y empecemos. Te contactaremos con una propuesta clara y{' '}
-        <strong>alineada a los objetivos</strong> de tu negocio.
-      </motion.p>
+        <i className="fas fa-clock"></i>
+        <span dangerouslySetInnerHTML={{ __html: t('contact-urgency-banner') }} />
+      </motion.div>
 
       <div className={styles.contactContainer}>
         <motion.form
@@ -129,24 +141,24 @@ const Contact = (): JSX.Element => {
         >
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label htmlFor="name">Nombre completo *</label>
+              <label htmlFor="name">{t('contact-label-name')}</label>
               <input
                 type="text"
                 id="name"
                 name="name"
-                placeholder="Juan Camilo"
+                placeholder={t('contact-placeholder-name')}
                 required
                 value={formData.name}
                 onChange={handleChange}
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="email">Email *</label>
+              <label htmlFor="email">{t('contact-label-email')}</label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                placeholder="test@gmail.com"
+                placeholder={t('contact-placeholder-email')}
                 required
                 value={formData.email}
                 onChange={handleChange}
@@ -155,23 +167,23 @@ const Contact = (): JSX.Element => {
           </div>
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label htmlFor="phone">Teléfono</label>
+              <label htmlFor="phone">{t('contact-label-phone')}</label>
               <input
                 type="tel"
                 id="phone"
                 name="phone"
-                placeholder="+57 322 347 93 37"
+                placeholder={t('contact-placeholder-phone')}
                 value={formData.phone}
                 onChange={handleChange}
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="company">Empresa</label>
+              <label htmlFor="company">{t('contact-label-company')}</label>
               <input
                 type="text"
                 id="company"
                 name="company"
-                placeholder="Mi Empresa SRL"
+                placeholder={t('contact-placeholder-company')}
                 value={formData.company}
                 onChange={handleChange}
               />
@@ -179,7 +191,7 @@ const Contact = (): JSX.Element => {
           </div>
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label htmlFor="projectType">Tipo de proyecto *</label>
+              <label htmlFor="projectType">{t('contact-label-project-type')}</label>
               <select
                 id="projectType"
                 name="projectType"
@@ -187,59 +199,67 @@ const Contact = (): JSX.Element => {
                 value={formData.projectType}
                 onChange={handleChange}
               >
-                <option value="">Selecciona el tipo de proyecto</option>
-                <option value="landing-page">Landing Page</option>
-                <option value="corporativo">Sitio Web Corporativo</option>
-                <option value="e-commerce">Tienda Online (E-commerce)</option>
-                <option value="web-app">Aplicación Web</option>
-                <option value="rediseño">Rediseño de sitio existente</option>
-                <option value="otro">Otro</option>
+                <option value="">{t('contact-select-project-type')}</option>
+                <option value="landing-page">{t('contact-option-landing-page')}</option>
+                <option value="corporativo">{t('contact-option-corporativo')}</option>
+                <option value="e-commerce">{t('contact-option-ecommerce')}</option>
+                <option value="web-app">{t('contact-option-web-app')}</option>
+                <option value="rediseño">{t('contact-option-rediseño')}</option>
+                <option value="otro">{t('contact-option-otro')}</option>
               </select>
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="budget">Presupuesto estimado</label>
+              <label htmlFor="budget">{t('contact-label-budget')}</label>
               <select
                 id="budget"
                 name="budget"
                 value={formData.budget}
                 onChange={handleChange}
               >
-                <option value="">Selecciona tu presupuesto</option>
-                <option value="starter">$600,000 COP (Starter)</option>
-                <option value="professional">$3,200,000 COP (Professional)</option>
-                <option value="custom">$8,000,000 COP (Custom)</option>
-                <option value="no-seguro">No estoy seguro</option>
+                <option value="">{t('contact-select-budget')}</option>
+                <option value="starter">{t('contact-option-budget-starter')}</option>
+                <option value="professional">{t('contact-option-budget-professional')}</option>
+                <option value="custom">{t('contact-option-budget-custom')}</option>
+                <option value="no-seguro">{t('contact-option-budget-unsure')}</option>
               </select>
             </div>
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="timeline">Timeframe esperado</label>
+            <label htmlFor="timeline">{t('contact-label-timeline')}</label>
             <select
               id="timeline"
               name="timeline"
               value={formData.timeline}
               onChange={handleChange}
             >
-              <option value="">¿Cuándo necesitas el proyecto?</option>
-              <option value="1-2-weeks">1-2 Semanas</option>
-              <option value="3-4-weeks">3-4 Semanas</option>
-              <option value="1-2-months">1-2 Meses</option>
-              <option value="flexible">Flexible</option>
+              <option value="">{t('contact-select-timeline')}</option>
+              <option value="1-2-weeks">{t('contact-option-timeline-1-2-weeks')}</option>
+              <option value="3-4-weeks">{t('contact-option-timeline-3-4-weeks')}</option>
+              <option value="1-2-months">{t('contact-option-timeline-1-2-months')}</option>
+              <option value="flexible">{t('contact-option-timeline-flexible')}</option>
             </select>
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="message">Cuéntanos sobre tu proyecto</label>
+            <label htmlFor="message">{t('contact-label-message')}</label>
             <textarea
               id="message"
               name="message"
-              placeholder="Describe tu negocio, objetivos, público objetivo, funcionalidades específicas que necesitas..."
+              placeholder={t('contact-placeholder-message')}
               rows={5}
               value={formData.message}
               onChange={handleChange}
             ></textarea>
           </div>
           <button type="submit" className={styles.ctaButton} disabled={isSubmitting}>
-            Solicitar Propuesta Gratuita
+            {isSubmitting ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i> {t('contact-btn-submitting')}
+              </>
+            ) : (
+              <>
+                <i className="fas fa-rocket"></i> {t('contact-btn')}
+              </>
+            )}
           </button>
         </motion.form>
 
@@ -250,13 +270,13 @@ const Contact = (): JSX.Element => {
           viewport={{ once: true }}
         >
           <div className={styles.infoBox}>
-            <h4>¿Por qué elegirnos?</h4>
+            <h4>{t('contact-why-title')}</h4>
             <ul>
-              <li>Consulta gratuita sin compromiso</li>
-              <li>Respuesta rápida en menos de 24 horas</li>
-              <li>Experiencia con empresas colombianas</li>
-              <li>Soporte en español</li>
-              <li>Precios competitivos en pesos colombianos</li>
+              <li>{t('contact-why-1')}</li>
+              <li>{t('contact-why-2')}</li>
+              <li>{t('contact-why-3')}</li>
+              <li>{t('contact-why-4')}</li>
+              <li>{t('contact-why-5')}</li>
             </ul>
           </div>
         </motion.div>

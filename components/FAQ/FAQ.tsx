@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './FAQ.module.css';
 import { ReactNode } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface FAQItem {
   question: string;
   answer: string;
+  icon?: string;
 }
 
 interface FAQProps {
@@ -15,121 +17,143 @@ interface FAQProps {
   title?: ReactNode;
 }
 
-const defaultFaqs: FAQItem[] = [
-  {
-    question: '¿Cuánto tiempo toma desarrollar mi proyecto?',
-    answer:
-      'Los tiempos varían según la complejidad: Landing pages básicas (7-10 días), sitios corporativos (14-21 días), y aplicaciones complejas (30-45 días). Siempre mantenemos comunicación constante sobre el progreso.',
-  },
-  {
-    question: '¿Qué tecnologías utilizan para el desarrollo?',
-    answer:
-      'Usamos tecnologías modernas como React, Next.js, Node.js, Firebase, y herramientas de diseño como Figma y Webflow, según las necesidades del proyecto.',
-  },
-  {
-    question: '¿Incluyen hosting y dominio en el precio?',
-    answer:
-      'Sí, todos los planes incluyen hosting por 1 año. El dominio puede incluirse o gestionarse aparte según el plan y la preferencia del cliente.',
-  },
-  {
-    question: '¿Ofrecen soporte después de la entrega?',
-    answer:
-      'Sí, ofrecemos soporte post-entrega: 30 días para Starter, 3 meses para Professional, y opciones personalizadas para proyectos complejos.',
-  },
-  {
-    question: '¿Puedo solicitar cambios durante el desarrollo?',
-    answer:
-      'Sí, puedes solicitar cambios. Starter incluye 1 revisión, Professional incluye 3, y los proyectos personalizados se acuerdan según el alcance.',
-  },
-  {
-    question: '¿Qué pasa si no estoy satisfecho con el resultado?',
-    answer:
-      'Trabajamos contigo hasta que estés satisfecho dentro de las revisiones incluidas. Si hay desacuerdo, buscamos una solución justa y transparente.',
-  },
-  {
-    question: '¿Pueden integrar mi sitio con sistemas existentes?',
-    answer:
-      'Sí, realizamos integraciones con CRMs, ERPs, pasarelas de pago y otros sistemas según tus necesidades.',
-  },
-  {
-    question: '¿Los sitios son optimizados para móviles?',
-    answer:
-      'Todos nuestros sitios son 100% responsive y optimizados para móviles y tablets.',
-  },
-  {
-    question: '¿Cómo es el proceso de pago?',
-    answer:
-      'El pago se realiza en dos partes: 50% al iniciar y 50% al entregar el proyecto, salvo acuerdos especiales.',
-  },
-  {
-    question: '¿Proporcionan capacitación para usar el sitio?',
-    answer:
-      'Sí, ofrecemos capacitación básica para que puedas administrar tu sitio o tienda.',
-  },
-];
-
-const FAQ = ({ faqs = defaultFaqs, title }: FAQProps) => {
+const FAQ = ({ faqs, title }: FAQProps) => {
+  const { language, t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  // Generate FAQs from translations
+  const defaultFaqs = useMemo<FAQItem[]>(() => {
+    const icons = [
+      'fas fa-clock',
+      'fas fa-code',
+      'fas fa-server',
+      'fas fa-headset',
+      'fas fa-edit',
+      'fas fa-shield-alt',
+      'fas fa-plug',
+      'fas fa-mobile-alt',
+      'fas fa-credit-card',
+      'fas fa-graduation-cap',
+    ];
+
+    return Array.from({ length: 10 }, (_, i) => ({
+      question: t(`faq-question-${i + 1}`),
+      answer: t(`faq-answer-${i + 1}`),
+      icon: icons[i],
+    }));
+  }, [t]);
+
+  const displayFaqs = faqs || defaultFaqs;
 
   const toggleAccordion = (index: number): void => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  };
+
   return (
     <section id="faq" className={styles.faqSection}>
-      <h2 className={styles.sectionTitle}>
-        {title || (
-          <>
-            Preguntas <strong>Frecuentes</strong>
-          </>
-        )}
-      </h2>
+      <motion.div
+        className={styles.pill}
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
+        <i className="fas fa-question-circle"></i> {t('faq-pill')}
+      </motion.div>
 
-      <div className={styles.accordion}>
-        {faqs.map((faq, index) => (
+      <motion.h2
+        className={styles.sectionTitle}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        dangerouslySetInnerHTML={!title ? { __html: t('faq-main-title') } : undefined}
+      >
+        {title}
+      </motion.h2>
+
+      <motion.div
+        className={styles.faqGrid}
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        {displayFaqs.map((faq, index) => (
           <motion.div
             key={index}
-            className={`${styles.accordionItem} ${openIndex === index ? styles.open : ''}`}
-            layout
-            transition={{ layout: { duration: 0.28, ease: [0.22, 0.61, 0.36, 1] } }}
+            className={`${styles.faqCard} ${openIndex === index ? styles.open : ''}`}
+            variants={itemVariants}
+            whileHover={{ scale: 1.02, y: -4 }}
+            transition={{ duration: 0.3 }}
           >
-            <button
-              className={styles.accordionTrigger}
-              onClick={() => toggleAccordion(index)}
-              aria-expanded={openIndex === index}
-            >
-              {faq.question}
-              <span className={styles.chevron}>
-                <i className="fas fa-chevron-right"></i>
-              </span>
-            </button>
+            <div className={styles.cardHeader}>
+              <div className={styles.iconContainer}>
+                <i className={faq.icon || 'fas fa-question-circle'}></i>
+              </div>
+              <button
+                className={styles.cardTrigger}
+                onClick={() => toggleAccordion(index)}
+                aria-expanded={openIndex === index}
+              >
+                <h3>{faq.question}</h3>
+                <span className={styles.chevron}>
+                  <i className={`fas fa-chevron-${openIndex === index ? 'up' : 'down'}`}></i>
+                </span>
+              </button>
+            </div>
             <AnimatePresence>
               {openIndex === index && (
                 <motion.div
-                  className={styles.accordionContent}
-                  initial={{ opacity: 0, scaleY: 0.9 }}
-                  animate={{ opacity: 1, scaleY: 1 }}
-                  exit={{ opacity: 0, scaleY: 0.9 }}
-                  transition={{ duration: 0.24, ease: [0.22, 0.61, 0.36, 1] }}
-                  style={{ originY: 0 }}
+                  className={styles.cardContent}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  {faq.answer}
+                  <div className={styles.answerContent}>
+                    <div className={styles.answerIcon}>
+                      <i className="fas fa-check-circle"></i>
+                    </div>
+                    <p>{faq.answer}</p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
-      <div className={styles.faqContact}>
-        <p>¿No encuentras la respuesta que buscas?</p>
+      <motion.div
+        className={styles.faqContact}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
+        <p>{t('faq-contact-text')}</p>
         <a href="#contacto" className={styles.ctaButton}>
-          Contacta con nosotros
+          <i className="fas fa-envelope"></i> {t('faq-contact-button')}
         </a>
-      </div>
+      </motion.div>
     </section>
   );
 };
 
 export default FAQ;
-

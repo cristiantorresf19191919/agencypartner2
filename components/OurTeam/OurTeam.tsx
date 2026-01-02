@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import styles from './OurTeam.module.css';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface TeamMember {
   name: string;
@@ -24,31 +25,31 @@ interface OurTeamProps {
   members?: TeamMember[];
 }
 
-const defaultMembers: TeamMember[] = [
-  {
-    name: 'Cristian Torres',
-    role: 'Developer',
-    image: '/images/portfolio/cris.jpg',
-    bio: 'Desarrollador apasionado por crear soluciones digitales innovadoras y de alta calidad.',
-    skills: ['React', 'Next.js', 'TypeScript', 'Node.js'],
-    social: {
-      linkedin: '#',
-      github: '#',
-      email: '#',
-    },
-  },
-];
-
 const OurTeam = ({
   sectionId = 'nuestro-equipo',
-  title = (
-    <>
-      Nuestro <strong>Equipo</strong>
-    </>
-  ),
-  subtitle = 'Conoce a los profesionales que hacen posible cada proyecto',
-  members = defaultMembers,
+  title,
+  subtitle,
+  members,
 }: OurTeamProps) => {
+  const { t } = useLanguage();
+
+  const defaultMembers: TeamMember[] = [
+    {
+      name: 'Cristian Torres',
+      role: t('team-member-role-developer'),
+      image: '/images/portfolio/cris.jpg',
+      bio: t('team-member-bio-cristian'),
+      skills: ['React', 'Next.js', 'TypeScript', 'Node.js'],
+      social: {
+        linkedin: '#',
+        github: '#',
+        email: '#',
+      },
+    },
+  ];
+
+  const displaySubtitle = subtitle || t('team-subtitle');
+  const displayMembers = members || defaultMembers;
   return (
     <section id={sectionId} className={styles.ourTeam}>
       <motion.div
@@ -66,18 +67,29 @@ const OurTeam = ({
           transition={{ delay: 0.1 }}
         >
           <i className="fas fa-users"></i>
-          <span>Equipo Profesional</span>
+          <span>{t('team-pill')}</span>
         </motion.div>
 
-        <motion.h2
-          className={styles.sectionTitle}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-        >
-          {title}
-        </motion.h2>
+        {title ? (
+          <motion.h2
+            className={styles.sectionTitle}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            {title}
+          </motion.h2>
+        ) : (
+          <motion.h2
+            className={styles.sectionTitle}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            dangerouslySetInnerHTML={{ __html: t('team-title') }}
+          />
+        )}
 
         <motion.p
           className={styles.sectionSubtitle}
@@ -86,7 +98,7 @@ const OurTeam = ({
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
         >
-          {subtitle}
+          {displaySubtitle}
         </motion.p>
 
         <motion.div
@@ -96,7 +108,7 @@ const OurTeam = ({
           viewport={{ once: true }}
           transition={{ staggerChildren: 0.2, delay: 0.4 }}
         >
-          {members.map((member, index) => (
+          {displayMembers.map((member, index) => (
             <motion.div
               key={index}
               className={styles.teamCard}

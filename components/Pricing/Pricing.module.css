@@ -48,7 +48,7 @@
   gap: 2rem;
   max-width: 1200px;
   margin: 3rem auto 0;
-  align-items: start;
+  align-items: stretch;
 }
 
 .pricingCard {
@@ -60,6 +60,9 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 [data-theme="dark"] .pricingCard {
@@ -97,6 +100,39 @@
 .cardHeader {
   text-align: center;
   margin-bottom: 1.5rem;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.limitedOffer {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+  animation: pulse 2s infinite;
+  z-index: 10;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.limitedOffer i {
+  font-size: 0.7rem;
 }
 
 .cardIcon {
@@ -145,6 +181,10 @@
   list-style: none;
   margin: 1.5rem 0;
   text-align: left;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 [data-theme="dark"] .featuresList {
@@ -163,8 +203,9 @@
 }
 
 .priceContainer {
-  margin: 1.5rem 0;
+  margin: 1.5rem 0 0 0;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .priceContainer span del {
@@ -185,16 +226,29 @@
 }
 
 .ctaButton {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
   padding: 14px 32px;
   border-radius: 50px;
   font-weight: 600;
   text-decoration: none;
-  text-align: center;
   transition: all 0.3s ease;
   color: white;
-  margin-top: 1rem;
+  margin-top: auto;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.ctaButton i {
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+}
+
+.ctaButton:hover i {
+  transform: translateX(3px);
 }
 
 .ctaButton.purple {
@@ -251,4 +305,3 @@
     transform: scale(1);
   }
 }
-

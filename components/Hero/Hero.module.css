@@ -162,7 +162,9 @@
 }
 
 .ctaButtonPrimary {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 14px 32px;
   background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
   color: white;
@@ -171,6 +173,11 @@
   text-decoration: none;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(160, 106, 249, 0.3);
+  font-size: 1rem;
+}
+
+.ctaButtonPrimary i {
+  font-size: 0.9rem;
 }
 
 .ctaButtonPrimary:hover {
