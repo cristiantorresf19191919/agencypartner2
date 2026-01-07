@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -10,6 +11,19 @@ import styles from "./BlogPage.module.css";
 export default function DeveloperBlogPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+
+  const toggleCard = (cardId: string) => {
+    setExpandedCards((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+  };
 
   const sections = [
     {
@@ -292,13 +306,51 @@ export default function DeveloperBlogPage() {
                 <Text className={styles.topicsLabel}>
                   Topics Covered:
                 </Text>
-                <div className={styles.topicsList}>
-                  {section.topics.map((topic, idx) => (
-                    <span key={idx} className={styles.topicTag}>
-                      {topic}
-                    </span>
-                  ))}
+                <div 
+                  className={`${styles.topicsList} ${expandedCards.has(section.id) ? styles.topicsListExpanded : ''}`}
+                >
+                  {section.topics.map((topic, idx) => {
+                    const isVisible = expandedCards.has(section.id) || idx < 3;
+                    return (
+                      <span 
+                        key={idx} 
+                        className={`${styles.topicTag} ${isVisible ? styles.topicTagVisible : styles.topicTagHidden}`}
+                      >
+                        {topic}
+                      </span>
+                    );
+                  })}
                 </div>
+                {section.topics.length > 3 && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleCard(section.id);
+                    }}
+                    className={styles.expandButton}
+                    aria-label={expandedCards.has(section.id) ? "Show less topics" : "Show more topics"}
+                  >
+                    <span className={styles.expandButtonText}>
+                      {expandedCards.has(section.id) ? "Show Less" : `+${section.topics.length - 3} More`}
+                    </span>
+                    <svg 
+                      className={`${styles.expandIcon} ${expandedCards.has(section.id) ? styles.expandIconRotated : ''}`}
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 16 16" 
+                      fill="none"
+                    >
+                      <path 
+                        d="M4 6L8 10L12 6" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
               <div className={styles.sectionCta}>
                 Explore Section <i className="fas fa-arrow-right"></i>

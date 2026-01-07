@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocale } from '@/lib/useLocale';
-import { SearchBar } from '@/components/Search';
 import styles from './Header.module.css';
 
 const DeveloperHeader = () => {
@@ -49,10 +48,6 @@ const DeveloperHeader = () => {
         >
           {t('nav-asesorias')}
         </Link>
-
-        <div style={{ marginRight: '1rem' }}>
-          <SearchBar />
-        </div>
 
         <div className={styles.headerActions}>
           <button

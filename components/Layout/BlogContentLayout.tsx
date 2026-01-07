@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
+import SearchSection from "@/components/Search/SearchSection";
 import styles from "./BlogContentLayout.module.css";
 
 // Dynamically import DocSidebar with error boundary
@@ -44,6 +45,7 @@ export function BlogContentLayout({ children }: BlogContentLayoutProps) {
       <CssBaseline />
       <main>
         <DeveloperHeader />
+        <SearchSection />
         <div className={styles.blogLayout}>
           <div className={styles.backgroundEffects}>
             <div className={styles.radialGradient} />
