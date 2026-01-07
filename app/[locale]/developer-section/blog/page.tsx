@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
+import { blogCategories } from "@/lib/blogCategories";
 import styles from "./BlogPage.module.css";
 
 export default function DeveloperBlogPage() {
@@ -25,452 +26,8 @@ export default function DeveloperBlogPage() {
     });
   };
 
-  const sections = [
-    {
-      id: "react-patterns",
-      title: t("blog-react-patterns"),
-      description: t("blog-react-patterns-desc"),
-      icon: "⚛️",
-      color: "from-blue-500 to-cyan-500",
-      topics: [
-        "Compound Components",
-        "Higher-Order Components (HOC)",
-        "Custom Hooks",
-        "Render Props",
-        "Containment Pattern",
-        "Slot Pattern",
-        "Selective Hydration",
-      ],
-    },
-    {
-      id: "container-presentational-pattern",
-      title: "Container/Presentational Pattern with Render Props",
-      description: "The 'Secret Sauce' for scalable React apps. Learn how to separate logic from UI, build reusable data sources, and create maintainable components that scale with your application.",
-      icon: "🏗️",
-      color: "from-emerald-500 to-teal-500",
-      topics: [
-        "Container/Presentational Pattern",
-        "Render Props",
-        "DataSource Pattern",
-        "Separation of Concerns",
-        "LocalStorage Integration",
-        "Reusable Logic Components",
-      ],
-    },
-    {
-      id: "advanced-react-hooks",
-      title: "Advanced React Hooks & Patterns",
-      description: "Senior-level patterns that solve real production problems: Performance, Visual Stability, and Race Conditions. Learn useTransition, useLayoutEffect, callback refs, and modern router architecture.",
-      icon: "🚀",
-      color: "from-violet-500 to-purple-500",
-      topics: [
-        "useTransition (Non-Blocking UI)",
-        "useLayoutEffect (Preventing Flicker)",
-        "Callback Ref Pattern",
-        "Router Loaders (Modern Architecture)",
-      ],
-    },
-    {
-      id: "advanced-react-concepts",
-      title: "Advanced React Concepts",
-      description: "Senior-level documentation focusing on the why (architecture/trade-offs) rather than just the how (syntax). Learn the Element Prop Pattern, Context API optimization, and when to avoid useEffect.",
-      icon: "🎯",
-      color: "from-cyan-500 to-blue-500",
-      topics: [
-        "Element Prop Pattern (Inversion of Control)",
-        "Split Context Pattern (Performance)",
-        "Derived State (Less useEffect)",
-        "When to Use useEffect",
-      ],
-    },
-    {
-      id: "design-patterns",
-      title: t("blog-design-patterns"),
-      description: t("blog-design-patterns-desc"),
-      icon: "🎨",
-      color: "from-purple-500 to-pink-500",
-      topics: [
-        "Singleton",
-        "Factory",
-        "Observer",
-        "Strategy",
-        "Decorator",
-        "Adapter",
-        "Facade",
-        "Command",
-      ],
-    },
-    {
-      id: "solid-principles",
-      title: t("blog-solid-principles"),
-      description: t("blog-solid-principles-desc"),
-      icon: "🏗️",
-      color: "from-green-500 to-emerald-500",
-      topics: [
-        "Single Responsibility",
-        "Open/Closed",
-        "Liskov Substitution",
-        "Interface Segregation",
-        "Dependency Inversion",
-      ],
-    },
-    {
-      id: "performance-optimization",
-      title: t("blog-performance-optimization"),
-      description: t("blog-performance-optimization-desc"),
-      icon: "⚡",
-      color: "from-orange-500 to-red-500",
-      topics: [
-        "Code-Splitting and Lazy-Loading",
-        "useCallback Hook",
-        "useMemo Hook",
-        "State Collocation",
-        "Lifting Components Up",
-        "Throttling",
-        "Debouncing",
-      ],
-    },
-    {
-      id: "api-layer",
-      title: t("blog-api-layer"),
-      description: t("blog-api-layer-desc"),
-      icon: "🔌",
-      color: "from-indigo-500 to-purple-500",
-      topics: [
-        "API Layer Architecture",
-        "Separation of Concerns",
-        "Custom Hooks for API",
-        "TypeScript with API",
-        "Async Operations",
-        "Error Handling",
-        "Request Management",
-      ],
-    },
-    {
-      id: "react-query",
-      title: "React Query: Production Patterns",
-      description: "Production-grade React Query patterns: Optimistic Updates, Race Condition handling, Data Transformation, and Cancellation. Learn how senior engineers implement these concepts in real-world applications.",
-      icon: "⚡",
-      color: "from-pink-500 to-rose-500",
-      topics: [
-        "Optimistic Updates",
-        "Search Grid with Cancellation",
-        "Infinite Feed with Data Transform",
-        "Race Condition Prevention",
-        "Placeholder Data",
-        "Query Selectors",
-      ],
-    },
-    {
-      id: "advanced-patterns",
-      title: "Advanced Patterns: Design System Foundations",
-      description: "Render Props, Wrapper Components, and Polymorphic Components are the building blocks of Design Systems and Headless UI libraries. Essential skills for building reusable component libraries.",
-      icon: "🧩",
-      color: "from-purple-500 to-indigo-500",
-      topics: [
-        "Render Props Pattern",
-        "Wrapper Components (Guards)",
-        "Polymorphic Components",
-        "Design System Architecture",
-        "Headless UI Patterns",
-        "TypeScript Generics",
-      ],
-    },
-    {
-      id: "state-management",
-      title: "State Management in 2025",
-      description: "Learn modern React state management: Immer for immutable updates, Zustand for shared state, TanStack Query for remote data, and nuqs for URL state. Understand when you actually need a state management library.",
-      icon: "📦",
-      color: "from-emerald-500 to-teal-500",
-      topics: [
-        "useImmer & useImmerReducer",
-        "Zustand for Shared State",
-        "TanStack Query for Remote Data",
-        "URL State with nuqs",
-        "State Concerns Breakdown",
-        "When to Use What",
-      ],
-    },
-    {
-      id: "react-design-patterns",
-      title: "React Design Patterns 2025",
-      description: "Comprehensive guide to React design patterns and best practices for 2025. Covering function components, custom hooks, TypeScript integration, React 19 features, modern frameworks, and component libraries.",
-      icon: "🎨",
-      color: "from-indigo-500 to-purple-500",
-      topics: [
-        "Modern Component Patterns",
-        "Custom Hooks",
-        "Context API & React 19",
-        "TypeScript Best Practices",
-        "React 19 Features",
-        "Next.js, Remix, Vite",
-        "Tailwind & Component Libraries",
-      ],
-    },
-    {
-      id: "kotlin-multiplatform",
-      title: "Kotlin Multiplatform UI Patterns",
-      description:
-        "Practical Compose Multiplatform techniques to ship one shared UI codebase across Android, iOS, and Desktop without losing platform polish.",
-      icon: "📱",
-      color: "from-indigo-500 to-violet-500",
-      topics: [
-        "Shared UiState + Events",
-        "Expect/Actual UI adapters",
-        "Adaptive layouts by size",
-        "Shared navigation graphs",
-        "Design tokens per platform",
-        "Compose resources pipeline",
-        "Back/predictive gestures",
-      ],
-    },
-    {
-      id: "testing-strategies",
-      title: "Testing Strategies & Patterns",
-      description: "Comprehensive testing guide: Unit, Integration, E2E testing with React Testing Library, Jest, Vitest, Playwright. Learn testing patterns, mocking strategies, and how to test hooks, context, and async operations.",
-      icon: "🧪",
-      color: "from-green-500 to-emerald-500",
-      topics: [
-        "React Testing Library Best Practices",
-        "Testing Custom Hooks",
-        "Testing Context & Providers",
-        "Mocking Strategies",
-        "Integration Testing Patterns",
-        "E2E Testing with Playwright",
-        "Test-Driven Development (TDD)",
-        "Snapshot Testing",
-        "Accessibility Testing",
-      ],
-    },
-    {
-      id: "error-handling",
-      title: "Error Boundaries & Error Handling Patterns",
-      description: "Master production-grade error handling: Error Boundaries, error recovery strategies, error reporting, and graceful degradation patterns. Learn how to build resilient React applications.",
-      icon: "🛡️",
-      color: "from-red-500 to-orange-500",
-      topics: [
-        "Error Boundary Pattern",
-        "Error Recovery Strategies",
-        "Error Reporting (Sentry, LogRocket)",
-        "Graceful Degradation",
-        "Async Error Handling",
-        "Error State Management",
-        "User-Friendly Error Messages",
-      ],
-    },
-    {
-      id: "accessibility",
-      title: "Accessibility Patterns & Best Practices",
-      description: "Build accessible React applications following WCAG guidelines. Learn ARIA patterns, keyboard navigation, screen reader optimization, and inclusive design practices.",
-      icon: "♿",
-      color: "from-blue-500 to-indigo-500",
-      topics: [
-        "ARIA Patterns",
-        "Keyboard Navigation",
-        "Focus Management",
-        "Screen Reader Optimization",
-        "Semantic HTML",
-        "Color Contrast & Visual Accessibility",
-        "Form Accessibility",
-        "Accessible Components Library",
-      ],
-    },
-    {
-      id: "typescript-advanced",
-      title: "Advanced TypeScript Patterns for React",
-      description: "Master TypeScript with React: Generic components, utility types, type inference, discriminated unions, and advanced patterns that make your code type-safe and maintainable.",
-      icon: "📘",
-      color: "from-blue-600 to-cyan-500",
-      topics: [
-        "Generic Components",
-        "Utility Types & Mapped Types",
-        "Discriminated Unions",
-        "Type Inference Patterns",
-        "Branded Types",
-        "Type Guards & Assertions",
-        "Advanced Hooks Typing",
-        "Template Literal Types",
-      ],
-    },
-    {
-      id: "concurrent-features",
-      title: "React Concurrent Features & Suspense",
-      description: "Deep dive into React 18+ concurrent features: Suspense, useDeferredValue, useTransition, streaming SSR, and how to build responsive UIs that never block.",
-      icon: "⚡",
-      color: "from-yellow-500 to-orange-500",
-      topics: [
-        "Suspense & Error Boundaries",
-        "useDeferredValue Pattern",
-        "useTransition for Non-Blocking UI",
-        "Streaming SSR",
-        "Concurrent Rendering",
-        "Time Slicing",
-        "Priority-based Updates",
-      ],
-    },
-    {
-      id: "server-components",
-      title: "Server Components & React Server Components",
-      description: "Next.js 13+ Server Components: When to use Server vs Client components, data fetching patterns, streaming, and building hybrid applications.",
-      icon: "🖥️",
-      color: "from-gray-600 to-slate-500",
-      topics: [
-        "Server vs Client Components",
-        "Data Fetching Patterns",
-        "Streaming & Progressive Rendering",
-        "Server Actions",
-        "Hybrid Architecture",
-        "Performance Benefits",
-        "Migration Strategies",
-      ],
-    },
-    {
-      id: "form-management",
-      title: "Form Management & Validation Patterns",
-      description: "Production-ready form handling: React Hook Form, Formik, Zod validation, complex form patterns, multi-step forms, and form state management.",
-      icon: "📝",
-      color: "from-purple-500 to-pink-500",
-      topics: [
-        "React Hook Form Patterns",
-        "Zod Schema Validation",
-        "Complex Form Patterns",
-        "Multi-step Forms",
-        "Dynamic Forms",
-        "Form State Management",
-        "File Upload Patterns",
-        "Form Performance Optimization",
-      ],
-    },
-    {
-      id: "security",
-      title: "React Security Best Practices",
-      description: "Secure React applications: XSS prevention, CSRF protection, authentication patterns, authorization, secure data handling, and security auditing.",
-      icon: "🔒",
-      color: "from-red-600 to-pink-600",
-      topics: [
-        "XSS Prevention",
-        "CSRF Protection",
-        "Authentication Patterns",
-        "Authorization Strategies",
-        "Secure Data Handling",
-        "Content Security Policy",
-        "Dependency Security",
-        "Security Auditing",
-      ],
-    },
-    {
-      id: "performance-monitoring",
-      title: "Performance Monitoring & Optimization",
-      description: "Measure and optimize React performance: React DevTools Profiler, Web Vitals, bundle analysis, Core Web Vitals, performance budgets, and real user monitoring.",
-      icon: "📊",
-      color: "from-teal-500 to-cyan-500",
-      topics: [
-        "React DevTools Profiler",
-        "Web Vitals & Core Web Vitals",
-        "Bundle Analysis",
-        "Performance Budgets",
-        "Real User Monitoring (RUM)",
-        "Lighthouse CI",
-        "Performance Metrics",
-        "Optimization Strategies",
-      ],
-    },
-    {
-      id: "code-splitting",
-      title: "Advanced Code Splitting & Bundling",
-      description: "Master code splitting strategies: Route-based splitting, component-based splitting, dynamic imports, bundle optimization, and modern bundler configurations.",
-      icon: "📦",
-      color: "from-indigo-600 to-purple-600",
-      topics: [
-        "Route-based Code Splitting",
-        "Component-based Splitting",
-        "Dynamic Imports",
-        "Bundle Optimization",
-        "Tree Shaking",
-        "Module Federation",
-        "Bundle Analysis Tools",
-      ],
-    },
-    {
-      id: "animations",
-      title: "Animation & Transition Patterns",
-      description: "Smooth animations in React: Framer Motion, React Spring, CSS transitions, layout animations, gesture handling, and performance-optimized animations.",
-      icon: "🎬",
-      color: "from-pink-500 to-rose-500",
-      topics: [
-        "Framer Motion Patterns",
-        "React Spring",
-        "Layout Animations",
-        "Gesture Handling",
-        "Performance Optimization",
-        "CSS-in-JS Animations",
-        "Animation Best Practices",
-      ],
-    },
-    {
-      id: "internationalization",
-      title: "Internationalization (i18n) Patterns",
-      description: "Build multilingual React applications: react-i18next, date/time formatting, RTL support, locale management, and translation strategies.",
-      icon: "🌍",
-      color: "from-green-600 to-teal-600",
-      topics: [
-        "react-i18next Patterns",
-        "Date/Time Formatting",
-        "RTL Support",
-        "Locale Management",
-        "Translation Strategies",
-        "Pluralization",
-        "Currency Formatting",
-      ],
-    },
-    {
-      id: "react-internals",
-      title: "React Internals & Advanced Concepts",
-      description: "Understand React's internals: Fiber architecture, reconciliation algorithm, render phases, commit phases, and how React works under the hood.",
-      icon: "🔬",
-      color: "from-violet-600 to-purple-600",
-      topics: [
-        "Fiber Architecture",
-        "Reconciliation Algorithm",
-        "Render & Commit Phases",
-        "Priority System",
-        "Event System",
-        "Hooks Implementation",
-        "Scheduler",
-      ],
-    },
-    {
-      id: "migration-patterns",
-      title: "Migration & Refactoring Patterns",
-      description: "Strategies for migrating legacy React code: Class to Hooks migration, Redux to modern state management, upgrading React versions, and incremental refactoring.",
-      icon: "🔄",
-      color: "from-amber-500 to-yellow-500",
-      topics: [
-        "Class to Hooks Migration",
-        "Redux to Modern State",
-        "React Version Upgrades",
-        "Incremental Refactoring",
-        "Legacy Code Patterns",
-        "Breaking Changes Handling",
-      ],
-    },
-    {
-      id: "micro-frontends",
-      title: "Micro-Frontends Architecture",
-      description: "Build scalable micro-frontend architectures: Module Federation, single-spa, independent deployments, shared dependencies, and team autonomy patterns.",
-      icon: "🏗️",
-      color: "from-slate-600 to-gray-600",
-      topics: [
-        "Module Federation",
-        "Single-SPA Architecture",
-        "Independent Deployments",
-        "Shared Dependencies",
-        "Team Autonomy",
-        "Communication Patterns",
-        "Routing Strategies",
-      ],
-    },
-  ];
+  // Use categories instead of individual sections
+  const categories = blogCategories;
 
   return (
     <main>
@@ -504,84 +61,83 @@ export default function DeveloperBlogPage() {
           </Text>
         </div>
 
-        {/* Sections Grid */}
+        {/* Categories Grid */}
         <div className={styles.sectionsGrid}>
-          {sections.map((section) => (
+          {categories.map((category) => (
             <a
-              key={section.id}
-              href={createLocalizedPath(`/developer-section/blog/${section.id}`)}
+              key={category.id}
+              href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)}
               className={styles.sectionCard}
             >
               <div
                 className={styles.iconContainer}
                 style={{
                   background: `linear-gradient(to bottom right, ${
-                    section.color.includes('indigo') 
+                    category.color.includes('indigo') 
                       ? 'rgba(129, 140, 248, 0.25)' 
-                      : section.color.includes('blue') 
+                      : category.color.includes('blue') 
                         ? 'rgba(147, 197, 253, 0.25)' 
-                        : section.color.includes('purple') 
+                        : category.color.includes('purple') 
                           ? 'rgba(196, 181, 253, 0.25)' 
-                          : section.color.includes('orange')
+                          : category.color.includes('orange')
                             ? 'rgba(251, 146, 60, 0.25)'
                             : 'rgba(134, 239, 172, 0.25)'
                   }, ${
-                    section.color.includes('purple') 
+                    category.color.includes('purple') 
                       ? 'rgba(196, 181, 253, 0.25)' 
-                      : section.color.includes('cyan') 
+                      : category.color.includes('cyan') 
                         ? 'rgba(165, 243, 252, 0.25)' 
-                        : section.color.includes('pink') 
+                        : category.color.includes('pink') 
                           ? 'rgba(251, 146, 60, 0.25)' 
-                          : section.color.includes('red')
+                          : category.color.includes('red')
                             ? 'rgba(248, 113, 113, 0.25)'
                             : 'rgba(110, 231, 183, 0.25)'
                   })`
                 }}
               >
-                {section.icon}
+                {category.icon}
               </div>
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {section.title}
+                  {category.title}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  {section.description}
+                  {category.description}
                 </Text>
               </div>
               <div className="mt-auto">
                 <Text className={styles.topicsLabel}>
-                  Topics Covered:
+                  {category.posts.length} {category.posts.length === 1 ? 'Post' : 'Posts'} in this category
                 </Text>
                 <div 
-                  className={`${styles.topicsList} ${expandedCards.has(section.id) ? styles.topicsListExpanded : ''}`}
+                  className={`${styles.topicsList} ${expandedCards.has(category.id) ? styles.topicsListExpanded : ''}`}
                 >
-                  {section.topics.map((topic, idx) => {
-                    const isVisible = expandedCards.has(section.id) || idx < 3;
+                  {category.posts.slice(0, expandedCards.has(category.id) ? category.posts.length : 3).map((post) => {
                     return (
                       <span 
-                        key={idx} 
-                        className={`${styles.topicTag} ${isVisible ? styles.topicTagVisible : styles.topicTagHidden}`}
+                        key={post.id} 
+                        className={styles.topicTag}
                       >
-                        {topic}
+                        {post.title}
                       </span>
                     );
                   })}
                 </div>
-                {section.topics.length > 3 && (
+                {category.posts.length > 3 && (
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      toggleCard(section.id);
+                      toggleCard(category.id);
                     }}
                     className={styles.expandButton}
-                    aria-label={expandedCards.has(section.id) ? "Show less topics" : "Show more topics"}
+                    aria-label={expandedCards.has(category.id) ? "Show less posts" : "Show more posts"}
                   >
                     <span className={styles.expandButtonText}>
-                      {expandedCards.has(section.id) ? "Show Less" : `+${section.topics.length - 3} More`}
+                      {expandedCards.has(category.id) ? "Show Less" : `+${category.posts.length - 3} More Posts`}
                     </span>
                     <svg 
-                      className={`${styles.expandIcon} ${expandedCards.has(section.id) ? styles.expandIconRotated : ''}`}
+                      className={`${styles.expandIcon} ${expandedCards.has(category.id) ? styles.expandIconRotated : ''}`}
                       width="16" 
                       height="16" 
                       viewBox="0 0 16 16" 
@@ -599,7 +155,7 @@ export default function DeveloperBlogPage() {
                 )}
               </div>
               <div className={styles.sectionCta}>
-                Explore Section <i className="fas fa-arrow-right"></i>
+                Explore Category <i className="fas fa-arrow-right"></i>
               </div>
             </a>
           ))}
@@ -657,4 +213,3 @@ export default function DeveloperBlogPage() {
     </main>
   );
 }
-

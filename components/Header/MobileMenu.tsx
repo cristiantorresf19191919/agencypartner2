@@ -26,6 +26,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
 
   const toggleLanguage = () => {
     setLanguage(language === 'es' ? 'en' : 'es');
+    onClose(); // Close mobile menu when language is switched
   };
 
   const navItems: NavItem[] = [
