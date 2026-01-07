@@ -76,6 +76,7 @@ export function CodeEditor({
   // Always start with false - fullscreen should only be triggered by user action
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const isInternalUpdateRef = useRef(false);
   
   // Store original values for reset
@@ -104,6 +105,17 @@ export function CodeEditor({
   // Track mount state for portal
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
@@ -175,24 +187,29 @@ export function CodeEditor({
     }
   }, [isPrismReady, language]);
 
-  const editorStyle: React.CSSProperties = useMemo(() => ({
-    fontFamily: '"Fira Code", "Fira Mono", "Monaco", "Consolas", "Courier New", monospace',
-    fontSize: `${fontSize}px`,
-    lineHeight: 1.6,
-    outline: 0,
-    minHeight: isFullscreen ? "100vh" : (typeof height === "number" ? `${height}px` : height),
-    height: isFullscreen ? "100vh" : "auto",
-    width: isFullscreen ? "100vw" : "100%",
-    backgroundColor: "#0d1117",
-    color: "#c9d1d9",
-    padding: isFullscreen ? "24px" : "20px",
-    borderBottomLeftRadius: isFullscreen ? "0" : "8px",
-    borderBottomRightRadius: isFullscreen ? "0" : "8px",
-    border: "none",
-    borderTop: "none",
-    overflow: "auto",
-    boxSizing: "border-box",
-  }), [fontSize, isFullscreen, height]);
+  const editorStyle: React.CSSProperties = useMemo(() => {
+    const mobilePadding = isMobile ? "0.75rem" : "20px";
+    const fullscreenPadding = isMobile ? "1rem" : "24px";
+    
+    return {
+      fontFamily: '"Fira Code", "Fira Mono", "Monaco", "Consolas", "Courier New", monospace',
+      fontSize: `${fontSize}px`,
+      lineHeight: 1.6,
+      outline: 0,
+      minHeight: isFullscreen ? "100vh" : (typeof height === "number" ? `${height}px` : height),
+      height: isFullscreen ? "100vh" : "auto",
+      width: isFullscreen ? "100vw" : "100%",
+      backgroundColor: "#0d1117",
+      color: "#c9d1d9",
+      padding: isFullscreen ? fullscreenPadding : mobilePadding,
+      borderBottomLeftRadius: isFullscreen ? "0" : "8px",
+      borderBottomRightRadius: isFullscreen ? "0" : "8px",
+      border: "none",
+      borderTop: "none",
+      overflow: "auto",
+      boxSizing: "border-box",
+    };
+  }, [fontSize, isFullscreen, height, isMobile]);
 
   const renderEditorContent = () => {
     return (
@@ -386,7 +403,7 @@ export function CodeEditor({
               value={code}
               onValueChange={handleValueChange}
               highlight={highlightCode}
-              padding={isFullscreen ? 24 : 16}
+              padding={isFullscreen ? 24 : (isMobile ? 12 : 16)}
               style={editorStyle}
               readOnly={readOnly}
               tabSize={2}

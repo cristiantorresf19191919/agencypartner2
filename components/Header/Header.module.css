@@ -420,25 +420,47 @@
     align-items: center;
     position: relative;
     min-height: 64px;
+    gap: 1rem;
   }
 
   .navLinks {
     display: none;
   }
 
-  .headerActions {
+  /* Hide nav links on mobile for DeveloperHeader */
+  .nav a.gradientLink {
     display: none;
+  }
+
+  .headerActions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-left: auto;
+  }
+  
+  .themeToggle {
+    width: 40px;
+    height: 40px;
+    padding: 0.4rem;
+  }
+  
+  .languageSwitcher {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    min-width: 44px;
   }
 
   .logo {
     font-size: 1.25rem;
-    position: absolute;
-    right: 1.25rem;
+    position: relative;
+    right: auto;
     left: auto;
     transform: none;
     z-index: 1000;
     transition: all 0.3s ease;
     margin-left: 0;
+    margin-right: auto;
   }
 
   .logo i {
