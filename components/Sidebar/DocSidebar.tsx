@@ -454,6 +454,63 @@ function DocSidebar() {
         },
       ],
     },
+    {
+      titleKey: "Kotlin Multiplatform",
+      icon: <CodeIcon sx={{ fontSize: 24 }} />,
+      color: "#7C3AED",
+      defaultOpen: true,
+      items: [
+        { 
+          id: "unidirectional-state", 
+          titleKey: "Unidirectional State", 
+          href: "/developer-section/blog/kotlin-multiplatform#unidirectional-state", 
+          icon: <LayersIcon sx={{ fontSize: 20 }} />,
+          color: "#7C3AED"
+        },
+        { 
+          id: "platform-adapter", 
+          titleKey: "Expect/Actual UI Adapter", 
+          href: "/developer-section/blog/kotlin-multiplatform#platform-adapter", 
+          icon: <ExtensionIcon sx={{ fontSize: 20 }} />,
+          color: "#06B6D4"
+        },
+        { 
+          id: "adaptive-layouts", 
+          titleKey: "Adaptive Layouts", 
+          href: "/developer-section/blog/kotlin-multiplatform#adaptive-layouts", 
+          icon: <CategoryIcon sx={{ fontSize: 20 }} />,
+          color: "#22C55E"
+        },
+        { 
+          id: "shared-navigation", 
+          titleKey: "Type-safe Navigation", 
+          href: "/developer-section/blog/kotlin-multiplatform#shared-navigation", 
+          icon: <AccountTreeIcon sx={{ fontSize: 20 }} />,
+          color: "#6366F1"
+        },
+        { 
+          id: "design-system", 
+          titleKey: "Design System Bridge", 
+          href: "/developer-section/blog/kotlin-multiplatform#design-system", 
+          icon: <VisibilityIcon sx={{ fontSize: 20 }} />,
+          color: "#F59E0B"
+        },
+        { 
+          id: "compose-resources", 
+          titleKey: "Compose Resources", 
+          href: "/developer-section/blog/kotlin-multiplatform#compose-resources", 
+          icon: <WaterDropIcon sx={{ fontSize: 20 }} />,
+          color: "#0EA5E9"
+        },
+        { 
+          id: "native-interactions", 
+          titleKey: "Native Back & Gestures", 
+          href: "/developer-section/blog/kotlin-multiplatform#native-interactions", 
+          icon: <SwapHorizIcon sx={{ fontSize: 20 }} />,
+          color: "#F97316"
+        },
+      ],
+    },
   ], []);
 
   useEffect(() => {

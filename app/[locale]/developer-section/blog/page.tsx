@@ -285,6 +285,23 @@ export default function DeveloperBlogPage() {
         "Tailwind & Component Libraries",
       ],
     },
+    {
+      id: "kotlin-multiplatform",
+      title: "Kotlin Multiplatform UI Patterns",
+      description:
+        "Practical Compose Multiplatform techniques to ship one shared UI codebase across Android, iOS, and Desktop without losing platform polish.",
+      icon: "📱",
+      color: "from-indigo-500 to-violet-500",
+      topics: [
+        "Shared UiState + Events",
+        "Expect/Actual UI adapters",
+        "Adaptive layouts by size",
+        "Shared navigation graphs",
+        "Design tokens per platform",
+        "Compose resources pipeline",
+        "Back/predictive gestures",
+      ],
+    },
   ];
 
   return (
