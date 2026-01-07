@@ -1,12 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import { useLocale } from '@/lib/useLocale';
+import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Footer.module.css';
 
 const Footer = (): JSX.Element => {
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
+  const pathname = usePathname();
+  const isDeveloperSection = pathname?.includes('/developer-section');
   
   return (
     <footer className={styles.footer}>
@@ -60,9 +66,26 @@ const Footer = (): JSX.Element => {
             Colombia
           </p>
           <p>© {new Date().getFullYear()} OptimusAgency. Todos los derechos reservados.</p>
+          
+          {isDeveloperSection && (
+            <div className={styles.developerInfo}>
+              <Image
+                src="/images/portfolio/cris.jpg"
+                alt="Cris Developer"
+                width={80}
+                height={80}
+                className={styles.developerImage}
+              />
+              <p className={styles.developerName}>Cris Developer Senior</p>
+            </div>
+          )}
+          
           <div className={styles.footerLinks}>
             <Link href="#">Política de Privacidad</Link>
             <Link href="#">Términos de Servicio</Link>
+            <Link href={createLocalizedPath('/developer-section')} className={styles.gradientLink}>
+              {t('nav-developer-section')}
+            </Link>
             <Link href={createLocalizedPath('/asesorias')} className={styles.gradientLink}>
               Asesorías
             </Link>

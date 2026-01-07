@@ -1,15 +1,43 @@
 // Analytics tracking utility
 // This file provides a centralized way to track user interactions
 
+// Standard Facebook Pixel events
+const STANDARD_FB_EVENTS = [
+  'PageView',
+  'ViewContent',
+  'Search',
+  'AddToCart',
+  'InitiateCheckout',
+  'AddPaymentInfo',
+  'Purchase',
+  'Lead',
+  'CompleteRegistration',
+];
+
 export const trackEvent = (eventName: string, eventData?: Record<string, any>) => {
+  if (typeof window === 'undefined') return;
+
   // Google Analytics 4 event tracking
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', eventName, eventData);
+  if ((window as any).gtag) {
+    try {
+      (window as any).gtag('event', eventName, eventData);
+    } catch (error) {
+      console.warn('Google Analytics tracking error:', error);
+    }
   }
 
   // Facebook Pixel tracking
-  if (typeof window !== 'undefined' && (window as any).fbq) {
-    (window as any).fbq('track', eventName, eventData);
+  if ((window as any).fbq) {
+    try {
+      // Use trackCustom for non-standard events
+      if (STANDARD_FB_EVENTS.includes(eventName)) {
+        (window as any).fbq('track', eventName, eventData);
+      } else {
+        (window as any).fbq('trackCustom', eventName, eventData);
+      }
+    } catch (error) {
+      console.warn('Facebook Pixel tracking error:', error);
+    }
   }
 
   // Custom event tracking (for debugging)

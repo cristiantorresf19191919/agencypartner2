@@ -13,10 +13,11 @@ interface NavLink {
   href: string;
   label: string;
   gradient?: boolean;
+  codeSymbol?: boolean;
 }
 
 const Header = () => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
@@ -47,6 +48,7 @@ const Header = () => {
   const navLinks: NavLink[] = [
     { href: '#faq', label: 'FAQ' },
     { href: '#contacto', label: 'Contacto' },
+    { href: '/developer-section', label: '</>', gradient: false, codeSymbol: true },
     { href: '/asesorias', label: 'Asesorías', gradient: true },
     { href: '/agentes', label: 'Agentes', gradient: true },
   ];
@@ -71,17 +73,13 @@ const Header = () => {
             <span className={styles.hamburgerLine}></span>
           </button>
 
-          <Link href={createLocalizedPath('/')} className={styles.logo}>
-            <i className="fas fa-code"></i> Optimus<strong>Agency</strong>
-          </Link>
-
           <ul className={styles.navLinks}>
             {navLinks.map((link) => (
               <li key={link.href}>
                 {link.href.startsWith('#') ? (
                   <a
                     href={link.href}
-                    className={link.gradient ? styles.gradientLink : ''}
+                    className={link.codeSymbol ? styles.codeSymbolLink : link.gradient ? styles.gradientLink : ''}
                     onClick={(e) => {
                       e.preventDefault();
                       const target = document.querySelector(link.href);
@@ -95,7 +93,7 @@ const Header = () => {
                 ) : (
                   <Link
                     href={createLocalizedPath(link.href)}
-                    className={link.gradient ? styles.gradientLink : ''}
+                    className={link.codeSymbol ? styles.codeSymbolLink : link.gradient ? styles.gradientLink : ''}
                   >
                     {link.label}
                   </Link>
@@ -135,6 +133,10 @@ const Header = () => {
               </span>
             </button>
           </div>
+
+          <Link href={createLocalizedPath('/')} className={styles.logo}>
+            <i className="fas fa-code"></i> Optimus<strong>Agency</strong>
+          </Link>
         </nav>
 
         <div className={styles.headerWaveContainer}>

@@ -21,7 +21,7 @@ interface NavItem {
 
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
   const { theme, toggleTheme } = useTheme();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { createLocalizedPath } = useLocale();
 
   const toggleLanguage = () => {
@@ -40,6 +40,12 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
       icon: 'fas fa-envelope',
       title: 'Contacto',
       description: 'Ponte en contacto',
+    },
+    {
+      href: '/developer-section',
+      icon: 'fas fa-code',
+      title: '</>',
+      description: t('nav-developer-section-desc'),
     },
     {
       href: '/asesorias',
@@ -168,7 +174,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                           <i className={item.icon}></i>
                         </div>
                         <div className={styles.navText}>
-                          <span className={styles.title}>{item.title}</span>
+                          <span className={`${styles.title} ${item.title === '</>' ? styles.codeSymbolTitle : ''}`}>{item.title}</span>
                           <span className={styles.description}>{item.description}</span>
                         </div>
                       </div>
@@ -181,7 +187,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                           <i className={item.icon}></i>
                         </div>
                         <div className={styles.navText}>
-                          <span className={styles.title}>{item.title}</span>
+                          <span className={`${styles.title} ${item.title === '</>' ? styles.codeSymbolTitle : ''}`}>{item.title}</span>
                           <span className={styles.description}>{item.description}</span>
                         </div>
                       </div>

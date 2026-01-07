@@ -110,6 +110,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const metadata = metadataByLocale[locale];
+
+  if (!metadata) {
+    notFound();
+  }
   
   return {
     ...metadata,

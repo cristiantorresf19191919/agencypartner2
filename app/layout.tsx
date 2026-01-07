@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import '@/styles/globals.css';
-import Script from 'next/script';
 import FloatingChat from '@/components/Chatbot/FloatingChat';
+import { ScriptLoader } from '@/components/Scripts/ScriptLoader';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -47,42 +47,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <FloatingChat />
           </LanguageProvider>
         </ThemeProvider>
-        {/* Google Analytics - Replace G-XXXXXXXXXX with your actual GA4 ID */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-XXXXXXXXXX');
-          `}
-        </Script>
-        {/* Facebook Pixel - Replace YOUR_PIXEL_ID with your actual Pixel ID */}
-        <Script id="facebook-pixel" strategy="afterInteractive">
-          {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', 'YOUR_PIXEL_ID');
-            fbq('track', 'PageView');
-          `}
-        </Script>
-        <Script
-          src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
-          strategy="afterInteractive"
-        />
-        <Script
-          src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"
-          strategy="afterInteractive"
-        />
+        <ScriptLoader />
       </body>
     </html>
   );
