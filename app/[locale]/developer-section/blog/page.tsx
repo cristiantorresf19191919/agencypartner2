@@ -3,7 +3,6 @@
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
-import { useEffect, useRef } from "react";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import styles from "./BlogPage.module.css";
@@ -11,97 +10,6 @@ import styles from "./BlogPage.module.css";
 export default function DeveloperBlogPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
-  const particlesRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Initialize particles.js with error handling
-    const initParticles = () => {
-      try {
-        if (typeof window === "undefined" || !particlesRef.current) {
-          return;
-        }
-
-        // Check for particlesJS or particles (different versions use different names)
-        const particlesJS = (window as any).particlesJS || (window as any).particles;
-        
-        if (!particlesJS) {
-          // Retry after a short delay if script hasn't loaded yet
-          const timeoutId = setTimeout(() => {
-            initParticles();
-          }, 100);
-          return () => clearTimeout(timeoutId);
-        }
-
-        particlesJS("particles-blog", {
-          particles: {
-            number: { value: 60 },
-            color: { value: "#a06af9" },
-            shape: { type: "circle" },
-            opacity: { value: 0.5, random: true },
-            size: { value: 3, random: true },
-            line_linked: {
-              enable: true,
-              distance: 150,
-              color: "#a06af9",
-              opacity: 0.2,
-              width: 1,
-            },
-            move: {
-              enable: true,
-              speed: 0.4,
-              direction: "none",
-              random: true,
-              straight: false,
-              out_mode: "out",
-              bounce: false,
-            },
-          },
-          interactivity: {
-            detect_on: "canvas",
-            events: {
-              onhover: { enable: true, mode: "grab" },
-              onclick: { enable: true, mode: "push" },
-              resize: true,
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                line_linked: { opacity: 0.4 },
-              },
-            },
-          },
-          retina_detect: true,
-        });
-      } catch (error) {
-        console.warn("Failed to initialize particles.js:", error);
-      }
-    };
-
-    // Try to initialize immediately, or wait for script to load
-    if (typeof window !== "undefined") {
-      if ((window as any).particlesJS || (window as any).particles) {
-        initParticles();
-      } else {
-        // Wait for script to load
-        const checkParticles = setInterval(() => {
-          if ((window as any).particlesJS || (window as any).particles) {
-            clearInterval(checkParticles);
-            initParticles();
-          }
-        }, 100);
-
-        // Cleanup after 5 seconds if still not loaded
-        const timeout = setTimeout(() => {
-          clearInterval(checkParticles);
-        }, 5000);
-
-        return () => {
-          clearInterval(checkParticles);
-          clearTimeout(timeout);
-        };
-      }
-    }
-  }, []);
 
   const sections = [
     {
@@ -308,13 +216,6 @@ export default function DeveloperBlogPage() {
     <main>
       <DeveloperHeader />
       <div className={styles.blogPage}>
-        {/* Particles Background */}
-        <div
-          id="particles-blog"
-          ref={particlesRef}
-          className={styles.particles}
-        ></div>
-
         <div className={styles.content}>
         {/* Breadcrumb */}
         <nav className={styles.breadcrumb} aria-label="Breadcrumb">
