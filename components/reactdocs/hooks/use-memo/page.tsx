@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, Stack, Heading, Text, ButtonLink, CodeComparison, Button } from "@/components/ui";
+import { Card, Stack, Heading, Text, ButtonLink, CodeComparison } from "@/components/ui";
 import { ExpensiveCalculation } from "@/components/hooks/ExpensiveCalculation";
 
 export default function UseMemoPage() {
@@ -55,15 +55,24 @@ export default function UseMemoPage() {
               </div>
 
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button onClick={addNumber}>
+                <button 
+                  onClick={addNumber}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Add Number
-                </Button>
-                <Button onClick={removeNumber}>
+                </button>
+                <button 
+                  onClick={removeNumber}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Remove Number
-                </Button>
-                <Button onClick={() => setOtherState(prev => prev + 1)}>
+                </button>
+                <button 
+                  onClick={() => setOtherState(prev => prev + 1)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Update Other State ({otherState})
-                </Button>
+                </button>
               </div>
 
               <div className="mt-4 p-4 bg-zinc-100 dark:bg-zinc-800 rounded-lg">

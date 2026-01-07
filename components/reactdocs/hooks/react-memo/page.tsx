@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, Stack, Heading, Text, ButtonLink, CodeComparison, Button } from "@/components/ui";
+import { Card, Stack, Heading, Text, ButtonLink, CodeComparison } from "@/components/ui";
 import { ExpensiveComponentNoMemo, ExpensiveComponentWithMemo } from "@/components/hooks/ExpensiveComponent";
 
 export default function ReactMemoPage() {
@@ -70,15 +70,24 @@ export default function ReactMemoPage() {
               </div>
 
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button onClick={() => setParentCounter(prev => prev + 1)}>
+                <button 
+                  onClick={() => setParentCounter(prev => prev + 1)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Update Parent Counter ({parentCounter})
-                </Button>
-                <Button onClick={() => setChildACount(prev => prev + 1)}>
+                </button>
+                <button 
+                  onClick={() => setChildACount(prev => prev + 1)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Update Component A ({childACount})
-                </Button>
-                <Button onClick={() => setChildBCount(prev => prev + 1)}>
+                </button>
+                <button 
+                  onClick={() => setChildBCount(prev => prev + 1)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Update Component B ({childBCount})
-                </Button>
+                </button>
               </div>
 
               <div className="mt-4 p-4 bg-zinc-100 dark:bg-zinc-800 rounded-lg">

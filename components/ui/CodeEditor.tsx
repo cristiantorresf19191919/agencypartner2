@@ -39,8 +39,8 @@ const loadPrism = async () => {
     await import("prismjs/components/prism-java");
     await import("prismjs/components/prism-css");
     
-    // Load theme
-    await import("prismjs/themes/prism-tomorrow.css");
+    // Theme styling is handled inline in the component
+    // No need to import external CSS file
     
     prismHighlight = prismCore.highlight;
     prismLanguages = prismCore.languages;

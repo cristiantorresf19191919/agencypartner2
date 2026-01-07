@@ -8,7 +8,6 @@ interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
 }
 
 export function Heading({ level = 1, children, className = "", ...props }: HeadingProps) {
-  const Component = `h${level}` as keyof JSX.IntrinsicElements;
   const sizeClasses = {
     1: "text-4xl md:text-5xl",
     2: "text-3xl md:text-4xl",
@@ -18,10 +17,23 @@ export function Heading({ level = 1, children, className = "", ...props }: Headi
     6: "text-base md:text-lg",
   };
 
-  return (
-    <Component className={`font-bold ${sizeClasses[level]} ${className}`} {...props}>
-      {children}
-    </Component>
-  );
+  const headingClasses = `font-bold ${sizeClasses[level]} ${className}`;
+
+  switch (level) {
+    case 1:
+      return <h1 className={headingClasses} {...props}>{children}</h1>;
+    case 2:
+      return <h2 className={headingClasses} {...props}>{children}</h2>;
+    case 3:
+      return <h3 className={headingClasses} {...props}>{children}</h3>;
+    case 4:
+      return <h4 className={headingClasses} {...props}>{children}</h4>;
+    case 5:
+      return <h5 className={headingClasses} {...props}>{children}</h5>;
+    case 6:
+      return <h6 className={headingClasses} {...props}>{children}</h6>;
+    default:
+      return <h1 className={headingClasses} {...props}>{children}</h1>;
+  }
 }
 

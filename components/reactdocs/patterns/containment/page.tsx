@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Card, Modal, Sidebar } from "@/components/patterns";
-import { Stack, Heading, Text, Button, ButtonLink, CodeComparison } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison } from "@/components/ui";
 
 export default function ContainmentPatternPage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -124,9 +124,12 @@ function Card({ children, variant = "default" }) {
                 </Text>
               </div>
 
-              <Button onClick={() => setModalOpen(true)} className="w-fit mb-6">
+              <button 
+                onClick={() => setModalOpen(true)} 
+                className="w-fit mb-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 Open Modal
-              </Button>
+              </button>
 
               <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} size="md">
                 <Stack direction="col" gap="md">
@@ -136,12 +139,18 @@ function Card({ children, variant = "default" }) {
                     or care what&apos;s inside - it just provides the backdrop and container.
                   </Text>
                   <div className="flex gap-2 justify-end">
-                    <Button variant="secondary" onClick={() => setModalOpen(false)}>
+                    <button 
+                      onClick={() => setModalOpen(false)}
+                      className="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors"
+                    >
                       Cancel
-                    </Button>
-                    <Button onClick={() => setModalOpen(false)}>
+                    </button>
+                    <button 
+                      onClick={() => setModalOpen(false)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
                       Confirm
-                    </Button>
+                    </button>
                   </div>
                 </Stack>
               </Modal>

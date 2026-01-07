@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Card, Stack, Heading, Text, ButtonLink, CodeComparison, Button } from "@/components/ui";
+import { Card, Stack, Heading, Text, ButtonLink, CodeComparison } from "@/components/ui";
 import { ButtonWithCallback } from "@/components/hooks/ButtonWithCallback";
 
 export default function UseCallbackPage() {
@@ -86,12 +86,18 @@ export default function UseCallbackPage() {
               </div>
 
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button onClick={() => setCount(prev => prev + 1)}>
+                <button 
+                  onClick={() => setCount(prev => prev + 1)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Update Count ({count})
-                </Button>
-                <Button onClick={() => setOtherState(prev => prev + 1)}>
+                </button>
+                <button 
+                  onClick={() => setOtherState(prev => prev + 1)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Update Other State ({otherState})
-                </Button>
+                </button>
               </div>
 
               <div className="mt-4 p-4 bg-zinc-100 dark:bg-zinc-800 rounded-lg">

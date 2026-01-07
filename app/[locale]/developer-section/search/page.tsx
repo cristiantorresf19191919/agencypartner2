@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -35,7 +35,7 @@ const sectionIcons: Record<string, React.ReactNode> = {
   "Advanced React Hooks": <HookIcon sx={{ fontSize: 20 }} />,
 };
 
-export default function SearchResultsPage() {
+function SearchResultsContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
   const { t } = useLanguage();
@@ -294,6 +294,22 @@ export default function SearchResultsPage() {
         )}
       </div>
     </BlogContentLayout>
+  );
+}
+
+export default function SearchResultsPage() {
+  return (
+    <Suspense fallback={
+      <BlogContentLayout>
+        <div className={styles.searchPage}>
+          <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+            Loading...
+          </div>
+        </div>
+      </BlogContentLayout>
+    }>
+      <SearchResultsContent />
+    </Suspense>
   );
 }
 

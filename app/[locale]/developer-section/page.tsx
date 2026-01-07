@@ -4,7 +4,7 @@ import { Stack, Heading, Text } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import { motion } from "framer-motion";
-import { AutoAwesome as Sparkles, Code as Code2, ArrowForward as ArrowRight } from "@mui/icons-material";
+import { AutoAwesome as Sparkles, Code as Code2, ArrowForward as ArrowRight, Support as SupportIcon } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
@@ -80,6 +80,41 @@ export default function DeveloperSectionPage() {
                 <div className={styles.ctaLink}>
                   <span>Explore Blog</span>
                   <ArrowRight className={styles.ctaArrow} />
+                </div>
+              </div>
+            </motion.a>
+          </motion.div>
+
+          {/* Need Help Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className={styles.helpSection}
+          >
+            <motion.a
+              href={createLocalizedPath("/asesorias")}
+              className={styles.helpCard}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className={styles.helpGlowEffect} />
+              <div className={styles.helpContent}>
+                <div className={styles.helpIconContainer}>
+                  <SupportIcon className={styles.helpIcon} />
+                </div>
+                
+                <Heading level={2} className={styles.helpTitle}>
+                  {t("developer-section-need-help-title")}
+                </Heading>
+                
+                <Text className={styles.helpDescription}>
+                  {t("developer-section-need-help-desc")}
+                </Text>
+                
+                <div className={styles.helpCtaLink}>
+                  <span>{t("developer-section-need-help-cta")}</span>
+                  <ArrowRight className={styles.helpCtaArrow} />
                 </div>
               </div>
             </motion.a>

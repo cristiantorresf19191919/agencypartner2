@@ -125,7 +125,7 @@ const ProductsList = ({ products }: { products: Product[] }) => {
           <img src={product.image} alt={product.name} className="w-12 h-12" />
           <div className="flex-1">
             <h3 className="font-semibold">{product.name}</h3>
-            <p className="text-sm text-gray-600">${product.price}</p>
+            <p className="text-sm text-gray-600">\${product.price}</p>
           </div>
         </div>
       )} 

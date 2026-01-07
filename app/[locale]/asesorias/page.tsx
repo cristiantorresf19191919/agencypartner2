@@ -8,136 +8,7 @@ import Portfolio from '@/components/Portfolio/Portfolio';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
 import FAB from '@/components/FAB/FAB';
-
-const mentoringPlans = [
-  {
-    name: 'Asesoría Express',
-    icon: 'fas fa-bolt',
-    iconColor: 'yellow',
-    tag: 'Resuelve tus dudas puntuales',
-    price: '$120,000',
-    oldPrice: '$150,000',
-    currency: 'COP',
-    features: [
-      '1 sesión personalizada (60 min)',
-      'Resolución de bloqueos',
-      'Revisión de código en vivo',
-      'Grabación de la sesión',
-      'Soporte por chat 24h',
-    ],
-    buttonText: 'Agendar ahora',
-    buttonGradient: 'purple',
-  },
-  {
-    name: 'Mentoría Continua',
-    icon: 'fas fa-user-graduate',
-    iconColor: 'green',
-    tag: 'Acompañamiento y evolución constante',
-    price: '$390,000',
-    oldPrice: '$450,000',
-    currency: 'COP/mes',
-    featured: true,
-    features: [
-      '4 sesiones mensuales 1:1',
-      'Seguimiento de tu proyecto',
-      'Plan de aprendizaje personalizado',
-      'Code review y buenas prácticas',
-      'Material de apoyo exclusivo',
-      'Soporte por chat ilimitado',
-    ],
-    buttonText: 'Quiero mentoría',
-    buttonGradient: 'pink',
-  },
-  {
-    name: 'Clases Personalizadas',
-    icon: 'fas fa-chalkboard-teacher',
-    iconColor: 'teal',
-    tag: 'Aprende lo que realmente necesitas',
-    price: '$150,000',
-    oldPrice: '$180,000',
-    currency: 'COP/sesión',
-    features: [
-      'Temas a la medida (JS, Python, Kotlin, etc.)',
-      'Ejercicios prácticos y retos',
-      'Acceso a grabaciones',
-      'Feedback en tiempo real',
-      'Material descargable',
-    ],
-    buttonText: 'Solicitar clase',
-    buttonGradient: 'teal',
-  },
-  {
-    name: 'Arquitectura & Code Review',
-    icon: 'fas fa-project-diagram',
-    iconColor: 'purple',
-    tag: 'Mejora tu software con expertos',
-    price: '$250,000',
-    oldPrice: '$300,000',
-    currency: 'COP',
-    features: [
-      'Análisis de arquitectura',
-      'Revisión de código profesional',
-      'Recomendaciones de escalabilidad',
-      'Seguridad y performance',
-      'Informe detallado y plan de acción',
-    ],
-    buttonText: 'Mejorar mi software',
-    buttonGradient: 'purple',
-  },
-];
-
-const mentoringFaqs = [
-  {
-    question: '¿Qué tecnologías cubren las asesorías?',
-    answer:
-      'JavaScript, Python, Kotlin, Flutter, Spring Boot, Docker, bases de datos SQL y NoSQL, arquitectura de software, buenas prácticas y más.',
-  },
-  {
-    question: '¿Cómo se agenda una sesión?',
-    answer:
-      'Simplemente llena el formulario de contacto o escríbenos por WhatsApp. Te responderemos en menos de 24h para coordinar fecha y hora.',
-  },
-  {
-    question: '¿Puedo llevar mi propio proyecto o código?',
-    answer:
-      '¡Por supuesto! Puedes traer tu proyecto, código o idea y te ayudamos a resolver dudas, mejorar la arquitectura o avanzar más rápido.',
-  },
-  {
-    question: '¿Las clases y asesorías son grabadas?',
-    answer:
-      'Sí, todas las sesiones pueden ser grabadas y te compartimos el video para que repases cuando quieras.',
-  },
-  {
-    question: '¿Qué nivel necesito para tomar una mentoría?',
-    answer:
-      'No importa tu nivel: desde principiante hasta avanzado. Adaptamos la mentoría a tus objetivos y conocimientos.',
-  },
-  {
-    question: '¿Puedo pedir ayuda para entrevistas técnicas o coding interviews?',
-    answer:
-      '¡Claro! Te preparamos para entrevistas técnicas, algoritmos, estructuras de datos y simulacros de entrevistas reales.',
-  },
-  {
-    question: '¿Incluyen material de estudio y ejercicios?',
-    answer:
-      'Sí, recibirás material de apoyo, ejercicios prácticos y recursos recomendados según tu objetivo.',
-  },
-  {
-    question: '¿Cómo es el proceso de pago?',
-    answer:
-      'Puedes pagar por transferencia, Nequi, Daviplata o tarjeta. Te enviamos los datos al agendar.',
-  },
-  {
-    question: '¿Puedo solicitar factura o recibo?',
-    answer:
-      'Sí, emitimos factura electrónica o recibo si lo necesitas para tu empresa o contabilidad.',
-  },
-  {
-    question: '¿Ofrecen asesoría para empresas o equipos?',
-    answer:
-      'Sí, realizamos talleres, capacitaciones y consultoría para equipos de desarrollo y empresas.',
-  },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const mentoringCases = [
   {
@@ -182,6 +53,128 @@ const mentoringCases = [
 ];
 
 export default function AsesoriasPage() {
+  const { t } = useLanguage();
+
+  const mentoringFaqs = [
+    {
+      question: t('asesorias-faq-1-q') || '¿Qué tecnologías cubren las asesorías?',
+      answer: t('asesorias-faq-1-a') || 'JavaScript, Python, Kotlin, Flutter, Spring Boot, Docker, bases de datos SQL y NoSQL, arquitectura de software, buenas prácticas y más.',
+    },
+    {
+      question: t('asesorias-faq-2-q') || '¿Cómo se agenda una sesión?',
+      answer: t('asesorias-faq-2-a') || 'Simplemente llena el formulario de contacto o escríbenos por WhatsApp. Te responderemos en menos de 24h para coordinar fecha y hora.',
+    },
+    {
+      question: t('asesorias-faq-3-q') || '¿Puedo llevar mi propio proyecto o código?',
+      answer: t('asesorias-faq-3-a') || '¡Por supuesto! Puedes traer tu proyecto, código o idea y te ayudamos a resolver dudas, mejorar la arquitectura o avanzar más rápido.',
+    },
+    {
+      question: t('asesorias-faq-4-q') || '¿Las clases y asesorías son grabadas?',
+      answer: t('asesorias-faq-4-a') || 'Sí, todas las sesiones pueden ser grabadas y te compartimos el video para que repases cuando quieras.',
+    },
+    {
+      question: t('asesorias-faq-5-q') || '¿Qué nivel necesito para tomar una mentoría?',
+      answer: t('asesorias-faq-5-a') || 'No importa tu nivel: desde principiante hasta avanzado. Adaptamos la mentoría a tus objetivos y conocimientos.',
+    },
+    {
+      question: t('asesorias-faq-6-q') || '¿Puedo pedir ayuda para entrevistas técnicas o coding interviews?',
+      answer: t('asesorias-faq-6-a') || '¡Claro! Te preparamos para entrevistas técnicas, algoritmos, estructuras de datos y simulacros de entrevistas reales.',
+    },
+    {
+      question: t('asesorias-faq-7-q') || '¿Incluyen material de estudio y ejercicios?',
+      answer: t('asesorias-faq-7-a') || 'Sí, recibirás material de apoyo, ejercicios prácticos y recursos recomendados según tu objetivo.',
+    },
+    {
+      question: t('asesorias-faq-8-q') || '¿Cómo es el proceso de pago?',
+      answer: t('asesorias-faq-8-a') || 'Puedes pagar por transferencia, Nequi, Daviplata o tarjeta. Te enviamos los datos al agendar.',
+    },
+    {
+      question: t('asesorias-faq-9-q') || '¿Puedo solicitar factura o recibo?',
+      answer: t('asesorias-faq-9-a') || 'Sí, emitimos factura electrónica o recibo si lo necesitas para tu empresa o contabilidad.',
+    },
+    {
+      question: t('asesorias-faq-10-q') || '¿Ofrecen asesoría para empresas o equipos?',
+      answer: t('asesorias-faq-10-a') || 'Sí, realizamos talleres, capacitaciones y consultoría para equipos de desarrollo y empresas.',
+    },
+  ];
+
+  const mentoringPlans = [
+    {
+      name: t('asesorias-plan-express-name'),
+      icon: 'fas fa-bolt',
+      iconColor: 'yellow',
+      tag: t('asesorias-plan-express-tag'),
+      price: t('asesorias-plan-express-price'),
+      oldPrice: '$150,000',
+      currency: t('asesorias-plan-express-currency'),
+      features: [
+        t('asesorias-plan-express-feature-1'),
+        t('asesorias-plan-express-feature-2'),
+        t('asesorias-plan-express-feature-3'),
+        t('asesorias-plan-express-feature-4'),
+        t('asesorias-plan-express-feature-5'),
+      ],
+      buttonText: t('asesorias-plan-express-button'),
+      buttonGradient: 'purple',
+    },
+    {
+      name: t('asesorias-plan-continua-name'),
+      icon: 'fas fa-user-graduate',
+      iconColor: 'green',
+      tag: t('asesorias-plan-continua-tag'),
+      price: t('asesorias-plan-continua-price'),
+      oldPrice: '$450,000',
+      currency: t('asesorias-plan-continua-currency'),
+      featured: true,
+      features: [
+        t('asesorias-plan-continua-feature-1'),
+        t('asesorias-plan-continua-feature-2'),
+        t('asesorias-plan-continua-feature-3'),
+        t('asesorias-plan-continua-feature-4'),
+        t('asesorias-plan-continua-feature-5'),
+        t('asesorias-plan-continua-feature-6'),
+      ],
+      buttonText: t('asesorias-plan-continua-button'),
+      buttonGradient: 'pink',
+    },
+    {
+      name: t('asesorias-plan-clases-name'),
+      icon: 'fas fa-chalkboard-teacher',
+      iconColor: 'teal',
+      tag: t('asesorias-plan-clases-tag'),
+      price: t('asesorias-plan-clases-price'),
+      oldPrice: '$180,000',
+      currency: t('asesorias-plan-clases-currency'),
+      features: [
+        t('asesorias-plan-clases-feature-1'),
+        t('asesorias-plan-clases-feature-2'),
+        t('asesorias-plan-clases-feature-3'),
+        t('asesorias-plan-clases-feature-4'),
+        t('asesorias-plan-clases-feature-5'),
+      ],
+      buttonText: t('asesorias-plan-clases-button'),
+      buttonGradient: 'teal',
+    },
+    {
+      name: t('asesorias-plan-arch-name'),
+      icon: 'fas fa-project-diagram',
+      iconColor: 'purple',
+      tag: t('asesorias-plan-arch-tag'),
+      price: t('asesorias-plan-arch-price'),
+      oldPrice: '$300,000',
+      currency: t('asesorias-plan-arch-currency'),
+      features: [
+        t('asesorias-plan-arch-feature-1'),
+        t('asesorias-plan-arch-feature-2'),
+        t('asesorias-plan-arch-feature-3'),
+        t('asesorias-plan-arch-feature-4'),
+        t('asesorias-plan-arch-feature-5'),
+      ],
+      buttonText: t('asesorias-plan-arch-button'),
+      buttonGradient: 'purple',
+    },
+  ];
+
   return (
     <main>
       <Header />
@@ -189,16 +182,16 @@ export default function AsesoriasPage() {
       <Pricing
         sectionId="servicios"
         pillIconClass="fas fa-laptop-code"
-        pillText="Servicios de Mentoría y Asesoría"
+        pillText={t('asesorias-pill')}
         title={
           <>
             Soluciones <strong>a tu medida</strong>
           </>
         }
-        subtitle="Acompañamiento experto, clases prácticas y consultoría para que avances más rápido y seguro en tu carrera o proyecto."
+        subtitle={t('asesorias-subtitle')}
         plans={mentoringPlans}
-        consultText="¿No sabes qué servicio elegir? ¡Te ayudo a encontrar la mejor opción para ti!"
-        consultCtaText="Recibir asesoría gratuita"
+        consultText={t('asesorias-consult-text')}
+        consultCtaText={t('asesorias-consult-cta')}
       />
       <FAQ
         faqs={mentoringFaqs}
@@ -211,7 +204,7 @@ export default function AsesoriasPage() {
       <Portfolio
         sectionId="casos-de-exito"
         pillIconClass="fas fa-star"
-        pillText="Testimonios y Casos de Éxito"
+        pillText={t('asesorias-portfolio-pill')}
         title={
           <>
             Historias de <strong>impacto real</strong>
@@ -219,8 +212,7 @@ export default function AsesoriasPage() {
         }
         subtitle={
           <>
-            Más de 100 estudiantes y profesionales han transformado su carrera y
-            proyectos con nuestra mentoría.
+            {t('asesorias-portfolio-subtitle')}
           </>
         }
         cases={mentoringCases}
