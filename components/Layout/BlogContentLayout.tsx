@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
@@ -13,7 +13,7 @@ const DocSidebar = dynamic(
   () => import("@/components/Sidebar/DocSidebar"),
   { 
     ssr: false,
-    loading: () => <div style={{ width: 320, minHeight: 400, backgroundColor: 'transparent' }} />
+    loading: () => null
   }
 );
 
@@ -35,7 +35,7 @@ const muiTheme = createTheme({
   },
 });
 
-export function BlogContentLayout({ children }: BlogContentLayoutProps) {
+function BlogContentLayout({ children }: BlogContentLayoutProps) {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />

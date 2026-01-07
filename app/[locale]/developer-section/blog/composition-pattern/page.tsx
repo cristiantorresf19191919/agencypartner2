@@ -3,7 +3,7 @@
 import { Card, Stack, Heading, Text, ButtonLink, CodeEditor } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
-import { BlogContentLayout } from "@/components/Layout/BlogContentLayout";
+import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import styles from "../BlogPostPage.module.css";
 
 export default function CompositionPatternPage() {

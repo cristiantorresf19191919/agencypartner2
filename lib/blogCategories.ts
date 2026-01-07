@@ -182,6 +182,15 @@ export const blogCategories: BlogCategory[] = [
         slug: "edge-computing",
         topics: ["Edge Computing Fundamentals", "Vercel Edge Functions", "Cloudflare Workers", "Edge Caching"],
       },
+      {
+        id: "terraform",
+        title: "Terraform: Infrastructure as Code Mastery",
+        description: "Complete Terraform guide from fundamentals to advanced: Infrastructure as Code, state management, modules, workspaces, and production patterns.",
+        icon: "🏗️",
+        color: "from-green-500 to-emerald-500",
+        slug: "terraform",
+        topics: ["Terraform Fundamentals", "State Management", "Modules & Reusability", "Workspaces", "Provisioners", "Best Practices", "AWS/Azure/GCP Examples"],
+      },
     ],
   },
   {

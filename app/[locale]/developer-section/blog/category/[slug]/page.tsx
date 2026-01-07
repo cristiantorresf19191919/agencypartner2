@@ -3,7 +3,7 @@
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
-import { BlogContentLayout } from "@/components/Layout/BlogContentLayout";
+import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { getCategoryBySlug } from "@/lib/blogCategories";
 import { notFound } from "next/navigation";
 import styles from "../../BlogPage.module.css";
