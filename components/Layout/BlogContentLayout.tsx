@@ -10,11 +10,7 @@ import styles from "./BlogContentLayout.module.css";
 
 // Dynamically import DocSidebar with error boundary
 const DocSidebar = dynamic(
-  () => import("@/components/Sidebar/DocSidebar").catch((err) => {
-    console.error("Failed to load DocSidebar:", err);
-    // Return a fallback component
-    return { default: () => <div style={{ width: 320, minHeight: 400 }} /> };
-  }),
+  () => import("@/components/Sidebar/DocSidebar"),
   { 
     ssr: false,
     loading: () => <div style={{ width: 320, minHeight: 400, backgroundColor: 'transparent' }} />
@@ -67,3 +63,5 @@ export function BlogContentLayout({ children }: BlogContentLayoutProps) {
     </ThemeProvider>
   );
 }
+
+export default BlogContentLayout;
