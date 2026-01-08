@@ -30,9 +30,14 @@ const DeveloperHeader = () => {
   return (
     <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
       <nav className={styles.nav}>
-        <div className={styles.logo}>
+        <Link
+          href={createLocalizedPath('/')}
+          className={styles.logo}
+          style={{ textDecoration: 'none' }}
+        >
           <span className={styles.codeSymbol}>&lt;/&gt;</span>
-        </div>
+          <span className={styles.brandName}>OptimusAgency</span>
+        </Link>
 
         <Link
           href={createLocalizedPath('/developer-section/blog')}
