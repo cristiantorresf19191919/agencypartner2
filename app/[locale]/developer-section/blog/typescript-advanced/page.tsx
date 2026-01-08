@@ -120,7 +120,7 @@ function ProductList({ products }: { products: Product[] }) {
       renderItem={product => (
         <div>
           <h3>{product.title}</h3>
-          <p>${product.price}</p>
+          <p>\${product.price}</p>
         </div>
       )}
     />
@@ -324,7 +324,7 @@ function useApi<T>(url: string): ApiResponse<T> {
 
 // Usage - TypeScript knows the shape based on status
 function UserProfile({ userId }: { userId: string }) {
-  const response = useApi<User>(`/api/users/${userId}`);
+  const response = useApi<User>(\`/api/users/\${userId}\`);
 
   if (response.status === 'loading') {
     return <Spinner />;
@@ -633,7 +633,7 @@ function isValidationError(error: unknown): error is ValidationError {
 
 function handleError(error: unknown) {
   if (isValidationError(error)) {
-    console.error(\`Validation failed for \${error.field}: \${error.message}\`);
+    console.error(\`Validation failed for \\\${error.field}: \\\${error.message}\`);
   } else {
     console.error('Unknown error:', error);
   }

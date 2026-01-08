@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -891,7 +892,7 @@ export async function GET(request: Request) {
   const response = new Response(JSON.stringify(data), {
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': \`public, s-maxage=\${CACHE_DURATION}, stale-while-revalidate=\${STALE_DURATION}\`,
+      'Cache-Control': \`public, s-maxage=\\\${CACHE_DURATION}, stale-while-revalidate=\\\${STALE_DURATION}\`,
       'Date': new Date().toUTCString()
     }
   });
@@ -908,7 +909,7 @@ async function revalidateCache(cacheKey: string, cache: Cache) {
     const response = new Response(JSON.stringify(data), {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': \`public, s-maxage=\${CACHE_DURATION}, stale-while-revalidate=\${STALE_DURATION}\`,
+        'Cache-Control': \`public, s-maxage=\\\${CACHE_DURATION}, stale-while-revalidate=\\\${STALE_DURATION}\`,
         'Date': new Date().toUTCString()
       }
     });
@@ -1080,7 +1081,7 @@ export async function GET(request: Request) {
 
 function generateETag(data: any): string {
   // Simple ETag generation (use crypto for production)
-  return \`"\${Buffer.from(JSON.stringify(data)).toString('base64').slice(0, 27)}"\`;
+  return \`"\\\${Buffer.from(JSON.stringify(data)).toString('base64').slice(0, 27)}"\`;
 }
 
 // ✅ Cache Partitioning by User Segment
@@ -1309,10 +1310,10 @@ export async function POST(request: Request) {
   });
   
   // Complex database query
-  const result = await pool.query(`
+  const result = await pool.query(\`
     WITH complex_cte AS (
       SELECT * FROM large_table 
-      WHERE created_at > NOW() - INTERVAL '30 days'
+      WHERE created_at &gt; NOW() - INTERVAL '30 days'
     )
     SELECT 
       category,
@@ -1321,10 +1322,10 @@ export async function POST(request: Request) {
     FROM complex_cte
     GROUP BY category
     ORDER BY count DESC
-  `);
+  \`);
   
   // Process results
-  const processed = result.rows.map(row => ({
+  const processed = result.rows.map(row =&gt; ({
     ...row,
     formatted_price: formatCurrency(row.avg_price)
   }));
@@ -1857,4 +1858,5 @@ export async function GET(request: Request) {
     </BlogContentLayout>
   );
 }
+
 

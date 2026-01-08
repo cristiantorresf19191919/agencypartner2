@@ -1,16 +1,19 @@
 "use client";
 
+import React from "react";
 import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { useBlogPostContent } from "@/lib/blogTranslations";
+import { getCategoryForPost } from "@/lib/blogCategories";
 import styles from "../BlogPostPage.module.css";
 
 export default function AWSCloudPage() {
   const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const postContent = useBlogPostContent('aws-cloud', language);
+  const category = getCategoryForPost("aws-cloud");
 
   return (
     <BlogContentLayout>
@@ -28,6 +31,16 @@ export default function AWSCloudPage() {
               {t("nav-blog")}
             </ButtonLink>
           </li>
+          {category && (
+            <>
+              <li className={styles.breadcrumbSeparator}>/</li>
+              <li>
+                <ButtonLink href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)} variant="secondary" className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
+                  {category.title}
+                </ButtonLink>
+              </li>
+            </>
+          )}
           <li className={styles.breadcrumbSeparator}>/</li>
           <li className={styles.breadcrumbCurrent}>
             {postContent?.breadcrumbLabel || 'AWS Cloud'}
@@ -488,7 +501,7 @@ const apiMethod = {
       Type: 'AWS_PROXY',
       IntegrationHttpMethod: 'POST',
       Uri: {
-        'Fn::Sub': 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations'
+        'Fn::Sub': 'arn:aws:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/\${LambdaFunction.Arn}/invocations'
       }
     }
   }
@@ -833,7 +846,7 @@ const lambdaExecutionRole = {
             's3:PutObject'
           ],
           Resource: {
-            'Fn::Sub': 'arn:aws:s3:::${S3Bucket}/*'
+            'Fn::Sub': 'arn:aws:s3:::\${S3Bucket}/*'
           }
         }]
       }
@@ -932,7 +945,7 @@ const ec2Role = {
         "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
         "Tags": [
-          { "Key": "Name", "Value": { "Fn::Sub": "${AWS::StackName}-VPC" } }
+          { "Key": "Name", "Value": { "Fn::Sub": "\${AWS::StackName}-VPC" } }
         ]
       }
     }
@@ -942,7 +955,7 @@ const ec2Role = {
       "Description": "VPC ID",
       "Value": { "Ref": "VPC" },
       "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-VPCId" }
+        "Name": { "Fn::Sub": "\${AWS::StackName}-VPCId" }
       }
     }
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -1573,8 +1574,8 @@ class ErrorHandler {
 // commonTest/kotlin/ProductRepositoryTest.kt
 class ProductRepositoryTest {
     @Test
-    fun `getProducts returns success with valid data`() = runTest {
-        val mockApi = mockk<ProductApi>()
+    fun \`getProducts returns success with valid data\`() = runTest {
+        val mockApi = mockk&lt;ProductApi&gt;()
         val repository = ProductRepositoryImpl(mockApi)
         
         coEvery { mockApi.fetchProducts() } returns listOf(
@@ -1726,4 +1727,5 @@ const frameworkDecision = {
     </BlogContentLayout>
   );
 }
+
 

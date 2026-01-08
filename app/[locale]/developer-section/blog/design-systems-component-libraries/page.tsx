@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -603,15 +604,15 @@ import { Button } from '@design-system/components';
  * Use buttons to trigger actions in your application.
  * 
  * @example
- * ```tsx
+ * \`\`\`tsx
  * import { Button } from '@design-system/components';
  * 
- * <Button variant="primary" onClick={handleClick}>
+ * &lt;Button variant="primary" onClick=\\{handleClick\\}&gt;
  *   Click me
- * </Button>
- * ```
+ * &lt;/Button&gt;
+ * \`\`\`
  * 
- * @see {@link https://design-system.example.com/components/button | Full Documentation}
+ * @see {\{@link\} https://design-system.example.com/components/button | Full Documentation}
  */
 
 // ✅ JSDoc Documentation

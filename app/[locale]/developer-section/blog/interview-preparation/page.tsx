@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -499,7 +500,7 @@ Bandwidth:
 
 ## STEP 3: High-Level Design
 
-```
+\`\`\`
 ┌─────────┐     ┌──────────┐     ┌──────────┐
 │ Client  │────▶│   Load   │────▶│  Web     │
 │         │     │ Balancer │     │ Server   │
@@ -510,18 +511,18 @@ Bandwidth:
                             │  Cache   │  │Database  │
                             │ (Redis)  │  │ (MySQL)  │
                             └──────────┘  └──────────┘
-```
+\`\`\`
 
 ## STEP 4: API Design
 
 POST /api/v1/shorten
-{
+\{
   "long_url": "https://example.com/very/long/url",
   "expires_in": 365  // days, optional
-}
-Response: { "short_url": "bit.ly/abc123" }
+\}
+Response: \{ "short_url": "bit.ly/abc123" \}
 
-GET /{short_url}
+GET /\{short_url\}
 Response: 301 Redirect to long_url
 
 ## STEP 5: Database Schema
@@ -573,7 +574,9 @@ Load Balancing:
 - Analytics: Track click counts
 - Rate limiting: Prevent abuse
 - Custom URLs: Additional uniqueness check
-- URL expiration: Background job to clean expired URLs"`}
+- URL expiration: Background job to clean expired URLs
+\`\`\`
+\`}
             />
 
             <CodeEditor
@@ -605,27 +608,21 @@ const systemDesignFramework = {
       'What to mention but not design',
       'What's out of scope'
     ],
-    example: \`
-      Interviewer: "Design Twitter"
-      
-      You: "Let me clarify:
-      
-      Functional Requirements:
-      - Users can post tweets (280 chars)
-      - Users can follow other users
-      - Users see timeline of tweets from followed users
-      - Users can like/retweet tweets
-      - Real-time feed updates?
-      
-      Non-Functional:
-      - Scale: 200M DAU, 100M tweets/day
-      - Read:write ratio: 100:1
-      - Timeline generation latency: < 200ms
-      - Availability: 99.9%
-      
-      Should I focus on the feed generation algorithm
-      or the overall architecture?"
-    \`
+    example: 'Interviewer: "Design Twitter"\\n\\n' +
+      'You: "Let me clarify:\\n\\n' +
+      'Functional Requirements:\\n' +
+      '- Users can post tweets (280 chars)\\n' +
+      '- Users can follow other users\\n' +
+      '- Users see timeline of tweets from followed users\\n' +
+      '- Users can like/retweet tweets\\n' +
+      '- Real-time feed updates?\\n\\n' +
+      'Non-Functional:\\n' +
+      '- Scale: 200M DAU, 100M tweets/day\\n' +
+      '- Read:write ratio: 100:1\\n' +
+      '- Timeline generation latency: < 200ms\\n' +
+      '- Availability: 99.9%\\n\\n' +
+      'Should I focus on the feed generation algorithm\\n' +
+      'or the overall architecture?"'
   },
 
   // STEP 2: CAPACITY ESTIMATION (3 minutes)
@@ -634,32 +631,23 @@ const systemDesignFramework = {
     bandwidth: 'Calculate network bandwidth',
     requests: 'Calculate request rates',
     memory: 'Calculate cache requirements',
-    formula: \`
-      // Storage
-      Daily new records × Average record size × Retention period
-      
-      // Bandwidth
-      Requests/sec × Response size
-      
-      // Cache
-      Read QPS × Cache hit ratio × Average object size
-    \`,
-    example: \`
-      "For a messaging system with 500M users:
-      
-      Storage:
-      - 1B messages/day × 1KB × 30 days = 30 TB
-      - User data: 500M × 2KB = 1 TB
-      - Total: ~31 TB
-      
-      Traffic:
-      - Writes: 1B/86400 = ~11,500 writes/sec
-      - Reads: 50B/86400 = ~580,000 reads/sec
-      
-      Bandwidth:
-      - Write: 11,500 × 1KB = 11.5 MB/sec
-      - Read: 580,000 × 1KB = 580 MB/sec"
-    \`
+    formula: '// Storage\\n' +
+      'Daily new records × Average record size × Retention period\\n\\n' +
+      '// Bandwidth\\n' +
+      'Requests/sec × Response size\\n\\n' +
+      '// Cache\\n' +
+      'Read QPS × Cache hit ratio × Average object size',
+    example: '"For a messaging system with 500M users:\\n\\n' +
+      'Storage:\\n' +
+      '- 1B messages/day × 1KB × 30 days = 30 TB\\n' +
+      '- User data: 500M × 2KB = 1 TB\\n' +
+      '- Total: ~31 TB\\n\\n' +
+      'Traffic:\\n' +
+      '- Writes: 1B/86400 = ~11,500 writes/sec\\n' +
+      '- Reads: 50B/86400 = ~580,000 reads/sec\\n\\n' +
+      'Bandwidth:\\n' +
+      '- Write: 11,500 × 1KB = 11.5 MB/sec\\n' +
+      '- Read: 580,000 × 1KB = 580 MB/sec"'
   },
 
   // STEP 3: HIGH-LEVEL DESIGN (5 minutes)
@@ -674,14 +662,12 @@ const systemDesignFramework = {
       'CDN',
       'Search/indexing'
     ],
-    diagram: \`
-      Draw simple boxes and arrows:
-      Client → LB → App Servers → Database
-                           ↓
-                         Cache
-                           ↓
-                    Message Queue
-    \`,
+    diagram: 'Draw simple boxes and arrows:\\n' +
+      'Client → LB → App Servers → Database\\n' +
+      '                     ↓\\n' +
+      '                   Cache\\n' +
+      '                     ↓\\n' +
+      '              Message Queue',
     principles: [
       'Start simple, add complexity',
       'Show main data flows',
@@ -708,12 +694,11 @@ const systemDesignFramework = {
       tradeoffs: 'Trade-offs between approaches',
       complexity: 'Time/space complexity'
     },
-    example: \`
-      // Database Schema
-      Users Table:
-      - user_id (PK)
-      - username (unique)
-      - email
+    example: '// Database Schema\\n' +
+      'Users Table:\\n' +
+      '- user_id (PK)\\n' +
+      '- username (unique)\\n' +
+      '- email'
       - created_at
       
       Tweets Table:
@@ -728,23 +713,19 @@ const systemDesignFramework = {
       - created_at
       - Composite PK (follower_id, followee_id)
       
-      // Feed Generation Algorithm
-      
-      Option 1: Fan-out on Write
-      - When user tweets, push to all followers' timelines
-      - Write-heavy: O(followers) per tweet
-      - Read-light: O(1) to fetch timeline
-      
-      Option 2: Fan-out on Read
-      - Fetch tweets from all followed users on read
-      - Write-light: O(1) to post tweet
-      - Read-heavy: O(followers) to fetch timeline
-      
-      Hybrid Approach:
-      - Fan-out on write for celebrities (>1M followers)
-      - Fan-out on read for regular users
-      - Best of both worlds
-    \`
+      // Feed Generation Algorithm\\n\\n' +
+      'Option 1: Fan-out on Write\\n' +
+      '- When user tweets, push to all followers\' timelines\\n' +
+      '- Write-heavy: O(followers) per tweet\\n' +
+      '- Read-light: O(1) to fetch timeline\\n\\n' +
+      'Option 2: Fan-out on Read\\n' +
+      '- Fetch tweets from all followed users on read\\n' +
+      '- Write-light: O(1) to post tweet\\n' +
+      '- Read-heavy: O(followers) to fetch timeline\\n\\n' +
+      'Hybrid Approach:\\n' +
+      '- Fan-out on write for celebrities (>1M followers)\\n' +
+      '- Fan-out on read for regular users\\n' +
+      '- Best of both worlds'
   },
 
   // STEP 5: SCALING & OPTIMIZATION (5-10 minutes)
@@ -2296,4 +2277,5 @@ const questionsToAsk = {
     </BlogContentLayout>
   );
 }
+
 
