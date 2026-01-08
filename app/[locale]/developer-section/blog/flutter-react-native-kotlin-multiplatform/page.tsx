@@ -707,9 +707,7 @@ struct OptimizedProductList: View {
             </div>
 
             <CodeComparison
-              leftTitle="Flutter"
-              rightTitle="React Native"
-              leftCode={`// Flutter: 100% UI Code Sharing
+              wrong={`// Flutter: 100% UI Code Sharing
 // ✅ Single codebase for all platforms
 
 class ProductScreen extends StatelessWidget {
@@ -743,7 +741,7 @@ class ProductService {
 }
 
 // Code Sharing: ~95-100%`}
-              rightCode={`// React Native: ~80-90% Code Sharing
+              good={`// React Native: ~80-90% Code Sharing
 // ✅ Shared components and logic
 
 const ProductScreen = () => {

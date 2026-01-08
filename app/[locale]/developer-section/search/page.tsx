@@ -24,7 +24,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import { getSearchIndex, searchItems, type SearchItem } from "@/lib/searchIndex";
-import { BlogContentLayout } from "@/components/Layout/BlogContentLayout";
+import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import SearchBar from "@/components/Search/SearchBar";
 import styles from "./SearchResults.module.css";
 

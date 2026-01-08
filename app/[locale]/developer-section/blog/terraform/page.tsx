@@ -1681,14 +1681,14 @@ locals {
   ip_string = join(".", local.ip_parts)
   
   # File operations
-  user_data_content = file("${path.module}/scripts/user_data.sh")
+  user_data_content = file("\${path.module}/scripts/user_data.sh")
   config_json = jsonencode({
     database = aws_db_instance.main.endpoint
     cache    = aws_elasticache_cluster.main.cache_nodes[0].address
   })
   
   # Template functions
-  user_data_rendered = templatefile("${path.module}/templates/user_data.tpl", {
+  user_data_rendered = templatefile("\${path.module}/templates/user_data.tpl", {
     db_host = aws_db_instance.main.address
     db_name = aws_db_instance.main.db_name
   })

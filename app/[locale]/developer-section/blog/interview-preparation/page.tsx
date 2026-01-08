@@ -576,7 +576,7 @@ Load Balancing:
 - Custom URLs: Additional uniqueness check
 - URL expiration: Background job to clean expired URLs
 \`\`\`
-\`}
+`}
             />
 
             <CodeEditor
@@ -619,7 +619,7 @@ const systemDesignFramework = {
       'Non-Functional:\\n' +
       '- Scale: 200M DAU, 100M tweets/day\\n' +
       '- Read:write ratio: 100:1\\n' +
-      '- Timeline generation latency: < 200ms\\n' +
+      '- Timeline generation latency: &lt; 200ms\\n' +
       '- Availability: 99.9%\\n\\n' +
       'Should I focus on the feed generation algorithm\\n' +
       'or the overall architecture?"'
@@ -698,22 +698,18 @@ const systemDesignFramework = {
       'Users Table:\\n' +
       '- user_id (PK)\\n' +
       '- username (unique)\\n' +
-      '- email'
-      - created_at
-      
-      Tweets Table:
-      - tweet_id (PK)
-      - user_id (FK)
-      - content
-      - created_at
-      
-      Follows Table:
-      - follower_id (FK)
-      - followee_id (FK)
-      - created_at
-      - Composite PK (follower_id, followee_id)
-      
-      // Feed Generation Algorithm\\n\\n' +
+      '- email\\n\\n' +
+      'Tweets Table:\\n' +
+      '- tweet_id (PK)\\n' +
+      '- user_id (FK)\\n' +
+      '- content\\n' +
+      '- created_at\\n\\n' +
+      'Follows Table:\\n' +
+      '- follower_id (FK)\\n' +
+      '- followee_id (FK)\\n' +
+      '- created_at\\n' +
+      '- Composite PK (follower_id, followee_id)\\n\\n' +
+      '// Feed Generation Algorithm\\n\\n' +
       'Option 1: Fan-out on Write\\n' +
       '- When user tweets, push to all followers\' timelines\\n' +
       '- Write-heavy: O(followers) per tweet\\n' +
@@ -723,7 +719,7 @@ const systemDesignFramework = {
       '- Write-light: O(1) to post tweet\\n' +
       '- Read-heavy: O(followers) to fetch timeline\\n\\n' +
       'Hybrid Approach:\\n' +
-      '- Fan-out on write for celebrities (>1M followers)\\n' +
+      '- Fan-out on write for celebrities (&gt;1M followers)\\n' +
       '- Fan-out on read for regular users\\n' +
       '- Best of both worlds'
   },
@@ -878,10 +874,10 @@ const scaleReference = {
     veryLarge: '100TB+'
   },
   latency: {
-    cache: '< 1ms',
+    cache: '&lt; 1ms',
     database: '1-10ms',
-    api: '< 100ms',
-    userPerceived: '< 200ms'
+    api: '&lt; 100ms',
+    userPerceived: '&lt; 200ms'
   }
 };`}
               language="tsx"
