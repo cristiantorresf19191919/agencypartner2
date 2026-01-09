@@ -13,12 +13,12 @@
   z-index: 10;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 6rem 1rem 3rem;
+  padding: 4.5rem 1rem 3rem;
 }
 
 @media (min-width: 480px) {
   .content {
-    padding: 7rem 1.25rem 4rem;
+    padding: 5.5rem 1.25rem 4rem;
   }
 }
 

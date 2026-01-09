@@ -43,12 +43,14 @@ type LanguageProviderProps = {
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const [language, setLanguageState] = useState<SupportedLanguage>('es');
+  // Initialize from current pathname so the correct locale is available on first render
+  const [language, setLanguageState] = useState<SupportedLanguage>(
+    () => getLocaleFromPathname(pathname || '/')
+  );
   const [mounted, setMounted] = useState(false);
 
   // Initialize and sync language with URL pathname
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== 'undefined' && pathname) {
       const localeFromPath = getLocaleFromPathname(pathname);
       setLanguageState(localeFromPath);
@@ -56,13 +58,23 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
         document.documentElement.lang = localeFromPath;
       }
     }
+    setMounted(true);
   }, [pathname]);
 
   const setLanguage = (lang: SupportedLanguage) => {
-    // Update URL to reflect language change - the useEffect will sync the state
+    // Update state immediately for instant UI feedback
+    setLanguageState(lang);
+
+    // Keep <html lang> in sync
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
+
+    // Update URL to reflect language change - the pathname syncs state on navigation
     if (pathname) {
       const newPath = addLocaleToPathname(pathname, lang);
-      router.push(newPath);
+      const hash = typeof window !== 'undefined' ? window.location.hash : '';
+      router.push(`${newPath}${hash}`, { scroll: false });
     }
   };
 
@@ -72,7 +84,11 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   };
 
   if (!mounted) {
-    return <>{children}</>;
+    return (
+      <LanguageContext.Provider value={{ language, setLanguage, t }}>
+        {children}
+      </LanguageContext.Provider>
+    );
   }
 
   return (

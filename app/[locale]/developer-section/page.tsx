@@ -4,7 +4,7 @@ import { Stack, Heading, Text } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import { motion } from "framer-motion";
-import { AutoAwesome as Sparkles, Code as Code2, ArrowForward as ArrowRight, Support as SupportIcon } from "@mui/icons-material";
+import { AutoAwesome as Sparkles, Code as Code2, ArrowForward as ArrowRight, Support as SupportIcon, Terminal as TerminalIcon } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
@@ -47,42 +47,74 @@ export default function DeveloperSectionPage() {
             </Text>
           </motion.div>
 
-          {/* Centered Blog Navigation */}
+          {/* Centered Navigation */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
             className={styles.blogNavigation}
           >
-            <motion.a
-              href={createLocalizedPath("/developer-section/blog")}
-              className={styles.blogCard}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className={styles.glowEffect} />
-              <div className={styles.gradientBlob1} />
-              <div className={styles.gradientBlob2} />
-              
-              <div className={styles.cardContent}>
-                <div className={styles.iconContainer}>
-                  <Code2 className={styles.icon} />
+            <div className={styles.navGrid}>
+              <motion.a
+                href={createLocalizedPath("/developer-section/blog")}
+                className={styles.blogCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.glowEffect} />
+                <div className={styles.gradientBlob1} />
+                <div className={styles.gradientBlob2} />
+                
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <Code2 className={styles.icon} />
+                  </div>
+                  
+                  <Heading level={2} className={styles.cardTitle}>
+                    {t("nav-blog")}
+                  </Heading>
+                  
+                  <Text className={styles.cardDescription}>
+                    {t("nav-blog-desc")}
+                  </Text>
+                  
+                  <div className={styles.ctaLink}>
+                    <span>Explore Blog</span>
+                    <ArrowRight className={styles.ctaArrow} />
+                  </div>
                 </div>
+              </motion.a>
+
+              <motion.a
+                href={createLocalizedPath("/developer-section/playground")}
+                className={styles.blogCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.glowEffect} />
+                <div className={styles.gradientBlob1} />
+                <div className={styles.gradientBlob2} />
                 
-                <Heading level={2} className={styles.cardTitle}>
-                  {t("nav-blog")}
-                </Heading>
-                
-                <Text className={styles.cardDescription}>
-                  {t("nav-blog-desc")}
-                </Text>
-                
-                <div className={styles.ctaLink}>
-                  <span>Explore Blog</span>
-                  <ArrowRight className={styles.ctaArrow} />
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <TerminalIcon className={styles.icon} />
+                  </div>
+                  
+                  <Heading level={2} className={styles.cardTitle}>
+                    Live Code Lab
+                  </Heading>
+                  
+                  <Text className={styles.cardDescription}>
+                    Monaco-powered editor with VS Code autocompletion. Write, run, and maximize for distraction-free coding.
+                  </Text>
+                  
+                  <div className={styles.ctaLink}>
+                    <span>Open Playground</span>
+                    <ArrowRight className={styles.ctaArrow} />
+                  </div>
                 </div>
-              </div>
-            </motion.a>
+              </motion.a>
+            </div>
           </motion.div>
 
           {/* Need Help Section */}

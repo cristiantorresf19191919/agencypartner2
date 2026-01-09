@@ -21,7 +21,6 @@ import {
 import {
   AccountTree as AccountTreeIcon,
   Category as CategoryIcon,
-  ExpandMore as ExpandMoreIcon,
   ChevronRight as ChevronRightIcon,
   Extension as ExtensionIcon,
   Layers as LayersIcon,
@@ -689,19 +688,19 @@ function DocSidebar() {
                           </Typography>
                         }
                       />
-                      <motion.div
-                        animate={{ rotate: isExpanded ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ExpandMoreIcon
-                          sx={{
-                            color: hasActiveItem
-                              ? section.color || "#61DAFB"
-                              : alpha("#ffffff", 0.5),
-                            fontSize: 20,
-                          }}
-                        />
-                      </motion.div>
+            <motion.div
+              animate={{ rotate: isExpanded ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronRightIcon
+                sx={{
+                  color: hasActiveItem
+                    ? section.color || "#61DAFB"
+                    : alpha("#ffffff", 0.5),
+                  fontSize: 20,
+                }}
+              />
+            </motion.div>
                     </>
                   )}
                 </ListItemButton>

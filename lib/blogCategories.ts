@@ -157,6 +157,25 @@ export const blogCategories: BlogCategory[] = [
     ],
   },
   {
+    id: "nextjs-framework",
+    title: "Next.js Framework",
+    description: "Master Next.js framework patterns, App Router, Server Components, data fetching, performance optimization, and production-ready patterns.",
+    icon: "▲",
+    color: "from-gray-800 to-gray-600",
+    slug: "nextjs-framework",
+    posts: [
+      {
+        id: "nextjs-best-practices",
+        title: "Next.js Best Practices & Patterns",
+        description: "Complete Next.js guide: App Router, Server Components, data fetching, caching, optimization, and production-ready patterns used by senior engineers.",
+        icon: "▲",
+        color: "from-gray-800 to-gray-600",
+        slug: "nextjs-best-practices",
+        topics: ["App Router", "Server Components", "Data Fetching", "Caching Strategies", "Performance Optimization", "Routing Patterns", "API Routes", "Middleware"],
+      },
+    ],
+  },
+  {
     id: "cloud-infrastructure",
     title: "Cloud & Infrastructure",
     description: "Build scalable cloud infrastructure with AWS, edge computing, and serverless architectures. Learn production-ready cloud patterns.",
