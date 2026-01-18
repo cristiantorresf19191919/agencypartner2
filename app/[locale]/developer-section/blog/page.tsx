@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -9,7 +9,7 @@ import Footer from "@/components/Footer/Footer";
 import { blogCategories } from "@/lib/blogCategories";
 import styles from "./BlogPage.module.css";
 
-export default function DeveloperBlogPage() {
+function BlogPageContent() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
@@ -211,5 +211,25 @@ export default function DeveloperBlogPage() {
       </div>
       <Footer />
     </main>
+  );
+}
+
+export default function DeveloperBlogPage() {
+  return (
+    <Suspense fallback={
+      <main>
+        <DeveloperHeader />
+        <div className={styles.blogPage}>
+          <div className={styles.content}>
+            <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+              Loading...
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    }>
+      <BlogPageContent />
+    </Suspense>
   );
 }

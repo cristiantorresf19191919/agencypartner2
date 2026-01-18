@@ -1,54 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense } from "react";
-import { createPortal } from "react-dom";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
+// @ts-ignore
+import * as Babel from "@babel/standalone";
 
-// Dynamically import Editor to avoid SSR issues
-const Editor = dynamic(
-  () => import("react-simple-code-editor"),
-  { 
-    ssr: false,
-    loading: () => null
-  }
-);
-
-// Dynamically import PrismJS only on client side to avoid SSR issues
-let prismLoaded = false;
-let prismHighlight: any = null;
-let prismLanguages: any = null;
-
-const loadPrism = async () => {
-  if (typeof window === "undefined") return; // Only run on client
-  if (prismLoaded) return;
-  
-  try {
-    // Import in correct order - core first, then dependencies, then languages
-    const prismCore = await import("prismjs/components/prism-core");
-    
-    // Load dependencies first
-    await import("prismjs/components/prism-clike");
-    await import("prismjs/components/prism-markup");
-    
-    // Then load language-specific components
-    await import("prismjs/components/prism-javascript");
-    await import("prismjs/components/prism-typescript");
-    await import("prismjs/components/prism-jsx");
-    await import("prismjs/components/prism-tsx");
-    await import("prismjs/components/prism-java");
-    await import("prismjs/components/prism-css");
-    
-    // Theme styling is handled inline in the component
-    // No need to import external CSS file
-    
-    prismHighlight = prismCore.highlight;
-    prismLanguages = prismCore.languages;
-    prismLoaded = true;
-  } catch (error) {
-    console.error("Failed to load PrismJS:", error);
-  }
-};
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+  loading: () => <div className="w-full h-40 grid place-items-center text-sm text-slate-300">Loading editor…</div>,
+});
 
 interface CodeEditorProps {
   code: string;
@@ -60,82 +23,58 @@ interface CodeEditorProps {
   defaultFullscreen?: boolean;
 }
 
+const REACT_UMD = `
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+`;
+
+const KOTLIN_PLAYGROUND_SCRIPT = "https://unpkg.com/kotlin-playground@1.9.0/dist/kotlin-playground.min.js";
+
 export function CodeEditor({
   code: initialCode,
   language = "tsx",
   onChange,
   readOnly = false,
-  height = 400,
+  height = 420,
   className = "",
   defaultFullscreen = false,
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
-  const [isPrismReady, setIsPrismReady] = useState(false);
-  const [fontSize, setFontSize] = useState(14);
-  const [showCopied, setShowCopied] = useState(false);
-  // Always start with false - fullscreen should only be triggered by user action
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(defaultFullscreen);
   const [isMounted, setIsMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const isInternalUpdateRef = useRef(false);
-  
-  // Store original values for reset
-  const originalCodeRef = useRef(initialCode);
-  const originalFontSizeRef = useRef(14);
+  const [outputHtml, setOutputHtml] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [fontSize, setFontSize] = useState(14);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const kotlinScriptInjected = useRef(false);
 
-  // Sync code state with prop changes (only if not from internal update)
+  const normalizedLang = language.toLowerCase();
+  const isKotlin = normalizedLang.includes("kotlin");
+  const isReactLike = ["react", "tsx", "jsx"].includes(normalizedLang);
+  const isRunnable =
+    !readOnly && (["javascript", "typescript", "jsx", "tsx", "react"].includes(normalizedLang) || isKotlin);
+
+  useEffect(() => setIsMounted(true), []);
+
   useEffect(() => {
-    if (!isInternalUpdateRef.current && initialCode !== code) {
-      setCode(initialCode);
-      originalCodeRef.current = initialCode; // Update original when prop changes
-    }
-    isInternalUpdateRef.current = false;
+    setCode(initialCode);
   }, [initialCode]);
-  
-  // Reset to original state
-  const handleReset = useCallback(() => {
-    isInternalUpdateRef.current = true;
-    setCode(originalCodeRef.current);
-    setFontSize(originalFontSizeRef.current);
-    if (onChange) {
-      onChange(originalCodeRef.current);
-    }
-  }, [onChange]);
-
-  // Track mount state for portal
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Detect mobile screen size
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
-    loadPrism().then(() => {
-      setIsPrismReady(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isFullscreen) {
-        setIsFullscreen(false);
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type === "playground-log") {
+        setLogs((prev) => [...prev.slice(-50), event.data.message]);
+      }
+      if (event.data?.type === "playground-error") {
+        setError(event.data.message);
       }
     };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isFullscreen]);
-
-  // Prevent body scroll when modal is open
   useEffect(() => {
     if (isFullscreen) {
       document.body.style.overflow = "hidden";
@@ -147,335 +86,287 @@ export function CodeEditor({
     };
   }, [isFullscreen]);
 
-  const handleValueChange = useCallback((newCode: string) => {
-    isInternalUpdateRef.current = true;
-    setCode(newCode);
-    if (onChange) {
-      onChange(newCode);
-    }
-  }, [onChange]);
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(code);
-    setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 2000);
-  };
-
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
-
-  const highlightCode = useCallback((code: string) => {
-    if (!isPrismReady || !prismHighlight || !prismLanguages) {
-      return code;
-    }
-
-    try {
-      // Kotlin is similar to Java, so use Java syntax highlighting
-      const lang = language === "tsx" ? prismLanguages.tsx : 
-                   language === "jsx" ? prismLanguages.jsx :
-                   language === "typescript" ? prismLanguages.typescript :
-                   language === "javascript" ? prismLanguages.javascript :
-                   language === "kotlin" ? prismLanguages.java : // Use Java for Kotlin
-                   language === "java" ? prismLanguages.java :
-                   prismLanguages.markup;
-      
-      return prismHighlight(code, lang, language);
-    } catch (e) {
-      console.error("PrismJS highlighting error:", e);
-      return code;
-    }
-  }, [isPrismReady, language]);
-
-  const editorStyle: React.CSSProperties = useMemo(() => {
-    const mobilePadding = isMobile ? "0.75rem" : "20px";
-    const fullscreenPadding = isMobile ? "1rem" : "24px";
-    
-    return {
-      fontFamily: '"Fira Code", "Fira Mono", "Monaco", "Consolas", "Courier New", monospace',
-      fontSize: `${fontSize}px`,
-      lineHeight: 1.6,
-      outline: 0,
-      minHeight: isFullscreen ? "100vh" : (typeof height === "number" ? `${height}px` : height),
-      height: isFullscreen ? "100vh" : "auto",
-      width: isFullscreen ? "100vw" : "100%",
-      backgroundColor: "#0d1117",
-      color: "#c9d1d9",
-      padding: isFullscreen ? fullscreenPadding : mobilePadding,
-      borderBottomLeftRadius: isFullscreen ? "0" : "8px",
-      borderBottomRightRadius: isFullscreen ? "0" : "8px",
-      border: "none",
-      borderTop: "none",
-      overflow: "auto",
-      boxSizing: "border-box",
+  useEffect(() => {
+    if (!isKotlin) return;
+    if (kotlinScriptInjected.current) return;
+    const script = document.createElement("script");
+    script.src = KOTLIN_PLAYGROUND_SCRIPT;
+    script.async = true;
+    script.onload = () => {
+      kotlinScriptInjected.current = true;
     };
-  }, [fontSize, isFullscreen, height, isMobile]);
+    document.head.appendChild(script);
+  }, [isKotlin]);
 
-  const renderEditorContent = () => {
-    return (
-      <>
-        {/* Toolbar */}
-        <div className={`flex items-center justify-between bg-[#161b22] border-b border-[#30363d] shrink-0 ${
-          isFullscreen ? "px-6 py-4" : "px-4 py-3"
-        }`}>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-[#8b949e] font-mono uppercase tracking-wider font-medium">{language}</span>
-          </div>
-          <div className={`flex items-center gap-2 ${isFullscreen ? "pr-2" : ""}`}>
-            {/* Font Size Controls */}
-            <div className="flex items-center gap-1.5 bg-[#0d1117] rounded-lg border border-[#30363d] px-2 py-1">
-              <button 
-                onClick={() => setFontSize(Math.max(10, fontSize - 1))}
-                className="p-1.5 hover:bg-[#21262d] rounded-md text-[#8b949e] hover:text-[#c9d1d9] transition-all duration-200 active:scale-95"
-                title="Decrease font size"
-                aria-label="Decrease font size"
-              >
-                <i className="fas fa-minus text-xs"></i>
-              </button>
-              <span className="text-xs text-[#c9d1d9] w-6 text-center font-semibold tabular-nums">{fontSize}</span>
-              <button 
-                onClick={() => setFontSize(Math.min(24, fontSize + 1))}
-                className="p-1.5 hover:bg-[#21262d] rounded-md text-[#8b949e] hover:text-[#c9d1d9] transition-all duration-200 active:scale-95"
-                title="Increase font size"
-                aria-label="Increase font size"
-              >
-                <i className="fas fa-plus text-xs"></i>
-              </button>
-            </div>
-            <div className="w-px h-5 bg-[#30363d] mx-1"></div>
-            {/* Copy Button */}
-            <button 
-              onClick={handleCopy}
-              className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-[#21262d] rounded-md text-xs text-[#8b949e] hover:text-[#c9d1d9] transition-all duration-200 active:scale-95 border border-transparent hover:border-[#30363d]"
-              title="Copy code to clipboard"
-              aria-label="Copy code"
-            >
-              {showCopied ? (
-                <>
-                  <i className="fas fa-check text-[#3fb950]"></i>
-                  <span className="text-[#3fb950] font-medium">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <i className="far fa-copy"></i>
-                  <span>Copy</span>
-                </>
-              )}
-            </button>
-            <div className="w-px h-5 bg-[#30363d] mx-1"></div>
-            {/* Reset Button */}
-            <button 
-              onClick={handleReset}
-              className="flex items-center gap-1.5 px-3 py-1.5 hover:bg-[#21262d] rounded-md text-xs text-[#8b949e] hover:text-[#c9d1d9] transition-all duration-200 active:scale-95 border border-transparent hover:border-[#30363d]"
-              title="Reset to original code and font size"
-              aria-label="Reset editor"
-            >
-              <i className="fas fa-undo text-xs"></i>
-              <span>Reset</span>
-            </button>
-            <div className="w-px h-5 bg-[#30363d] mx-1"></div>
-            {/* Fullscreen Button */}
-            <button 
-              onClick={toggleFullscreen}
-              className={`flex items-center gap-1.5 px-3 py-1.5 hover:bg-[#21262d] rounded-md text-xs text-[#8b949e] hover:text-[#c9d1d9] transition-all duration-200 active:scale-95 border border-transparent hover:border-[#30363d] ${
-                isFullscreen ? "mr-0" : ""
-              }`}
-              title={isFullscreen ? "Exit Fullscreen (Esc)" : "Enter Fullscreen"}
-              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-            >
-              {isFullscreen ? (
-                <>
-                  <i className="fas fa-compress"></i>
-                  <span>Exit</span>
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-expand"></i>
-                  <span>Maximize</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
+  const editorOptions = useMemo(
+    () => ({
+      minimap: { enabled: false },
+      fontSize,
+      fontLigatures: true,
+      smoothScrolling: true,
+      scrollBeyondLastLine: false,
+      automaticLayout: true,
+      renderLineHighlight: "all" as const,
+      suggest: { preview: true, showWords: true },
+      quickSuggestions: true,
+      tabSize: 2,
+      formatOnPaste: true,
+      formatOnType: true,
+      readOnly,
+    }),
+    [fontSize, readOnly]
+  );
 
-        <style jsx global>{`
-          .code-editor-wrapper {
-            display: block !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-          }
-          .code-editor-wrapper pre {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: transparent !important;
-          }
-          .code-editor-textarea {
-            caret-color: #58a6ff !important;
-            outline: none !important;
-            border: none !important;
-            resize: none !important;
-          }
-          .code-editor-textarea:focus {
-            outline: none !important;
-            border: none !important;
-          }
-          .code-editor-wrapper .code-editor-pre {
-            pointer-events: none !important;
-            overflow: visible !important;
-          }
-          .code-editor-wrapper pre {
-            scrollbar-width: thin;
-            scrollbar-color: #30363d #0d1117;
-          }
-          .code-editor-wrapper pre::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-          }
-          .code-editor-wrapper pre::-webkit-scrollbar-track {
-            background: #0d1117;
-          }
-          .code-editor-wrapper pre::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 5px;
-          }
-          .code-editor-wrapper pre::-webkit-scrollbar-thumb:hover {
-            background: #484f58;
-          }
-          .code-editor-wrapper .token.comment,
-          .code-editor-wrapper .token.prolog,
-          .code-editor-wrapper .token.doctype,
-          .code-editor-wrapper .token.cdata {
-            color: #8b949e;
-            font-style: italic;
-          }
-          .code-editor-wrapper .token.punctuation {
-            color: #c9d1d9;
-          }
-          .code-editor-wrapper .token.property,
-          .code-editor-wrapper .token.tag,
-          .code-editor-wrapper .token.boolean,
-          .code-editor-wrapper .token.number,
-          .code-editor-wrapper .token.constant,
-          .code-editor-wrapper .token.symbol,
-          .code-editor-wrapper .token.deleted {
-            color: #79c0ff;
-          }
-          .code-editor-wrapper .token.selector,
-          .code-editor-wrapper .token.attr-name,
-          .code-editor-wrapper .token.string,
-          .code-editor-wrapper .token.char,
-          .code-editor-wrapper .token.builtin,
-          .code-editor-wrapper .token.inserted {
-            color: #a5d6ff;
-          }
-          .code-editor-wrapper .token.operator,
-          .code-editor-wrapper .token.entity,
-          .code-editor-wrapper .token.url,
-          .code-editor-wrapper .language-css .token.string,
-          .code-editor-wrapper .style .token.string {
-            color: #ff7b72;
-          }
-          .code-editor-wrapper .token.atrule,
-          .code-editor-wrapper .token.attr-value,
-          .code-editor-wrapper .token.keyword {
-            color: #ff7b72;
-            font-weight: 500;
-          }
-          .code-editor-wrapper .token.function,
-          .code-editor-wrapper .token.class-name {
-            color: #d2a8ff;
-          }
-          .code-editor-wrapper .token.regex,
-          .code-editor-wrapper .token.important,
-          .code-editor-wrapper .token.variable {
-            color: #ffa657;
-          }
-        `}</style>
-        <div 
-          className={`grow overflow-auto bg-[#0d1117] ${isFullscreen ? "" : ""}`}
-          style={isFullscreen ? { 
-            height: "calc(100vh - 64px)",
-            width: "100vw"
-          } : {}}
-        >
-          {isPrismReady ? (
-            <Editor
-              value={code}
-              onValueChange={handleValueChange}
-              highlight={highlightCode}
-              padding={isFullscreen ? 24 : (isMobile ? 12 : 16)}
-              style={editorStyle}
-              readOnly={readOnly}
-              tabSize={2}
-              insertSpaces={true}
-              ignoreTabKey={false}
-              preClassName="code-editor-pre"
-              textareaClassName="code-editor-textarea"
-            />
-          ) : (
-            <div style={editorStyle}>
-              <pre style={{ margin: 0, padding: 0, color: "#c9d1d9", lineHeight: 1.6 }}>
-                <code>{code}</code>
-              </pre>
-            </div>
-          )}
-        </div>
-      </>
-    );
+  const buildPreviewHTML = (jsCode: string) => {
+    return `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    ${REACT_UMD}
+    <style>
+      body { margin: 0; padding: 16px; background:#0b1020; color:#e5edff; font-family: Inter, system-ui, -apple-system, sans-serif;}
+      #root { min-height: 100px; }
+      pre { white-space: pre-wrap; word-break: break-word; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      const parentWindow = window.parent;
+      const safeConsole = {
+        log: (...args) => parentWindow.postMessage({ type: "playground-log", message: args.map(a => typeof a === "object" ? JSON.stringify(a) : String(a)).join(" ") }, "*"),
+        warn: (...args) => parentWindow.postMessage({ type: "playground-log", message: "⚠️ " + args.join(" ") }, "*"),
+        error: (...args) => parentWindow.postMessage({ type: "playground-log", message: "❌ " + args.join(" ") }, "*"),
+      };
+      try {
+        ${jsCode}
+        const __InternalApp = window.__APP__;
+        if (__InternalApp && window.React && window.ReactDOM) {
+          const root = document.getElementById("root");
+          const React = window.React;
+          const ReactDOM = window.ReactDOM;
+          ReactDOM.createRoot(root).render(React.createElement(__InternalApp));
+        } else if (window.ReactDOM) {
+          const root = document.getElementById("root");
+          root.innerHTML = "<pre style='color:#e5edff;white-space:pre-wrap'>No default export named App was found. Console output is still captured.</pre>";
+        }
+      } catch (err) {
+        parentWindow.postMessage({ type: "playground-error", message: err?.message || String(err) }, "*");
+      }
+    </script>
+  </body>
+</html>
+`;
   };
+
+  const runCode = useCallback(async () => {
+    if (!isRunnable || isKotlin) return;
+    setIsRunning(true);
+    setError(null);
+    setLogs([]);
+    try {
+      const wrapped = `${code}
+;window.__APP__ = typeof App !== "undefined" ? App : (typeof exports !== "undefined" ? exports.default : null);`;
+
+      const result = Babel.transform(wrapped, {
+        presets: ["env", "react", "typescript"],
+        sourceType: "module",
+        filename: "App.tsx",
+      }).code;
+
+      const html = buildPreviewHTML(result || "");
+      setOutputHtml(html);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsRunning(false);
+    }
+  }, [code, isKotlin, isRunnable]);
+
+  const handleReset = useCallback(() => {
+    setCode(initialCode);
+    setOutputHtml("");
+    setLogs([]);
+    setError(null);
+    if (onChange) onChange(initialCode);
+  }, [initialCode, onChange]);
+
+  useEffect(() => {
+    if (!isRunnable || isKotlin) return;
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        runCode();
+      }
+      if (e.key === "Escape" && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isRunnable, isKotlin, runCode, isFullscreen]);
+
+  const handleEditorMount = useCallback((editor: any, monaco: any) => {
+    editor.focus();
+    monaco.editor.setTheme("vs-dark");
+    monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+      diagnosticCodesToIgnore: [1375],
+    });
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ES2020,
+      allowNonTsExtensions: true,
+      allowJs: true,
+      module: monaco.languages.typescript.ModuleKind.ESNext,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      jsx: monaco.languages.typescript.JsxEmit.React,
+    });
+  }, []);
+
+  const editorSection = (
+    <div className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-2 bg-white/5 border-b border-white/10">
+        <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_6px_rgba(16,185,129,0.2)]"></span>
+          {language}
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-200">
+            <button
+              className="px-1 hover:text-white"
+              onClick={() => setFontSize((s) => Math.max(10, s - 1))}
+              aria-label="Decrease font size"
+            >
+              A-
+            </button>
+            <span className="px-1 tabular-nums">{fontSize}</span>
+            <button
+              className="px-1 hover:text-white"
+              onClick={() => setFontSize((s) => Math.min(24, s + 1))}
+              aria-label="Increase font size"
+            >
+              A+
+            </button>
+          </div>
+          {!readOnly && (
+            <>
+              <button
+                onClick={handleReset}
+                className="px-3 py-1 text-xs rounded-md bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10"
+              >
+                Reset
+              </button>
+              <button
+                onClick={runCode}
+                className={`px-3 py-1 text-xs rounded-md text-[#041021] bg-linear-to-r from-[#6c8bff] to-[#7cf4ff] border border-white/20 shadow-[0_8px_30px_rgba(124,244,255,0.25)] hover:brightness-110 ${
+                  isRunning ? "opacity-70" : ""
+                }`}
+              >
+                {isRunning ? "Running…" : "Run (⌘/Ctrl+Enter)"}
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => setIsFullscreen((v) => !v)}
+            className="px-3 py-1 text-xs rounded-md bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10"
+          >
+            {isFullscreen ? "Exit" : "Maximize"}
+          </button>
+        </div>
+      </div>
+
+      {isKotlin ? (
+        <div className="p-3 bg-[#0b1020] text-slate-100 overflow-auto">
+          <pre
+            className="kotlin-playground"
+            data-target-platform="js"
+            data-auto-indent="true"
+            data-theme="darcula"
+            data-readonly={readOnly ? "true" : "false"}
+          >
+{code}
+          </pre>
+        </div>
+      ) : (
+        <MonacoEditor
+          height={height}
+          language={isReactLike ? "typescript" : language}
+          path="App.tsx"
+          value={code}
+          onChange={(value) => {
+            const next = value || "";
+            setCode(next);
+            if (onChange) onChange(next);
+          }}
+          options={editorOptions}
+          onMount={handleEditorMount}
+          theme="vs-dark"
+        />
+      )}
+    </div>
+  );
+
+  const previewSection =
+    isRunnable && !isKotlin ? (
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <div className="border border-white/10 rounded-lg bg-[#0b1020] p-3">
+          <div className="text-xs text-slate-300 mb-2">Preview</div>
+          <iframe
+            ref={iframeRef}
+            title="playground-preview"
+            sandbox="allow-scripts allow-same-origin"
+            srcDoc={outputHtml}
+            className="w-full h-64 bg-white rounded-md border border-white/10"
+          />
+          {error && <div className="mt-2 text-xs text-red-300">⚠️ {error}</div>}
+        </div>
+        <div className="border border-white/10 rounded-lg bg-[#0b1020] p-3">
+          <div className="text-xs text-slate-300 mb-2">Console</div>
+          <div className="h-64 overflow-auto text-xs text-slate-100 space-y-1 font-mono">
+            {logs.length === 0 ? <div className="text-slate-500">Logs will appear here.</div> : null}
+            {logs.map((line, idx) => (
+              <div key={`${line}-${idx}`} className="whitespace-pre-wrap wrap-break-word">
+                {line}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    ) : null;
+
+  const shell = (
+    <div className={`rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-3 ${className}`}>
+      {editorSection}
+      {previewSection}
+    </div>
+  );
 
   return (
     <>
-      {/* Regular editor (non-fullscreen) */}
-      {!isFullscreen && (
-        <motion.div 
-          layout
-          className={`code-editor-wrapper overflow-hidden border border-[#30363d] shadow-2xl rounded-xl relative block w-full ${className}`}
-          style={{ display: 'block', width: '100%', minWidth: 0 }}
-          initial={false}
-          transition={{
-            type: "spring",
-            damping: 25,
-            stiffness: 300
-          }}
-        >
-          {renderEditorContent()}
-        </motion.div>
-      )}
-
-      {/* Fullscreen Modal using React Portal */}
-      {isMounted && createPortal(
-        <AnimatePresence>
-          {isFullscreen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 bg-black/90 backdrop-blur-md"
-                style={{ zIndex: 99999 }}
-                onClick={() => setIsFullscreen(false)}
-              />
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{
-                  duration: 0.3
-                }}
-                className="fixed inset-0 flex flex-col overflow-hidden code-editor-wrapper"
-                style={{ zIndex: 100000 }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {renderEditorContent()}
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+      {shell}
+      <AnimatePresence>
+        {isFullscreen && isMounted && (
+          <motion.div
+            className="fixed inset-0 z-2000 bg-[#0b0f1a]/80 backdrop-blur-md flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="w-full h-full max-w-[1400px] max-h-[90vh] overflow-auto"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.97, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              {shell}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
-

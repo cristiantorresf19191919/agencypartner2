@@ -120,7 +120,7 @@ export default function PlaygroundPage() {
       target: monaco.languages.typescript.ScriptTarget.ES2020,
       allowNonTsExtensions: true,
       allowJs: true,
-      module: monaco.languages.typescript.ModuleKind.ESNext,
+      module: monaco.languages.typescript.ModuleKind.CommonJS, // Changed to CommonJS
       moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
     });
 
@@ -146,22 +146,80 @@ export default function PlaygroundPage() {
     try {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as typeof Function;
 
-      let compiledOutput = "";
+      let modulesRegistration = "";
+      
+      // We will perform a "bundle" step:
+      // 1. Compile all files to CommonJS
+      // 2. Wrap them in a registration function
       if (monacoRef.current) {
         const monaco = monacoRef.current;
         const workerGetter = await monaco.languages.typescript.getTypeScriptWorker();
+        
+        // Process all files
         for (const file of files) {
-          const uri = monaco.Uri.parse(file.uri);
+          const uri = monaco.Uri.parse(file.uri as string);
+          // If the model doesn't exist in editor (e.g. freshly mounted), ensure it's synced or skip
+          // Ideally we rely on monaco models being present.
           const model = monaco.editor.getModel(uri);
-          if (!model) continue;
-          const client = await workerGetter(uri);
-          const emit = await client.getEmitOutput(uri.toString());
-          const jsFile = emit.outputFiles?.[0]?.text ?? "";
-          compiledOutput += `// ${file.name}\n${jsFile}\n`;
+          
+          let jsCode = "";
+          if (model) {
+             const client = await workerGetter(uri);
+             const emit = await client.getEmitOutput(uri.toString());
+             jsCode = emit.outputFiles?.[0]?.text ?? "";
+          } else {
+             // If for some reason model is missing but we have content (edge case), try direct transpile or skip
+             // For simplicity, skip.
+             continue;
+          }
+
+          // Normalize path for registry: remove file:// and src prefix for simpler requiring?
+          // Let's stick to standard internal paths: "./index" etc.
+          // file.name is "index.ts" -> registry key "./index"
+          const moduleName = "./" + file.name.replace(/\.tsx?$/, "");
+          
+          // Escape backticks in code to avoid breaking the template literal
+          const safeCode = jsCode.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\${/g, "\\${");
+
+          modulesRegistration += `
+            __modules["${moduleName}"] = function(exports, require, module) {
+              ${safeCode}
+            };
+          `;
         }
-      } else {
-        compiledOutput = files.map((f) => `// ${f.name}\n${f.code}`).join("\n");
       }
+
+      // 3. Create the loader shim
+      const loaderCode = `
+        const __modules = {};
+        const __cache = {};
+
+        function require(path) {
+          // simple path resolution
+          if (!path.startsWith("./")) return; // fallback or error for external libs (not supported yet)
+          
+          // normalized key: support extensionless lookups
+          let key = path.replace(/\\.js$/, "").replace(/\\.ts$/, "").replace(/\\.tsx$/, "");
+          
+          if (__cache[key]) return __cache[key].exports;
+          
+          const factory = __modules[key];
+          if (!factory) throw new Error("Module not found: " + path);
+          
+          const module = { exports: {} };
+          __cache[key] = module;
+          
+          // Execute factory
+          factory(module.exports, require, module);
+          return module.exports;
+        }
+
+        // Register ALL modules
+        ${modulesRegistration}
+
+        // Boot Main
+        return require("./index"); 
+      `;
 
       const runner = new AsyncFunction(
         "console",
@@ -173,7 +231,7 @@ export default function PlaygroundPage() {
         "performance",
         "Date",
         "Math",
-        `"use strict";\n${compiledOutput}`
+        `"use strict";\n${loaderCode}`
       );
 
       const sandboxConsole = {
@@ -194,7 +252,10 @@ export default function PlaygroundPage() {
         Math
       );
 
-      setOutput(formatValue(result));
+      // setOutput(formatValue(result)); // Usually main doesn't return value in this setup, or it returns exports.
+      // Let's just say "Execution complete" if no error.
+      setOutput("Done.");
+
     } catch (err) {
       setError((err as Error).message);
       setOutput("Execution stopped.");
