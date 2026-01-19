@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -7,6 +8,9 @@ import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { getCategoryBySlug } from "@/lib/blogCategories";
 import { notFound } from "next/navigation";
 import styles from "../../BlogPage.module.css";
+
+const DESCRIPTION_COLLAPSE_THRESHOLD = 110;
+const TOPICS_COLLAPSE_THRESHOLD = 4;
 
 interface CategoryPageProps {
   params: {
@@ -18,7 +22,31 @@ interface CategoryPageProps {
 export default function CategoryPage({ params }: CategoryPageProps) {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const [expandedDesc, setExpandedDesc] = useState<Set<string>>(new Set());
+  const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
   const category = getCategoryBySlug(params.slug);
+
+  const toggleDesc = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpandedDesc((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleTopics = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpandedTopics((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   if (!category) {
     notFound();
@@ -135,26 +163,71 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               <Heading level={2} className={styles.sectionTitle}>
                 {post.title}
               </Heading>
-              <Text className={styles.sectionDescription}>
-                {post.description}
-              </Text>
+              <div className={styles.descriptionWrapper}>
+                <Text
+                  className={`${styles.sectionDescription} ${
+                    !expandedDesc.has(post.id) && post.description.length > DESCRIPTION_COLLAPSE_THRESHOLD
+                      ? styles.sectionDescriptionCollapsed
+                      : ""
+                  }`}
+                >
+                  {post.description}
+                </Text>
+                {post.description.length > DESCRIPTION_COLLAPSE_THRESHOLD && (
+                  <button
+                    type="button"
+                    onClick={(e) => toggleDesc(post.id, e)}
+                    className={styles.expandTextButton}
+                    aria-expanded={expandedDesc.has(post.id)}
+                    aria-label={expandedDesc.has(post.id) ? "Show less" : "Show more"}
+                  >
+                    {expandedDesc.has(post.id) ? "Show less" : "Show more"}
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="mt-auto">
+            <div className={styles.topicsSection}>
               <Text className={styles.topicsLabel}>
                 Topics Covered:
               </Text>
               <div className={styles.topicsList}>
-                {post.topics.slice(0, 5).map((topic, idx) => (
-                  <span key={idx} className={styles.topicTag}>
-                    {topic}
-                  </span>
-                ))}
-                {post.topics.length > 5 && (
-                  <span className={styles.topicTag}>
-                    +{post.topics.length - 5} more
-                  </span>
+                {(expandedTopics.has(post.id) ? post.topics : post.topics.slice(0, TOPICS_COLLAPSE_THRESHOLD)).map(
+                  (topic, idx) => (
+                    <span key={idx} className={styles.topicTag}>
+                      {topic}
+                    </span>
+                  )
                 )}
               </div>
+              {post.topics.length > TOPICS_COLLAPSE_THRESHOLD && (
+                <button
+                  type="button"
+                  onClick={(e) => toggleTopics(post.id, e)}
+                  className={styles.expandButton}
+                  aria-label={expandedTopics.has(post.id) ? "Show fewer topics" : "Show all topics"}
+                >
+                  <span className={styles.expandButtonText}>
+                    {expandedTopics.has(post.id)
+                      ? "Show less"
+                      : `+${post.topics.length - TOPICS_COLLAPSE_THRESHOLD} more`}
+                  </span>
+                  <svg
+                    className={`${styles.expandIcon} ${expandedTopics.has(post.id) ? styles.expandIconRotated : ""}`}
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                  >
+                    <path
+                      d="M4 6L8 10L12 6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
             <div className={styles.sectionCta}>
               Read Article <i className="fas fa-arrow-right"></i>

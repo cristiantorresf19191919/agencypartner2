@@ -223,6 +223,23 @@ ${answersText}`;
       error,
     );
 
+    const err = error as { message?: string; status?: number; code?: number };
+    const msg = String(err?.message ?? '');
+    const isQuota =
+      err?.status === 429 ||
+      err?.code === 429 ||
+      /429|Quota exceeded|RESOURCE_EXHAUSTED|rate.?limit/i.test(msg);
+
+    if (isQuota) {
+      return NextResponse.json(
+        {
+          error:
+            'El servicio de recomendaciones está temporalmente sobrecargado (límite de uso alcanzado). Por favor, inténtalo de nuevo en 1–2 minutos.',
+        },
+        { status: 429 },
+      );
+    }
+
     return NextResponse.json(
       { error: 'Error interno del servidor' },
       { status: 500 },

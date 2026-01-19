@@ -1,6 +1,26 @@
 /* ProjectAdvisorStepper styles
  * Based on the massage stepper UI, adapted for software project advisory.
+ * UI/UX: improved hierarchy, affordance, and accessibility.
  */
+
+/* Design token fallbacks (when not set globally) */
+.overlay {
+    --primary-green: #075257;
+    --primary-green-dark: #053d41;
+    --primary-green-light: #0a6c73;
+    --primary-green-soft: rgba(7, 82, 87, 0.08);
+    --border-light: #e5e7eb;
+    --border-medium: #d1d5db;
+    --bg-white: #fff;
+    --bg-champagne: #f5f1e8;
+    --text-light: #fff;
+    --font-serif: 'Georgia', 'Cambria', 'Times New Roman', serif;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+}
 
 /* Overlay */
 
@@ -10,9 +30,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(9, 14, 18, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -60,16 +80,34 @@
     }
 }
 
+/* Tighter, focused width for the initial choice screen */
+.modalInitial {
+    max-width: 560px;
+    height: auto;
+    max-height: 90vh;
+}
+
+.modalInitial::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--primary-green-light));
+    border-radius: 32px 32px 0 0;
+}
+
 /* Close Button */
 
 .closeButton {
     position: absolute;
     top: var(--spacing-md);
     right: var(--spacing-lg);
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 1.25rem;
-    color: var(--text-light);
+    color: #23243a;
     cursor: pointer;
     width: 44px;
     height: 44px;
@@ -82,9 +120,15 @@
 }
 
 .closeButton:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.35);
-    transform: scale(1.05);
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: scale(1.08);
+    color: #000;
+}
+
+.closeButton:focus-visible {
+    outline: 2px solid var(--primary-green);
+    outline-offset: 2px;
 }
 
 /* Header */
@@ -324,7 +368,7 @@
 .stepCircleInactive {
     background: linear-gradient(135deg, var(--bg-white) 0%, rgba(245, 241, 232, 0.5) 100%);
     border: 2.5px solid var(--border-light);
-    color: var(--text-medium);
+    color: #6b7280;
     box-shadow:
         0 2px 8px rgba(0, 0, 0, 0.05),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -352,7 +396,7 @@
 .stepLabel {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-dark);
+    color: #23243a;
     text-align: center;
     white-space: nowrap;
     letter-spacing: 0.3px;
@@ -644,6 +688,10 @@
     min-height: 0;
 }
 
+.questionContainerInitial {
+    padding-top: 2.5rem;
+}
+
 .questionContainer::-webkit-scrollbar {
     width: 8px;
 }
@@ -677,6 +725,162 @@
     margin-bottom: var(--spacing-md);
 }
 
+/* Initial service type selection */
+.serviceTypeHeader {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.serviceTypeBadge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary-green);
+    background: var(--primary-green-soft);
+    padding: 0.35rem 0.75rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(7, 82, 87, 0.2);
+}
+
+.serviceTypeIcon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: var(--primary-green);
+    background: linear-gradient(145deg, rgba(7, 82, 87, 0.12) 0%, rgba(7, 82, 87, 0.06) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(7, 82, 87, 0.2);
+    box-shadow: 0 4px 16px rgba(7, 82, 87, 0.08);
+}
+
+.questionInitial {
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+}
+
+.serviceTypeSubtitle {
+    font-size: 0.95rem;
+    color: #4b5563;
+    margin: 0.5rem 0 0;
+    line-height: 1.55;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.optionsContainerInitial {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Card-style option (initial screen) */
+.optionButtonCard {
+    padding: 1.25rem 1.5rem;
+    gap: 1.25rem;
+    border-radius: 16px;
+    border: 2px solid var(--border-light);
+    justify-content: flex-start;
+    min-height: 0;
+}
+
+.optionButtonCard:hover {
+    border-color: rgba(7, 82, 87, 0.35);
+    box-shadow: 0 8px 24px rgba(7, 82, 87, 0.1);
+    transform: translateY(-3px);
+}
+
+.optionButtonCard:hover .optionIconWrap {
+    background: rgba(7, 82, 87, 0.14);
+    color: var(--primary-green);
+}
+
+.optionButtonCard:hover .optionChevron {
+    color: var(--primary-green);
+    transform: translateX(3px);
+}
+
+.optionButtonCard:focus-visible {
+    outline: 2px solid var(--primary-green);
+    outline-offset: 2px;
+}
+
+.optionButtonCard:active {
+    transform: translateY(-1px);
+}
+
+.optionCardContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.optionTitle {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.optionDescription {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.optionChevron {
+    flex-shrink: 0;
+    font-size: 1rem;
+    color: #9ca3af;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.optionButtonCard .optionIconWrap {
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+    border-radius: 12px;
+}
+
+.optionIconWrap {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--primary-green);
+    background: rgba(7, 82, 87, 0.08);
+    border-radius: 10px;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.optionButton:hover .optionIconWrap {
+    background: rgba(7, 82, 87, 0.12);
+}
+
+.optionButton:focus-visible .optionIconWrap {
+    background: rgba(7, 82, 87, 0.15);
+}
+
 .questionBadge {
     display: inline-flex;
     align-items: center;
@@ -695,7 +899,7 @@
     font-family: var(--font-serif);
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary-dark);
+    color: #23243a;
     margin: 0;
     line-height: 1.4;
 }
@@ -829,7 +1033,7 @@
 .optionText {
     flex: 1;
     font-size: 1rem;
-    color: var(--text-dark);
+    color: #23243a;
     line-height: 1.5;
     font-weight: 500;
 }
@@ -898,12 +1102,12 @@
 
 .scaleOptionText {
     font-size: 0.95rem;
-    color: var(--text-dark);
+    color: #23243a;
     line-height: 1.5;
 }
 
 .scaleOptionButtonActive .scaleOptionText {
-    color: var(--text-dark);
+    color: #23243a;
     font-weight: 500;
 }
 
@@ -951,15 +1155,57 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(5, 9, 20, 0.96);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: linear-gradient(165deg, #0b0f1a 0%, #0f172a 45%, #0b1222 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 32px;
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.35s ease-out;
+    overflow: hidden;
+}
+
+.loadingBgOrbs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.loadingBgOrbs::before,
+.loadingBgOrbs::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    animation: orbFloat 18s ease-in-out infinite;
+}
+
+.loadingBgOrbs::before {
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, transparent 70%);
+    top: -8%;
+    left: -5%;
+    animation-delay: 0s;
+}
+
+.loadingBgOrbs::after {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.35) 0%, transparent 70%);
+    bottom: -5%;
+    right: -5%;
+    animation-delay: -9s;
+}
+
+@keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    33% { transform: translate(6%, 4%) scale(1.05); opacity: 0.6; }
+    66% { transform: translate(-4%, -3%) scale(0.98); opacity: 0.45; }
 }
 
 .loadingContent {
@@ -968,96 +1214,169 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    max-width: 500px;
+    max-width: 520px;
     padding: var(--spacing-lg);
+    position: relative;
+    z-index: 1;
 }
 
-.loadingSpinner {
+/* Thinking / AI animation */
+.loadingThinking {
+    position: relative;
+    width: 100px;
+    height: 100px;
     display: flex;
-    gap: 12px;
-    margin-bottom: var(--spacing-lg);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.75rem;
 }
 
-.spinnerCircle {
-    width: 16px;
-    height: 16px;
-    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+.thinkingRings {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thinkingRing {
+    position: absolute;
     border-radius: 50%;
-    animation: bounce 1.4s ease-in-out infinite both;
-    box-shadow: 0 2px 8px rgba(7, 82, 87, 0.3);
+    border: 2px solid rgba(56, 189, 248, 0.35);
+    animation: ringPulseThink 2.2s ease-in-out infinite;
 }
 
-.spinnerCircle:nth-child(1) {
-    animation-delay: -0.32s;
+.thinkingRing:nth-child(1) { width: 48px; height: 48px; animation-delay: 0s; }
+.thinkingRing:nth-child(2) { width: 68px; height: 68px; animation-delay: -0.4s; }
+.thinkingRing:nth-child(3) { width: 88px; height: 88px; animation-delay: -0.8s; }
+
+@keyframes ringPulseThink {
+    0%, 100% { transform: scale(0.85); opacity: 0.4; }
+    50% { transform: scale(1); opacity: 0.75; }
 }
 
-.spinnerCircle:nth-child(2) {
-    animation-delay: -0.16s;
+.thinkingIcon {
+    position: relative;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    color: rgba(56, 189, 248, 0.95);
+    filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.5));
+    animation: iconGlow 2.5s ease-in-out infinite;
 }
 
-@keyframes bounce {
-    0%,
-    80%,
-    100% {
-        transform: scale(0.6);
-        opacity: 0.5;
-    }
-    40% {
-        transform: scale(1);
-        opacity: 1;
-    }
+@keyframes iconGlow {
+    0%, 100% { opacity: 1; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.5)); }
+    50% { opacity: 0.9; filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.7)); }
+}
+
+.loadingTitle {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: 0.02em;
+    margin: 0 0 0.35rem;
+    line-height: 1.3;
 }
 
 .loadingText {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--primary-green-soft);
-    font-family: var(--font-serif);
-    letter-spacing: 0.5px;
-    margin-bottom: var(--spacing-lg);
-    line-height: 1.4;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: rgba(248, 250, 252, 0.85);
+    letter-spacing: 0.01em;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+}
+
+.loadingProgress {
+    width: 100%;
+    max-width: 240px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.loadingProgressBar {
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.9), rgba(45, 212, 191, 0.9));
+    border-radius: 4px;
+    animation: progressIndeterminate 1.6s ease-in-out infinite;
+}
+
+@keyframes progressIndeterminate {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(200%); }
+    100% { transform: translateX(-100%); }
+}
+
+.loadingHint {
+    font-size: 0.8rem;
+    color: rgba(248, 250, 252, 0.5);
+    margin: 0 0 1.25rem;
 }
 
 .loadingTip {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.4s ease;
+}
+
+.loadingTipSteps {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.loadingTipStep {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: background 0.35s ease, transform 0.35s ease;
+}
+
+.loadingTipStepActive {
+    background: rgba(56, 189, 248, 0.9);
+    transform: scale(1.2);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+.loadingTipContent {
     display: flex;
     align-items: flex-start;
-    gap: var(--spacing-sm);
-    background: linear-gradient(135deg, rgba(7, 82, 87, 0.18) 0%, rgba(20, 40, 80, 0.35) 100%);
-    padding: var(--spacing-md);
-    border-radius: 16px;
-    border: 1px solid rgba(148, 163, 184, 0.5);
-    max-width: 100%;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.6);
-    margin-top: var(--spacing-sm);
+    gap: 0.75rem;
+    text-align: left;
 }
 
 .tipIcon {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     flex-shrink: 0;
     margin-top: 2px;
-    color: var(--primary-green-light);
-    animation: float 3s ease-in-out infinite;
+    color: rgba(56, 189, 248, 0.9);
 }
 
 .tipText {
-    font-size: 1rem;
-    color: #e2e8f0;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    color: rgba(226, 232, 240, 0.95);
+    line-height: 1.55;
     font-weight: 400;
-    text-align: left;
-    font-family: var(--font-sans);
-}
-
-@keyframes float {
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-4px);
-    }
 }
 
 @media (max-width: 768px) {
@@ -1065,15 +1384,18 @@
         max-width: 90%;
         padding: var(--spacing-md);
     }
+    .loadingTitle {
+        font-size: 1.35rem;
+    }
     .loadingText {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     .loadingTip {
-        padding: var(--spacing-sm);
-        gap: var(--spacing-xs);
+        padding: 0.875rem 1rem;
+        gap: 0.6rem;
     }
     .tipIcon {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
     }
     .tipText {
         font-size: 0.9rem;
@@ -1115,7 +1437,7 @@
 
 .backButton {
     background: var(--bg-white);
-    color: var(--text-dark);
+    color: #23243a;
     border: 2px solid var(--border-light);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
@@ -1201,14 +1523,14 @@
 .choiceTitle {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: #23243a;
     margin: 0;
     font-family: var(--font-serif);
 }
 
 .choiceSubtitle {
     font-size: 1.125rem;
-    color: var(--text-gray);
+    color: #6b7280;
     margin: 0;
     max-width: 500px;
 }

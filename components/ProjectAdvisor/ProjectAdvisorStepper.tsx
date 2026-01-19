@@ -261,45 +261,75 @@ export function ProjectAdvisorStepper({ open, onClose }: ProjectAdvisorStepperPr
   // Initial service type selector
   if (!serviceType) {
     return (
-      <div className={styles.overlay} onClick={handleClose}>
-        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={styles.overlay}
+        onClick={handleClose}
+        role="presentation"
+      >
+        <div
+          className={`${styles.modal} ${styles.modalInitial}`}
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="advisor-initial-title"
+          aria-describedby="advisor-initial-desc"
+        >
           <button
             className={styles.closeButton}
             onClick={handleClose}
             aria-label="Cerrar"
           >
-            <i className="fa-solid fa-times" />
+            <i className="fa-solid fa-times" aria-hidden="true" />
           </button>
-          <div className={styles.questionContainer}>
-            <div className={styles.questionHeader}>
-              <h3 className={styles.question}>¿Para quién es este proyecto de software?</h3>
+          <div className={`${styles.questionContainer} ${styles.questionContainerInitial}`}>
+            <div className={styles.serviceTypeHeader}>
+              <span className={styles.serviceTypeBadge}>Paso 1</span>
+              <div className={styles.serviceTypeIcon}>
+                <i className="fa-solid fa-compass" aria-hidden="true" />
+              </div>
+              <h2 id="advisor-initial-title" className={styles.questionInitial}>
+                ¿Para quién es este proyecto de software?
+              </h2>
+              <p id="advisor-initial-desc" className={styles.serviceTypeSubtitle}>
+                Elige el perfil que mejor describe tu caso para personalizar las preguntas.
+              </p>
             </div>
-            <div className={styles.optionsContainer}>
+            <div className={styles.optionsContainerInitial}>
               <button
-                className={styles.optionButton}
+                type="button"
+                className={`${styles.optionButton} ${styles.optionButtonCard}`}
                 onClick={() => setServiceType('persona')}
               >
-                <div className={styles.optionCheckbox}>
-                  <div className={styles.radio}>
-                    <div className={styles.radioDot} />
-                  </div>
+                <div className={styles.optionIconWrap}>
+                  <i className="fa-solid fa-user" aria-hidden="true" />
                 </div>
-                <span className={styles.optionText}>
-                  Proyecto para una persona, emprendimiento o pequeño negocio.
-                </span>
+                <div className={styles.optionCardContent}>
+                  <span className={styles.optionTitle}>
+                    Persona, emprendimiento o pequeño negocio
+                  </span>
+                  <span className={styles.optionDescription}>
+                    Landings, tiendas, portfolios y apps personales.
+                  </span>
+                </div>
+                <i className={`fa-solid fa-chevron-right ${styles.optionChevron}`} aria-hidden="true" />
               </button>
               <button
-                className={styles.optionButton}
+                type="button"
+                className={`${styles.optionButton} ${styles.optionButtonCard}`}
                 onClick={() => setServiceType('empresa')}
               >
-                <div className={styles.optionCheckbox}>
-                  <div className={styles.radio}>
-                    <div className={styles.radioDot} />
-                  </div>
+                <div className={styles.optionIconWrap}>
+                  <i className="fa-solid fa-building" aria-hidden="true" />
                 </div>
-                <span className={styles.optionText}>
-                  Proyecto para empresa / equipo (sistemas internos, integraciones, SaaS, etc.).
-                </span>
+                <div className={styles.optionCardContent}>
+                  <span className={styles.optionTitle}>
+                    Empresa o equipo
+                  </span>
+                  <span className={styles.optionDescription}>
+                    Sistemas internos, integraciones, SaaS y productos B2B.
+                  </span>
+                </div>
+                <i className={`fa-solid fa-chevron-right ${styles.optionChevron}`} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -310,8 +340,8 @@ export function ProjectAdvisorStepper({ open, onClose }: ProjectAdvisorStepperPr
 
   if (recommendation) {
     return (
-      <div className={styles.overlay} onClick={handleClose}>
-        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.overlay} onClick={handleClose} role="presentation">
+        <div className={styles.modal} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Recomendación de proyecto">
           <button
             className={styles.closeButton}
             onClick={handleClose}
@@ -331,8 +361,8 @@ export function ProjectAdvisorStepper({ open, onClose }: ProjectAdvisorStepperPr
 
   if (previousRecommendation && showPreviousChoice) {
     return (
-      <div className={styles.overlay} onClick={handleClose}>
-        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.overlay} onClick={handleClose} role="presentation">
+        <div className={styles.modal} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Opciones de recomendación">
           <button
             className={styles.closeButton}
             onClick={handleClose}
@@ -376,8 +406,8 @@ export function ProjectAdvisorStepper({ open, onClose }: ProjectAdvisorStepperPr
   const progressPct = Math.min(((currentStepIndex + 1) / MAX_QUESTIONS) * 100, 100);
 
   return (
-    <div className={styles.overlay} onClick={handleClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.overlay} onClick={handleClose} role="presentation">
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Asistente de proyecto">
         <button
           className={styles.closeButton}
           onClick={handleClose}
@@ -393,22 +423,49 @@ export function ProjectAdvisorStepper({ open, onClose }: ProjectAdvisorStepperPr
 
         {isLoading && (
           <div className={styles.loadingOverlay}>
+            <div className={styles.loadingBgOrbs} aria-hidden="true" />
             <div className={styles.loadingContent}>
-              <div className={styles.loadingSpinner}>
-                <div className={styles.spinnerCircle} />
-                <div className={styles.spinnerCircle} />
-                <div className={styles.spinnerCircle} />
+              <div className={styles.loadingThinking}>
+                <div className={styles.thinkingRings}>
+                  <div className={styles.thinkingRing} />
+                  <div className={styles.thinkingRing} />
+                  <div className={styles.thinkingRing} />
+                </div>
+                <div className={styles.thinkingIcon}>
+                  <i className="fa-solid fa-wand-magic-sparkles" />
+                </div>
               </div>
+              <h3 className={styles.loadingTitle}>
+                Analizando tu proyecto
+              </h3>
               <p className={styles.loadingText}>
-                Analizando tu proyecto para encontrar el stack y enfoque más inteligentes…
+                Buscando el stack y enfoque más inteligentes para tu caso…
+              </p>
+              <div className={styles.loadingProgress}>
+                <div className={styles.loadingProgressBar} />
+              </div>
+              <p className={styles.loadingHint}>
+                Suele tardar entre 10 y 30 segundos
               </p>
               <div className={styles.loadingTip}>
-                <i
-                  className={`${loadingTips[currentTip].icon} ${styles.tipIcon}`}
-                />
-                <span className={styles.tipText}>
-                  {loadingTips[currentTip].text}
-                </span>
+                <div className={styles.loadingTipSteps}>
+                  {loadingTips.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`${styles.loadingTipStep} ${i === currentTip ? styles.loadingTipStepActive : ''}`}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                <div className={styles.loadingTipContent}>
+                  <i
+                    className={`${loadingTips[currentTip].icon} ${styles.tipIcon}`}
+                    aria-hidden="true"
+                  />
+                  <span className={styles.tipText}>
+                    {loadingTips[currentTip].text}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -520,13 +577,13 @@ export function ProjectAdvisorStepper({ open, onClose }: ProjectAdvisorStepperPr
                   );
                 })}
               </div>
-            ) : (
+            ) : currentQuestion ? (
               <div className={styles.errorMessage}>
                 <i className="fa-solid fa-exclamation-triangle" />
                 No se pudieron cargar opciones para esta pregunta. Intenta de nuevo o cierra el
                 asistente e inténtalo más tarde.
               </div>
-            )}
+            ) : null}
           </div>
           {error && (
             <div className={styles.errorMessage}>

@@ -10,6 +10,7 @@ import styles from './MobileMenu.module.css';
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  onAdvisorOpen?: () => void;
 }
 
 interface NavItem {
@@ -19,14 +20,21 @@ interface NavItem {
   description: string;
 }
 
-const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
+const MobileMenu = ({ isOpen, onClose, onAdvisorOpen }: MobileMenuProps) => {
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const { createLocalizedPath } = useLocale();
 
   const toggleLanguage = () => {
     setLanguage(language === 'es' ? 'en' : 'es');
-    onClose(); // Close mobile menu when language is switched
+    // Don't close menu on language switch - let user continue browsing
+  };
+
+  const handleAdvisorClick = () => {
+    if (onAdvisorOpen) {
+      onAdvisorOpen();
+    }
+    onClose();
   };
 
   const navItems: NavItem[] = [
@@ -198,6 +206,28 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                 </motion.div>
               ))}
             </nav>
+
+            {/* Advisor CTA Button */}
+            {onAdvisorOpen && (
+              <motion.div
+                className={styles.advisorCtaContainer}
+                variants={itemVariants}
+                custom={navItems.length}
+                initial="closed"
+                animate="open"
+              >
+                <button
+                  className={styles.advisorCtaButton}
+                  onClick={handleAdvisorClick}
+                  aria-label="Planear mi proyecto con IA"
+                >
+                  <span className={styles.advisorCtaIcon}>
+                    <i className="fa-solid fa-wand-magic-sparkles" />
+                  </span>
+                  <span className={styles.advisorCtaText}>Planear mi proyecto con IA</span>
+                </button>
+              </motion.div>
+            )}
 
             <div className={styles.switchers}>
               <div className={styles.themeSwitcher}>

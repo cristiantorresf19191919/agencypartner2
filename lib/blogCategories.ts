@@ -108,6 +108,15 @@ export const blogCategories: BlogCategory[] = [
         slug: "react-internals",
         topics: ["Fiber Architecture", "Reconciliation Algorithm", "Render & Commit Phases"],
       },
+      {
+        id: "react-best-practices",
+        title: "Vercel React Best Practices",
+        description: "45+ performance rules from Vercel: waterfalls, bundle size, server-side, client data, re-renders, rendering, JavaScript, and advanced patterns. Editable code with live preview.",
+        icon: "⚡",
+        color: "from-amber-500 to-orange-500",
+        slug: "react-best-practices",
+        topics: ["Eliminating Waterfalls", "Bundle Size", "Server-Side Performance", "Client Data Fetching", "Re-render Optimization", "Rendering", "JavaScript Performance", "Advanced Patterns"],
+      },
     ],
   },
   {

@@ -63,6 +63,7 @@ const Header = () => {
           />
         </div>
         <nav className={styles.nav}>
+          {/* Mobile Menu Toggle - Always visible on mobile */}
           <button
             className={`${styles.mobileMenuToggle} ${mobileMenuOpen ? styles.active : ''}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -73,6 +74,12 @@ const Header = () => {
             <span className={styles.hamburgerLine}></span>
           </button>
 
+          {/* Logo - Left side on desktop */}
+          <Link href={createLocalizedPath('/')} className={styles.logo}>
+            <i className="fas fa-code"></i> Optimus<strong>Agency</strong>
+          </Link>
+
+          {/* Navigation Links - Center on desktop */}
           <ul className={styles.navLinks}>
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -102,6 +109,7 @@ const Header = () => {
             ))}
           </ul>
 
+          {/* Header Actions - Right side on desktop */}
           <div className={styles.headerActions}>
             <button
               type="button"
@@ -133,10 +141,6 @@ const Header = () => {
               </span>
             </button>
           </div>
-
-          <Link href={createLocalizedPath('/')} className={styles.logo}>
-            <i className="fas fa-code"></i> Optimus<strong>Agency</strong>
-          </Link>
         </nav>
 
         <div className={styles.headerWaveContainer}>
@@ -179,7 +183,11 @@ const Header = () => {
         </div>
       </header>
 
-      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <MobileMenu 
+        isOpen={mobileMenuOpen} 
+        onClose={() => setMobileMenuOpen(false)}
+        onAdvisorOpen={() => setAdvisorOpen(true)}
+      />
       <ProjectAdvisorStepper open={advisorOpen} onClose={() => setAdvisorOpen(false)} />
     </>
   );

@@ -277,6 +277,47 @@
   }
 }
 
+.sectionDescriptionCollapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.descriptionWrapper {
+  flex-grow: 1;
+  margin-bottom: 0.5rem;
+}
+
+.descriptionWrapper .sectionDescription {
+  margin-bottom: 0.5rem;
+}
+
+.expandTextButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  color: rgb(139, 232, 249);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: color 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.expandTextButton:hover {
+  color: rgb(167, 243, 255);
+  text-decoration: underline;
+}
+
+.topicsSection {
+  margin-top: auto;
+}
+
 .topicsLabel {
   font-size: 0.8125rem;
   font-weight: 700;

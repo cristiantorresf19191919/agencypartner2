@@ -13,6 +13,20 @@ function BlogPageContent() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
+
+  const DESC_COLLAPSE_THRESHOLD = 110;
+
+  const toggleDesc = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpandedDescriptions((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const toggleCard = (cardId: string) => {
     setExpandedCards((prev) => {
@@ -101,9 +115,28 @@ function BlogPageContent() {
                 <Heading level={2} className={styles.sectionTitle}>
                   {category.title}
                 </Heading>
-                <Text className={styles.sectionDescription}>
-                  {category.description}
-                </Text>
+                <div className={styles.descriptionWrapper}>
+                  <Text
+                    className={`${styles.sectionDescription} ${
+                      !expandedDescriptions.has(category.id) && category.description.length > DESC_COLLAPSE_THRESHOLD
+                        ? styles.sectionDescriptionCollapsed
+                        : ""
+                    }`}
+                  >
+                    {category.description}
+                  </Text>
+                  {category.description.length > DESC_COLLAPSE_THRESHOLD && (
+                    <button
+                      type="button"
+                      onClick={(e) => toggleDesc(category.id, e)}
+                      className={styles.expandTextButton}
+                      aria-expanded={expandedDescriptions.has(category.id)}
+                      aria-label={expandedDescriptions.has(category.id) ? "Show less" : "Show more"}
+                    >
+                      {expandedDescriptions.has(category.id) ? "Show less" : "Show more"}
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="mt-auto">
                 <Text className={styles.topicsLabel}>

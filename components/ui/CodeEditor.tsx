@@ -21,6 +21,8 @@ interface CodeEditorProps {
   height?: string | number;
   className?: string;
   defaultFullscreen?: boolean;
+  /** When true, disables TS/JS semantic and syntax validation (e.g. for display-only snippets). Default true so blog and comparison editors don't show lint errors. Set false for runnable playgrounds. */
+  disableLinting?: boolean;
 }
 
 const REACT_UMD = `
@@ -38,6 +40,7 @@ export function CodeEditor({
   height = 420,
   className = "",
   defaultFullscreen = false,
+  disableLinting = true,
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
   const [isFullscreen, setIsFullscreen] = useState(defaultFullscreen);
@@ -111,8 +114,8 @@ export function CodeEditor({
       quickSuggestions: true,
       tabSize: 2,
       formatOnPaste: true,
-      formatOnType: true,
       readOnly,
+      formatOnType: true,
     }),
     [fontSize, readOnly]
   );
@@ -141,12 +144,12 @@ export function CodeEditor({
       };
       try {
         ${jsCode}
-        const __InternalApp = window.__APP__;
-        if (__InternalApp && window.React && window.ReactDOM) {
+        const App = window.__APP__;
+        if (App && window.React && window.ReactDOM) {
           const root = document.getElementById("root");
           const React = window.React;
           const ReactDOM = window.ReactDOM;
-          ReactDOM.createRoot(root).render(React.createElement(__InternalApp));
+          ReactDOM.createRoot(root).render(React.createElement(App));
         } else if (window.ReactDOM) {
           const root = document.getElementById("root");
           root.innerHTML = "<pre style='color:#e5edff;white-space:pre-wrap'>No default export named App was found. Console output is still captured.</pre>";
@@ -166,8 +169,101 @@ export function CodeEditor({
     setError(null);
     setLogs([]);
     try {
-      const wrapped = `${code}
+      // For React/TSX code, automatically detect and wrap exported components
+      let wrapped = code;
+      if (isReactLike) {
+        // Check if code already defines App or has default export
+        const hasApp = /\b(App|window\.__APP__)\s*[=:]/.test(code);
+        const hasDefaultExport = /export\s+default\s+/.test(code);
+        
+        if (!hasApp && !hasDefaultExport) {
+          // Try to find exported component names
+          const exportMatches = [
+            ...code.matchAll(/export\s+(?:const|function|class)\s+(\w+)/g),
+            ...code.matchAll(/export\s+{\s*(\w+)/g),
+          ];
+          
+          if (exportMatches.length > 0) {
+            // Get the first exported component name
+            const componentName = exportMatches[0][1];
+            
+            // Wrap code to capture exports and create App
+            wrapped = `${code}
+
+// Auto-generated preview wrapper
+(function() {
+  var _exports = typeof exports !== 'undefined' ? exports : {};
+  var Component = _exports.${componentName} || (typeof ${componentName} !== 'undefined' ? ${componentName} : null);
+  
+  var App = function App() {
+    try {
+      if (Component && typeof Component === 'function') {
+        return React.createElement(Component, {});
+      }
+      if (_exports.default) {
+        return React.createElement(_exports.default, {});
+      }
+      // Try any exported function
+      var keys = Object.keys(_exports);
+      for (var i = 0; i < keys.length; i++) {
+        var exp = _exports[keys[i]];
+        if (typeof exp === 'function') {
+          return React.createElement(exp, {});
+        }
+      }
+      return React.createElement('div', { style: { padding: '16px', color: '#e5edff' } }, 
+        'Component "${componentName}" code executed. Check console for output.'
+      );
+    } catch (err) {
+      return React.createElement('div', { 
+        style: { color: '#ef4444', padding: '16px' } 
+      }, String(err?.message || err));
+    }
+  };
+  
+  window.__APP__ = App;
+})();`;
+          } else {
+            // No exports found, create generic wrapper
+            wrapped = `${code}
+
+// Auto-generated preview wrapper
+(function() {
+  var _exports = typeof exports !== 'undefined' ? exports : {};
+  var App = function App() {
+    try {
+      if (_exports.default) {
+        return React.createElement(_exports.default, {});
+      }
+      var keys = Object.keys(_exports);
+      for (var i = 0; i < keys.length; i++) {
+        var exp = _exports[keys[i]];
+        if (typeof exp === 'function') {
+          return React.createElement(exp, {});
+        }
+      }
+      return React.createElement('div', { style: { padding: '16px', color: '#e5edff' } }, 
+        'Code executed. Check console for output.'
+      );
+    } catch (err) {
+      return React.createElement('div', { style: { color: '#ef4444', padding: '16px' } }, 
+        String(err?.message || err)
+      );
+    }
+  };
+  window.__APP__ = App;
+})();`;
+          }
+        } else {
+          // Has App or default export, use existing pattern
+          wrapped = `${code}
 ;window.__APP__ = typeof App !== "undefined" ? App : (typeof exports !== "undefined" ? exports.default : null);`;
+        }
+      } else {
+        // Non-React code
+        wrapped = `${code}
+;window.__APP__ = typeof App !== "undefined" ? App : (typeof exports !== "undefined" ? exports.default : null);`;
+      }
 
       const result = Babel.transform(wrapped, {
         presets: ["env", "react", "typescript"],
@@ -182,7 +278,7 @@ export function CodeEditor({
     } finally {
       setIsRunning(false);
     }
-  }, [code, isKotlin, isRunnable]);
+  }, [code, isKotlin, isRunnable, isReactLike]);
 
   const handleReset = useCallback(() => {
     setCode(initialCode);
@@ -207,28 +303,47 @@ export function CodeEditor({
     return () => window.removeEventListener("keydown", handler);
   }, [isRunnable, isKotlin, runCode, isFullscreen]);
 
-  const handleEditorMount = useCallback((editor: any, monaco: any) => {
-    editor.focus();
-    monaco.editor.setTheme("vs-dark");
-    monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
-    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
-      noSyntaxValidation: false,
-      diagnosticCodesToIgnore: [1375],
-    });
-    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      target: monaco.languages.typescript.ScriptTarget.ES2020,
-      allowNonTsExtensions: true,
-      allowJs: true,
-      module: monaco.languages.typescript.ModuleKind.ESNext,
-      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-      jsx: monaco.languages.typescript.JsxEmit.React,
-    });
-  }, []);
+  const handleEditorMount = useCallback(
+    (_editor: any, monaco: any) => {
+      // Avoid editor.focus() on mount: it causes the page to scroll to the focused
+      // editor. Blog posts have many CodeEditors; the last one to mount would
+      // scroll the page to the bottom. Users can click into an editor to focus it.
+      monaco.editor.setTheme("vs-dark");
+      monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+      const isTsOrJs =
+        isReactLike ||
+        normalizedLang === "typescript" ||
+        normalizedLang === "javascript";
+      if (isTsOrJs) {
+        const noValidation = disableLinting || !isRunnable;
+        monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+          noSemanticValidation: noValidation,
+          noSyntaxValidation: noValidation,
+          diagnosticCodesToIgnore: [1375],
+        });
+        if (monaco.languages.typescript.javascriptDefaults) {
+          monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+            noSemanticValidation: noValidation,
+            noSyntaxValidation: noValidation,
+            diagnosticCodesToIgnore: [1375],
+          });
+        }
+      }
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        target: monaco.languages.typescript.ScriptTarget.ES2020,
+        allowNonTsExtensions: true,
+        allowJs: true,
+        module: monaco.languages.typescript.ModuleKind.ESNext,
+        moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        jsx: monaco.languages.typescript.JsxEmit.React,
+      });
+    },
+    [disableLinting, isRunnable, isReactLike, normalizedLang]
+  );
 
   const editorSection = (
-    <div className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2 bg-white/5 border-b border-white/10">
+    <div className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden" style={{ display: 'flex', flexDirection: 'column', minHeight: height === "auto" ? 400 : typeof height === 'number' ? height : 400 }}>
+      <div className="flex items-center justify-between px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
           <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_6px_rgba(16,185,129,0.2)]"></span>
           {language}
@@ -278,34 +393,38 @@ export function CodeEditor({
         </div>
       </div>
 
-      {isKotlin ? (
-        <div className="p-3 bg-[#0b1020] text-slate-100 overflow-auto">
-          <pre
-            className="kotlin-playground"
-            data-target-platform="js"
-            data-auto-indent="true"
-            data-theme="darcula"
-            data-readonly={readOnly ? "true" : "false"}
-          >
+      <div className="flex-1 min-h-0" style={{ display: 'flex', flexDirection: 'column' }}>
+        {isKotlin ? (
+          <div className="p-3 bg-[#0b1020] text-slate-100 overflow-auto flex-1">
+            <pre
+              className="kotlin-playground"
+              data-target-platform="js"
+              data-auto-indent="true"
+              data-theme="darcula"
+              data-readonly={readOnly ? "true" : "false"}
+            >
 {code}
-          </pre>
-        </div>
-      ) : (
-        <MonacoEditor
-          height={height}
-          language={isReactLike ? "typescript" : language}
-          path="App.tsx"
-          value={code}
-          onChange={(value) => {
-            const next = value || "";
-            setCode(next);
-            if (onChange) onChange(next);
-          }}
-          options={editorOptions}
-          onMount={handleEditorMount}
-          theme="vs-dark"
-        />
-      )}
+            </pre>
+          </div>
+        ) : (
+          <div className="flex-1" style={{ minHeight: 300 }}>
+            <MonacoEditor
+              height={height === "auto" ? 400 : height}
+              language={isReactLike ? "typescript" : language}
+              path="App.tsx"
+              value={code}
+              onChange={(value) => {
+                const next = value || "";
+                setCode(next);
+                if (onChange) onChange(next);
+              }}
+              options={editorOptions}
+              onMount={handleEditorMount}
+              theme="vs-dark"
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 

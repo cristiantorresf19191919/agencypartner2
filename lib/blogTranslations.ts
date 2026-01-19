@@ -136,6 +136,18 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'Edge Computing',
     },
   },
+  'react-best-practices': {
+    es: {
+      title: 'Vercel React Best Practices',
+      subtitle: 'Guía de optimización de rendimiento para React y Next.js: 45+ reglas en 8 categorías (waterfalls, bundle, servidor, cliente, re-renders, rendering, JavaScript, patrones avanzados). Ejemplos de código editables con vista previa en vivo.',
+      breadcrumbLabel: 'React Best Practices',
+    },
+    en: {
+      title: 'Vercel React Best Practices',
+      subtitle: 'Comprehensive performance optimization guide for React and Next.js from Vercel Engineering. 45+ rules across 8 categories: eliminating waterfalls, bundle size, server-side, client data fetching, re-renders, rendering, JavaScript micro-optimizations, and advanced patterns. Editable code examples with live preview.',
+      breadcrumbLabel: 'React Best Practices',
+    },
+  },
 };
 
 /**

@@ -87,7 +87,11 @@ function DocSidebar() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash.replace("#", "");
-      if (hash) setActiveId(hash);
+      if (hash) {
+        setActiveId(hash);
+        // Don't auto-scroll on page load - let the browser handle it naturally
+        // Only set the activeId for highlighting purposes
+      }
     }
   }, []);
 
@@ -516,8 +520,15 @@ function DocSidebar() {
     const newExpanded = new Set<string>();
     navigation.forEach((section, idx) => {
       const hasActiveItem = section.items.some((item) => {
-        const isCurrentPage = pathname.includes(item.href.split("#")[0]);
-        return isCurrentPage;
+        // Get the base path without hash
+        const itemBasePath = item.href.split("#")[0];
+        // Normalize paths for comparison (remove leading/trailing slashes)
+        const normalizedItemPath = itemBasePath.replace(/^\/+|\/+$/g, '');
+        const normalizedPathname = pathname.replace(/^\/+|\/+$/g, '');
+        // Check if pathname exactly matches or starts with the item path
+        // This prevents false matches (e.g., /blog/composition matching /blog/nextjs-best-practices)
+        return normalizedPathname === normalizedItemPath || 
+               normalizedPathname.startsWith(normalizedItemPath + '/');
       });
       if (hasActiveItem || section.defaultOpen) {
         newExpanded.add(`section-${idx}`);
@@ -622,7 +633,11 @@ function DocSidebar() {
             const isExpanded = expandedSections.has(sectionKey);
             const sectionTitle = t(section.titleKey) !== section.titleKey ? t(section.titleKey) : section.titleKey;
             const hasActiveItem = section.items.some((item) => {
-              const isCurrentPage = pathname.includes(item.href.split("#")[0]);
+              const itemBasePath = item.href.split("#")[0];
+              const normalizedItemPath = itemBasePath.replace(/^\/+|\/+$/g, '');
+              const normalizedPathname = pathname.replace(/^\/+|\/+$/g, '');
+              const isCurrentPage = normalizedPathname === normalizedItemPath || 
+                                    normalizedPathname.startsWith(normalizedItemPath + '/');
               const isActive = activeId === item.id;
               return isCurrentPage && isActive;
             });
@@ -688,19 +703,19 @@ function DocSidebar() {
                           </Typography>
                         }
                       />
-            <motion.div
+                      <motion.div
               animate={{ rotate: isExpanded ? 90 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
+                        transition={{ duration: 0.2 }}
+                      >
               <ChevronRightIcon
-                sx={{
-                  color: hasActiveItem
-                    ? section.color || "#61DAFB"
-                    : alpha("#ffffff", 0.5),
-                  fontSize: 20,
-                }}
-              />
-            </motion.div>
+                          sx={{
+                            color: hasActiveItem
+                              ? section.color || "#61DAFB"
+                              : alpha("#ffffff", 0.5),
+                            fontSize: 20,
+                          }}
+                        />
+                      </motion.div>
                     </>
                   )}
                 </ListItemButton>
@@ -710,7 +725,11 @@ function DocSidebar() {
                   <List component="div" disablePadding sx={{ pb: 1 }}>
                     {section.items.map((item, itemIdx) => {
                       const isActive = activeId === item.id;
-                      const isCurrentPage = pathname.includes(item.href.split("#")[0]);
+                      const itemBasePath = item.href.split("#")[0];
+                      const normalizedItemPath = itemBasePath.replace(/^\/+|\/+$/g, '');
+                      const normalizedPathname = pathname.replace(/^\/+|\/+$/g, '');
+                      const isCurrentPage = normalizedPathname === normalizedItemPath || 
+                                            normalizedPathname.startsWith(normalizedItemPath + '/');
                       const isItemActive = isCurrentPage && isActive;
 
                       return (
