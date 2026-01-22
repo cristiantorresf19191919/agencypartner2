@@ -385,6 +385,16 @@ export const blogCategories: BlogCategory[] = [
         slug: "refactoring-guru",
         topics: ["Refused Bequest", "Code Smells", "Refactoring Techniques", "Object-Orientation Abusers", "Inheritance Patterns"],
       },
+    ],
+  },
+  {
+    id: "ai-llms",
+    title: "AI & LLMs",
+    description: "Explore artificial intelligence and Large Language Models. Learn about Transformer architecture, attention mechanisms, training, and how these systems intelligently generate text.",
+    icon: "🤖",
+    color: "from-indigo-500 to-purple-500",
+    slug: "ai-llms",
+    posts: [
       {
         id: "how-llms-work",
         title: "How LLMs Work: Behind the Scenes",

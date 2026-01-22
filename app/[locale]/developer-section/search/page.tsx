@@ -24,6 +24,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import { getSearchIndex, searchItems, type SearchItem } from "@/lib/searchIndex";
+import { normalizeColorForMUI } from "@/lib/utils";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import SearchBar from "@/components/Search/SearchBar";
 import styles from "./SearchResults.module.css";
@@ -216,77 +217,80 @@ function SearchResultsContent() {
                 </Box>
 
                 <div className={styles.resultsGrid}>
-                  {items.map((item, idx) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: (groupIdx * 0.1) + (idx * 0.05) }}
-                    >
-                      <Link
-                        href={createLocalizedPath(item.href)}
-                        style={{ textDecoration: "none" }}
+                  {items.map((item, idx) => {
+                    const normalizedColor = normalizeColorForMUI(item.color);
+                    return (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: (groupIdx * 0.1) + (idx * 0.05) }}
                       >
-                        <Card
-                          className={styles.resultCard}
-                          sx={{
-                            bgcolor: alpha("#1a1a2e", 0.6),
-                            border: `1px solid ${alpha(item.color || "#a06af9", 0.3)}`,
-                            backdropFilter: "blur(10px)",
-                            transition: "all 0.3s ease",
-                            cursor: "pointer",
-                            "&:hover": {
-                              transform: "translateY(-4px)",
-                              borderColor: item.color || "#a06af9",
-                              bgcolor: alpha("#1a1a2e", 0.8),
-                              boxShadow: `0 8px 24px ${alpha(item.color || "#a06af9", 0.3)}`,
-                            },
-                          }}
+                        <Link
+                          href={createLocalizedPath(item.href)}
+                          style={{ textDecoration: "none" }}
                         >
-                          <CardContent sx={{ p: 2.5 }}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                mb: 1.5,
-                              }}
-                            >
+                          <Card
+                            className={styles.resultCard}
+                            sx={{
+                              bgcolor: alpha("#1a1a2e", 0.6),
+                              border: `1px solid ${alpha(normalizedColor, 0.3)}`,
+                              backdropFilter: "blur(10px)",
+                              transition: "all 0.3s ease",
+                              cursor: "pointer",
+                              "&:hover": {
+                                transform: "translateY(-4px)",
+                                borderColor: normalizedColor,
+                                bgcolor: alpha("#1a1a2e", 0.8),
+                                boxShadow: `0 8px 24px ${alpha(normalizedColor, 0.3)}`,
+                              },
+                            }}
+                          >
+                            <CardContent sx={{ p: 2.5 }}>
                               <Box
                                 sx={{
-                                  width: 8,
-                                  height: 8,
-                                  borderRadius: "50%",
-                                  bgcolor: item.color || "#a06af9",
-                                  mr: 1.5,
-                                  boxShadow: `0 0 8px ${alpha(item.color || "#a06af9", 0.5)}`,
-                                }}
-                              />
-                              <Typography
-                                variant="h6"
-                                sx={{
-                                  fontWeight: 600,
-                                  color: "#ffffff",
-                                  fontSize: "1rem",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  mb: 1.5,
                                 }}
                               >
-                                {item.title}
+                                <Box
+                                  sx={{
+                                    width: 8,
+                                    height: 8,
+                                    borderRadius: "50%",
+                                    bgcolor: normalizedColor,
+                                    mr: 1.5,
+                                    boxShadow: `0 0 8px ${alpha(normalizedColor, 0.5)}`,
+                                  }}
+                                />
+                                <Typography
+                                  variant="h6"
+                                  sx={{
+                                    fontWeight: 600,
+                                    color: "#ffffff",
+                                    fontSize: "1rem",
+                                  }}
+                                >
+                                  {item.title}
+                                </Typography>
+                              </Box>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: "rgba(255, 255, 255, 0.6)",
+                                  fontSize: "0.85rem",
+                                  mt: 1,
+                                }}
+                              >
+                                {item.section}
                               </Typography>
-                            </Box>
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                color: "rgba(255, 255, 255, 0.6)",
-                                fontSize: "0.85rem",
-                                mt: 1,
-                              }}
-                            >
-                              {item.section}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    </motion.div>
-                  ))}
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </motion.div>
             ))}
