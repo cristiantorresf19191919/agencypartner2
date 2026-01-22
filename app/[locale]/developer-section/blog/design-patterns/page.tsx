@@ -67,32 +67,28 @@ export default function DesignPatternsPage() {
           <ButtonLink 
             href="#creational" 
             variant="secondary" 
-            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
-            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20 text-sm"
           >
             {t("design-patterns-creational-title")}
           </ButtonLink>
           <ButtonLink 
             href="#structural" 
             variant="secondary" 
-            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
-            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20 text-sm"
           >
             {t("design-patterns-structural-title")}
           </ButtonLink>
           <ButtonLink 
             href="#behavioral" 
             variant="secondary" 
-            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
-            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20 text-sm"
           >
             {t("design-patterns-behavioral-title")}
           </ButtonLink>
           <ButtonLink 
             href="#react-patterns" 
             variant="secondary" 
-            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
-            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20 text-sm"
           >
             React Patterns
           </ButtonLink>

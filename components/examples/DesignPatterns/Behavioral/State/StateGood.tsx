@@ -199,7 +199,7 @@ const DocumentComponent: React.FC = () => {
 // ✅ Alternative: Using React useReducer with state machine pattern
 type DocumentStateType = "draft" | "moderation" | "published";
 
-interface DocumentState {
+interface DocumentStateData {
   state: DocumentStateType;
   content: string;
 }
@@ -209,9 +209,9 @@ type DocumentActionType =
   | { type: "RESET" };
 
 const documentStateMachineReducer = (
-  state: DocumentState,
+  state: DocumentStateData,
   action: DocumentActionType
-): DocumentState => {
+): DocumentStateData => {
   switch (state.state) {
     case "draft":
       if (action.type === "PUBLISH") {
@@ -241,7 +241,7 @@ const useDocumentStateMachine = (initialContent: string) => {
   const [state, dispatch] = useReducer(documentStateMachineReducer, {
     state: "draft" as DocumentStateType,
     content: initialContent,
-  });
+  } as DocumentStateData);
 
   const publish = useCallback(
     (user: { isAdmin: boolean }) => {

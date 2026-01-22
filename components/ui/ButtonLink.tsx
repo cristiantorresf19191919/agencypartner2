@@ -8,6 +8,8 @@ interface ButtonLinkProps {
   variant?: "primary" | "secondary" | "outline" | "nav";
   children: React.ReactNode;
   className?: string;
+  target?: string;
+  rel?: string;
 }
 
 export function ButtonLink({
@@ -15,6 +17,8 @@ export function ButtonLink({
   variant = "primary",
   children,
   className = "",
+  target,
+  rel,
 }: ButtonLinkProps) {
   const baseClasses = "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-300 ease-out";
   const variantClasses = {
@@ -25,7 +29,7 @@ export function ButtonLink({
   };
 
   return (
-    <Link href={href} className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
+    <Link href={href} className={`${baseClasses} ${variantClasses[variant]} ${className}`} target={target} rel={rel}>
       {children}
     </Link>
   );
