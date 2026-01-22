@@ -1,122 +1,161 @@
 // ✅ The Good Way (State Pattern)
-// Encapsulate state-specific behavior in separate classes
+// State is a behavioral design pattern that lets an object alter its behavior 
+// when its internal state changes. It appears as if the object changed its class.
 
-// ✅ State interface
-interface VendingMachineState {
-    void insertMoney(int amount);
-    void selectProduct(String product);
-    void cancel();
+// ✅ State interface - declares state-specific methods
+interface DocumentState {
+    void publish(User user);
+    void render();
 }
 
-// ✅ Concrete states
-class IdleState implements VendingMachineState {
-    private VendingMachine machine;
+// ✅ Concrete State: Draft
+// In Draft state, publish moves document to moderation
+class DraftState implements DocumentState {
+    private Document document;
     
-    public IdleState(VendingMachine machine) {
-        this.machine = machine;
+    public DraftState(Document document) {
+        this.document = document;
     }
     
-    public void insertMoney(int amount) {
-        System.out.println("Money inserted: $" + amount);
-        machine.setMoney(amount);
-        machine.setState(machine.getHasMoneyState());
+    @Override
+    public void publish(User user) {
+        System.out.println("Moving document from Draft to Moderation");
+        document.changeState(document.getModerationState());
     }
     
-    public void selectProduct(String product) {
-        System.out.println("Please insert money first");
-    }
-    
-    public void cancel() {
-        System.out.println("No transaction to cancel");
+    @Override
+    public void render() {
+        System.out.println("Rendering document in Draft state (editable)");
     }
 }
 
-class HasMoneyState implements VendingMachineState {
-    private VendingMachine machine;
+// ✅ Concrete State: Moderation
+// In Moderation state, publish makes document public only if user is admin
+class ModerationState implements DocumentState {
+    private Document document;
     
-    public HasMoneyState(VendingMachine machine) {
-        this.machine = machine;
+    public ModerationState(Document document) {
+        this.document = document;
     }
     
-    public void insertMoney(int amount) {
-        System.out.println("Money already inserted");
-    }
-    
-    public void selectProduct(String product) {
-        if (machine.getMoney() >= 10) {
-            System.out.println("Dispensing " + product);
-            machine.setMoney(0);
-            machine.setState(machine.getIdleState());
+    @Override
+    public void publish(User user) {
+        if (user.isAdmin()) {
+            System.out.println("Publishing document (admin approved)");
+            document.changeState(document.getPublishedState());
         } else {
-            System.out.println("Insufficient funds");
+            System.out.println("Only administrators can publish from Moderation");
         }
     }
     
-    public void cancel() {
-        System.out.println("Returning $" + machine.getMoney());
-        machine.setMoney(0);
-        machine.setState(machine.getIdleState());
+    @Override
+    public void render() {
+        System.out.println("Rendering document in Moderation state (pending review)");
     }
 }
 
-// ✅ Context class
-class VendingMachine {
-    private VendingMachineState idleState;
-    private VendingMachineState hasMoneyState;
-    private VendingMachineState currentState;
-    private int money;
+// ✅ Concrete State: Published
+// In Published state, publish does nothing
+class PublishedState implements DocumentState {
+    private Document document;
     
-    public VendingMachine() {
-        this.idleState = new IdleState(this);
-        this.hasMoneyState = new HasMoneyState(this);
-        this.currentState = idleState;
-        this.money = 0;
+    public PublishedState(Document document) {
+        this.document = document;
     }
     
-    public void setState(VendingMachineState state) {
+    @Override
+    public void publish(User user) {
+        // Published documents don't need republishing
+        System.out.println("Document is already published");
+    }
+    
+    @Override
+    public void render() {
+        System.out.println("Rendering document in Published state (read-only)");
+    }
+}
+
+// ✅ Context class - stores reference to current state object
+class Document {
+    private DocumentState draftState;
+    private DocumentState moderationState;
+    private DocumentState publishedState;
+    private DocumentState currentState;
+    private String content;
+    
+    public Document(String content) {
+        this.content = content;
+        this.draftState = new DraftState(this);
+        this.moderationState = new ModerationState(this);
+        this.publishedState = new PublishedState(this);
+        this.currentState = draftState; // Start in draft state
+    }
+    
+    // Method to change state
+    public void changeState(DocumentState state) {
         this.currentState = state;
     }
     
-    public VendingMachineState getIdleState() {
-        return idleState;
+    // Getters for states
+    public DocumentState getDraftState() {
+        return draftState;
     }
     
-    public VendingMachineState getHasMoneyState() {
-        return hasMoneyState;
+    public DocumentState getModerationState() {
+        return moderationState;
     }
     
-    public void setMoney(int money) {
-        this.money = money;
+    public DocumentState getPublishedState() {
+        return publishedState;
     }
     
-    public int getMoney() {
-        return money;
+    // Delegate state-specific behavior to current state
+    public void publish(User user) {
+        currentState.publish(user);
     }
     
-    // Delegate to current state
-    public void insertMoney(int amount) {
-        currentState.insertMoney(amount);
+    public void render() {
+        currentState.render();
     }
     
-    public void selectProduct(String product) {
-        currentState.selectProduct(product);
-    }
-    
-    public void cancel() {
-        currentState.cancel();
+    public String getContent() {
+        return content;
     }
 }
 
-// Usage
+// Helper class for user roles
+class User {
+    private String role;
+    
+    public User(String role) {
+        this.role = role;
+    }
+    
+    public boolean isAdmin() {
+        return "admin".equals(role);
+    }
+}
+
+// Usage example
 class App {
     public static void main(String[] args) {
-        VendingMachine machine = new VendingMachine();
+        Document doc = new Document("My Article");
+        User admin = new User("admin");
+        User editor = new User("editor");
         
-        machine.selectProduct("Coke"); // Please insert money first
-        machine.insertMoney(10);      // Money inserted: $10
-        machine.selectProduct("Coke"); // Dispensing Coke
-        machine.insertMoney(5);       // Money inserted: $5
-        machine.cancel();              // Returning $5
+        // Document starts in Draft state
+        doc.render(); // Rendering document in Draft state (editable)
+        
+        // Publish from Draft moves to Moderation
+        doc.publish(editor); // Moving document from Draft to Moderation
+        doc.render(); // Rendering document in Moderation state (pending review)
+        
+        // Only admin can publish from Moderation
+        doc.publish(editor); // Only administrators can publish from Moderation
+        doc.publish(admin); // Publishing document (admin approved)
+        doc.render(); // Rendering document in Published state (read-only)
+        
+        // Published documents can't be republished
+        doc.publish(admin); // Document is already published
     }
 }
-

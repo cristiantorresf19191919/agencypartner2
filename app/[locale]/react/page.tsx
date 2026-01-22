@@ -157,6 +157,8 @@ export default function ReactLessonsPage() {
                   readOnly={false}
                   height={280}
                   disableLinting={false}
+                  autoInjectImports={true}
+                  enableMultiFile={true}
                 />
               </Stack>
             </Card>

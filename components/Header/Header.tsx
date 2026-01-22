@@ -91,7 +91,7 @@ const Header = () => {
                       e.preventDefault();
                       const target = document.querySelector(link.href);
                       if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
+                        target.scrollIntoView({ behavior: 'auto' });
                       }
                     }}
                   >

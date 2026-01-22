@@ -438,12 +438,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Smooth scrolling
+  // Instant scrolling (no smooth behavior)
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', e => {
       e.preventDefault();
       document.querySelector(anchor.getAttribute('href'))
-        .scrollIntoView({ behavior: 'smooth' });
+        .scrollIntoView({ behavior: 'auto' });
     });
   });
 
@@ -693,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Enhanced Navigation with smooth scrolling
+    // Enhanced Navigation with instant scrolling
     const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -708,7 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 window.scrollTo({
                     top: targetPosition,
-                    behavior: 'smooth'
+                    behavior: 'auto'
                 });
             }
         });

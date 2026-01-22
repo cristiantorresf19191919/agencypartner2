@@ -52,7 +52,439 @@ export default function DesignPatternsPage() {
           </div>
         </div>
 
+        {/* Navigation Menu */}
+        <div style={{ 
+          display: "flex", 
+          flexWrap: "wrap", 
+          gap: "0.75rem", 
+          marginTop: "2rem", 
+          marginBottom: "3rem",
+          padding: "1.5rem",
+          backgroundColor: "rgba(255,255,255,0.05)",
+          borderRadius: "0.75rem",
+          border: "1px solid rgba(255, 255, 255, 0.1)"
+        }}>
+          <ButtonLink 
+            href="#creational" 
+            variant="secondary" 
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
+            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+          >
+            {t("design-patterns-creational-title")}
+          </ButtonLink>
+          <ButtonLink 
+            href="#structural" 
+            variant="secondary" 
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
+            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+          >
+            {t("design-patterns-structural-title")}
+          </ButtonLink>
+          <ButtonLink 
+            href="#behavioral" 
+            variant="secondary" 
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
+            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+          >
+            {t("design-patterns-behavioral-title")}
+          </ButtonLink>
+          <ButtonLink 
+            href="#react-patterns" 
+            variant="secondary" 
+            className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
+            style={{ fontSize: "0.875rem", padding: "0.5rem 1rem" }}
+          >
+            React Patterns
+          </ButtonLink>
+        </div>
+
+        <h2 id="structural" className={styles.categoryTitle}>{t("design-patterns-structural-title")}</h2>
+        <Text style={{ marginBottom: "2rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+          Structural design patterns explain how to assemble objects and classes into larger structures, while keeping these structures flexible and efficient.
+        </Text>
+
+        {/* Pattern Overview Cards */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "2rem", marginBottom: "3rem" }}>
+          {/* Adapter card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/adapter-mini.png?id=b2ee4f681fb589be5a0685b94692aebb"
+              alt="Adapter icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Adapter</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Allows objects with incompatible interfaces to collaborate.
+            </Text>
+          </div>
+          {/* Bridge card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/bridge-mini.png?id=b389101d8ee8e23ffa1b534c704d0774"
+              alt="Bridge icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Bridge</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you split a large class or a set of closely related classes into two separate hierarchies—abstraction and implementation—which can be developed independently of each other.
+            </Text>
+          </div>
+          {/* Composite card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/composite-mini.png?id=a369d98d18b417f255d04568fd0131b8"
+              alt="Composite icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Composite</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you compose objects into tree structures and then work with these structures as if they were individual objects.
+            </Text>
+          </div>
+          {/* Decorator card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/decorator-mini.png?id=d30458908e315af195cb183bc52dbef9"
+              alt="Decorator icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Decorator</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you attach new behaviors to objects by placing these objects inside special wrapper objects that contain the behaviors.
+            </Text>
+          </div>
+          {/* Facade card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/facade-mini.png?id=71ad6fa98b168c11cb3a1a9517dedf78"
+              alt="Facade icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Facade</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Provides a simplified interface to a library, a framework, or any other complex set of classes.
+            </Text>
+          </div>
+          {/* Flyweight card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/flyweight-mini.png?id=422ca8d2f90614dce810a8812c626698"
+              alt="Flyweight icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Flyweight</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you fit more objects into the available amount of RAM by sharing common parts of state between multiple objects instead of keeping all of the data in each object.
+            </Text>
+          </div>
+          {/* Proxy card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/proxy-mini.png?id=25890b11e7dc5af29625ccd0678b63a8"
+              alt="Proxy icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Proxy</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you provide a substitute or placeholder for another object. A proxy controls access to the original object, allowing you to perform something either before or after the request gets through to the original object.
+            </Text>
+          </div>
+        </div>
+
+        <h2 id="behavioral" className={styles.categoryTitle}>{t("design-patterns-behavioral-title")}</h2>
+        <Text style={{ marginBottom: "2rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+          Behavioral design patterns are concerned with algorithms and the assignment of responsibilities between objects.
+        </Text>
+
+        {/* Pattern Overview Cards */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "2rem", marginBottom: "3rem" }}>
+          {/* Chain of Responsibility card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/chain-of-responsibility-mini.png?id=36d85eba8d14986f053123de17aac7a7"
+              alt="Chain of Responsibility icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Chain of Responsibility</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you pass requests along a chain of handlers. Upon receiving a request, each handler decides either to process the request or to pass it to the next handler in the chain.
+            </Text>
+          </div>
+          {/* Command card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/command-mini.png?id=b149eda017c0583c1e92343b83cfb1eb"
+              alt="Command icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Command</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Turns a request into a stand-alone object that contains all information about the request. This transformation lets you pass requests as a method arguments, delay or queue a request's execution, and support undoable operations.
+            </Text>
+          </div>
+          {/* Iterator card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/iterator-mini.png?id=76c28bb48f997b36965983dd2b41f02e"
+              alt="Iterator icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Iterator</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you traverse elements of a collection without exposing its underlying representation (list, stack, tree, etc.).
+            </Text>
+          </div>
+          {/* Mediator card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/mediator-mini.png?id=a7e43ee8e17e4474737b1fcb3201d7ba"
+              alt="Mediator icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Mediator</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you reduce chaotic dependencies between objects. The pattern restricts direct communications between the objects and forces them to collaborate only via a mediator object.
+            </Text>
+          </div>
+          {/* Memento card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/memento-mini.png?id=8b2ea4dc2c5d15775a654808cc9de099"
+              alt="Memento icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Memento</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you save and restore the previous state of an object without revealing the details of its implementation.
+            </Text>
+          </div>
+          {/* Observer card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/observer-mini.png?id=fd2081ab1cff29c60b499bcf6a62786a"
+              alt="Observer icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Observer</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you define a subscription mechanism to notify multiple objects about any events that happen to the object they're observing.
+            </Text>
+          </div>
+          {/* State card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/state-mini.png?id=f4018837e0641d1dade756b6678fd4ee"
+              alt="State icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>State</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets an object alter its behavior when its internal state changes. It appears as if the object changed its class.
+            </Text>
+          </div>
+          {/* Strategy card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/strategy-mini.png?id=d38abee4fb6f2aed909d262bdadca936"
+              alt="Strategy icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Strategy</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you define a family of algorithms, put each of them into a separate class, and make their objects interchangeable.
+            </Text>
+          </div>
+          {/* Template Method card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/template-method-mini.png?id=9f200248d88026d8e79d0f3dae411ab4"
+              alt="Template Method icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Template Method</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Defines the skeleton of an algorithm in the superclass but lets subclasses override specific steps of the algorithm without changing its structure.
+            </Text>
+          </div>
+          {/* Visitor card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/visitor-mini.png?id=854a35a62963bec1d75eab996918989b"
+              alt="Visitor icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Visitor</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you separate algorithms from the objects on which they operate.
+            </Text>
+          </div>
+        </div>
+
+        <h2 id="react-patterns" className={styles.categoryTitle}>React Patterns</h2>
+
+        {/* Pattern Overview Cards */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "2rem", marginBottom: "3rem" }}>
+          {/* Composition Pattern card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <div style={{ width: "48px", height: "48px", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(99, 102, 241, 0.2)", borderRadius: "0.5rem" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="rgb(99, 102, 241)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="rgb(99, 102, 241)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="rgb(99, 102, 241)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Composition Pattern</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Build flexible and reusable components by combining smaller components together, avoiding inheritance and prop drilling.
+            </Text>
+          </div>
+          {/* Compound Components card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <div style={{ width: "48px", height: "48px", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(168, 85, 247, 0.2)", borderRadius: "0.5rem" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 6H16M8 12H16M8 18H16" stroke="rgb(168, 85, 247)" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="4" cy="6" r="1" fill="rgb(168, 85, 247)"/>
+                <circle cx="4" cy="12" r="1" fill="rgb(168, 85, 247)"/>
+                <circle cx="4" cy="18" r="1" fill="rgb(168, 85, 247)"/>
+              </svg>
+            </div>
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Compound Components</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Multiple related components that work together and share implicit state through Context for maximum flexibility.
+            </Text>
+          </div>
+          {/* Custom Hooks card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <div style={{ width: "48px", height: "48px", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(34, 197, 94, 0.2)", borderRadius: "0.5rem" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 18L15 12L9 6" stroke="rgb(34, 197, 94)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="12" r="10" stroke="rgb(34, 197, 94)" strokeWidth="2" fill="none"/>
+              </svg>
+            </div>
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Custom Hooks</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Extract component logic into reusable functions that can share stateful logic between components.
+            </Text>
+          </div>
+          {/* Higher-Order Components card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <div style={{ width: "48px", height: "48px", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(249, 115, 22, 0.2)", borderRadius: "0.5rem" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="rgb(249, 115, 22)" strokeWidth="2"/>
+                <path d="M9 3V21M15 3V21" stroke="rgb(249, 115, 22)" strokeWidth="2"/>
+                <path d="M3 9H21M3 15H21" stroke="rgb(249, 115, 22)" strokeWidth="2"/>
+              </svg>
+            </div>
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Higher-Order Components</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Functions that take a component and return a new component with additional props or behavior for code reuse.
+            </Text>
+          </div>
+          {/* Render Props card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <div style={{ width: "48px", height: "48px", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(236, 72, 153, 0.2)", borderRadius: "0.5rem" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="rgb(236, 72, 153)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="rgb(236, 72, 153)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="rgb(236, 72, 153)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Render Props</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Pass functions as props that return JSX, giving parent components full control over rendering while managing state.
+            </Text>
+          </div>
+        </div>
+
         <h2 id="creational" className={styles.categoryTitle}>{t("design-patterns-creational-title")}</h2>
+
+        {/* Pattern Overview Cards */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "2rem", marginBottom: "3rem" }}>
+          {/* Factory Method card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/factory-method-mini.png?id=72619e9527893374b98a5913779ac167"
+              alt="Factory Method icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Factory Method</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Provides an interface for creating objects in a superclass, but allows subclasses to alter
+              the type of objects that will be created.
+            </Text>
+          </div>
+          {/* Abstract Factory card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/abstract-factory-mini.png?id=4c3927c446313a38ce77dfee38111e27"
+              alt="Abstract Factory icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Abstract Factory</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you produce families of related objects without specifying their concrete classes.
+            </Text>
+          </div>
+          {/* Builder card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/builder-mini.png?id=19b95fd05e6469679752c0554b116815"
+              alt="Builder icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Builder</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you construct complex objects step by step and produce different types and
+              representations using the same construction code.
+            </Text>
+          </div>
+          {/* Prototype card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/prototype-mini.png?id=bc3046bb39ff36574c08d49839fd1c8e"
+              alt="Prototype icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Prototype</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Lets you copy existing objects without making your code dependent on their classes.
+            </Text>
+          </div>
+          {/* Singleton card */}
+          <div style={{ flex: "1 1 200px", backgroundColor: "rgba(255,255,255,0.05)", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <img
+              src="https://refactoring.guru/images/patterns/cards/singleton-mini.png?id=914e1565dfdf15f240e766163bd303ec"
+              alt="Singleton icon"
+              style={{ width: "48px", height: "48px", marginBottom: "0.75rem" }}
+              loading="lazy"
+            />
+            <Heading level={3} style={{ marginTop: "0.5rem", marginBottom: "0.5rem", fontSize: "1.125rem" }}>Singleton</Heading>
+            <Text style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(255, 255, 255, 0.8)" }}>
+              Ensures that a class has only one instance and provides a global access point to it.
+            </Text>
+          </div>
+        </div>
 
         {/* Factory Method */}
         <section id="factory-method" className={styles.section}>
@@ -60,10 +492,105 @@ export default function DesignPatternsPage() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-factory-method-title")}</Heading>
-                <Text className={styles.sectionDescription}>{t("design-patterns-factory-method-desc")}</Text>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <strong>Intent:</strong> Factory Method provides an interface for creating objects in a superclass, but
+                  allows subclasses to alter the type of objects that will be created.
+                </Text>
+                <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/factory-method/factory-method-en.png"
+                      alt="Factory Method pattern"
+                      style={{ width: "100%", maxWidth: 640, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// Factory Method: interface for creating objects; subclasses alter the type
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Problem
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  Logistics software initially hard‑codes a single transport class. As
+                  requests come in to support other transports (ships, airplanes, etc.), the code becomes
+                  riddled with conditionals and tightly coupled to concrete classes.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/factory-method/problem1-en.png"
+                      alt="Adding a new transportation class to the program causes an issue"
+                      style={{ width: "100%", maxWidth: 600, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Solution
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  Replace direct construction calls with calls to a factory method.  Subclasses
+                  override this method to return different product types, as long as all products
+                  share a common interface.  This decouples client code from
+                  concrete product classes and centralizes object creation.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/factory-method/solution2-en.png"
+                      alt="Factory Method – products hierarchy"
+                      style={{ width: "100%", maxWidth: 490, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/factory-method/solution3-en.png"
+                      alt="Factory Method – code structure after applying the pattern"
+                      style={{ width: "100%", maxWidth: 640, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Structure
+                </Heading>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1rem", listStyleType: "disc", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Product</strong> declares the interface common to all objects produced by the creator.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Concrete Products</strong> implement the product interface.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Creator</strong> class declares a factory method returning new products; its core logic works with product interfaces, not concrete classes.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Concrete Creators</strong> override the factory method to return different product types.</Text>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Code Example
+                </Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Factory Method: interface for creating objects; subclasses alter the type
 interface Button { fun render(): String; fun onClick(handler: () -> Unit) }
 
 abstract class Dialog {
@@ -92,7 +619,7 @@ class WebDialog : Dialog() {
 // Usage: dialog type chosen by config
 val dialog: Dialog = if (config == "Windows") WindowsDialog() else WebDialog()
 dialog.render()`}
-                typescriptCode={`// Factory Method: interface for creating objects; subclasses alter the type
+                  typescriptCode={`// Factory Method: interface for creating objects; subclasses alter the type
 interface Button { render(): string; onClick(handler: () => void): void; }
 
 abstract class Dialog {
@@ -125,7 +652,8 @@ class WebDialog extends Dialog {
 // Usage: dialog type chosen by config
 const dialog: Dialog = config === "Windows" ? new WindowsDialog() : new WebDialog();
 dialog.render();`}
-              />
+                />
+              </div>
             </Stack>
           </div>
         </section>
@@ -136,10 +664,106 @@ dialog.render();`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-abstract-factory-title")}</Heading>
-                <Text className={styles.sectionDescription}>{t("design-patterns-abstract-factory-desc")}</Text>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <strong>Intent:</strong> Abstract Factory lets you produce families of related objects without
+                  specifying their concrete classes.
+                </Text>
+                <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/abstract-factory/abstract-factory-en.png"
+                      alt="Abstract Factory pattern"
+                      style={{ width: "100%", maxWidth: 640, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// Abstract Factory: produce families of related objects
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Problem
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  A furniture shop simulator must create matching sets of furniture (chairs, sofas, coffee tables)
+                  across several style variants (Modern, Victorian, ArtDeco).  Hard‑coding constructors for each
+                  combination would either explode the number of subclasses or produce huge constructors.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/abstract-factory/problem-en.png"
+                      alt="Product families and their variants"
+                      style={{ width: "100%", maxWidth: 420, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Solution
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  Declare interfaces for each kind of product and then define a factory interface that
+                  produces these abstract products.  Concrete factories implement the interface and
+                  create consistent product variants (e.g., ModernChair, ModernSofa).  Client code works
+                  only with the abstract interfaces and doesn't care which concrete factory it uses.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/abstract-factory/solution1.png"
+                      alt="Abstract Factory – Chairs hierarchy"
+                      style={{ width: "100%", maxWidth: 420, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/abstract-factory/solution2.png"
+                      alt="Abstract Factory – Factories hierarchy"
+                      style={{ width: "100%", maxWidth: 640, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Structure
+                </Heading>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1rem", listStyleType: "disc", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Abstract Products</strong> define interfaces for a family of related products.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Concrete Products</strong> are implementations of abstract products grouped by variants.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Abstract Factory</strong> interface declares creation methods for each product type.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Concrete Factories</strong> implement creation methods and produce specific product variants while returning
+                    abstract types.</Text>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Code Example
+                </Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Abstract Factory: produce families of related objects
 interface Button { fun paint(): String }
 interface Checkbox { fun paint(): String }
 
@@ -167,7 +791,7 @@ class Application(private val factory: GUIFactory) {
 // Usage: factory chosen by OS
 val factory: GUIFactory = if (os == "Windows") WinFactory() else MacFactory()
 Application(factory).apply { createUI(); paint() }`}
-                typescriptCode={`// Abstract Factory: produce families of related objects
+                  typescriptCode={`// Abstract Factory: produce families of related objects
 interface Button { paint(): string; }
 interface Checkbox { paint(): string; }
 
@@ -199,7 +823,8 @@ const factory: GUIFactory = os === "Windows" ? new WinFactory() : new MacFactory
 const app = new Application(factory);
 app.createUI();
 app.paint();`}
-              />
+                />
+              </div>
             </Stack>
           </div>
         </section>
@@ -210,10 +835,109 @@ app.paint();`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-builder-title")}</Heading>
-                <Text className={styles.sectionDescription}>{t("design-patterns-builder-desc")}</Text>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <strong>Intent:</strong> Builder lets you construct complex objects step by step and allows producing
+                  different representations using the same construction code.
+                </Text>
+                <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/builder/builder-en.png"
+                      alt="Builder design pattern"
+                      style={{ width: "100%", maxWidth: 640, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// Builder: construct complex objects step by step
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Problem
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  Creating a complex object often involves many parameters and nested objects.  If you handle
+                  all combinations with subclasses, the class hierarchy blows up.  Alternatively, a single
+                  telescoping constructor becomes hard to use and leaves many unused parameters.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/builder/problem1.png"
+                      alt="Lots of subclasses create another problem"
+                      style={{ width: "100%", maxWidth: 600, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/builder/problem2.png"
+                      alt="The telescoping constructor"
+                      style={{ width: "100%", maxWidth: 600, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Solution
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  Move construction code into separate <em>builder</em> objects.  The client calls a set of
+                  building steps to assemble a product; each step may differ across builder implementations,
+                  allowing varied products from the same process.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/builder/solution1.png"
+                      alt="Applying the Builder pattern"
+                      style={{ width: "100%", maxWidth: 410, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Structure
+                </Heading>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1rem", listStyleType: "disc", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Builder</strong> interface declares product construction steps common to all builders.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Concrete Builders</strong> implement the steps and produce particular representations of a product.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Products</strong> are the resulting objects; products built by different builders need not share
+                    a class hierarchy.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Director</strong> defines the order in which to call construction steps so you can reuse
+                    specific configurations of products.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Client</strong> ties a builder to a director and triggers the construction process.</Text>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Code Example
+                </Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Builder: construct complex objects step by step
 interface Builder {
     fun reset()
     fun setSeats(n: Int)
@@ -243,7 +967,7 @@ val director = Director()
 val builder = CarBuilder()
 director.constructSportsCar(builder)
 val car = builder.getProduct()`}
-                typescriptCode={`// Builder: construct complex objects step by step
+                  typescriptCode={`// Builder: construct complex objects step by step
 interface Builder {
   reset(): void;
   setSeats(n: number): void;
@@ -277,7 +1001,8 @@ const director = new Director();
 const builder = new CarBuilder();
 director.constructSportsCar(builder);
 const car = builder.getProduct();`}
-              />
+                />
+              </div>
             </Stack>
           </div>
         </section>
@@ -288,10 +1013,100 @@ const car = builder.getProduct();`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-prototype-title")}</Heading>
-                <Text className={styles.sectionDescription}>{t("design-patterns-prototype-desc")}</Text>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <strong>Intent:</strong> Prototype lets you copy existing objects without making your code dependent on their
+                  classes.
+                </Text>
+                <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/prototype/prototype.png"
+                      alt="Prototype design pattern"
+                      style={{ width: "100%", maxWidth: 640, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// Prototype: copy existing objects without depending on their classes
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Problem
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  Naively duplicating an object requires knowing its class and copying each field.  Private fields
+                  aren't accessible, and dependencies on concrete classes creep into your code.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/prototype/prototype-comic-1-en.png"
+                      alt="Copying an object from the outside isn't always possible"
+                      style={{ width: "100%", maxWidth: 600, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Solution
+                </Heading>
+                <Text style={{ marginBottom: "1rem", lineHeight: "1.7", color: "rgba(255, 255, 255, 0.85)" }}>
+                  The pattern delegates cloning to the objects themselves.  You define a common <code style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", padding: "0.125rem 0.25rem", borderRadius: "0.25rem" }}>clone</code>
+                  interface so the client can copy any prototype without depending on its class; the concrete
+                  prototype creates a new instance and transfers its state.
+                </Text>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/prototype/prototype-comic-2-en.png"
+                      alt="Pre-built prototypes can be an alternative to subclassing"
+                      style={{ width: "100%", maxWidth: 343, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/prototype/prototype-comic-3-en.png"
+                      alt="The cell division analogy"
+                      style={{ width: "100%", maxWidth: 600, height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Structure
+                </Heading>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1rem", listStyleType: "disc", color: "rgba(255, 255, 255, 0.85)" }}>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Prototype</strong> interface declares cloning methods, usually a single <code style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", padding: "0.125rem 0.25rem", borderRadius: "0.25rem" }}>clone</code> method.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text><strong>Concrete Prototypes</strong> implement the cloning method to return a copy of themselves, handling any special cases such as deep copies.</Text>
+                  </li>
+                  <li style={{ marginBottom: "0.75rem", lineHeight: "1.7" }}>
+                    <Text>The <strong>Client</strong> can clone any object via the prototype interface without depending on concrete classes.</Text>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "0.75rem", color: "rgba(255, 255, 255, 0.9)" }}>
+                  Code Example
+                </Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Prototype: copy existing objects without depending on their classes
 abstract class Shape(val x: Int, val y: Int, val color: String) {
     abstract fun clone(): Shape
 }
@@ -311,7 +1126,7 @@ val shapes: List<Shape> = listOf(
     Circle(10, 10, "blue", 5)
 )
 val copies = shapes.map { it.clone() }`}
-                typescriptCode={`// Prototype: copy existing objects without depending on their classes
+                  typescriptCode={`// Prototype: copy existing objects without depending on their classes
 abstract class Shape {
   constructor(public x: number, public y: number, public color: string) {}
   abstract clone(): Shape;
@@ -337,7 +1152,8 @@ const shapes: Shape[] = [
   new Circle(10, 10, "blue", 5),
 ];
 const copies = shapes.map(s => s.clone());`}
-              />
+                />
+              </div>
             </Stack>
           </div>
         </section>
@@ -599,8 +1415,6 @@ const db2 = Database.getInstance();
           </div>
         </section>
 
-        <h2 id="structural" className={styles.categoryTitle}>{t("design-patterns-structural-title")}</h2>
-
         {/* Adapter */}
         <section id="adapter" className={styles.section}>
           <div className={styles.sectionCard}>
@@ -609,6 +1423,30 @@ const db2 = Database.getInstance();
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-adapter-title")}</Heading>
                 <Text className={styles.sectionDescription} style={{ fontStyle: "italic", opacity: 0.9, marginBottom: "0.25rem" }}>{t("design-patterns-adapter-aka")}</Text>
                 <Text className={styles.sectionDescription}>{t("design-patterns-adapter-desc")}</Text>
+              </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Intent</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Adapter allows objects with incompatible interfaces to collaborate by converting one interface into another. It's sometimes called the Wrapper pattern.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/adapter/adapter-en.png?id=11ef6ae6177291834323e3f918c47cd2"
+                    alt="Adapter design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Problem</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Imagine a stock‑market application that retrieves data in XML. A new analytics library you'd like to use expects JSON. Changing the library to work with XML may be impossible, and switching your application to JSON could break existing code.
+                </Text>
               </div>
               
               {/* Problem and Solution Diagrams */}
@@ -636,6 +1474,17 @@ const db2 = Database.getInstance();
                   </div>
                 </div>
                 <div>
+                  <Text style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Structure: Object Adapter</Text>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/diagrams/adapter/structure-object-adapter.png?id=33dffbe3aece294162440c7ddd3d5d4f"
+                      alt="Structure of the Adapter design pattern (object adapter)"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div>
                   <Text style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Real-World Analogy: Power Plug Adapter</Text>
                   <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
                     <img
@@ -646,6 +1495,14 @@ const db2 = Database.getInstance();
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Solution</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  You insert an adapter between the client and the service. The adapter implements the client's expected interface and wraps the service object. When the client calls the adapter, it converts the data and delegates the call to the wrapped service. This lets incompatible objects work together. Adapters can also convert calls in the opposite direction and may be chained to adapt multiple aspects at once.
+                </Text>
               </div>
               
               <KotlinTypeScriptBlock
@@ -737,6 +1594,47 @@ hole.fits(largeAdapter); // false`}
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-bridge-title")}</Heading>
                 <Text className={styles.sectionDescription}>{t("design-patterns-bridge-desc")}</Text>
               </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Intent</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Bridge lets you split a large class or a set of closely related classes into two separate hierarchies—abstraction and implementation—which can be developed independently of each other.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/bridge/bridge.png?id=bd543d4fb32e11647767301581a5ad54"
+                    alt="Bridge design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Problem</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  If you attempt to extend a class hierarchy along two independent axes, such as shape type and colour, the number of subclasses grows exponentially. For example, adding red and blue variants of circles and squares requires four subclasses; adding a new shape multiplies the combinations even further.
+                </Text>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Solution</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  The Bridge pattern replaces inheritance with composition. One dimension of variation is extracted into its own hierarchy, and the original classes hold a reference to an implementation object rather than containing all of its state and behaviour. A shape delegates colour handling to a colour object, forming a bridge between the two hierarchies. New colours or shapes can be added by extending either hierarchy independently.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/bridge/structure-en.png?id=827afa4b40008dc29d26fe0f4d41b9cc"
+                    alt="Structure of the Bridge design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
               <KotlinTypeScriptBlock
                 kotlinCode={`// Bridge: Abstraction (Remote) and Implementation (Device) vary independently
 // Implementation: platform-specific, used by abstraction
@@ -875,6 +1773,47 @@ advRemote.mute();`}
                 <Text className={styles.sectionDescription} style={{ fontStyle: "italic", opacity: 0.9, marginBottom: "0.25rem" }}>{t("design-patterns-composite-aka")}</Text>
                 <Text className={styles.sectionDescription}>{t("design-patterns-composite-desc")}</Text>
               </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Intent</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Composite lets you compose objects into tree structures and then work with these structures as if they were individual objects. It enables clients to treat both simple and complex elements uniformly.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/composite/composite.png?id=73bcf0d94db360b636cd745f710d19db"
+                    alt="Composite design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Problem</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  The pattern applies when your data model is naturally a tree. For example, an order can contain products directly or boxes of products, and boxes can nest other boxes. Computing the total cost requires traversing an arbitrary number of nested containers. Without a common interface you'd need to know each element's concrete type and nesting level ahead of time.
+                </Text>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Solution</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Composite introduces a shared interface for both leaf objects (e.g. products) and container objects (boxes). For a product, the price‑calculating method simply returns its price; for a box, it iterates over child items and delegates the call to each of them, accumulating the total. Because clients use the common interface they don't care whether they're dealing with a single product or an entire hierarchy.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/composite/structure-en.png?id=b7f114558b594dfb220d225398b2b744"
+                    alt="Structure of the Composite design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
               <KotlinTypeScriptBlock
                 kotlinCode={`// Composite: Graphic = Component; Dot, Circle = Leaf; CompoundGraphic = Container
 // Component: common ops for simple and complex elements
@@ -974,6 +1913,30 @@ class ImageEditor {
                 <Text className={styles.sectionDescription} style={{ fontStyle: "italic", opacity: 0.9, marginBottom: "0.25rem" }}>{t("design-patterns-decorator-aka")}</Text>
                 <Text className={styles.sectionDescription}>{t("design-patterns-decorator-desc")}</Text>
               </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Intent</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Decorator is a structural design pattern that lets you attach new behaviours to objects by placing them inside special wrapper objects that contain those behaviours. It's also known as the Wrapper pattern.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/decorator/decorator.png?id=710c66670c7123e0928d3b3758aea79e"
+                    alt="Decorator design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Problem</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Suppose you build a notification library around a simple <code style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", padding: "0.125rem 0.375rem", borderRadius: "0.25rem", fontFamily: "monospace" }}>Notifier</code> class with one method for sending emails. As clients request support for additional channels—SMS, Facebook, Slack and combinations thereof—you end up creating an explosion of subclasses to cover every possible combination of notification types. This approach bloats both the library and client code.
+                </Text>
+              </div>
               
               {/* Problem and Solution Diagrams */}
               <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem", marginBottom: "2rem" }}>
@@ -1049,6 +2012,22 @@ class ImageEditor {
                       loading="lazy"
                     />
                   </div>
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Solution</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Instead of extending a base class for each new notification type, Decorator uses composition. You wrap a basic notifier object in one or more decorator objects, each adding a specific notification method. Since all decorators implement the same interface as the base notifier, clients can build stacks of decorators to combine behaviours dynamically at runtime. This avoids the static class explosion and allows flexible combinations of features.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/decorator/structure.png?id=8c95d894aecce5315cc1b12093a7ea0c"
+                    alt="Structure of the Decorator design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
                 </div>
               </div>
               
@@ -1274,6 +2253,55 @@ class Application {
                 <Text className={styles.sectionDescription} style={{ fontStyle: "italic", opacity: 0.9, marginBottom: "0.25rem" }}>{t("design-patterns-flyweight-aka")}</Text>
                 <Text className={styles.sectionDescription}>{t("design-patterns-flyweight-desc")}</Text>
               </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Intent</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  Flyweight is a structural design pattern that lets you fit more objects into the available amount of RAM by sharing common parts of state between multiple objects instead of keeping all of the data in each object.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/flyweight/flyweight.png?id=e34fbacb847dd609b5e68aaf252c4db0"
+                    alt="Flyweight design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Problem</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  To have some fun after long working hours, you decided to create a simple video game where players move around a map and shoot each other. The particle system makes the game thrilling, but on less powerful machines the huge number of separate particle objects quickly consumes all available memory and causes the program to crash.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/flyweight/problem-en.png?id=7cfc97e5bf1cb38274c93823447cf17e"
+                    alt="Flyweight pattern problem"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", fontWeight: 600, marginBottom: "1rem", color: "rgba(255, 255, 255, 0.95)" }}>Solution</Heading>
+                <Text style={{ fontSize: "1rem", lineHeight: "1.75", color: "rgba(255, 255, 255, 0.85)", marginBottom: "1.5rem" }}>
+                  The flyweight approach splits the state of an object into intrinsic and extrinsic parts. Heavy, repeating data such as a particle's color and sprite become the intrinsic state stored inside a shared flyweight object. The changing context—coordinates, movement vectors and speed—is passed as extrinsic state via method parameters. As a result, a single flyweight instance can serve many contexts, drastically reducing memory consumption.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1.5rem", marginBottom: "2rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/flyweight/solution1-en.png?id=4b962ce51832e49a24f16f36be79ec45"
+                    alt="Flyweight pattern solution"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
               <KotlinTypeScriptBlock
                 kotlinCode={`// Flyweight: TreeType (intrinsic/shared) + Tree (extrinsic/context) + TreeFactory (pool)
 // Flyweight: intrinsic state (shared, immutable)
@@ -1551,8 +2579,6 @@ class Application {
             </Stack>
           </div>
         </section>
-
-        <h2 id="behavioral" className={styles.categoryTitle}>{t("design-patterns-behavioral-title")}</h2>
 
         {/* Chain of Responsibility */}
         <section id="chain-of-responsibility" className={styles.section}>
@@ -3917,8 +4943,110 @@ class Checkbox extends Component {
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-observer-title")}</Heading>
                 <Text className={styles.sectionDescription}>{t("design-patterns-observer-desc")}</Text>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// Observer: one-to-many; when subject changes, observers notified
+
+              {/* Pattern Overview and Diagrams */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem", marginBottom: "2rem" }}>
+                <div>
+                  <Text style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Observer Pattern Overview</Text>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/observer/observer-2x.png"
+                      alt="Observer pattern overview"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Intent</Heading>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  The observer pattern defines a subscription mechanism that lets one object notify multiple other objects about events that happen to the object it's observing.
+                </Text>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Problem</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  Imagine two objects: a customer and a store. A customer eagerly awaits a new product. They could visit the store every day, wasting time, or the store could email every customer whenever a new product arrives, spamming uninterested people.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/observer/observer-comic-1-en-2x.png"
+                    alt="Visiting store vs. sending spam"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Solution</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  The object with interesting state is called the <em>publisher</em>; objects that track its state are <em>subscribers</em>. Add a subscription mechanism to the publisher—a list of subscriber references and methods for adding and removing subscribers—so subscribers can be notified of events.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/observer/solution1-en-2x.png"
+                    alt="Subscription mechanism diagram"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1rem" }}>
+                  The publisher notifies subscribers by calling a notification method on each subscriber. All subscribers should implement the same interface so the publisher isn't coupled to concrete classes.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/observer/solution2-en-2x.png"
+                    alt="Notification methods diagram"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Real-World Analogy Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Real-World Analogy</Heading>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/observer/observer-comic-2-en-2x.png"
+                    alt="Magazine and newspaper subscriptions"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  Magazine and newspaper subscriptions work the same way. Instead of checking newsstands for a new issue, subscribers receive each issue automatically from the publisher. The publisher keeps a list of subscribers and can add or remove them at any time.
+                </Text>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Structure</Heading>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/observer/example-2x.png"
+                    alt="Observer pattern example"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  A publisher issues events when its state changes and maintains a subscription list. When an event happens, the publisher calls the update method declared in the subscriber interface on each subscriber. Concrete subscribers implement this interface to react to updates. A client creates publishers and subscribers and registers subscribers for publisher updates.
+                </Text>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Code Example</Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Observer: one-to-many; when subject changes, observers notified
 interface Observer { fun update(data: String) }
 
 class Subject {
@@ -3935,7 +5063,7 @@ class ConcreteObserver(private val name: String) : Observer {
 val sub = Subject()
 sub.attach(ConcreteObserver("A"))
 sub.setState("hello")`}
-                typescriptCode={`// Observer: one-to-many; when subject changes, observers notified
+                  typescriptCode={`// Observer: one-to-many; when subject changes, observers notified
 interface Observer { update(data: string): void; }
 
 class Subject {
@@ -3953,7 +5081,8 @@ class ConcreteObserver implements Observer {
 const sub = new Subject();
 sub.attach(new ConcreteObserver("A"));
 sub.setState("hello");`}
-              />
+                />
+              </div>
             </Stack>
           </div>
         </section>
@@ -3966,8 +5095,105 @@ sub.setState("hello");`}
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-state-title")}</Heading>
                 <Text className={styles.sectionDescription}>{t("design-patterns-state-desc")}</Text>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// State: object changes behavior when internal state changes
+
+              {/* Pattern Overview and Diagrams */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem", marginBottom: "2rem" }}>
+                <div>
+                  <Text style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>State Pattern Overview</Text>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/state/state-en-2x.png"
+                      alt="State pattern overview"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Intent</Heading>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  The state pattern lets an object alter its behavior when its internal state changes; it appears as if the object changed its class.
+                </Text>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Problem</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  Programs often have a finite set of states, each with different behavior, and rules that define what transitions are allowed. Implementing these behaviors with conditional statements leads to bloated, hard‑to‑maintain code, especially as the number of states grows.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/state/problem1-2x.png"
+                    alt="Finite-State Machine diagram"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1rem" }}>
+                  For example, a <code style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", padding: "0.25rem 0.5rem", borderRadius: "0.25rem" }}>Document</code> can be in <em>Draft</em>, <em>Moderation</em> or <em>Published</em>. Its <code style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", padding: "0.25rem 0.5rem", borderRadius: "0.25rem" }}>publish</code> method behaves differently in each state: it moves to moderation, publishes the document, or does nothing.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/state/problem2-en-2x.png"
+                    alt="Possible states of a document object"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Solution</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  Define a separate class for each possible state and move state‑specific behavior into these classes. The original object (the context) stores a reference to a state object and delegates state‑dependent work to it.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/state/solution-en-2x.png"
+                    alt="Document delegates the work to a state object"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  To change the state, the context replaces its current state object with another one that implements the same interface. Unlike strategies, states can know about and trigger transitions to other states.
+                </Text>
+              </div>
+
+              {/* Real-World Analogy Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Real-World Analogy</Heading>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  The buttons and switches on your smartphone behave differently depending on the phone's current state. When unlocked, buttons perform functions; when locked, buttons show the unlock screen; when the battery is low, they show the charging screen.
+                </Text>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Structure</Heading>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/state/example-2x.png"
+                    alt="State pattern example"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  A context holds a reference to a state object and delegates to it all state‑specific work. The state interface declares methods common to all states. Concrete states implement these methods and can reference the context to trigger transitions. Both context and states can change the active state by replacing the state object.
+                </Text>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Code Example</Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// State: object changes behavior when internal state changes
 interface State { fun handle(context: Context): String }
 
 class Context(private var state: State) {
@@ -3986,7 +5212,7 @@ class ConcreteStateB : State {
         ctx.setState(ConcreteStateA()); return "B"
     }
 }`}
-                typescriptCode={`// State: object changes behavior when internal state changes
+                  typescriptCode={`// State: object changes behavior when internal state changes
 interface State { handle(context: Context): string; }
 
 class Context {
@@ -4002,7 +5228,8 @@ class ConcreteStateA implements State {
 class ConcreteStateB implements State {
   handle(ctx: Context) { ctx.setState(new ConcreteStateA()); return "B"; }
 }`}
-              />
+                />
+              </div>
             </Stack>
           </div>
         </section>
@@ -4015,8 +5242,94 @@ class ConcreteStateB implements State {
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-strategy-title")}</Heading>
                 <Text className={styles.sectionDescription}>{t("design-patterns-strategy-desc")}</Text>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// Strategy: family of algorithms, interchangeable
+
+              {/* Pattern Overview and Diagrams */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem", marginBottom: "2rem" }}>
+                <div>
+                  <Text style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Strategy Pattern Overview</Text>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/strategy/strategy-2x.png"
+                      alt="Strategy pattern overview"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Intent</Heading>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  The strategy pattern defines a family of algorithms, encapsulates each in a separate class, and makes the algorithms interchangeable.
+                </Text>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Problem</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  Consider a navigation app that must provide routes for driving, walking, public transport, cycling and more. Implementing every algorithm in a single class causes the class to grow dramatically and become difficult to maintain, with each change risking bugs and merge conflicts.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/strategy/problem-2x.png"
+                    alt="Bloated navigator code diagram"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Solution</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  Extract each routing algorithm into its own strategy class. The original class (the context) stores a reference to a strategy object and delegates the route building to it. The context doesn't choose the algorithm itself; clients provide the desired strategy, and the context uses all strategies through a common interface.
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/strategy/solution-2x.png"
+                    alt="Route planning strategies diagram"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  Because the context communicates with strategies via an interface, you can add new algorithms or modify existing ones without changing the context. Clients can switch strategies at runtime through a setter or similar mechanism.
+                </Text>
+              </div>
+
+              {/* Real-World Analogy Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Real-World Analogy</Heading>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/content/strategy/strategy-comic-1-en-2x.png"
+                    alt="Various transportation strategies"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  Getting to the airport offers multiple strategies. You might take a bus, order a cab or ride a bicycle. Each method is a different strategy you choose based on factors like budget or time.
+                </Text>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Structure</Heading>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  A context holds a reference to a strategy and communicates with it through the strategy interface. Concrete strategies implement different versions of the algorithm. The context invokes the strategy's method whenever it needs the algorithm. Clients create strategies and assign them to the context, which can change strategies dynamically.
+                </Text>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Code Example</Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Strategy: family of algorithms, interchangeable
 interface Strategy { fun execute(a: Int, b: Int): Int }
 
 class Add : Strategy { override fun execute(a: Int, b: Int) = a + b }
@@ -4032,7 +5345,7 @@ val ctx = Context(Add())
 ctx.run(2, 3)  // 5
 ctx.setStrategy(Multiply())
 ctx.run(2, 3)  // 6`}
-                typescriptCode={`// Strategy: family of algorithms, interchangeable
+                  typescriptCode={`// Strategy: family of algorithms, interchangeable
 interface Strategy { execute(a: number, b: number): number; }
 
 class Add implements Strategy { execute(a: number, b: number) { return a + b; } }
@@ -4049,7 +5362,8 @@ const ctx = new Context(new Add());
 ctx.run(2, 3);   // 5
 ctx.setStrategy(new Multiply());
 ctx.run(2, 3);   // 6`}
-              />
+                />
+              </div>
             </Stack>
           </div>
         </section>
@@ -4062,34 +5376,478 @@ ctx.run(2, 3);   // 6`}
                 <Heading level={2} className={styles.sectionTitle}>{t("design-patterns-template-method-title")}</Heading>
                 <Text className={styles.sectionDescription}>{t("design-patterns-template-method-desc")}</Text>
               </div>
-              <KotlinTypeScriptBlock
-                kotlinCode={`// Template Method: skeleton in base, steps overridden
-abstract class AbstractClass {
-    fun templateMethod(): String = step1() + step2()
-    private fun step1() = "step1"
-    protected abstract fun step2(): String
+
+              {/* Pattern Overview and Diagrams */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem", marginBottom: "2rem" }}>
+                <div>
+                  <Text style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Template Method Pattern Overview</Text>
+                  <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
+                    <img
+                      src="https://refactoring.guru/images/patterns/content/template-method/template-method.png?id=eee9461742f832814f19612ccf472819"
+                      alt="Template Method Design Pattern"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Intent Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Intent</Heading>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  {t("design-patterns-template-method-intent")}
+                </Text>
+              </div>
+
+              {/* Problem Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Problem</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  {t("design-patterns-template-method-problem")}
+                </Text>
+                <Text style={{ marginBottom: "1rem" }}>
+                  {t("design-patterns-template-method-problem-2")}
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/template-method/problem.png?id=60fa4f735c467ac1c9438231a1782807"
+                    alt="Data mining classes contained a lot of duplicate code"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1rem" }}>
+                  {t("design-patterns-template-method-problem-3")}
+                </Text>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  {t("design-patterns-template-method-problem-4")}
+                </Text>
+              </div>
+
+              {/* Solution Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Solution</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  {t("design-patterns-template-method-solution")}
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/template-method/solution-en.png?id=98cb323d5736539b684da62a0fd49730"
+                    alt="Template method defines the skeleton of the algorithm"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1rem" }}>
+                  {t("design-patterns-template-method-solution-2")}
+                </Text>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1.5rem", listStyleType: "disc" }}>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    <em>{t("design-patterns-template-method-abstract-steps")}</em>
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    <em>{t("design-patterns-template-method-optional-steps")}</em>
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-hooks")}
+                  </li>
+                </ul>
+              </div>
+
+              {/* Real-World Analogy Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Real-World Analogy</Heading>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/template-method/live-example.png?id=2485d52852f87da06c9cc0e2fd257d6a"
+                    alt="Mass housing construction"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  {t("design-patterns-template-method-analogy")}
+                </Text>
+              </div>
+
+              {/* Structure Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Structure</Heading>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/template-method/structure.png?id=924692f994bff6578d8408d90f6fc459"
+                    alt="Structure of the Template Method design pattern"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <ol style={{ marginLeft: "1.5rem", marginBottom: "1.5rem", listStyleType: "decimal" }}>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    <strong>The Abstract Class</strong> {t("design-patterns-template-method-structure-1")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    <strong>Concrete Classes</strong> {t("design-patterns-template-method-structure-2")}
+                  </li>
+                </ol>
+              </div>
+
+              {/* Code Examples */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Code Example</Heading>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Template Method: skeleton in base, steps overridden
+abstract class DataMiner {
+    // Template method - defines the algorithm structure
+    fun mine(path: String) {
+        openFile(path)
+        val rawData = extractData(path)
+        val parsedData = parseData(rawData)
+        analyzeData(parsedData)
+        generateReport(parsedData)
+        closeFile(path)
+    }
+    
+    // Abstract step - must be implemented
+    protected abstract fun extractData(path: String): String
+    
+    // Optional steps with default implementation
+    protected open fun parseData(rawData: String): String {
+        println("Parsing raw data...")
+        return rawData.uppercase()
+    }
+    
+    protected open fun analyzeData(data: String) {
+        println("Analyzing data...")
+        println("Found \${data.length} characters")
+    }
+    
+    protected open fun generateReport(data: String) {
+        println("Generating report...")
+        println("Report: \$data")
+    }
+    
+    // Hooks - optional steps
+    protected open fun openFile(path: String) {
+        println("Opening file: \$path")
+    }
+    
+    protected open fun closeFile(path: String) {
+        println("Closing file")
+    }
 }
 
-class ConcreteClass : AbstractClass() {
-    override fun step2() = "concrete-step2"
+class DOCDataMiner : DataMiner() {
+    override fun extractData(path: String): String {
+        println("Extracting data from DOC format...")
+        return "DOC: Document content"
+    }
+    
+    override fun openFile(path: String) {
+        println("Opening DOC file: \$path")
+    }
 }
 
 // Usage
-ConcreteClass().templateMethod()`}
-                typescriptCode={`// Template Method: skeleton in base, steps overridden
-abstract class AbstractClass {
-  templateMethod(): string { return this.step1() + this.step2(); }
-  private step1() { return "step1"; }
-  protected abstract step2(): string;
+DOCDataMiner().mine("document.doc")`}
+                  typescriptCode={`// Template Method: skeleton in base, steps overridden
+abstract class DataMiner {
+  // Template method - defines the algorithm structure
+  mine(path: string): void {
+    this.openFile(path);
+    const rawData = this.extractData(path);
+    const parsedData = this.parseData(rawData);
+    this.analyzeData(parsedData);
+    this.generateReport(parsedData);
+    this.closeFile(path);
+  }
+  
+  // Abstract step - must be implemented
+  protected abstract extractData(path: string): string;
+  
+  // Optional steps with default implementation
+  protected parseData(rawData: string): string {
+    console.log("Parsing raw data...");
+    return rawData.toUpperCase();
+  }
+  
+  protected analyzeData(data: string): void {
+    console.log("Analyzing data...");
+    console.log("Found " + data.length + " characters");
+  }
+  
+  protected generateReport(data: string): void {
+    console.log("Generating report...");
+    console.log("Report: " + data);
+  }
+  
+  // Hooks - optional steps
+  protected openFile(path: string): void {
+    console.log("Opening file: " + path);
+  }
+  
+  protected closeFile(path: string): void {
+    console.log("Closing file");
+  }
 }
 
-class ConcreteClass extends AbstractClass {
-  protected step2() { return "concrete-step2"; }
+class DOCDataMiner extends DataMiner {
+  protected extractData(path: string): string {
+    console.log("Extracting data from DOC format...");
+    return "DOC: Document content";
+  }
+  
+  protected openFile(path: string): void {
+    console.log("Opening DOC file: " + path);
+  }
 }
 
 // Usage
-new ConcreteClass().templateMethod();`}
-              />
+new DOCDataMiner().mine("document.doc");`}
+                />
+              </div>
+
+              {/* Pseudocode Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Pseudocode Example</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  {t("design-patterns-template-method-pseudocode")}
+                </Text>
+                <div style={{ borderRadius: "0.5rem", overflow: "hidden", border: "1px solid rgba(255, 255, 255, 0.1)", backgroundColor: "rgba(255, 255, 255, 0.02)", marginTop: "1rem", marginBottom: "1rem" }}>
+                  <img
+                    src="https://refactoring.guru/images/patterns/diagrams/template-method/example.png?id=c0ce5cc8070925a1cd345fac6afa16b6"
+                    alt="Structure of the Template Method pattern example"
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    loading="lazy"
+                  />
+                </div>
+                <KotlinTypeScriptBlock
+                  kotlinCode={`// Game AI example using Template Method
+abstract class GameAI {
+    // Template method - defines the skeleton
+    fun turn() {
+        collectResources()
+        buildStructures()
+        buildUnits()
+        attack()
+    }
+    
+    // Some steps implemented in base class
+    fun collectResources() {
+        builtStructures.forEach { it.collect() }
+    }
+    
+    // Abstract steps - must be implemented
+    abstract fun buildStructures()
+    abstract fun buildUnits()
+    
+    // Template method with hooks
+    fun attack() {
+        val enemy = closestEnemy()
+        if (enemy == null) {
+            sendScouts(map.center)
+        } else {
+            sendWarriors(enemy.position)
+        }
+    }
+    
+    abstract fun sendScouts(position: Position)
+    abstract fun sendWarriors(position: Position)
+}
+
+class OrcsAI : GameAI() {
+    override fun buildStructures() {
+        // Build farms, barracks, then stronghold
+    }
+    
+    override fun buildUnits() {
+        // Build units depending on resources
+    }
+    
+    override fun sendScouts(position: Position) {
+        // Send scouts to position
+    }
+    
+    override fun sendWarriors(position: Position) {
+        // Send warriors to position
+    }
+}
+
+class MonstersAI : GameAI() {
+    override fun collectResources() {
+        // Monsters don't collect resources
+    }
+    
+    override fun buildStructures() {
+        // Monsters don't build structures
+    }
+    
+    override fun buildUnits() {
+        // Monsters don't build units
+    }
+    
+    override fun sendScouts(position: Position) {
+        // Monster scouting behavior
+    }
+    
+    override fun sendWarriors(position: Position) {
+        // Monster attack behavior
+    }
+}`}
+                  typescriptCode={`// Game AI example using Template Method
+abstract class GameAI {
+  // Template method - defines the skeleton
+  turn(): void {
+    this.collectResources();
+    this.buildStructures();
+    this.buildUnits();
+    this.attack();
+  }
+  
+  // Some steps implemented in base class
+  collectResources(): void {
+    this.builtStructures.forEach(s => s.collect());
+  }
+  
+  // Abstract steps - must be implemented
+  protected abstract buildStructures(): void;
+  protected abstract buildUnits(): void;
+  
+  // Template method with hooks
+  attack(): void {
+    const enemy = this.closestEnemy();
+    if (enemy == null) {
+      this.sendScouts(this.map.center);
+    } else {
+      this.sendWarriors(enemy.position);
+    }
+  }
+  
+  protected abstract sendScouts(position: Position): void;
+  protected abstract sendWarriors(position: Position): void;
+}
+
+class OrcsAI extends GameAI {
+  protected buildStructures(): void {
+    // Build farms, barracks, then stronghold
+  }
+  
+  protected buildUnits(): void {
+    // Build units depending on resources
+  }
+  
+  protected sendScouts(position: Position): void {
+    // Send scouts to position
+  }
+  
+  protected sendWarriors(position: Position): void {
+    // Send warriors to position
+  }
+}
+
+class MonstersAI extends GameAI {
+  collectResources(): void {
+    // Monsters don't collect resources
+  }
+  
+  protected buildStructures(): void {
+    // Monsters don't build structures
+  }
+  
+  protected buildUnits(): void {
+    // Monsters don't build units
+  }
+  
+  protected sendScouts(position: Position): void {
+    // Monster scouting behavior
+  }
+  
+  protected sendWarriors(position: Position): void {
+    // Monster attack behavior
+  }
+}`}
+                />
+              </div>
+
+              {/* Applicability Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Applicability</Heading>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1.5rem", listStyleType: "disc" }}>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-applicability-1")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-applicability-2")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-applicability-3")}
+                  </li>
+                </ul>
+              </div>
+
+              {/* How to Implement Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>How to Implement</Heading>
+                <ol style={{ marginLeft: "1.5rem", marginBottom: "1.5rem", listStyleType: "decimal" }}>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-implement-1")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-implement-2")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-implement-3")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-implement-4")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-implement-5")}
+                  </li>
+                </ol>
+              </div>
+
+              {/* Pros and Cons Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Pros and Cons</Heading>
+                <Text style={{ marginBottom: "1rem" }}>
+                  <strong>Pros:</strong>
+                </Text>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1.5rem", listStyleType: "disc" }}>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-pros-1")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-pros-2")}
+                  </li>
+                </ul>
+
+                <Text style={{ marginBottom: "1rem" }}>
+                  <strong>Cons:</strong>
+                </Text>
+                <ul style={{ marginLeft: "1.5rem", marginBottom: "1.5rem", listStyleType: "disc" }}>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-cons-1")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-cons-2")}
+                  </li>
+                  <li style={{ marginBottom: "0.5rem" }}>
+                    {t("design-patterns-template-method-cons-3")}
+                  </li>
+                </ul>
+              </div>
+
+              {/* Relations with Other Patterns Section */}
+              <div style={{ marginTop: "2rem" }}>
+                <Heading level={3} style={{ fontSize: "1.25rem", marginBottom: "1rem", fontWeight: 600 }}>Relations with Other Patterns</Heading>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  {t("design-patterns-template-method-relations-1")}
+                </Text>
+                <Text style={{ marginBottom: "1.5rem" }}>
+                  {t("design-patterns-template-method-relations-2")}
+                </Text>
+              </div>
             </Stack>
           </div>
         </section>

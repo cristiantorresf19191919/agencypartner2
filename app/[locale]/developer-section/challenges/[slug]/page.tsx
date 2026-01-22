@@ -244,7 +244,7 @@ export default function ChallengePlayPage() {
         <DeveloperHeader />
         <div className={playStyles.notFound}>
           <p>{t('challenge-not-found')}</p>
-          <a href={createLocalizedPath("/developer-section/challenges")}>{t('challenge-back')}</a>
+          <a href={createLocalizedPath("/developer-section/challenges/typescript-kotlin")}>{t('challenge-back')}</a>
         </div>
         <Footer />
       </main>
@@ -338,7 +338,7 @@ export default function ChallengePlayPage() {
 
       <div className={styles.footerActions}>
         <div className={playStyles.footerRow}>
-          <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/challenges")}>
+          <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/challenges/typescript-kotlin")}>
             {t('challenge-back')}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>

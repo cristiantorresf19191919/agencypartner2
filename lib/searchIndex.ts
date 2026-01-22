@@ -1,3 +1,5 @@
+import { blogCategories } from "./blogCategories";
+
 export interface SearchItem {
   id: string;
   title: string;
@@ -359,7 +361,8 @@ const keywordMap: Record<string, string[]> = {
 };
 
 export function getSearchIndex(t: (key: string) => string): SearchItem[] {
-  return navigationData.flatMap((section) =>
+  // Get items from navigation data (existing search items)
+  const navigationItems = navigationData.flatMap((section) =>
     section.items.map((item) => ({
       id: item.id,
       title: t(item.titleKey) !== item.titleKey ? t(item.titleKey) : item.titleKey,
@@ -371,6 +374,37 @@ export function getSearchIndex(t: (key: string) => string): SearchItem[] {
       keywords: keywordMap[item.id] || [],
     }))
   );
+
+  // Add all blog categories and posts
+  const blogItems = blogCategories.flatMap((category) => {
+    const categoryItem: SearchItem = {
+      id: `category-${category.id}`,
+      title: category.title,
+      titleKey: category.id,
+      href: `/developer-section/blog/category/${category.slug}`,
+      section: "Blog Categories",
+      sectionKey: "blog-categories",
+      icon: category.icon,
+      color: category.color,
+      keywords: [category.description, ...category.posts.map(p => p.title)],
+    };
+
+    const postItems: SearchItem[] = category.posts.map((post) => ({
+      id: `post-${post.id}`,
+      title: post.title,
+      titleKey: post.id,
+      href: `/developer-section/blog/${post.slug}`,
+      section: category.title,
+      sectionKey: category.id,
+      icon: post.icon,
+      color: post.color,
+      keywords: [post.description, ...(post.topics || [])],
+    }));
+
+    return [categoryItem, ...postItems];
+  });
+
+  return [...navigationItems, ...blogItems];
 }
 
 export function searchItems(

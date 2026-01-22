@@ -77,7 +77,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 body {
@@ -129,5 +129,17 @@ body {
 
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* Page transition animation - subtle fade from bottom */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

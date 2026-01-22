@@ -40,18 +40,25 @@ const DeveloperHeader = () => {
         </Link>
 
         <Link
-          href={createLocalizedPath('/developer-section/blog')}
+          href={createLocalizedPath('/developer-section')}
           className={styles.gradientLink}
           style={{ marginRight: '1.5rem', marginLeft: '2rem' }}
+        >
+          {t('nav-developer-section')}
+        </Link>
+        <Link
+          href={createLocalizedPath('/developer-section/blog')}
+          className={styles.gradientLink}
+          style={{ marginRight: '1.5rem' }}
         >
           {t('nav-blog')}
         </Link>
         <Link
-          href={createLocalizedPath('/asesorias')}
+          href={createLocalizedPath('/developer-section/challenges')}
           className={styles.gradientLink}
           style={{ marginRight: 'auto' }}
         >
-          {t('nav-asesorias')}
+          {t('nav-challenges')}
         </Link>
 
         <div className={styles.headerActions}>

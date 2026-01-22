@@ -74,7 +74,7 @@ const MobileMenu = ({ isOpen, onClose, onAdvisorOpen }: MobileMenuProps) => {
     if (href.startsWith('#')) {
       const target = document.querySelector(href);
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
+        target.scrollIntoView({ behavior: 'auto' });
       }
     }
     onClose();

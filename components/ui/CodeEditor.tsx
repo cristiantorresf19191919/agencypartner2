@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle } from "lucide-react";
+import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X } from "lucide-react";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
 
@@ -13,6 +13,12 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
   loading: () => <div className="w-full h-40 grid place-items-center text-sm text-slate-300">Loading editor…</div>,
 });
+
+interface CodeFile {
+  name: string;
+  content: string;
+  language: string;
+}
 
 interface CodeEditorProps {
   code: string;
@@ -24,12 +30,54 @@ interface CodeEditorProps {
   defaultFullscreen?: boolean;
   /** When true, disables TS/JS semantic and syntax validation (e.g. for display-only snippets). Default true so blog and comparison editors don't show lint errors. Set false for runnable playgrounds. */
   disableLinting?: boolean;
+  /** Enable multi-file support for creating solution files */
+  enableMultiFile?: boolean;
+  /** Auto-inject React imports when React hooks/JSX are detected */
+  autoInjectImports?: boolean;
 }
 
 const REACT_UMD = `
 <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 `;
+
+// Helper function to detect React usage and generate imports
+const detectAndInjectImports = (code: string, isReactLike: boolean): string => {
+  if (!isReactLike) return code;
+  
+  // Check if imports already exist (look for any import statement, not just at start)
+  const hasReactImport = /import\s+.*from\s+["']react["']/.test(code);
+  if (hasReactImport) return code;
+  
+  // Detect React features used
+  const usesJSX = /<[A-Z]/.test(code) || /<[a-z]+[^>]*>/.test(code);
+  const usesHooks = /\b(useState|useEffect|useCallback|useMemo|useRef|useContext|useReducer|useLayoutEffect|useImperativeHandle|useDebugValue|useId|useTransition|useDeferredValue|useSyncExternalStore|useInsertionEffect)\b/.test(code);
+  const usesReact = /\bReact\./.test(code);
+  
+  if (!usesJSX && !usesHooks && !usesReact) return code;
+  
+  // Build import statement - only include hooks that are actually used
+  const imports: string[] = [];
+  if (usesHooks) {
+    const hookMatches = code.matchAll(/\b(useState|useEffect|useCallback|useMemo|useRef|useContext|useReducer|useLayoutEffect|useImperativeHandle|useDebugValue|useId|useTransition|useDeferredValue|useSyncExternalStore|useInsertionEffect)\b/g);
+    const hooks = new Set<string>();
+    for (const match of hookMatches) {
+      hooks.add(match[1]);
+    }
+    if (hooks.size > 0) {
+      imports.push(...Array.from(hooks).sort());
+    }
+  }
+  // React is needed for JSX or React.* usage
+  if ((usesJSX || usesReact) && !imports.includes("React")) {
+    imports.unshift("React");
+  }
+  
+  if (imports.length === 0) return code;
+  
+  const importStatement = `import { ${imports.join(", ")} } from "react";\n\n`;
+  return importStatement + code;
+};
 
 export function CodeEditor({
   code: initialCode,
@@ -40,6 +88,8 @@ export function CodeEditor({
   className = "",
   defaultFullscreen = false,
   disableLinting = true,
+  enableMultiFile = false,
+  autoInjectImports = true,
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
   const [isFullscreen, setIsFullscreen] = useState(defaultFullscreen);
@@ -49,6 +99,8 @@ export function CodeEditor({
   const [isRunning, setIsRunning] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
   const [fontSize, setFontSize] = useState(14);
+  const [files, setFiles] = useState<CodeFile[]>([{ name: "App.tsx", content: initialCode, language }]);
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const uniqueId = useId();
 
@@ -61,8 +113,25 @@ export function CodeEditor({
   useEffect(() => setIsMounted(true), []);
 
   useEffect(() => {
-    setCode(initialCode);
-  }, [initialCode]);
+    // Auto-inject imports if enabled and missing
+    let processedCode = initialCode;
+    if (autoInjectImports && isReactLike && !readOnly) {
+      const codeWithImports = detectAndInjectImports(initialCode, isReactLike);
+      if (codeWithImports !== initialCode) {
+        processedCode = codeWithImports;
+      }
+    }
+    
+    setCode(processedCode);
+    if (enableMultiFile) {
+      setFiles([{ name: "App.tsx", content: processedCode, language }]);
+      setActiveFileIndex(0);
+    }
+  }, [initialCode, enableMultiFile, language, autoInjectImports, isReactLike, readOnly]);
+  
+  // Get current file content
+  const currentFile = enableMultiFile && files.length > 0 ? files[activeFileIndex] : null;
+  const currentCode = enableMultiFile && currentFile ? currentFile.content : code;
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
@@ -150,14 +219,85 @@ export function CodeEditor({
 `;
   };
 
+  const addFile = useCallback(() => {
+    if (!enableMultiFile) return;
+    const newFileName = `solution-${files.length}.tsx`;
+    const newFile: CodeFile = {
+      name: newFileName,
+      content: `// Solution file
+export function solution() {
+  // Your solution code here
+}`,
+      language: "tsx",
+    };
+    setFiles([...files, newFile]);
+    setActiveFileIndex(files.length);
+  }, [enableMultiFile, files]);
+  
+  const removeFile = useCallback((index: number) => {
+    if (!enableMultiFile || files.length <= 1) return;
+    const newFiles = files.filter((_, i) => i !== index);
+    setFiles(newFiles);
+    if (activeFileIndex >= newFiles.length) {
+      setActiveFileIndex(newFiles.length - 1);
+    } else if (activeFileIndex > index) {
+      setActiveFileIndex(activeFileIndex - 1);
+    }
+  }, [enableMultiFile, files, activeFileIndex]);
+  
+  const updateFileContent = useCallback((index: number, content: string) => {
+    if (!enableMultiFile) {
+      setCode(content);
+      if (onChange) onChange(content);
+      return;
+    }
+    const newFiles = [...files];
+    newFiles[index] = { ...newFiles[index], content };
+    setFiles(newFiles);
+    if (onChange && index === activeFileIndex) {
+      onChange(content);
+    }
+  }, [enableMultiFile, files, activeFileIndex, onChange]);
+  
+  // Build combined code from all files for execution
+  const buildCombinedCode = useCallback((): string => {
+    if (!enableMultiFile || files.length === 1) {
+      return autoInjectImports ? detectAndInjectImports(currentCode, isReactLike) : currentCode;
+    }
+    
+    // Combine all files, making non-main files available for import
+    const mainFile = files[0];
+    const otherFiles = files.slice(1);
+    
+    // Create a module system for imports
+    let combined = autoInjectImports ? detectAndInjectImports(mainFile.content, isReactLike) : mainFile.content;
+    
+    // Add other files as exportable modules
+    if (otherFiles.length > 0) {
+      combined += "\n\n// Additional files available for import:\n";
+      otherFiles.forEach((file, idx) => {
+        const moduleName = file.name.replace(/\.(tsx?|jsx?)$/, "");
+        combined += `\n// File: ${file.name}\n`;
+        // Inject imports in solution files too
+        const fileContent = autoInjectImports ? detectAndInjectImports(file.content, isReactLike) : file.content;
+        combined += `(function() {\n  const ${moduleName}Module = {};\n  const exports = ${moduleName}Module;\n  ${fileContent}\n  window.__modules__ = window.__modules__ || {};\n  window.__modules__['${file.name}'] = ${moduleName}Module;\n})();\n`;
+      });
+    }
+    
+    return combined;
+  }, [enableMultiFile, files, currentCode, autoInjectImports, isReactLike]);
+
   const runCode = useCallback(async () => {
     if (!isRunnable || isKotlin) return;
     setIsRunning(true);
     setError(null);
     setLogs([]);
     try {
+      // Get combined code with auto-injected imports
+      const codeToRun = buildCombinedCode();
+      
       // For React/TSX code, automatically detect and wrap exported components
-      let wrapped = code;
+      let wrapped = codeToRun;
       if (isReactLike) {
         // Check if code already defines App or has default export
         const hasApp = /\b(App|window\.__APP__)\s*[=:]/.test(code);
@@ -265,15 +405,20 @@ export function CodeEditor({
     } finally {
       setIsRunning(false);
     }
-  }, [code, isKotlin, isRunnable, isReactLike]);
+  }, [buildCombinedCode, isKotlin, isRunnable, isReactLike]);
 
   const handleReset = useCallback(() => {
-    setCode(initialCode);
+    if (enableMultiFile) {
+      setFiles([{ name: "App.tsx", content: initialCode, language }]);
+      setActiveFileIndex(0);
+    } else {
+      setCode(initialCode);
+    }
     setOutputHtml("");
     setLogs([]);
     setError(null);
     if (onChange) onChange(initialCode);
-  }, [initialCode, onChange]);
+  }, [initialCode, onChange, enableMultiFile, language]);
 
   useEffect(() => {
     if (!isRunnable || isKotlin) return;
@@ -323,7 +468,36 @@ export function CodeEditor({
         module: monaco.languages.typescript.ModuleKind.ESNext,
         moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
         jsx: monaco.languages.typescript.JsxEmit.React,
+        lib: ["ES2020", "DOM", "DOM.Iterable"],
+        types: ["react", "react-dom"],
       });
+      
+      // Add React type definitions for better autocomplete
+      if (isReactLike) {
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(
+          `declare module "react" {
+            export function useState<T>(initial: T): [T, (value: T | ((prev: T) => T)) => void];
+            export function useEffect(effect: () => void | (() => void), deps?: any[]): void;
+            export function useCallback<T extends (...args: any[]) => any>(callback: T, deps: any[]): T;
+            export function useMemo<T>(factory: () => T, deps: any[]): T;
+            export function useRef<T>(initial: T): { current: T };
+            export function useContext<T>(context: any): T;
+            export function useReducer<R>(reducer: (state: R, action: any) => R, initial: R): [R, (action: any) => void];
+            export function useId(): string;
+            export function useTransition(): [boolean, (callback: () => void) => void];
+            export function useDeferredValue<T>(value: T): T;
+            export function useSyncExternalStore<T>(subscribe: (onStoreChange: () => void) => () => void, getSnapshot: () => T): T;
+            export function useLayoutEffect(effect: () => void | (() => void), deps?: any[]): void;
+            export function useImperativeHandle<T>(ref: any, init: () => T, deps?: any[]): void;
+            export function useDebugValue(value: any, formatter?: (value: any) => any): void;
+            export function useInsertionEffect(effect: () => void | (() => void), deps?: any[]): void;
+            export const createElement: any;
+            export const Fragment: any;
+            export default any;
+          }`,
+          "file:///node_modules/@types/react/index.d.ts"
+        );
+      }
     },
     [disableLinting, isRunnable, isReactLike, normalizedLang]
   );
@@ -331,9 +505,49 @@ export function CodeEditor({
   const editorSection = (
     <div className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden" style={{ display: 'flex', flexDirection: 'column', minHeight: height === "auto" ? 400 : typeof height === 'number' ? height : 400 }}>
       <div className="flex items-center justify-between px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
-        <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_6px_rgba(16,185,129,0.2)]"></span>
-          {language}
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {enableMultiFile && files.length > 1 ? (
+            <div className="flex items-center gap-1 overflow-x-auto flex-1">
+              {files.map((file, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveFileIndex(idx)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors shrink-0 ${
+                    idx === activeFileIndex
+                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                  }`}
+                >
+                  <span>{file.name}</span>
+                  {files.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFile(idx);
+                      }}
+                      className="ml-1 hover:text-red-400 transition-colors"
+                      aria-label="Remove file"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
+                </button>
+              ))}
+              <button
+                onClick={addFile}
+                className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors shrink-0"
+                aria-label="Add new file"
+              >
+                <FilePlus className="h-3.5 w-3.5" />
+                <span>New File</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_6px_rgba(16,185,129,0.2)]"></span>
+              {enableMultiFile && currentFile ? currentFile.name : language}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {/* Font size */}
@@ -405,13 +619,12 @@ export function CodeEditor({
         <div className="flex-1" style={{ minHeight: 300 }}>
           <MonacoEditor
             height={height === "auto" ? 400 : height}
-            language={isReactLike ? "typescript" : normalizedLang}
-            path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : "App.tsx"}
-            value={code}
+            language={isReactLike ? "typescript" : (enableMultiFile && currentFile ? currentFile.language : normalizedLang)}
+            path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : (enableMultiFile && currentFile ? currentFile.name : "App.tsx")}
+            value={currentCode}
             onChange={(value) => {
               const next = value || "";
-              setCode(next);
-              if (onChange) onChange(next);
+              updateFileContent(activeFileIndex, next);
             }}
             options={editorOptions}
             onMount={handleEditorMount}

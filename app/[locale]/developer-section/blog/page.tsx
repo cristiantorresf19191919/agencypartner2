@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
+import SearchSection from "@/components/Search/SearchSection";
 import { blogCategories } from "@/lib/blogCategories";
 import styles from "./BlogPage.module.css";
 
@@ -73,6 +74,11 @@ function BlogPageContent() {
           <Text className={styles.subtitle}>
             {t("blog-subtitle")}
           </Text>
+        </div>
+
+        {/* Search Section */}
+        <div className={styles.searchWrapper}>
+          <SearchSection />
         </div>
 
         {/* Categories Grid */}

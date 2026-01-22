@@ -72,7 +72,20 @@
 @media (min-width: 768px) {
   .headerSection {
     gap: 2rem;
-    margin-bottom: 6rem;
+    margin-bottom: 4rem;
+  }
+}
+
+.searchWrapper {
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .searchWrapper {
+    margin-bottom: 4rem;
   }
 }
 

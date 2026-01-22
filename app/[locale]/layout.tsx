@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/lib/i18n';
 import type { Metadata } from 'next';
+import PageTransition from '@/components/Layout/PageTransition';
 
 type LocaleLayoutProps = {
   children: ReactNode;
@@ -152,6 +153,10 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  return <>{children}</>;
+  return (
+    <PageTransition>
+      {children}
+    </PageTransition>
+  );
 }
 

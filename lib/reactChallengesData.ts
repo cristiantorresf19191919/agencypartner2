@@ -639,7 +639,7 @@ const Parent = () => {
         description: "Component is defined outside Parent",
         validate: (code: string) => {
           const childDef = /const\s+Child\s*=/.exec(code);
-          const parentDef = /const\s+Parent\s*=/exec(code);
+          const parentDef = /const\s+Parent\s*=/.exec(code);
           return childDef && parentDef && childDef.index! < parentDef.index!;
         },
       },

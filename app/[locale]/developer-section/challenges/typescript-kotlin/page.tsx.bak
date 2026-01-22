@@ -15,10 +15,6 @@ export default function ChallengesLandingPage() {
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
 
-  // Ensure we have the data
-  const challengesCount = CHALLENGES?.length || 0;
-  const reactChallengesCount = REACT_CHALLENGES?.length || 0;
-
   return (
     <main className={styles.page}>
       <DeveloperHeader />
@@ -54,12 +50,10 @@ export default function ChallengesLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            style={{ width: '100%' }}
           >
             <Link
               href={createLocalizedPath("/developer-section/challenges/typescript-kotlin")}
               className={styles.challengeCard}
-              style={{ display: 'block' }}
             >
               <div className={styles.cardGlow} />
               <div className={styles.cardGradient1} />
@@ -80,7 +74,7 @@ export default function ChallengesLandingPage() {
                 
                 <div className={styles.cardStats}>
                   <span className={styles.stat}>
-                    {challengesCount} {t('challenges-count')}
+                    {CHALLENGES.length} {t('challenges-count')}
                   </span>
                   <span className={styles.stat}>
                     {t('challenges-badge-typescript-kotlin')}
@@ -99,12 +93,10 @@ export default function ChallengesLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
-            style={{ width: '100%' }}
           >
             <Link
               href={createLocalizedPath("/developer-section/react-challenges")}
               className={styles.challengeCard}
-              style={{ display: 'block' }}
             >
               <div className={styles.cardGlow} />
               <div className={styles.cardGradient1} />
@@ -125,7 +117,7 @@ export default function ChallengesLandingPage() {
                 
                 <div className={styles.cardStats}>
                   <span className={styles.stat}>
-                    {reactChallengesCount} {t('challenges-count')}
+                    {REACT_CHALLENGES.length} {t('challenges-count')}
                   </span>
                   <span className={styles.stat}>
                     React + TypeScript

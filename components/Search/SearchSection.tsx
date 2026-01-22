@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search as SearchIcon, Close as CloseIcon } from "@mui/icons-material";
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "./SearchSection.module.css";
 
 export default function SearchSection() {
@@ -14,6 +15,7 @@ export default function SearchSection() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,7 +119,7 @@ export default function SearchSection() {
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search patterns, concepts, principles..."
+                    placeholder={t("search-placeholder") || "Search blog posts, patterns, concepts..."}
                     className={styles.searchInput}
                     autoComplete="off"
                   />
