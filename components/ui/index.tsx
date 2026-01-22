@@ -6,4 +6,5 @@ export { Text } from './Text';
 export { ButtonLink } from './ButtonLink';
 export { CodeComparison } from './CodeComparison';
 export { CodeEditor } from './CodeEditor';
+export { KotlinTypeScriptBlock } from './KotlinTypeScriptBlock';
 

@@ -2,7 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['images.unsplash.com', 'epicwebsol.com'],
+    domains: ['images.unsplash.com', 'epicwebsol.com', 'refactoring.guru'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'refactoring.guru',
+        pathname: '/images/**',
+      },
+    ],
   },
   // Improve error handling and prevent 500 errors
   onDemandEntries: {

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import * as ts from "typescript";
 import { motion } from "framer-motion";
 import {
   PlayArrow as PlayIcon,
@@ -159,116 +160,121 @@ export default function PlaygroundPage() {
       }
 
       const monaco = monacoRef.current;
-      const workerGetter = await monaco.languages.typescript.getTypeScriptWorker();
-      
-      // Process all files - use files from state but read latest content from Monaco models
+
+      // Process all files: compile from the live model content (model.getValue()) so we
+      // always use exactly what you see and get accurate TypeScript error messages.
       for (const file of files) {
         const uri = monaco.Uri.parse(file.uri || `file:///src/${file.name}`);
         let model = monaco.editor.getModel(uri);
-        
-        // If model doesn't exist, create it from file state
+
         if (!model) {
           model = monaco.editor.createModel(file.code, "typescript", uri);
         }
-        
+
         if (!model) {
           appendLog(`⚠️ Warning: Could not create model for ${file.name}`);
           continue;
         }
 
-        let jsCode = "";
+        const source = model.getValue();
+        let jsCode: string;
         try {
-          const client = await workerGetter(uri);
-          const emit = await client.getEmitOutput(uri.toString());
-          jsCode = emit.outputFiles?.[0]?.text ?? "";
-          
-          // If compilation failed (empty output), check for errors
-          if (!jsCode && emit.outputFiles?.length === 0) {
-            const diagnostics = monaco.languages.typescript.typescriptDefaults.getDiagnostics(uri);
-            const errors = diagnostics.filter(d => d.severity === monaco.MarkerSeverity.Error);
-            if (errors.length > 0) {
-              const errorMsg = errors[0].message || "Compilation error";
-              throw new Error(`Error in ${file.name}: ${errorMsg}`);
-            }
+          const result = ts.transpileModule(source, {
+            compilerOptions: {
+              module: ts.ModuleKind.CommonJS,
+              target: ts.ScriptTarget.ES2020,
+              esModuleInterop: true,
+              moduleResolution: ts.ModuleResolutionKind.NodeJs,
+            },
+            reportDiagnostics: true,
+            fileName: file.name,
+          });
+          const errs = (result.diagnostics ?? []).filter(
+            (d) => d.category === ts.DiagnosticCategory.Error
+          );
+          if (errs.length > 0) {
+            const msg = ts.flattenDiagnosticMessageText(errs[0].messageText, "\n");
+            throw new Error(`Error in ${file.name}: ${msg}`);
           }
+          jsCode = result.outputText;
         } catch (err) {
           const errorMsg = err instanceof Error ? err.message : String(err);
           throw new Error(`Failed to compile ${file.name}: ${errorMsg}`);
         }
 
-        // Normalize path for registry: "./index" for "index.ts", "./utils" for "utils.ts"
         const moduleName = "./" + file.name.replace(/\.tsx?$/, "");
+        // Use JSON.stringify to safely escape the entire code string
+        // This handles all special characters including template literals, quotes, backslashes, etc.
+        const codeJson = JSON.stringify(jsCode);
         
-        // Escape backticks in code to avoid breaking the template literal
-        const safeCode = jsCode.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\${/g, "\\${");
-
-        modulesRegistration += `
-            __modules["${moduleName}"] = function(exports, require, module) {
-              ${safeCode}
-            };
-          `;
+        // Build module registration: store code as JSON string, then eval it safely
+        // This avoids all escaping issues with template literals, quotes, etc.
+        modulesRegistration +=
+          "            __modules[" + JSON.stringify(moduleName) + "] = function(exports, require, module) {\n" +
+          "              var __code = " + codeJson + ";\n" +
+          "              eval(__code);\n" +
+          "            };\n          ";
       }
 
-      // 3. Create the loader shim
-      const loaderCode = `
-        const __modules = {};
-        const __cache = {};
+      // 3. Create the loader shim using string concatenation to avoid template literal nesting issues
+      const loaderCode =
+        "        const __modules = {};\n" +
+        "        const __cache = {};\n\n" +
+        "        function require(path) {\n" +
+        "          // simple path resolution\n" +
+        "          if (!path.startsWith(\"./\")) {\n" +
+        "            throw new Error(\"External modules not supported: \" + path);\n" +
+        "          }\n" +
+        "          \n" +
+        "          // normalized key: support extensionless lookups and remove leading ./\n" +
+        "          // \"./utils\" -> \"utils\", \"./utils.ts\" -> \"utils\", \"./index\" -> \"index\"\n" +
+        "          let key = path.replace(/^\\.\\//, \"\").replace(/\\.js$/, \"\").replace(/\\.ts$/, \"\").replace(/\\.tsx$/, \"\");\n" +
+        "          \n" +
+        "          // Try with \"./\" prefix for module registry (how we register modules)\n" +
+        "          const moduleKey = \"./\" + key;\n" +
+        "          \n" +
+        "          if (__cache[moduleKey]) return __cache[moduleKey].exports;\n" +
+        "          \n" +
+        "          // Try to find the factory function - check the primary key first\n" +
+        "          let factory = __modules[moduleKey];\n" +
+        "          \n" +
+        "          // If not found, try alternative keys\n" +
+        "          if (!factory) {\n" +
+        "            const altKeys = [key, \"./\" + key, path];\n" +
+        "            for (const altKey of altKeys) {\n" +
+        "              if (__modules[altKey]) {\n" +
+        "                factory = __modules[altKey];\n" +
+        "                break;\n" +
+        "              }\n" +
+        "            }\n" +
+        "          }\n" +
+        "          \n" +
+        "          if (!factory) {\n" +
+        "            throw new Error(\"Module not found: \" + path + \" (available: \" + Object.keys(__modules).join(\", \") + \")\");\n" +
+        "          }\n" +
+        "          \n" +
+        "          const module = { exports: {} };\n" +
+        "          __cache[moduleKey] = module;\n" +
+        "          \n" +
+        "          // Execute factory\n" +
+        "          factory(module.exports, require, module);\n" +
+        "          return module.exports;\n" +
+        "        }\n\n" +
+        "        // Register ALL modules\n" +
+        modulesRegistration + "\n" +
+        "        // Boot Main - try \"./index\" first, then fallback to first file\n" +
+        "        try {\n" +
+        "          return require(\"./index\");\n" +
+        "        } catch (err) {\n" +
+        "          if (err.message.includes(\"Module not found\")) {\n" +
+        "            throw new Error(\"Entry point './index' not found. Make sure you have an 'index.ts' file.\");\n" +
+        "          }\n" +
+        "          throw err;\n" +
+        "        }\n      ";
 
-        function require(path) {
-          // simple path resolution
-          if (!path.startsWith("./")) {
-            throw new Error("External modules not supported: " + path);
-          }
-          
-          // normalized key: support extensionless lookups and remove leading ./
-          // "./utils" -> "utils", "./utils.ts" -> "utils", "./index" -> "index"
-          let key = path.replace(/^\\.\\//, "").replace(/\\.js$/, "").replace(/\\.ts$/, "").replace(/\\.tsx$/, "");
-          
-          // Try with "./" prefix for module registry (how we register modules)
-          const moduleKey = "./" + key;
-          
-          if (__cache[moduleKey]) return __cache[moduleKey].exports;
-          
-          // Try to find the factory function - check the primary key first
-          let factory = __modules[moduleKey];
-          
-          // If not found, try alternative keys
-          if (!factory) {
-            const altKeys = [key, "./" + key, path];
-            for (const altKey of altKeys) {
-              if (__modules[altKey]) {
-                factory = __modules[altKey];
-                break;
-              }
-            }
-          }
-          
-          if (!factory) {
-            throw new Error("Module not found: " + path + " (available: " + Object.keys(__modules).join(", ") + ")");
-          }
-          
-          const module = { exports: {} };
-          __cache[moduleKey] = module;
-          
-          // Execute factory
-          factory(module.exports, require, module);
-          return module.exports;
-        }
-
-        // Register ALL modules
-        ${modulesRegistration}
-
-        // Boot Main - try "./index" first, then fallback to first file
-        try {
-          return require("./index");
-        } catch (err) {
-          if (err.message.includes("Module not found")) {
-            throw new Error("Entry point './index' not found. Make sure you have an 'index.ts' file.");
-          }
-          throw err;
-        }
-      `;
-
+      // Construct the function body using string concatenation to avoid template literal issues
+      const functionBody = '"use strict";\n' + loaderCode;
+      
       const runner = new AsyncFunction(
         "console",
         "setTimeout",
@@ -279,7 +285,7 @@ export default function PlaygroundPage() {
         "performance",
         "Date",
         "Math",
-        `"use strict";\n${loaderCode}`
+        functionBody
       );
 
       const sandboxConsole = {
@@ -305,7 +311,10 @@ export default function PlaygroundPage() {
       setOutput("Done.");
 
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : String(err);
+      let errorMsg = err instanceof Error ? err.message : String(err);
+      if (/invalid or unexpected token/i.test(errorMsg)) {
+        errorMsg += " Often this is a syntax error (e.g. missing \")\" or \"}\"). Check for red squiggles in the editor.";
+      }
       setError(errorMsg);
       setOutput("Execution stopped.");
       appendLog(`❌ Error: ${errorMsg}`);
@@ -476,17 +485,12 @@ export default function PlaygroundPage() {
               height="100%"
               language="typescript"
               path={activeFileData?.uri}
-              value={activeFileData?.code || ""}
+              defaultValue={activeFileData?.code || ""}
               onChange={(value) => {
-                const next = value || "";
+                const next = value ?? "";
                 setFiles((prev) =>
                   prev.map((f) => (f.name === activeFileData.name ? { ...f, code: next } : f))
                 );
-                if (monacoRef.current) {
-                  const monaco = monacoRef.current;
-                  const model = monaco.editor.getModel(monaco.Uri.parse(activeFileData.uri));
-                  if (model) model.setValue(next);
-                }
               }}
               options={editorOptions}
               onMount={handleEditorMount}

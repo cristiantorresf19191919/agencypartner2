@@ -549,6 +549,240 @@ function FormField({ InputComponent, ...props }: { InputComponent: React.Compone
           </div>
         </section>
 
+        {/* Dependency Inversion Principle */}
+        <section id="dip" className={styles.section}>
+          <div className={styles.sectionCard}>
+            <Stack direction="col" gap="md">
+              <div>
+                <Heading level={2} className={styles.sectionTitle}>
+                  {t("solid-dip-title")}
+                </Heading>
+                <Text className={styles.sectionDescription}>
+                  {t("solid-dip-desc")}
+                </Text>
+              </div>
+
+              <CodeComparison
+                language="tsx"
+                showKotlin={true}
+                kotlinExample={`// ✅ GOOD: Dependency Inversion Principle Applied
+// High-level modules depend on abstractions, not concrete implementations
+
+// Step 1: Define Abstractions (Interfaces)
+data class User(
+    val name: String,
+    val email: String,
+    val dateOfBirth: java.util.Date
+)
+
+interface ExportUser {
+    fun export(user: User)
+}
+
+// Step 2: Implement Concrete Classes
+class ExportUserToCSV : ExportUser {
+    override fun export(user: User) {
+        // Logic to export user to a CSV file
+        println("Exported \${user.name} to CSV")
+    }
+}
+
+class ExportUserToPDF : ExportUser {
+    override fun export(user: User) {
+        // Logic to export user to a PDF file
+        println("Exported \${user.name} to PDF")
+    }
+}
+
+// Step 3: Use Dependency Injection
+// High-level module depends on abstraction, not concrete implementation
+class ExportUserUseCase(
+    private val exportUser: ExportUser  // Depends on abstraction
+) {
+    fun execute(user: User) {
+        // Export the user data using the injected dependency
+        exportUser.export(user)
+    }
+}
+
+// Usage examples:
+
+// With CSV
+val exportUsertoCSV = ExportUserToCSV()
+val exportUserUseCaseCSV = ExportUserUseCase(exportUsertoCSV)
+
+exportUserUseCaseCSV.execute(
+    User(
+        name = "Bobson Paebi",
+        email = "paebi@bubstack.tech",
+        dateOfBirth = java.util.Date()
+    )
+)
+
+// With PDF
+val exportUsertoPDF = ExportUserToPDF()
+val exportUserUseCasePDF = ExportUserUseCase(exportUsertoPDF)
+
+exportUserUseCasePDF.execute(
+    User(
+        name = "Bobson Paebi",
+        email = "paebi@bubstack.tech",
+        dateOfBirth = java.util.Date()
+    )
+)
+
+// Benefits:
+// ✅ High-level modules don't depend on low-level modules
+// ✅ Both depend on abstractions
+// ✅ Easy to test (can inject mocks)
+// ✅ Easy to extend (add new export formats)
+// ✅ Follows Dependency Inversion Principle`}
+                wrong={`// ❌ WRONG: High-level module depends on low-level modules
+// Direct dependency on concrete implementations
+
+type User = {
+  name: string;
+  email: string;
+  dateOfBirth: Date;
+};
+
+// Low-level module: CSV export
+class ExportUserToCSV {
+  export(user: User) {
+    console.log(\`Exported \${user.name} to CSV\`);
+  }
+}
+
+// Low-level module: PDF export
+class ExportUserToPDF {
+  export(user: User) {
+    console.log(\`Exported \${user.name} to PDF\`);
+  }
+}
+
+// ❌ High-level module directly depends on concrete implementations
+class ExportUserUseCase {
+  private csvExporter = new ExportUserToCSV(); // Direct dependency!
+  private pdfExporter = new ExportUserToPDF(); // Direct dependency!
+
+  executeCSV(user: User) {
+    this.csvExporter.export(user);
+  }
+
+  executePDF(user: User) {
+    this.pdfExporter.export(user);
+  }
+}
+
+// Problems:
+// - High-level depends on low-level modules
+// - Hard to test (can't inject mocks)
+// - Hard to extend (must modify UseCase for new formats)
+// - Violates Dependency Inversion Principle
+// - Tight coupling`}
+                good={`// ✅ GOOD: Dependency Inversion Principle Applied
+// High-level modules depend on abstractions, not concrete implementations
+
+// Step 1: Define Abstractions (Interfaces)
+type User = {
+  name: string;
+  email: string;
+  dateOfBirth: Date;
+};
+
+interface ExportUser {
+  export(user: User): void;
+}
+
+// Step 2: Implement Concrete Classes
+class ExportUserToCSV implements ExportUser {
+  export(user: User) {
+    // Logic to export user to a CSV file
+    console.log(\`Exported \${user.name} to CSV\`);
+  }
+}
+
+class ExportUserToPDF implements ExportUser {
+  export(user: User) {
+    // Logic to export user to a PDF file
+    console.log(\`Exported \${user.name} to PDF\`);
+  }
+}
+
+// Step 3: Use Dependency Injection
+// High-level module depends on abstraction, not concrete implementation
+class ExportUserUseCase {
+  constructor(private exportUser: ExportUser) {} // Depends on abstraction
+
+  execute(user: User) {
+    // Export the user data using the injected dependency
+    this.exportUser.export(user);
+  }
+}
+
+// Usage examples:
+
+// With CSV
+const exportUsertoCSV = new ExportUserToCSV();
+const exportUserUseCaseCSV = new ExportUserUseCase(exportUsertoCSV);
+
+exportUserUseCaseCSV.execute({
+  name: 'Bobson Paebi',
+  email: 'paebi@bubstack.tech',
+  dateOfBirth: new Date(),
+});
+
+// With PDF
+const exportUsertoPDF = new ExportUserToPDF();
+const exportUserUseCasePDF = new ExportUserUseCase(exportUsertoPDF);
+
+exportUserUseCasePDF.execute({
+  name: 'Bobson Paebi',
+  email: 'paebi@bubstack.tech',
+  dateOfBirth: new Date(),
+});
+
+// React Component Example:
+export function UserExportForm() {
+  const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
+
+  // Create the appropriate exporter based on selection
+  const exporter: ExportUser = exportFormat === 'csv' 
+    ? new ExportUserToCSV() 
+    : new ExportUserToPDF();
+
+  const exportUserUseCase = new ExportUserUseCase(exporter);
+
+  const handleExport = (user: User) => {
+    exportUserUseCase.execute(user);
+  };
+
+  return (
+    <form onSubmit={(e) => {
+      e.preventDefault();
+      handleExport({ name: 'John', email: 'john@example.com', dateOfBirth: new Date() });
+    }}>
+      <select value={exportFormat} onChange={(e) => setExportFormat(e.target.value as 'csv' | 'pdf')}>
+        <option value="csv">CSV</option>
+        <option value="pdf">PDF</option>
+      </select>
+      <button type="submit">Export User</button>
+    </form>
+  );
+}
+
+// Benefits:
+// ✅ High-level modules don't depend on low-level modules
+// ✅ Both depend on abstractions
+// ✅ Easy to test (can inject mocks)
+// ✅ Easy to extend (add new export formats without modifying UseCase)
+// ✅ Follows Dependency Inversion Principle
+// ✅ Loose coupling`}
+              />
+            </Stack>
+          </div>
+        </section>
+
         {/* Navigation */}
         <div className={styles.navigation}>
           <ButtonLink variant="nav" href={createLocalizedPath("/developer-section/blog/design-patterns")}>

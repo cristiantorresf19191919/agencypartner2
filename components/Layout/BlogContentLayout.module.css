@@ -46,6 +46,7 @@
   max-width: none;
   padding: 0 1rem;
   margin-left: 0;
+  box-sizing: border-box;
 }
 
 /* Account for fixed sidebar on large screens - always reserve space for sidebar */

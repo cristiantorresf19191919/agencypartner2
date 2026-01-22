@@ -164,32 +164,49 @@ function DocSidebar() {
       ],
     },
     {
-      titleKey: "design-patterns-title",
-      icon: <AccountTreeIcon sx={{ fontSize: 24 }} />,
+      titleKey: "design-patterns-creational-title",
+      icon: <FactoryIcon sx={{ fontSize: 24 }} />,
       color: "#9C27B0",
       defaultOpen: true,
       items: [
-        { 
-          id: "strategy", 
-          titleKey: "design-patterns-strategy-title", 
-          href: "/developer-section/blog/design-patterns#strategy", 
-          icon: <SportsEsportsIcon sx={{ fontSize: 20 }} />,
-          color: "#E91E63"
-        },
-        { 
-          id: "observer", 
-          titleKey: "Observer Pattern", 
-          href: "/developer-section/blog/design-patterns#observer", 
-          icon: <VisibilityIcon sx={{ fontSize: 20 }} />,
-          color: "#00BCD4"
-        },
-        { 
-          id: "factory", 
-          titleKey: "Factory Pattern", 
-          href: "/developer-section/blog/design-patterns#factory", 
-          icon: <FactoryIcon sx={{ fontSize: 20 }} />,
-          color: "#FF9800"
-        },
+        { id: "factory-method", titleKey: "design-patterns-factory-method-title", href: "/developer-section/blog/design-patterns#factory-method", icon: <FactoryIcon sx={{ fontSize: 20 }} />, color: "#E91E63" },
+        { id: "abstract-factory", titleKey: "design-patterns-abstract-factory-title", href: "/developer-section/blog/design-patterns#abstract-factory", icon: <LayersIcon sx={{ fontSize: 20 }} />, color: "#9C27B0" },
+        { id: "builder", titleKey: "design-patterns-builder-title", href: "/developer-section/blog/design-patterns#builder", icon: <AccountTreeIcon sx={{ fontSize: 20 }} />, color: "#FF9800" },
+        { id: "prototype", titleKey: "design-patterns-prototype-title", href: "/developer-section/blog/design-patterns#prototype", icon: <ExtensionIcon sx={{ fontSize: 20 }} />, color: "#00BCD4" },
+        { id: "singleton", titleKey: "design-patterns-singleton-title", href: "/developer-section/blog/design-patterns#singleton", icon: <GpsFixedIcon sx={{ fontSize: 20 }} />, color: "#4CAF50" },
+      ],
+    },
+    {
+      titleKey: "design-patterns-structural-title",
+      icon: <LayersIcon sx={{ fontSize: 24 }} />,
+      color: "#2196F3",
+      defaultOpen: true,
+      items: [
+        { id: "adapter", titleKey: "design-patterns-adapter-title", href: "/developer-section/blog/design-patterns#adapter", icon: <ExtensionIcon sx={{ fontSize: 20 }} />, color: "#2196F3" },
+        { id: "bridge", titleKey: "design-patterns-bridge-title", href: "/developer-section/blog/design-patterns#bridge", icon: <SwapHorizIcon sx={{ fontSize: 20 }} />, color: "#03A9F4" },
+        { id: "composite", titleKey: "design-patterns-composite-title", href: "/developer-section/blog/design-patterns#composite", icon: <AccountTreeIcon sx={{ fontSize: 20 }} />, color: "#00BCD4" },
+        { id: "decorator", titleKey: "design-patterns-decorator-title", href: "/developer-section/blog/design-patterns#decorator", icon: <LayersIcon sx={{ fontSize: 20 }} />, color: "#009688" },
+        { id: "facade", titleKey: "design-patterns-facade-title", href: "/developer-section/blog/design-patterns#facade", icon: <VisibilityIcon sx={{ fontSize: 20 }} />, color: "#4CAF50" },
+        { id: "flyweight", titleKey: "design-patterns-flyweight-title", href: "/developer-section/blog/design-patterns#flyweight", icon: <WaterDropIcon sx={{ fontSize: 20 }} />, color: "#8BC34A" },
+        { id: "proxy", titleKey: "design-patterns-proxy-title", href: "/developer-section/blog/design-patterns#proxy", icon: <LockOpenIcon sx={{ fontSize: 20 }} />, color: "#FF9800" },
+      ],
+    },
+    {
+      titleKey: "design-patterns-behavioral-title",
+      icon: <AccountTreeIcon sx={{ fontSize: 24 }} />,
+      color: "#673AB7",
+      defaultOpen: true,
+      items: [
+        { id: "chain-of-responsibility", titleKey: "design-patterns-chain-title", href: "/developer-section/blog/design-patterns#chain-of-responsibility", icon: <TrendingUpIcon sx={{ fontSize: 20 }} />, color: "#673AB7" },
+        { id: "command", titleKey: "design-patterns-command-title", href: "/developer-section/blog/design-patterns#command", icon: <CodeIcon sx={{ fontSize: 20 }} />, color: "#7C4DFF" },
+        { id: "iterator", titleKey: "design-patterns-iterator-title", href: "/developer-section/blog/design-patterns#iterator", icon: <SwapHorizIcon sx={{ fontSize: 20 }} />, color: "#9C27B0" },
+        { id: "mediator", titleKey: "design-patterns-mediator-title", href: "/developer-section/blog/design-patterns#mediator", icon: <GpsFixedIcon sx={{ fontSize: 20 }} />, color: "#E91E63" },
+        { id: "memento", titleKey: "design-patterns-memento-title", href: "/developer-section/blog/design-patterns#memento", icon: <LockOpenIcon sx={{ fontSize: 20 }} />, color: "#00BCD4" },
+        { id: "observer", titleKey: "design-patterns-observer-title", href: "/developer-section/blog/design-patterns#observer", icon: <VisibilityIcon sx={{ fontSize: 20 }} />, color: "#009688" },
+        { id: "state", titleKey: "design-patterns-state-title", href: "/developer-section/blog/design-patterns#state", icon: <SportsEsportsIcon sx={{ fontSize: 20 }} />, color: "#4CAF50" },
+        { id: "strategy", titleKey: "design-patterns-strategy-title", href: "/developer-section/blog/design-patterns#strategy", icon: <SportsEsportsIcon sx={{ fontSize: 20 }} />, color: "#8BC34A" },
+        { id: "template-method", titleKey: "design-patterns-template-method-title", href: "/developer-section/blog/design-patterns#template-method", icon: <CodeIcon sx={{ fontSize: 20 }} />, color: "#FF9800" },
+        { id: "visitor", titleKey: "design-patterns-visitor-title", href: "/developer-section/blog/design-patterns#visitor", icon: <ExtensionIcon sx={{ fontSize: 20 }} />, color: "#F44336" },
       ],
     },
     {

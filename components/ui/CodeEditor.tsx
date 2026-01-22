@@ -2,9 +2,10 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
+import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle } from "lucide-react";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
 
@@ -30,8 +31,6 @@ const REACT_UMD = `
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 `;
 
-const KOTLIN_PLAYGROUND_SCRIPT = "https://unpkg.com/kotlin-playground@1.9.0/dist/kotlin-playground.min.js";
-
 export function CodeEditor({
   code: initialCode,
   language = "tsx",
@@ -51,7 +50,7 @@ export function CodeEditor({
   const [logs, setLogs] = useState<string[]>([]);
   const [fontSize, setFontSize] = useState(14);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const kotlinScriptInjected = useRef(false);
+  const uniqueId = useId();
 
   const normalizedLang = language.toLowerCase();
   const isKotlin = normalizedLang.includes("kotlin");
@@ -88,18 +87,6 @@ export function CodeEditor({
       document.body.style.overflow = "";
     };
   }, [isFullscreen]);
-
-  useEffect(() => {
-    if (!isKotlin) return;
-    if (kotlinScriptInjected.current) return;
-    const script = document.createElement("script");
-    script.src = KOTLIN_PLAYGROUND_SCRIPT;
-    script.async = true;
-    script.onload = () => {
-      kotlinScriptInjected.current = true;
-    };
-    document.head.appendChild(script);
-  }, [isKotlin]);
 
   const editorOptions = useMemo(
     () => ({
@@ -349,108 +336,160 @@ export function CodeEditor({
           {language}
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-200">
+          {/* Font size */}
+          <div
+            className="inline-flex items-center rounded-lg border border-white/10 bg-white/5 overflow-hidden"
+            role="group"
+            aria-label="Font size"
+          >
             <button
-              className="px-1 hover:text-white"
               onClick={() => setFontSize((s) => Math.max(10, s - 1))}
               aria-label="Decrease font size"
+              className="flex h-8 w-8 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
             >
-              A-
+              <Minus className="h-3.5 w-3.5" strokeWidth={2.5} />
             </button>
-            <span className="px-1 tabular-nums">{fontSize}</span>
+            <span
+              className="min-w-8 px-1.5 text-center text-xs font-medium tabular-nums text-slate-300"
+              aria-hidden
+            >
+              {fontSize}
+            </span>
             <button
-              className="px-1 hover:text-white"
               onClick={() => setFontSize((s) => Math.min(24, s + 1))}
               aria-label="Increase font size"
+              className="flex h-8 w-8 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
             >
-              A+
+              <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
             </button>
           </div>
+          <span className="h-4 w-px bg-white/10" aria-hidden />
           {!readOnly && (
             <>
               <button
                 onClick={handleReset}
-                className="px-3 py-1 text-xs rounded-md bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10"
+                aria-label="Reset code"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
               >
+                <RotateCcw className="h-3.5 w-3.5" strokeWidth={2} />
                 Reset
               </button>
-              <button
-                onClick={runCode}
-                className={`px-3 py-1 text-xs rounded-md text-[#041021] bg-linear-to-r from-[#6c8bff] to-[#7cf4ff] border border-white/20 shadow-[0_8px_30px_rgba(124,244,255,0.25)] hover:brightness-110 ${
-                  isRunning ? "opacity-70" : ""
-                }`}
-              >
-                {isRunning ? "Running…" : "Run (⌘/Ctrl+Enter)"}
-              </button>
+              {!isKotlin && (
+                <button
+                  onClick={runCode}
+                  disabled={isRunning}
+                  aria-label={isRunning ? "Running" : "Run code"}
+                  className={`inline-flex h-8 items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-xs font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.4)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(34,211,238,0.5)] hover:from-cyan-300 hover:via-blue-300 hover:to-indigo-300 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-[0_2px_12px_rgba(34,211,238,0.4)] ${
+                    isRunning ? "cursor-wait" : ""
+                  }`}
+                >
+                  <Play className="h-3.5 w-3.5 fill-current" strokeWidth={2} />
+                  {isRunning ? "Running…" : "Run"}
+                  <kbd className="ml-0.5 hidden rounded bg-black/20 px-1.5 py-0.5 font-sans text-[10px] sm:inline">⌘↵</kbd>
+                </button>
+              )}
             </>
           )}
           <button
             onClick={() => setIsFullscreen((v) => !v)}
-            className="px-3 py-1 text-xs rounded-md bg-white/5 border border-white/10 text-slate-200 hover:bg-white/10"
+            aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
           >
+            {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" strokeWidth={2} /> : <Maximize2 className="h-3.5 w-3.5" strokeWidth={2} />}
             {isFullscreen ? "Exit" : "Maximize"}
           </button>
         </div>
       </div>
 
       <div className="flex-1 min-h-0" style={{ display: 'flex', flexDirection: 'column' }}>
-        {isKotlin ? (
-          <div className="p-3 bg-[#0b1020] text-slate-100 overflow-auto flex-1">
-            <pre
-              className="kotlin-playground"
-              data-target-platform="js"
-              data-auto-indent="true"
-              data-theme="darcula"
-              data-readonly={readOnly ? "true" : "false"}
-            >
-{code}
-            </pre>
-          </div>
-        ) : (
-          <div className="flex-1" style={{ minHeight: 300 }}>
-            <MonacoEditor
-              height={height === "auto" ? 400 : height}
-              language={isReactLike ? "typescript" : language}
-              path="App.tsx"
-              value={code}
-              onChange={(value) => {
-                const next = value || "";
-                setCode(next);
-                if (onChange) onChange(next);
-              }}
-              options={editorOptions}
-              onMount={handleEditorMount}
-              theme="vs-dark"
-            />
-          </div>
-        )}
+        <div className="flex-1" style={{ minHeight: 300 }}>
+          <MonacoEditor
+            height={height === "auto" ? 400 : height}
+            language={isReactLike ? "typescript" : normalizedLang}
+            path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : "App.tsx"}
+            value={code}
+            onChange={(value) => {
+              const next = value || "";
+              setCode(next);
+              if (onChange) onChange(next);
+            }}
+            options={editorOptions}
+            onMount={handleEditorMount}
+            theme="vs-dark"
+          />
+        </div>
       </div>
     </div>
   );
 
   const previewSection =
     isRunnable && !isKotlin ? (
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
-        <div className="border border-white/10 rounded-lg bg-[#0b1020] p-3">
-          <div className="text-xs text-slate-300 mb-2">Preview</div>
-          <iframe
-            ref={iframeRef}
-            title="playground-preview"
-            sandbox="allow-scripts allow-same-origin"
-            srcDoc={outputHtml}
-            className="w-full h-64 bg-white rounded-md border border-white/10"
-          />
-          {error && <div className="mt-2 text-xs text-red-300">⚠️ {error}</div>}
-        </div>
-        <div className="border border-white/10 rounded-lg bg-[#0b1020] p-3">
-          <div className="text-xs text-slate-300 mb-2">Console</div>
-          <div className="h-64 overflow-auto text-xs text-slate-100 space-y-1 font-mono">
-            {logs.length === 0 ? <div className="text-slate-500">Logs will appear here.</div> : null}
-            {logs.map((line, idx) => (
-              <div key={`${line}-${idx}`} className="whitespace-pre-wrap wrap-break-word">
-                {line}
-              </div>
-            ))}
+      <div className="mt-4 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020]">
+        <div className="grid min-h-0 md:grid-cols-2">
+          {/* Preview */}
+          <div className="flex flex-col border-b border-white/10 md:border-b-0 md:border-r md:border-r-white/10">
+            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
+              <Monitor className="h-3.5 w-3.5 text-cyan-400/80" strokeWidth={2} />
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Preview</span>
+            </div>
+            <div className="relative flex min-h-72 flex-1 flex-col p-3">
+              {!outputHtml ? (
+                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5">
+                  <div className="mb-2 rounded-full bg-white/5 p-3">
+                    <Play className="h-5 w-5 text-slate-500" strokeWidth={2} />
+                  </div>
+                  <p className="text-sm text-slate-500">Run the code to see the preview</p>
+                  <p className="mt-0.5 text-xs text-slate-600">Press Run or ⌘↵</p>
+                </div>
+              ) : (
+                <iframe
+                  ref={iframeRef}
+                  title="playground-preview"
+                  sandbox="allow-scripts allow-same-origin"
+                  srcDoc={outputHtml}
+                  className="min-h-60 w-full flex-1 rounded-lg border border-white/10 bg-[#0e1628]"
+                />
+              )}
+              {error && (
+                <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" strokeWidth={2} />
+                  <p className="text-xs text-red-300">{error}</p>
+                </div>
+              )}
+            </div>
+          </div>
+          {/* Console */}
+          <div className="flex flex-col">
+            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
+              <Terminal className="h-3.5 w-3.5 text-emerald-400/80" strokeWidth={2} />
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Console</span>
+              {logs.length > 0 && (
+                <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium tabular-nums text-slate-400">
+                  {logs.length}
+                </span>
+              )}
+            </div>
+            <div className="flex min-h-72 flex-1 flex-col overflow-hidden p-3">
+              {logs.length === 0 ? (
+                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5">
+                  <Terminal className="mb-2 h-8 w-8 text-slate-600" strokeWidth={1.5} />
+                  <p className="text-sm text-slate-500">Logs will appear here</p>
+                  <p className="mt-0.5 text-xs text-slate-600">console.log, warnings, errors</p>
+                </div>
+              ) : (
+                <div className="flex-1 overflow-auto rounded-lg border border-white/10 bg-[#0a0f1a] px-3 py-2 font-mono text-xs leading-relaxed text-slate-200">
+                  {logs.map((line, idx) => (
+                    <div
+                      key={`${line}-${idx}`}
+                      className="whitespace-pre-wrap wrap-break-word border-b border-white/5 py-1.5 last:border-b-0"
+                    >
+                      <span className="select-none pr-2 text-slate-600">{idx + 1}</span>
+                      {line}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
