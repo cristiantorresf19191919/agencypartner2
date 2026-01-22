@@ -1,14 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
+import { FullscreenIframeModal } from "@/components/ui/FullscreenIframeModal";
 import styles from "../BlogPostPage.module.css";
 
 export default function RefactoringGuruPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const [isIframeModalOpen, setIsIframeModalOpen] = useState(false);
 
   return (
     <BlogContentLayout>
@@ -1393,6 +1396,125 @@ export default function RefactoringGuruPage() {
         </div>
       </section>
 
+      {/* Interactive Refactoring Guru Section */}
+      <section className={styles.section}>
+        <div className={styles.sectionCard}>
+          <Stack direction="col" gap="lg">
+            <div>
+              <Heading level={2} className={styles.sectionTitle}>
+                Explore Refactoring.Guru
+              </Heading>
+              <Text className={styles.sectionDescription}>
+                Browse the complete refactoring catalog directly from Refactoring.Guru. Click the maximize button to view in fullscreen.
+              </Text>
+            </div>
+
+            {/* Embedded Iframe with Maximize Button */}
+            <div style={{
+              marginTop: "2rem",
+              borderRadius: "0.75rem",
+              overflow: "hidden",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgba(255, 255, 255, 0.02)",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              position: "relative"
+            }}>
+              {/* Header Bar */}
+              <div style={{
+                padding: "1rem 1.5rem",
+                background: "rgba(0, 0, 0, 0.6)",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexShrink: 0,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <div style={{
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #a06af9 0%, #6366f1 100%)",
+                    boxShadow: "0 0 10px rgba(160, 106, 249, 0.5)",
+                  }} />
+                  <span style={{
+                    color: "rgba(255, 255, 255, 0.9)",
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                  }}>
+                    Refactoring.Guru - Refactoring Catalog
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsIframeModalOpen(true)}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.1)",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    borderRadius: "0.375rem",
+                    padding: "0.5rem 0.75rem",
+                    color: "rgba(255, 255, 255, 0.9)",
+                    cursor: "pointer",
+                    fontSize: "0.875rem",
+                    transition: "all 0.2s",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                  }}
+                  aria-label="Maximize iframe"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                  </svg>
+                  Maximize
+                </button>
+              </div>
+
+              {/* Iframe Container */}
+              <div style={{
+                position: "relative",
+                width: "100%",
+                height: "600px",
+                overflow: "hidden",
+                background: "#000",
+              }}>
+                <iframe
+                  src="https://refactoring.guru/refactoring"
+                  title="Refactoring.Guru - Refactoring Catalog"
+                  allow="fullscreen"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    background: "#000",
+                  }}
+                />
+              </div>
+            </div>
+          </Stack>
+        </div>
+      </section>
+
       {/* Related Resources Section */}
       <section className={styles.section}>
         <div className={styles.sectionCard}>
@@ -1542,6 +1664,15 @@ export default function RefactoringGuruPage() {
           </ButtonLink>
         </div>
       </nav>
+
+      {/* Fullscreen Iframe Modal */}
+      <FullscreenIframeModal
+        isOpen={isIframeModalOpen}
+        onClose={() => setIsIframeModalOpen(false)}
+        src="https://refactoring.guru/refactoring"
+        title="Refactoring.Guru - Refactoring Catalog"
+        allow="fullscreen"
+      />
     </BlogContentLayout>
   );
 }
