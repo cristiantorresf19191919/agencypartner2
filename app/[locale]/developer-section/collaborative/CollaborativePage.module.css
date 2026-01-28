@@ -1,0 +1,175 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 20%, rgba(80, 56, 255, 0.1), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(37, 228, 255, 0.12), transparent 38%),
+    #05070f;
+  color: #f7fbff;
+}
+
+.backgroundGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(700px at 50% 10%, rgba(81, 56, 255, 0.18), transparent 40%),
+    radial-gradient(600px at 85% 30%, rgba(30, 203, 255, 0.14), transparent 45%);
+  filter: blur(40px);
+  z-index: 0;
+}
+
+.backgroundGrid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.8), transparent 60%);
+  z-index: 0;
+}
+
+.heroSection {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 24px 40px;
+  text-align: center;
+}
+
+.title {
+  margin: 20px auto 16px;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  max-width: 900px;
+}
+
+.subtitle {
+  margin: 0 auto;
+  max-width: 820px;
+  color: #c6d5ff;
+  line-height: 1.7;
+  font-size: 18px;
+}
+
+.roomControls {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.roomInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd8ff;
+  font-size: 14px;
+}
+
+.userInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userInput label {
+  font-size: 14px;
+  color: #cbd8ff;
+}
+
+.userInput input {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.userInput input:focus {
+  outline: none;
+  border-color: rgba(93, 95, 255, 0.5);
+}
+
+.languageSelect {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.languageSelect label {
+  font-size: 14px;
+  color: #cbd8ff;
+}
+
+.languageSelect select {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.languageSelect select:focus {
+  outline: none;
+  border-color: rgba(93, 95, 255, 0.5);
+}
+
+.shareButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(120deg, rgba(93, 95, 255, 0.3), rgba(20, 122, 255, 0.3));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shareButton:hover {
+  background: linear-gradient(120deg, rgba(93, 95, 255, 0.4), rgba(20, 122, 255, 0.4));
+  transform: translateY(-1px);
+}
+
+.editorSection {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 24px 96px;
+}
+
+.editorContainer {
+  width: 100%;
+  height: 600px;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: #cbd8ff;
+  font-size: 18px;
+}

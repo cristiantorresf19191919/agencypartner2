@@ -1,0 +1,329 @@
+.playSection {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 100px 24px 40px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.description {
+  position: sticky;
+  top: 100px;
+  padding: 20px 0;
+}
+
+.descHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pts {
+  font-size: 13px;
+  color: #9fc4ff;
+  font-weight: 600;
+}
+
+.descTitle {
+  margin: 0 0 14px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #f1f6ff;
+  line-height: 1.25;
+}
+
+.descSub {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9fc4ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.descBody {
+  margin: 0;
+  font-size: 14px;
+  color: #c6d5ff;
+  line-height: 1.6;
+}
+
+.sample {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  color: #ddecff;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.editorColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.langTabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  color: #b8ccf0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.tab:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #e6f0ff;
+}
+
+.activeTab {
+  border-color: rgba(124, 244, 255, 0.5);
+  background: linear-gradient(120deg, rgba(108, 139, 255, 0.15), rgba(124, 244, 255, 0.12));
+  color: #e6f0ff;
+  box-shadow: 0 4px 16px rgba(124, 244, 255, 0.15);
+}
+
+.editorWrap {
+  height: 380px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(12, 16, 36, 0.9), rgba(7, 10, 24, 0.95));
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.editorLoading {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  color: #c2d8ff;
+  background: #0b1024;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #7cf4ff;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: #d0e0ff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iconBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.runBtn, .submitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.runBtn {
+  background: linear-gradient(120deg, #5b7eff, #6ce0ff);
+  color: #041021;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 24px rgba(124, 244, 255, 0.25);
+}
+
+.runBtn:hover:not(.disabled) {
+  background: linear-gradient(120deg, #6a8eff, #7ae8ff);
+  transform: translateY(-1px);
+}
+
+.submitBtn {
+  background: linear-gradient(120deg, #22c55e, #16a34a);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.3);
+}
+
+.submitBtn:hover:not(.disabled) {
+  background: linear-gradient(120deg, #2dd36f, #22c55e);
+  transform: translateY(-1px);
+}
+
+.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.outputPanel {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(12, 18, 36, 0.92), rgba(8, 12, 26, 0.95));
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.outputHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e6f0ff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.passLabel {
+  color: #6ee7b7;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.failLabel {
+  color: #fca5a5;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.successBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 16px;
+  padding: 14px 18px;
+  background: linear-gradient(120deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.25));
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  border-radius: 12px;
+  color: #6ee7b7;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+}
+
+.successIcon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.errorLine {
+  margin: 10px 16px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  color: #fecaca;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.logList {
+  max-height: 200px;
+  overflow: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.emptyLog {
+  margin: 0;
+  color: #7b9ad0;
+  font-size: 14px;
+}
+
+.logLine {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ddecff;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.notFound {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 140px 24px 80px;
+  color: #c6d5ff;
+}
+
+.notFound a {
+  color: #7cf4ff;
+  font-weight: 600;
+}
+
+.notFound a:hover {
+  text-decoration: underline;
+}
+
+.footerRow {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}

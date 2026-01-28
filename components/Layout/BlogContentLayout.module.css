@@ -1,0 +1,126 @@
+.blogLayout {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a0a2e 0%, #16213e 45%, #0f172a 100%);
+  overflow: hidden;
+}
+
+.backgroundEffects {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.radialGradient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(120, 119, 198, 0.15), rgba(255, 255, 255, 0));
+}
+
+.container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  margin: 0;
+  padding: 6rem 0 3rem 0;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 6rem 0 3rem 0;
+  }
+}
+
+.contentWrapper {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  align-items: flex-start;
+  position: relative;
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  padding: 0 1rem;
+  margin-left: 0;
+  box-sizing: border-box;
+}
+
+/* Account for fixed sidebar on large screens - always reserve space for sidebar */
+@media (min-width: 1024px) {
+  .mainContent {
+    margin-left: 320px; /* Sidebar open width - ensures consistent spacing */
+    width: calc(100% - 320px);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@media (min-width: 480px) {
+  .mainContent {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .mainContent {
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mainContent {
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .mainContent {
+    padding: 0 4rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .mainContent {
+    padding: 0 5rem;
+  }
+}
+
+/* Improve text readability in main content */
+.mainContent p {
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+}
+
+.mainContent p + p {
+  margin-top: 1.5rem;
+}
+
+.mainContent h1,
+.mainContent h2,
+.mainContent h3,
+.mainContent h4 {
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+.mainContent h2 {
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .mainContent p {
+    line-height: 2;
+    margin-bottom: 1.75rem;
+  }
+  
+  .mainContent h2 {
+    margin-top: 3rem;
+  }
+}
+
+
