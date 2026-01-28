@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -53,7 +53,7 @@ export default function APILayerPage() {
         </div>
 
         {/* What is an API Layer */}
-        <section id="what-is-api-layer" className={styles.section}>
+        <FullscreenSection id="what-is-api-layer" title="What Is Api Layer" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -74,10 +74,10 @@ export default function APILayerPage() {
               </div>
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Bad Code: Mixed API and UI */}
-        <section id="bad-example" className={styles.section}>
+        <FullscreenSection id="bad-example" title="Bad Example" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -179,10 +179,10 @@ export function UserProfile() {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Why API Layer Matters */}
-        <section id="why-matters" className={styles.section}>
+        <FullscreenSection id="why-matters" title="Why Matters" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -229,10 +229,10 @@ export function UserProfile() {
               </div>
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Building with Custom Hooks */}
-        <section id="custom-hooks" className={styles.section}>
+        <FullscreenSection id="custom-hooks" title="Custom Hooks" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -369,10 +369,10 @@ function UserProfile({ userId }) {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Complete Example: Structured API Layer */}
-        <section id="complete-example" className={styles.section}>
+        <FullscreenSection id="complete-example" title="Complete Example" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -514,10 +514,10 @@ function UserProfile() {
               </div>
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Key Takeaways */}
-        <section id="key-takeaways" className={styles.section}>
+        <FullscreenSection id="key-takeaways" title="Key Takeaways" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -559,7 +559,7 @@ function UserProfile() {
               </div>
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Back to Blog */}
         <div className={styles.backButton}>

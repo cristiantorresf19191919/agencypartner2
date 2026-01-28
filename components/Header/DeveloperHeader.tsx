@@ -6,17 +6,14 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocale } from '@/lib/useLocale';
+import LanguageSwitcher from './LanguageSwitcher';
 import styles from './Header.module.css';
 
 const DeveloperHeader = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const { createLocalizedPath } = useLocale();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'es' ? 'en' : 'es');
-  };
 
   useEffect(() => {
     const handleScroll = (): void => {
@@ -83,23 +80,7 @@ const DeveloperHeader = () => {
               )}
             </motion.div>
           </button>
-          <button
-            type="button"
-            className={styles.languageSwitcher}
-            onClick={toggleLanguage}
-            aria-label={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
-          >
-            <motion.span
-              key={language}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className={styles.languageLabel}
-            >
-              {language === 'es' ? 'EN' : 'ES'}
-            </motion.span>
-          </button>
+          <LanguageSwitcher />
         </div>
       </nav>
     </header>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function CodeSplittingPage() {
       </div>
 
       {/* Route-based Code Splitting */}
-      <section id="route-splitting" className={styles.section}>
+      <FullscreenSection id="route-splitting" title="Route Splitting" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -112,10 +112,10 @@ function App() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Component-based Splitting */}
-      <section id="component-splitting" className={styles.section}>
+      <FullscreenSection id="component-splitting" title="Component Splitting" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -214,10 +214,10 @@ function PreloadableLink({ to, children }: { to: string; children: React.ReactNo
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Module Federation */}
-      <section id="module-federation" className={styles.section}>
+      <FullscreenSection id="module-federation" title="Module Federation" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -291,7 +291,7 @@ module.exports = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

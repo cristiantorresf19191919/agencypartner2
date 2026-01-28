@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -37,7 +37,7 @@ export default function ReactInternalsPage() {
         </Text>
       </div>
 
-      <section id="fiber-architecture" className={styles.section}>
+      <FullscreenSection id="fiber-architecture" title="Fiber Architecture" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -59,7 +59,7 @@ export default function ReactInternalsPage() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

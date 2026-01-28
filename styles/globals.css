@@ -132,6 +132,13 @@ body {
   }
 }
 
+/* Code editor & blog section containment - no layout overflow */
+.code-editor-shell,
+.code-editor-container,
+.fullscreen-section-wrapper {
+  max-width: 100%;
+}
+
 /* Page transition animation - subtle fade from bottom */
 @keyframes pageFadeIn {
   from {

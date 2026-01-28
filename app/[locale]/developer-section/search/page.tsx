@@ -39,11 +39,12 @@ const sectionIcons: Record<string, React.ReactNode> = {
 function SearchResultsContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const [searchQuery, setSearchQuery] = useState(query);
 
-  const searchIndex = useMemo(() => getSearchIndex(t), [t]);
+  const locale = language as 'en' | 'es';
+  const searchIndex = useMemo(() => getSearchIndex(t, locale), [t, locale]);
   const results = useMemo(() => {
     if (!searchQuery.trim()) {
       return [];

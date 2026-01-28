@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -37,7 +37,7 @@ export default function MicroFrontendsPage() {
         </Text>
       </div>
 
-      <section id="module-federation" className={styles.section}>
+      <FullscreenSection id="module-federation" title="Module Federation" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -55,7 +55,7 @@ export default function MicroFrontendsPage() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

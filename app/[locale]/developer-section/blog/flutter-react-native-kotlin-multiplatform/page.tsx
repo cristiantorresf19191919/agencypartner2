@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -43,7 +43,7 @@ export default function FlutterReactNativeKotlinMultiplatformPage() {
       </div>
 
       {/* Executive Summary */}
-      <section id="executive-summary" className={styles.section}>
+      <FullscreenSection id="executive-summary" title="Executive Summary" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -65,10 +65,10 @@ export default function FlutterReactNativeKotlinMultiplatformPage() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Architecture Deep Dive */}
-      <section id="architecture-deep-dive" className={styles.section}>
+      <FullscreenSection id="architecture-deep-dive" title="Architecture Deep Dive" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -541,10 +541,10 @@ actual class Platform {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Performance Analysis */}
-      <section id="performance-analysis" className={styles.section}>
+      <FullscreenSection id="performance-analysis" title="Performance Analysis" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -691,10 +691,10 @@ struct OptimizedProductList: View {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Code Sharing Strategies */}
-      <section id="code-sharing" className={styles.section}>
+      <FullscreenSection id="code-sharing" title="Code Sharing" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -886,10 +886,10 @@ struct ProductListScreen: View {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Ecosystem & Tooling */}
-      <section id="ecosystem" className={styles.section}>
+      <FullscreenSection id="ecosystem" title="Ecosystem" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -999,10 +999,10 @@ dependencies {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* State Management Patterns */}
-      <section id="state-management" className={styles.section}>
+      <FullscreenSection id="state-management" title="State Management" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1174,10 +1174,10 @@ fun ProductListScreen(viewModel: ProductListViewModel) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Long-term Viability */}
-      <section id="long-term-viability" className={styles.section}>
+      <FullscreenSection id="long-term-viability" title="Long Term Viability" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1273,10 +1273,10 @@ class BusinessLogic {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Decision Framework */}
-      <section id="decision-framework" className={styles.section}>
+      <FullscreenSection id="decision-framework" title="Decision Framework" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1399,10 +1399,10 @@ struct BankingScreen: View {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Production Patterns */}
-      <section id="production-patterns" className={styles.section}>
+      <FullscreenSection id="production-patterns" title="Production Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1591,10 +1591,10 @@ class ProductRepositoryTest {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Final Verdict */}
-      <section id="final-verdict" className={styles.section}>
+      <FullscreenSection id="final-verdict" title="Final Verdict" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1686,10 +1686,10 @@ const frameworkDecision = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Conclusion */}
-      <section id="conclusion" className={styles.section}>
+      <FullscreenSection id="conclusion" title="Conclusion" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1721,7 +1721,7 @@ const frameworkDecision = {
             </Text>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

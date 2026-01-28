@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function ErrorHandlingPage() {
       </div>
 
       {/* Error Boundary Pattern */}
-      <section id="error-boundary" className={styles.section}>
+      <FullscreenSection id="error-boundary" title="Error Boundary" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -146,10 +146,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Modern Error Boundary with Hooks */}
-      <section id="error-boundary-hooks" className={styles.section}>
+      <FullscreenSection id="error-boundary-hooks" title="Error Boundary Hooks" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -227,10 +227,10 @@ function UserProfileWithRetry({ userId }: { userId: string }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Async Error Handling */}
-      <section id="async-error-handling" className={styles.section}>
+      <FullscreenSection id="async-error-handling" title="Async Error Handling" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -322,10 +322,10 @@ const UserProfile = ({ userId }: { userId: string }) => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Error Reporting */}
-      <section id="error-reporting" className={styles.section}>
+      <FullscreenSection id="error-reporting" title="Error Reporting" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -427,10 +427,10 @@ LogRocket.captureException(error, {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Error Recovery Strategies */}
-      <section id="error-recovery" className={styles.section}>
+      <FullscreenSection id="error-recovery" title="Error Recovery" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -532,10 +532,10 @@ function FeatureWithFallback() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Error State Management */}
-      <section id="error-state-management" className={styles.section}>
+      <FullscreenSection id="error-state-management" title="Error State Management" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -627,10 +627,10 @@ function MyComponent() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* User-Friendly Error Messages */}
-      <section id="user-friendly-errors" className={styles.section}>
+      <FullscreenSection id="user-friendly-errors" title="User Friendly Errors" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -726,7 +726,7 @@ function getContextualErrorMessage(error: Error, context: string): string {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

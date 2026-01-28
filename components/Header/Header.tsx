@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocale } from '@/lib/useLocale';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
+import LanguageSwitcher from './LanguageSwitcher';
 import { ProjectAdvisorStepper } from '@/components/ProjectAdvisor/ProjectAdvisorStepper';
 
 interface NavLink {
@@ -17,16 +16,11 @@ interface NavLink {
 }
 
 const Header = () => {
-  const { language, setLanguage, t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [advisorOpen, setAdvisorOpen] = useState<boolean>(false);
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'es' ? 'en' : 'es');
-  };
 
   useEffect(() => {
     const handleScroll = (): void => {
@@ -111,23 +105,7 @@ const Header = () => {
 
           {/* Header Actions - Right side on desktop */}
           <div className={styles.headerActions}>
-            <button
-              type="button"
-              className={styles.languageSwitcher}
-              onClick={toggleLanguage}
-              aria-label={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
-            >
-              <motion.span
-                key={language}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2 }}
-                className={styles.languageLabel}
-              >
-                {language === 'es' ? 'EN' : 'ES'}
-              </motion.span>
-            </button>
+            <LanguageSwitcher />
 
             <button
               type="button"

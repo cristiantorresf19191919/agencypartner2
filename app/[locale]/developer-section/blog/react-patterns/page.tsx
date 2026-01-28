@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -48,7 +48,7 @@ export default function ReactPatternsPage() {
         </div>
 
         {/* Compound Components Pattern */}
-        <section id="compound-components" className={styles.section}>
+        <FullscreenSection id="compound-components" title="Compound Components" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -190,10 +190,10 @@ Accordion.Content = AccordionContent;
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Custom Hooks Pattern */}
-        <section id="custom-hooks" className={styles.section}>
+        <FullscreenSection id="custom-hooks" title="Custom Hooks" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -309,10 +309,10 @@ function UserAvatar({ userId }) {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Higher-Order Components Pattern */}
-        <section id="hoc" className={styles.section}>
+        <FullscreenSection id="hoc" title="Hoc" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -423,10 +423,10 @@ const ProtectedSettings = withAuth(Settings);
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Render Props Pattern */}
-        <section id="render-props" className="mb-16 scroll-mt-24">
+        <FullscreenSection id="render-props" title="Render Props" sectionClassName="mb-16 scroll-mt-24">
           <Card variant="elevated" className="p-8 !bg-white/5 !border-white/10">
             <Stack direction="col" gap="md">
               <div>
@@ -514,10 +514,10 @@ function MouseTracker({ children }) {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Selective Hydration Pattern */}
-        <section id="selective-hydration" className="mb-16 scroll-mt-24">
+        <FullscreenSection id="selective-hydration" title="Selective Hydration" sectionClassName="mb-16 scroll-mt-24">
           <Card variant="elevated" className="p-8 !bg-white/5 !border-white/10">
             <Stack direction="col" gap="md">
               <div>
@@ -603,7 +603,7 @@ const { startWriting } = pipeToNodeWritable(
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Navigation */}
         <div className={styles.navigation}>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -43,7 +43,7 @@ export default function DesignSystemsComponentLibrariesPage() {
       </div>
 
       {/* Building a Design System from Scratch */}
-      <section id="building-design-system" className={styles.section}>
+      <FullscreenSection id="building-design-system" title="Building Design System" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -302,10 +302,10 @@ export const useTheme = () => useContext(ThemeContext);`}
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Storybook Patterns */}
-      <section id="storybook-patterns" className={styles.section}>
+      <FullscreenSection id="storybook-patterns" title="Storybook Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -578,10 +578,10 @@ import { Button } from '@design-system/components';
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Component Documentation */}
-      <section id="component-documentation" className={styles.section}>
+      <FullscreenSection id="component-documentation" title="Component Documentation" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -853,10 +853,10 @@ export const Button = ...`}
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Token System Architecture */}
-      <section id="token-system" className={styles.section}>
+      <FullscreenSection id="token-system" title="Token System" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1087,10 +1087,10 @@ function applyTheme(theme: Theme) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Accessibility in Design Systems */}
-      <section id="accessibility-design-systems" className={styles.section}>
+      <FullscreenSection id="accessibility-design-systems" title="Accessibility Design Systems" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1379,10 +1379,10 @@ const accessibilityChecklist = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Versioning Component Libraries */}
-      <section id="versioning" className={styles.section}>
+      <FullscreenSection id="versioning" title="Versioning" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1624,7 +1624,7 @@ const preReleaseChecklist = [
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

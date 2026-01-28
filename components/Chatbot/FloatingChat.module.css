@@ -1,7 +1,7 @@
 .floatingButton {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 1rem));
+  right: max(2rem, calc(env(safe-area-inset-right, 0px) + 1rem));
   width: 60px;
   height: 60px;
   background: linear-gradient(135deg, #1d4ed8 0%, #22c55e 100%);
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 10px 40px rgba(15, 23, 42, 0.6);
-  z-index: 1000;
+  z-index: 1100;
   transition: all 0.3s ease;
   overflow: visible;
 }
@@ -332,8 +332,16 @@
   .floatingButton {
     width: 56px;
     height: 56px;
-    bottom: 1.5rem;
-    right: 1.5rem;
+    min-width: 56px;
+    min-height: 56px;
+    bottom: max(1.25rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem));
+    right: auto;
+    left: max(1.25rem, calc(env(safe-area-inset-left, 0px) + 0.75rem));
+  }
+
+  .ripple {
+    width: 56px;
+    height: 56px;
   }
 
   .chatIcon {
@@ -353,8 +361,15 @@
   .floatingButton {
     width: 52px;
     height: 52px;
-    bottom: 1.5rem;
-    right: 1.5rem;
+    min-width: 52px;
+    min-height: 52px;
+    bottom: max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.5rem));
+    left: max(1rem, calc(env(safe-area-inset-left, 0px) + 0.5rem));
+  }
+
+  .ripple {
+    width: 52px;
+    height: 52px;
   }
 
   .chatIcon {

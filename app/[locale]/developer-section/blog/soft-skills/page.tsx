@@ -1,16 +1,18 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { useBlogPostContent } from "@/lib/blogTranslations";
 import { getCategoryForPost } from "@/lib/blogCategories";
+import { localize } from "@/lib/localize";
 import styles from "../BlogPostPage.module.css";
 
 export default function SoftSkillsPage() {
   const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
   const postContent = useBlogPostContent('soft-skills', language);
   const category = getCategoryForPost("soft-skills");
 
@@ -35,7 +37,7 @@ export default function SoftSkillsPage() {
               <li className={styles.breadcrumbSeparator}>/</li>
               <li>
                 <ButtonLink href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)} variant="secondary" className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
-                  {category.title}
+                  {localize(category.title, locale)}
                 </ButtonLink>
               </li>
             </>
@@ -58,7 +60,7 @@ export default function SoftSkillsPage() {
       </div>
 
       {/* The Art of Asking Questions */}
-      <section id="asking-questions" className={styles.section}>
+      <FullscreenSection id="asking-questions" title="Asking Questions" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -261,10 +263,10 @@ Thanks for your guidance!
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Knowledge Sharing */}
-      <section id="knowledge-sharing" className={styles.section}>
+      <FullscreenSection id="knowledge-sharing" title="Knowledge Sharing" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -420,10 +422,10 @@ const runbookTemplate = \`# [Service Name] Runbook
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Communication Strategies */}
-      <section id="communication" className={styles.section}>
+      <FullscreenSection id="communication" title="Communication" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -624,10 +626,10 @@ const technicalExplanation = \`
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Proactivity & Resourcefulness */}
-      <section id="proactivity" className={styles.section}>
+      <FullscreenSection id="proactivity" title="Proactivity" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -795,10 +797,10 @@ const proactiveImprovement = \`
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Setting Expectations & Getting Feedback */}
-      <section id="expectations-feedback" className={styles.section}>
+      <FullscreenSection id="expectations-feedback" title="Expectations Feedback" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -996,10 +998,10 @@ Success Metrics:
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Accountability & Ownership */}
-      <section id="accountability" className={styles.section}>
+      <FullscreenSection id="accountability" title="Accountability" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1167,10 +1169,10 @@ Next update: Thursday EOD
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Respect in the Workplace */}
-      <section id="respect" className={styles.section}>
+      <FullscreenSection id="respect" title="Respect" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1314,10 +1316,10 @@ different thoughts. Overall, great work on this feature!
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Holding Off Judgment */}
-      <section id="judgment" className={styles.section}>
+      <FullscreenSection id="judgment" title="Judgment" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1454,10 +1456,10 @@ Try: "I've been learning about our current architecture.
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Avoiding High Maintenance */}
-      <section id="high-maintenance" className={styles.section}>
+      <FullscreenSection id="high-maintenance" title="High Maintenance" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1588,10 +1590,10 @@ const disagreement = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Building Relationships */}
-      <section id="relationships" className={styles.section}>
+      <FullscreenSection id="relationships" title="Relationships" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1741,10 +1743,10 @@ Thanks!
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Senior Developer Mindset */}
-      <section id="mindset" className={styles.section}>
+      <FullscreenSection id="mindset" title="Mindset" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1909,10 +1911,10 @@ const dailyPractices = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Tools for Growth */}
-      <section id="tools" className={styles.section}>
+      <FullscreenSection id="tools" title="Tools" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2072,7 +2074,7 @@ const healthyComparison = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

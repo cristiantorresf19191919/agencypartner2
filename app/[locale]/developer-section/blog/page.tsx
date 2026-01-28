@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
+import { localize } from "@/lib/localize";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import SearchSection from "@/components/Search/SearchSection";
@@ -11,8 +12,9 @@ import { blogCategories } from "@/lib/blogCategories";
 import styles from "./BlogPage.module.css";
 
 function BlogPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
 
@@ -119,34 +121,34 @@ function BlogPageContent() {
               </div>
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {category.title}
+                  {localize(category.title, locale)}
                 </Heading>
                 <div className={styles.descriptionWrapper}>
                   <Text
                     className={`${styles.sectionDescription} ${
-                      !expandedDescriptions.has(category.id) && category.description.length > DESC_COLLAPSE_THRESHOLD
+                      !expandedDescriptions.has(category.id) && localize(category.description, locale).length > DESC_COLLAPSE_THRESHOLD
                         ? styles.sectionDescriptionCollapsed
                         : ""
                     }`}
                   >
-                    {category.description}
+                    {localize(category.description, locale)}
                   </Text>
-                  {category.description.length > DESC_COLLAPSE_THRESHOLD && (
+                  {localize(category.description, locale).length > DESC_COLLAPSE_THRESHOLD && (
                     <button
                       type="button"
                       onClick={(e) => toggleDesc(category.id, e)}
                       className={styles.expandTextButton}
                       aria-expanded={expandedDescriptions.has(category.id)}
-                      aria-label={expandedDescriptions.has(category.id) ? "Show less" : "Show more"}
+                      aria-label={expandedDescriptions.has(category.id) ? t("blog-show-less") : t("blog-show-more")}
                     >
-                      {expandedDescriptions.has(category.id) ? "Show less" : "Show more"}
+                      {expandedDescriptions.has(category.id) ? t("blog-show-less") : t("blog-show-more")}
                     </button>
                   )}
                 </div>
               </div>
               <div className="mt-auto">
                 <Text className={styles.topicsLabel}>
-                  {category.posts.length} {category.posts.length === 1 ? 'Post' : 'Posts'} in this category
+                  {category.posts.length} {category.posts.length === 1 ? t("blog-post-singular") : t("blog-post-plural")} {t("blog-posts-in-category")}
                 </Text>
                 <div 
                   className={`${styles.topicsList} ${expandedCards.has(category.id) ? styles.topicsListExpanded : ''}`}
@@ -157,7 +159,7 @@ function BlogPageContent() {
                         key={post.id} 
                         className={styles.topicTag}
                       >
-                        {post.title}
+                        {localize(post.title, locale)}
                       </span>
                     );
                   })}
@@ -170,10 +172,10 @@ function BlogPageContent() {
                       toggleCard(category.id);
                     }}
                     className={styles.expandButton}
-                    aria-label={expandedCards.has(category.id) ? "Show less posts" : "Show more posts"}
+                    aria-label={expandedCards.has(category.id) ? t("blog-show-less-posts") : t("blog-more-posts")}
                   >
                     <span className={styles.expandButtonText}>
-                      {expandedCards.has(category.id) ? "Show Less" : `+${category.posts.length - 3} More Posts`}
+                      {expandedCards.has(category.id) ? t("blog-show-less") : `+${category.posts.length - 3} ${t("blog-more-posts")}`}
                     </span>
                     <svg 
                       className={`${styles.expandIcon} ${expandedCards.has(category.id) ? styles.expandIconRotated : ''}`}
@@ -194,7 +196,7 @@ function BlogPageContent() {
                 )}
               </div>
               <div className={styles.sectionCta}>
-                Explore Category <i className="fas fa-arrow-right"></i>
+                {t("blog-explore-category")} <i className="fas fa-arrow-right"></i>
               </div>
             </a>
           ))}

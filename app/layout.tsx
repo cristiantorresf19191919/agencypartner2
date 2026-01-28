@@ -4,7 +4,13 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import '@/styles/globals.css';
 import FloatingChat from '@/components/Chatbot/FloatingChat';
 import { ScriptLoader } from '@/components/Scripts/ScriptLoader';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: 'Optimus Agency | Desarrollo Web Profesional',

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -43,7 +43,7 @@ export default function EdgeComputingPage() {
       </div>
 
       {/* Edge Computing Fundamentals */}
-      <section id="edge-fundamentals" className={styles.section}>
+      <FullscreenSection id="edge-fundamentals" title="Edge Fundamentals" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -122,10 +122,10 @@ export default async function handler(request: Request) {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Vercel Edge Functions */}
-      <section id="vercel-edge" className={styles.section}>
+      <FullscreenSection id="vercel-edge" title="Vercel Edge" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -429,10 +429,10 @@ export function middleware(request: NextRequest) {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Cloudflare Workers */}
-      <section id="cloudflare-workers" className={styles.section}>
+      <FullscreenSection id="cloudflare-workers" title="Cloudflare Workers" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -808,10 +808,10 @@ export default {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Edge Caching Strategies */}
-      <section id="edge-caching" className={styles.section}>
+      <FullscreenSection id="edge-caching" title="Edge Caching" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1130,10 +1130,10 @@ function getUserSegment(request: Request): string {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Edge vs Serverless Trade-offs */}
-      <section id="edge-vs-serverless" className={styles.section}>
+      <FullscreenSection id="edge-vs-serverless" title="Edge Vs Serverless" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1567,10 +1567,10 @@ export async function GET(request: Request) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Best Practices */}
-      <section id="best-practices" className={styles.section}>
+      <FullscreenSection id="best-practices" title="Best Practices" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1836,7 +1836,7 @@ export async function GET(request: Request) {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Navigation */}
       <div className={styles.navigation}>

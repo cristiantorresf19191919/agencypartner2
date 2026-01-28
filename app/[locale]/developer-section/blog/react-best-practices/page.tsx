@@ -1,17 +1,19 @@
 "use client";
 
 import React from "react";
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { useBlogPostContent } from "@/lib/blogTranslations";
 import { getCategoryForPost } from "@/lib/blogCategories";
+import { localize } from "@/lib/localize";
 import styles from "../BlogPostPage.module.css";
 
 export default function ReactBestPracticesPage() {
   const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
   const postContent = useBlogPostContent("react-best-practices", language);
   const category = getCategoryForPost("react-best-practices");
 
@@ -35,7 +37,7 @@ export default function ReactBestPracticesPage() {
               <li className={styles.breadcrumbSeparator}>/</li>
               <li>
                 <ButtonLink href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)} variant="secondary" className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
-                  {category.title}
+                  {localize(category.title, locale)}
                 </ButtonLink>
               </li>
             </>
@@ -64,7 +66,7 @@ export default function ReactBestPracticesPage() {
       </div>
 
       {/* 1. Eliminating Waterfalls */}
-      <section id="eliminating-waterfalls" className={styles.section}>
+      <FullscreenSection id="eliminating-waterfalls" title="Eliminating Waterfalls" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -173,10 +175,10 @@ async function DataDisplay() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* 2. Bundle Size */}
-      <section id="bundle-size" className={styles.section}>
+      <FullscreenSection id="bundle-size" title="Bundle Size" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -279,10 +281,10 @@ export default function RootLayout({ children }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* 3. Server-Side Performance */}
-      <section id="server-side" className={styles.section}>
+      <FullscreenSection id="server-side" title="Server Side" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -413,10 +415,10 @@ export async function POST(request: Request) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* 4. Client-Side Data Fetching */}
-      <section id="client-data" className={styles.section}>
+      <FullscreenSection id="client-data" title="Client Data" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -537,10 +539,10 @@ function cachePrefs(user: FullUser) {
             </Text>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* 5. Re-render Optimization */}
-      <section id="rerender" className={styles.section}>
+      <FullscreenSection id="rerender" title="Rerender" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -1111,10 +1113,10 @@ export const App = () => <ScrollTracker />`}
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* 6. Rendering Performance */}
-      <section id="rendering" className={styles.section}>
+      <FullscreenSection id="rendering" title="Rendering" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -1560,10 +1562,10 @@ export const App = () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* 7. JavaScript Performance */}
-      <section id="javascript" className={styles.section}>
+      <FullscreenSection id="javascript" title="Javascript" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -1755,10 +1757,10 @@ for (const user of users) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* 8. Advanced Patterns */}
-      <section id="advanced" className={styles.section}>
+      <FullscreenSection id="advanced" title="Advanced" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -1815,7 +1817,7 @@ function SearchInput({ onSearch }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

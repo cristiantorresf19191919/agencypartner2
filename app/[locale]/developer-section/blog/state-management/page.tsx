@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeEditor, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeEditor, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -48,7 +48,7 @@ export default function StateManagementPage() {
       </div>
 
       {/* State Concerns Overview */}
-      <section id="state-concerns" className={styles.section}>
+      <FullscreenSection id="state-concerns" title="State Concerns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -75,10 +75,10 @@ export default function StateManagementPage() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Unit 74: Immutable Updates with useImmer */}
-      <section id="use-immer" className={styles.section}>
+      <FullscreenSection id="use-immer" title="Use Immer" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -232,10 +232,10 @@ function ComplexStateExample() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Unit 75: Cleaner Reducer with useImmerReducer */}
-      <section id="use-immer-reducer" className={styles.section}>
+      <FullscreenSection id="use-immer-reducer" title="Use Immer Reducer" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -385,10 +385,10 @@ function TodoApp() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Remote State: TanStack Query */}
-      <section id="remote-state" className={styles.section}>
+      <FullscreenSection id="remote-state" title="Remote State" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -489,10 +489,10 @@ function LikeButton({ postId }: { postId: string }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Shared State: Zustand */}
-      <section id="shared-state-zustand" className={styles.section}>
+      <FullscreenSection id="shared-state-zustand" title="Shared State Zustand" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -628,10 +628,10 @@ const useComplexStore = create<{ items: Array<{ id: number; count: number }> }>(
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* URL State: nuqs */}
-      <section id="url-state" className={styles.section}>
+      <FullscreenSection id="url-state" title="Url State" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -732,10 +732,10 @@ function ComplexState() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Summary Section */}
-      <section id="summary" className={styles.section}>
+      <FullscreenSection id="summary" title="Summary" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -770,7 +770,7 @@ function ComplexState() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

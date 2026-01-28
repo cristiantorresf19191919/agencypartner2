@@ -1,17 +1,19 @@
 "use client";
 
 import React from "react";
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { useBlogPostContent } from "@/lib/blogTranslations";
 import { getCategoryForPost } from "@/lib/blogCategories";
+import { localize } from "@/lib/localize";
 import styles from "../BlogPostPage.module.css";
 
 export default function AWSCloudPage() {
   const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
   const postContent = useBlogPostContent('aws-cloud', language);
   const category = getCategoryForPost("aws-cloud");
 
@@ -36,7 +38,7 @@ export default function AWSCloudPage() {
               <li className={styles.breadcrumbSeparator}>/</li>
               <li>
                 <ButtonLink href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)} variant="secondary" className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
-                  {category.title}
+                  {localize(category.title, locale)}
                 </ButtonLink>
               </li>
             </>
@@ -59,7 +61,7 @@ export default function AWSCloudPage() {
       </div>
 
       {/* AWS Fundamentals */}
-      <section id="aws-fundamentals" className={styles.section}>
+      <FullscreenSection id="aws-fundamentals" title="Aws Fundamentals" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -128,10 +130,10 @@ const s3Client = new S3Client({ region: 'us-east-1' });`}
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* EC2 & Compute */}
-      <section id="ec2-compute" className={styles.section}>
+      <FullscreenSection id="ec2-compute" title="Ec2 Compute" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -255,10 +257,10 @@ const launchTemplate = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* S3 & Storage */}
-      <section id="s3-storage" className={styles.section}>
+      <FullscreenSection id="s3-storage" title="S3 Storage" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -381,10 +383,10 @@ const s3EventNotification = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Lambda & Serverless */}
-      <section id="lambda-serverless" className={styles.section}>
+      <FullscreenSection id="lambda-serverless" title="Lambda Serverless" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -525,10 +527,10 @@ const eventRule = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* RDS & Databases */}
-      <section id="rds-databases" className={styles.section}>
+      <FullscreenSection id="rds-databases" title="Rds Databases" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -644,10 +646,10 @@ async function createUser(user: { userId: string; email: string; name: string })
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* VPC & Networking */}
-      <section id="vpc-networking" className={styles.section}>
+      <FullscreenSection id="vpc-networking" title="Vpc Networking" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -761,10 +763,10 @@ const privateRoute = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* IAM & Security */}
-      <section id="iam-security" className={styles.section}>
+      <FullscreenSection id="iam-security" title="Iam Security" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -895,10 +897,10 @@ const ec2Role = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* CloudFormation & IaC */}
-      <section id="cloudformation-iac" className={styles.section}>
+      <FullscreenSection id="cloudformation-iac" title="Cloudformation Iac" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -991,10 +993,10 @@ const nestedStack = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* CI/CD with AWS */}
-      <section id="cicd" className={styles.section}>
+      <FullscreenSection id="cicd" title="Cicd" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1127,10 +1129,10 @@ const codeBuildProject = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Architecture Patterns */}
-      <section id="architecture-patterns" className={styles.section}>
+      <FullscreenSection id="architecture-patterns" title="Architecture Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1215,10 +1217,10 @@ const wellArchitectedPrinciples = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Cost Optimization */}
-      <section id="cost-optimization" className={styles.section}>
+      <FullscreenSection id="cost-optimization" title="Cost Optimization" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1343,10 +1345,10 @@ const resourceTags = [
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Monitoring & CloudWatch */}
-      <section id="monitoring-cloudwatch" className={styles.section}>
+      <FullscreenSection id="monitoring-cloudwatch" title="Monitoring Cloudwatch" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1464,7 +1466,7 @@ export const handler = async (event) => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

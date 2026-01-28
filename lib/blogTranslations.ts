@@ -148,6 +148,18 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'React Best Practices',
     },
   },
+  'concurrent-features': {
+    es: {
+      title: 'Funciones Concurrentes de React y Suspense',
+      subtitle: 'Profundiza en las funciones concurrentes de React 18+: Suspense, useDeferredValue, useTransition, streaming SSR y cómo construir UIs responsivas que nunca bloquean la experiencia del usuario.',
+      breadcrumbLabel: 'Funciones Concurrentes',
+    },
+    en: {
+      title: 'React Concurrent Features & Suspense',
+      subtitle: 'Deep dive into React 18+ concurrent features: Suspense, useDeferredValue, useTransition, streaming SSR, and how to build responsive UIs that never block the user experience.',
+      breadcrumbLabel: 'Concurrent Features',
+    },
+  },
 };
 
 /**
