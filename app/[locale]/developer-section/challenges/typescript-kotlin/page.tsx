@@ -76,9 +76,13 @@ export default function ChallengesListPage() {
                 </div>
                 <h3 className={styles.cardTitle}>{c.title}</h3>
                 <p className={styles.cardCategory}>
-                  {c.category === 'Problem Solving (Basic)' 
-                    ? t('challenge-category-basic')
-                    : t('challenge-category-intermediate')}
+                  {c.category === "Problem Solving (Basic)"
+                    ? t("challenge-category-basic")
+                    : c.category === "Problem Solving (Intermediate)"
+                      ? t("challenge-category-intermediate")
+                      : c.category === "Reactive (Kotlin)"
+                        ? t("challenge-category-reactive")
+                        : c.category}
                 </p>
                 <div className={styles.cardMeta}>
                   <span>{t('challenges-card-success')} {c.successRate}</span>

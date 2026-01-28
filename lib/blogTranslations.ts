@@ -136,6 +136,18 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'Edge Computing',
     },
   },
+  'kotlin-coroutines': {
+    es: {
+      title: 'Kotlin Coroutines y Channels: de Cero a Héroe',
+      subtitle: 'De cero a experto en Kotlin Coroutines y Channels. Domina runBlocking, launch, async/await, Dispatchers, cancelación, Channels, Fan-Out/Fan-In, select y concurrencia estructurada—con código y desafíos.',
+      breadcrumbLabel: 'Kotlin Coroutines',
+    },
+    en: {
+      title: 'Kotlin Coroutines & Channels: Zero to Hero',
+      subtitle: 'From zero to expert in Kotlin Coroutines and Channels. Master runBlocking, launch, async/await, Dispatchers, cancellation, Channels, Fan-Out/Fan-In, select, and structured concurrency—with code and challenges.',
+      breadcrumbLabel: 'Kotlin Coroutines',
+    },
+  },
   'react-best-practices': {
     es: {
       title: 'Vercel React Best Practices',

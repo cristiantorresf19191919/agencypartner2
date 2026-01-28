@@ -851,6 +851,55 @@ export const blogCategories: BlogCategory[] = [
     ],
   },
   {
+    id: "backend-kotlin",
+    title: { en: "Backend & Kotlin", es: "Backend y Kotlin" },
+    description: {
+      en: "Build production-ready reactive backends with Kotlin and Spring. Project Reactor, Mono, Flux, and non-blocking APIs.",
+      es: "Construye backends reactivos listos para producción con Kotlin y Spring. Project Reactor, Mono, Flux y APIs no bloqueantes.",
+    },
+    icon: "⚡",
+    color: "from-violet-500 to-indigo-500",
+    slug: "backend-kotlin",
+    posts: [
+      {
+        id: "kotlin-coroutines",
+        title: { en: "Kotlin Coroutines & Channels: Zero to Hero", es: "Kotlin Coroutines y Channels: de Cero a Héroe" },
+        description: {
+          en: "From zero to expert in Kotlin Coroutines and Channels. Master runBlocking, launch, async/await, Dispatchers, cancellation, Channels, Fan-Out/Fan-In, select, and structured concurrency—with code and challenges.",
+          es: "De cero a experto en Kotlin Coroutines y Channels. Domina runBlocking, launch, async/await, Dispatchers, cancelación, Channels, Fan-Out/Fan-In, select y concurrencia estructurada—con código y desafíos.",
+        },
+        icon: "⚡",
+        color: "from-violet-500 to-indigo-500",
+        slug: "kotlin-coroutines",
+        topics: [
+          { en: "runBlocking & launch", es: "runBlocking y launch" },
+          { en: "async & await", es: "async y await" },
+          { en: "Channels", es: "Channels" },
+          { en: "select", es: "select" },
+          { en: "Structured Concurrency", es: "Concurrencia Estructurada" },
+        ],
+      },
+      {
+        id: "spring-reactive-kotlin",
+        title: { en: "Spring Reactive (Project Reactor): Zero to Hero", es: "Spring Reactive (Project Reactor): de Cero a Héroe" },
+        description: {
+          en: "From confused by flatMap to production-ready reactive backends. Mental models first—Mono, Flux, map vs flatMap, zip, switchIfEmpty, and a full Product API.",
+          es: "De confundido por flatMap a backends reactivos listos para producción. Modelos mentales primero: Mono, Flux, map vs flatMap, zip, switchIfEmpty y una API de Productos completa.",
+        },
+        icon: "⚡",
+        color: "from-violet-500 to-indigo-500",
+        slug: "spring-reactive-kotlin",
+        topics: [
+          { en: "Mono & Flux", es: "Mono y Flux" },
+          { en: "map vs flatMap", es: "map vs flatMap" },
+          { en: "Mono.zip", es: "Mono.zip" },
+          { en: "switchIfEmpty", es: "switchIfEmpty" },
+          { en: "Reactive REST API", es: "API REST Reactiva" },
+        ],
+      },
+    ],
+  },
+  {
     id: "accessibility-ux",
     title: { en: "Accessibility & UX", es: "Accesibilidad y UX" },
     description: {

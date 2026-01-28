@@ -531,6 +531,7 @@ const translations = {
     'challenge-difficulty-medium': 'Medio',
     'challenge-category-basic': 'Resolución de Problemas (Básico)',
     'challenge-category-intermediate': 'Resolución de Problemas (Intermedio)',
+    'challenge-category-reactive': 'Reactive (Kotlin)',
     // Add all other translations from index.html
   },
   en: {
@@ -1103,6 +1104,7 @@ const translations = {
     'challenge-difficulty-medium': 'Medium',
     'challenge-category-basic': 'Problem Solving (Basic)',
     'challenge-category-intermediate': 'Problem Solving (Intermediate)',
+    'challenge-category-reactive': 'Reactive (Kotlin)',
     // Add all other translations
   },
 } as const;

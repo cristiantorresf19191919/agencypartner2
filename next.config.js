@@ -9,6 +9,11 @@ const nextConfig = {
         hostname: 'refactoring.guru',
         pathname: '/images/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
   },
   // Improve error handling and prevent 500 errors

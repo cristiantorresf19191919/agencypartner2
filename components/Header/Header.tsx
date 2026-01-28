@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useLocale } from '@/lib/useLocale';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
