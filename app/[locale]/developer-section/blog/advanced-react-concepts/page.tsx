@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -48,7 +48,7 @@ export default function AdvancedReactConceptsPage() {
         </div>
 
         {/* Module 1: The "Element Prop" Pattern */}
-        <section id="element-prop-pattern" className={styles.section}>
+        <FullscreenSection id="element-prop-pattern" title="Element Prop Pattern" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -178,10 +178,10 @@ export const Card = ({ title, headerAction, footer, children }: CardProps) => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Module 2: Optimizing Context API (Split Context Pattern) */}
-        <section id="split-context-pattern" className={styles.section}>
+        <FullscreenSection id="split-context-pattern" title="Split Context Pattern" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -316,10 +316,10 @@ const UserProfile = () => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Module 3: Less UseEffects (Derived State) */}
-        <section id="derived-state" className={styles.section}>
+        <FullscreenSection id="derived-state" title="Derived State" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -431,10 +431,10 @@ return <button onClick={handleSubmit}>Submit</button>;`}
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Additional Best Practices */}
-        <section id="best-practices" className={styles.section}>
+        <FullscreenSection id="best-practices" title="Best Practices" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -513,7 +513,7 @@ useEffect(() => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Navigation */}
         <div className={styles.navigation}>

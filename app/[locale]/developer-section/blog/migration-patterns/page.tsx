@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -37,7 +37,7 @@ export default function MigrationPatternsPage() {
         </Text>
       </div>
 
-      <section id="class-to-hooks" className={styles.section}>
+      <FullscreenSection id="class-to-hooks" title="Class To Hooks" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -85,7 +85,7 @@ function Counter() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

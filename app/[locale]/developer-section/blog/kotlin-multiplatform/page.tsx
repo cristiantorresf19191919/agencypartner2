@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -247,7 +247,7 @@ export default function KotlinMultiplatformUIPage() {
         </div>
       </div>
 
-      <section id="unidirectional-state" className={styles.section}>
+      <FullscreenSection id="unidirectional-state" title="Unidirectional State" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -268,9 +268,9 @@ export default function KotlinMultiplatformUIPage() {
             <CodeEditor code={unidirectionalCode} language="kotlin" readOnly height={360} />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
-      <section id="platform-adapter" className={styles.section}>
+      <FullscreenSection id="platform-adapter" title="Platform Adapter" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -290,9 +290,9 @@ export default function KotlinMultiplatformUIPage() {
             <CodeEditor code={platformAdapterCode} language="kotlin" readOnly height={320} />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
-      <section id="adaptive-layouts" className={styles.section}>
+      <FullscreenSection id="adaptive-layouts" title="Adaptive Layouts" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -312,9 +312,9 @@ export default function KotlinMultiplatformUIPage() {
             <CodeEditor code={adaptiveLayoutsCode} language="kotlin" readOnly height={260} />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
-      <section id="shared-navigation" className={styles.section}>
+      <FullscreenSection id="shared-navigation" title="Shared Navigation" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -329,9 +329,9 @@ export default function KotlinMultiplatformUIPage() {
             <CodeEditor code={navigationCode} language="kotlin" readOnly height={260} />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
-      <section id="design-system" className={styles.section}>
+      <FullscreenSection id="design-system" title="Design System" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -352,9 +352,9 @@ export default function KotlinMultiplatformUIPage() {
             <CodeEditor code={designSystemCode} language="kotlin" readOnly height={260} />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
-      <section id="compose-resources" className={styles.section}>
+      <FullscreenSection id="compose-resources" title="Compose Resources" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -369,9 +369,9 @@ export default function KotlinMultiplatformUIPage() {
             <CodeEditor code={composeResourcesCode} language="kotlin" readOnly height={240} />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
-      <section id="native-interactions" className={`${styles.section} mb-8`}>
+      <FullscreenSection id="native-interactions" title="Native Interactions" sectionClassName={`${styles.section} mb-8`}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -386,7 +386,7 @@ export default function KotlinMultiplatformUIPage() {
             <CodeEditor code={nativeInteractionsCode} language="kotlin" readOnly height={240} />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       <div className={`${styles.infoBox} ${styles.infoBoxGreen} mb-12`}>
         <Text className={styles.infoText}>

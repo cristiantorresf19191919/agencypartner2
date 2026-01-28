@@ -1,16 +1,18 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { useBlogPostContent } from "@/lib/blogTranslations";
 import { getCategoryForPost } from "@/lib/blogCategories";
+import { localize } from "@/lib/localize";
 import styles from "../BlogPostPage.module.css";
 
 export default function TerraformPage() {
   const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
   const postContent = useBlogPostContent('terraform', language);
   const category = getCategoryForPost("terraform");
 
@@ -35,7 +37,7 @@ export default function TerraformPage() {
               <li className={styles.breadcrumbSeparator}>/</li>
               <li>
                 <ButtonLink href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)} variant="secondary" className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
-                  {category.title}
+                  {localize(category.title, locale)}
                 </ButtonLink>
               </li>
             </>
@@ -58,7 +60,7 @@ export default function TerraformPage() {
       </div>
 
       {/* Terraform Fundamentals */}
-      <section id="terraform-fundamentals" className={styles.section}>
+      <FullscreenSection id="terraform-fundamentals" title="Terraform Fundamentals" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -127,10 +129,10 @@ terraform destroy`}
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Basic Configuration */}
-      <section id="basic-configuration" className={styles.section}>
+      <FullscreenSection id="basic-configuration" title="Basic Configuration" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -305,10 +307,10 @@ output "instance_public_dns" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Variables and Outputs */}
-      <section id="variables-outputs" className={styles.section}>
+      <FullscreenSection id="variables-outputs" title="Variables Outputs" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -523,10 +525,10 @@ resource "aws_instance" "web" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* State Management */}
-      <section id="state-management" className={styles.section}>
+      <FullscreenSection id="state-management" title="State Management" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -668,10 +670,10 @@ terraform force-unlock <LOCK_ID>`}
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Modules */}
-      <section id="modules" className={styles.section}>
+      <FullscreenSection id="modules" title="Modules" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -903,10 +905,10 @@ module "production_app" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Workspaces */}
-      <section id="workspaces" className={styles.section}>
+      <FullscreenSection id="workspaces" title="Workspaces" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1067,10 +1069,10 @@ output "instance_ids" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Real-World Examples */}
-      <section id="real-world-examples" className={styles.section}>
+      <FullscreenSection id="real-world-examples" title="Real World Examples" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1407,10 +1409,10 @@ resource "aws_db_instance" "main" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Provisioners */}
-      <section id="provisioners" className={styles.section}>
+      <FullscreenSection id="provisioners" title="Provisioners" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1595,10 +1597,10 @@ resource "aws_instance" "example" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Advanced Features */}
-      <section id="advanced-features" className={styles.section}>
+      <FullscreenSection id="advanced-features" title="Advanced Features" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1854,10 +1856,10 @@ output "web_url" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Best Practices */}
-      <section id="best-practices" className={styles.section}>
+      <FullscreenSection id="best-practices" title="Best Practices" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2079,10 +2081,10 @@ resource "aws_instance" "web" {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Importing Existing Infrastructure */}
-      <section id="import" className={styles.section}>
+      <FullscreenSection id="import" title="Import" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2186,10 +2188,10 @@ terraform import module.vpc.aws_vpc.main vpc-12345678
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Troubleshooting */}
-      <section id="troubleshooting" className={styles.section}>
+      <FullscreenSection id="troubleshooting" title="Troubleshooting" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2342,7 +2344,7 @@ repos:
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

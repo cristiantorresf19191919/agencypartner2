@@ -11,6 +11,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'epicwebsol.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
   },
 }

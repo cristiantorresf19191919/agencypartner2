@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from "react";
+import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X } from "lucide-react";
@@ -160,7 +161,7 @@ export function CodeEditor({
   const editorOptions = useMemo(
     () => ({
       minimap: { enabled: false },
-      fontSize,
+      fontSize: Math.max(13, Math.min(fontSize, 22)),
       fontLigatures: true,
       smoothScrolling: true,
       scrollBeyondLastLine: false,
@@ -172,6 +173,8 @@ export function CodeEditor({
       formatOnPaste: true,
       readOnly,
       formatOnType: true,
+      wordWrap: "on" as const,
+      lineHeight: 1.5,
     }),
     [fontSize, readOnly]
   );
@@ -503,7 +506,7 @@ export function solution() {
   );
 
   const editorSection = (
-    <div className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden" style={{ display: 'flex', flexDirection: 'column', minHeight: height === "auto" ? 400 : typeof height === 'number' ? height : 400 }}>
+    <div className="code-editor-container flex flex-col border border-white/10 bg-[#0b1020] rounded-xl overflow-hidden shadow-lg shadow-black/20" style={{ display: 'flex', flexDirection: 'column', minHeight: height === "auto" ? 400 : typeof height === 'number' ? height : 400, maxWidth: '100%' }}>
       <div className="flex items-center justify-between px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {enableMultiFile && files.length > 1 ? (
@@ -615,8 +618,8 @@ export function solution() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0" style={{ display: 'flex', flexDirection: 'column' }}>
-        <div className="flex-1" style={{ minHeight: 300 }}>
+      <div className="flex-1 min-h-0 overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="flex-1 overflow-auto" style={{ minHeight: 300 }}>
           <MonacoEditor
             height={height === "auto" ? 400 : height}
             language={isReactLike ? "typescript" : (enableMultiFile && currentFile ? currentFile.language : normalizedLang)}
@@ -709,35 +712,39 @@ export function solution() {
     ) : null;
 
   const shell = (
-    <div className={`rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-3 ${className}`}>
+    <div className={`code-editor-shell rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-3 max-w-full overflow-hidden ${className}`}>
       {editorSection}
       {previewSection}
     </div>
   );
 
+  const fullscreenOverlay =
+    typeof document !== "undefined" && document.body ? (
+      createPortal(
+        <AnimatePresence>
+          {isFullscreen && isMounted && (
+            <motion.div
+              className="fixed inset-0 z-[9999] flex flex-col bg-[#0b0f1a]"
+              style={{ width: "100vw", height: "100vh", left: 0, top: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <div className="flex-1 flex flex-col overflow-hidden p-3 sm:p-4 min-h-0">
+                {shell}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )
+    ) : null;
+
   return (
     <>
       {shell}
-      <AnimatePresence>
-        {isFullscreen && isMounted && (
-          <motion.div
-            className="fixed inset-0 z-2000 bg-[#0b0f1a]/80 backdrop-blur-md flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="w-full h-full max-w-[1400px] max-h-[90vh] overflow-auto"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.97, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-            >
-              {shell}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {fullscreenOverlay}
     </>
   );
 }

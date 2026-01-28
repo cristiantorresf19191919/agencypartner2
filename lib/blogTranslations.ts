@@ -136,6 +136,18 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'Edge Computing',
     },
   },
+  'kotlin-coroutines': {
+    es: {
+      title: 'Kotlin Coroutines y Channels: de Cero a Héroe',
+      subtitle: 'De cero a experto en Kotlin Coroutines y Channels. Domina runBlocking, launch, async/await, Dispatchers, cancelación, Channels, Fan-Out/Fan-In, select y concurrencia estructurada—con código y desafíos.',
+      breadcrumbLabel: 'Kotlin Coroutines',
+    },
+    en: {
+      title: 'Kotlin Coroutines & Channels: Zero to Hero',
+      subtitle: 'From zero to expert in Kotlin Coroutines and Channels. Master runBlocking, launch, async/await, Dispatchers, cancellation, Channels, Fan-Out/Fan-In, select, and structured concurrency—with code and challenges.',
+      breadcrumbLabel: 'Kotlin Coroutines',
+    },
+  },
   'react-best-practices': {
     es: {
       title: 'Vercel React Best Practices',
@@ -146,6 +158,18 @@ const blogTranslations: BlogTranslations = {
       title: 'Vercel React Best Practices',
       subtitle: 'Comprehensive performance optimization guide for React and Next.js from Vercel Engineering. 45+ rules across 8 categories: eliminating waterfalls, bundle size, server-side, client data fetching, re-renders, rendering, JavaScript micro-optimizations, and advanced patterns. Editable code examples with live preview.',
       breadcrumbLabel: 'React Best Practices',
+    },
+  },
+  'concurrent-features': {
+    es: {
+      title: 'Funciones Concurrentes de React y Suspense',
+      subtitle: 'Profundiza en las funciones concurrentes de React 18+: Suspense, useDeferredValue, useTransition, streaming SSR y cómo construir UIs responsivas que nunca bloquean la experiencia del usuario.',
+      breadcrumbLabel: 'Funciones Concurrentes',
+    },
+    en: {
+      title: 'React Concurrent Features & Suspense',
+      subtitle: 'Deep dive into React 18+ concurrent features: Suspense, useDeferredValue, useTransition, streaming SSR, and how to build responsive UIs that never block the user experience.',
+      breadcrumbLabel: 'Concurrent Features',
     },
   },
 };

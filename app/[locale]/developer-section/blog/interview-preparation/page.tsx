@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -43,7 +43,7 @@ export default function InterviewPreparationPage() {
       </div>
 
       {/* Technical Interview Strategies */}
-      <section id="technical-strategies" className={styles.section}>
+      <FullscreenSection id="technical-strategies" title="Technical Strategies" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -418,10 +418,10 @@ const commonPatterns = {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* System Design Interview Prep */}
-      <section id="system-design" className={styles.section}>
+      <FullscreenSection id="system-design" title="System Design" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -891,10 +891,10 @@ const scaleReference = {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Coding Interview Patterns */}
-      <section id="coding-patterns" className={styles.section}>
+      <FullscreenSection id="coding-patterns" title="Coding Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1483,10 +1483,10 @@ class Trie {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Behavioral Interview Techniques */}
-      <section id="behavioral-interviews" className={styles.section}>
+      <FullscreenSection id="behavioral-interviews" title="Behavioral Interviews" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1913,10 +1913,10 @@ const behavioralTips = {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Practice Strategy */}
-      <section id="practice-strategy" className={styles.section}>
+      <FullscreenSection id="practice-strategy" title="Practice Strategy" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2242,10 +2242,10 @@ const questionsToAsk = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Conclusion */}
-      <section id="conclusion" className={styles.section}>
+      <FullscreenSection id="conclusion" title="Conclusion" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -2269,7 +2269,7 @@ const questionsToAsk = {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

@@ -6,8 +6,14 @@ import { FABProvider } from '@/contexts/FABContext';
 import '@/styles/globals.css';
 import Script from 'next/script';
 import FloatingChat from '@/components/Chatbot/FloatingChat';
-import { ProjectAdvisorWrapper } from '@/components/ProjectAdvisor/ProjectAdvisorWrapper';
-import type { Metadata } from 'next';
+import { ScriptLoader } from '@/components/Scripts/ScriptLoader';
+import type { Metadata, Viewport } from 'next';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: 'Optimus Agency | Desarrollo Web Profesional',

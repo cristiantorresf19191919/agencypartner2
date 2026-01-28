@@ -1,4 +1,6 @@
 import { blogCategories } from "./blogCategories";
+import { localize } from "./localize";
+import type { Locale } from "./localize";
 
 export interface SearchItem {
   id: string;
@@ -360,7 +362,10 @@ const keywordMap: Record<string, string[]> = {
   "component-libraries": ["tailwind", "kendo react", "component library", "design system", "styling"],
 };
 
-export function getSearchIndex(t: (key: string) => string): SearchItem[] {
+export function getSearchIndex(
+  t: (key: string) => string,
+  locale: Locale = "en"
+): SearchItem[] {
   // Get items from navigation data (existing search items)
   const navigationItems = navigationData.flatMap((section) =>
     section.items.map((item) => ({
@@ -375,30 +380,36 @@ export function getSearchIndex(t: (key: string) => string): SearchItem[] {
     }))
   );
 
-  // Add all blog categories and posts
+  // Add all blog categories and posts (localized)
   const blogItems = blogCategories.flatMap((category) => {
     const categoryItem: SearchItem = {
       id: `category-${category.id}`,
-      title: category.title,
+      title: localize(category.title, locale),
       titleKey: category.id,
       href: `/developer-section/blog/category/${category.slug}`,
       section: "Blog Categories",
       sectionKey: "blog-categories",
       icon: category.icon,
       color: category.color,
-      keywords: [category.description, ...category.posts.map(p => p.title)],
+      keywords: [
+        localize(category.description, locale),
+        ...category.posts.map((p) => localize(p.title, locale)),
+      ],
     };
 
     const postItems: SearchItem[] = category.posts.map((post) => ({
       id: `post-${post.id}`,
-      title: post.title,
+      title: localize(post.title, locale),
       titleKey: post.id,
       href: `/developer-section/blog/${post.slug}`,
-      section: category.title,
+      section: localize(category.title, locale),
       sectionKey: category.id,
       icon: post.icon,
       color: post.color,
-      keywords: [post.description, ...(post.topics || [])],
+      keywords: [
+        localize(post.description, locale),
+        ...(post.topics || []).map((topic) => localize(topic, locale)),
+      ],
     }));
 
     return [categoryItem, ...postItems];

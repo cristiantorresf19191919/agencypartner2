@@ -1,14 +1,20 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor, FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
+import { useBlogPostContent } from "@/lib/blogTranslations";
+import { getCategoryForPost } from "@/lib/blogCategories";
+import { localize } from "@/lib/localize";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import styles from "../BlogPostPage.module.css";
 
 export default function ConcurrentFeaturesPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
+  const postContent = useBlogPostContent('concurrent-features', language);
+  const category = getCategoryForPost("concurrent-features");
 
   return (
     <BlogContentLayout>
@@ -26,23 +32,35 @@ export default function ConcurrentFeaturesPage() {
               {t("nav-blog")}
             </ButtonLink>
           </li>
+          {category && (
+            <>
+              <li className={styles.breadcrumbSeparator}>/</li>
+              <li>
+                <ButtonLink href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)} variant="secondary" className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
+                  {localize(category.title, locale)}
+                </ButtonLink>
+              </li>
+            </>
+          )}
           <li className={styles.breadcrumbSeparator}>/</li>
-          <li className={styles.breadcrumbCurrent}>Concurrent Features</li>
+          <li className={styles.breadcrumbCurrent}>
+            {postContent?.breadcrumbLabel ?? 'Concurrent Features'}
+          </li>
         </ol>
       </nav>
 
       {/* Header */}
       <div className={styles.headerSection}>
         <Heading className={styles.title}>
-          React Concurrent Features & Suspense
+          {postContent?.title ?? 'React Concurrent Features & Suspense'}
         </Heading>
         <Text className={styles.subtitle}>
-          Deep dive into React 18+ concurrent features: Suspense, useDeferredValue, useTransition, streaming SSR, and how to build responsive UIs that never block the user experience.
+          {postContent?.subtitle ?? 'Deep dive into React 18+ concurrent features: Suspense, useDeferredValue, useTransition, streaming SSR, and how to build responsive UIs that never block the user experience.'}
         </Text>
       </div>
 
       {/* Suspense & Error Boundaries */}
-      <section id="suspense" className={styles.section}>
+      <FullscreenSection id="suspense" title="1. Suspense & Error Boundaries" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -135,10 +153,10 @@ function Dashboard() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* useDeferredValue */}
-      <section id="use-deferred-value" className={styles.section}>
+      <FullscreenSection id="use-deferred-value" title="2. useDeferredValue Pattern" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -208,10 +226,10 @@ function SearchList({ items }: { items: string[] }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* useTransition */}
-      <section id="use-transition" className={styles.section}>
+      <FullscreenSection id="use-transition" title="3. useTransition" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -308,10 +326,10 @@ function FilterableList({ items }: { items: Item[] }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Streaming SSR */}
-      <section id="streaming-ssr" className={styles.section}>
+      <FullscreenSection id="streaming-ssr" title="4. Streaming SSR" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -399,7 +417,7 @@ function ProgressivePage() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

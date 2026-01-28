@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -48,7 +48,7 @@ export default function AdvancedReactHooksPage() {
         </div>
 
         {/* The "Non-Blocking" UI (useTransition) */}
-        <section id="use-transition" className={styles.section}>
+        <FullscreenSection id="use-transition" title="Use Transition" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -150,10 +150,10 @@ export const SearchFeature = () => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Preventing "Flicker" (useLayoutEffect) */}
-        <section id="use-layout-effect" className={styles.section}>
+        <FullscreenSection id="use-layout-effect" title="Use Layout Effect" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -250,10 +250,10 @@ export const SmartTooltip = ({ targetRef, children }) => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* The "Callback Ref" Pattern */}
-        <section id="callback-ref" className={styles.section}>
+        <FullscreenSection id="callback-ref" title="Callback Ref" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -347,10 +347,10 @@ export const DynamicMeasurer = () => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Modern Architecture (Loaders vs. Waterfalls) */}
-        <section id="modern-architecture" className={styles.section}>
+        <FullscreenSection id="modern-architecture" title="Modern Architecture" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -468,10 +468,10 @@ export const UserProfile = () => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* React Portals: Escaping the CSS Trap */}
-        <section id="react-portals" className={styles.section}>
+        <FullscreenSection id="react-portals" title="React Portals" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -592,10 +592,10 @@ const Tooltip = ({ targetElement, children }) => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Error Boundaries: The "Blast Radius" Control */}
-        <section id="error-boundaries" className={styles.section}>
+        <FullscreenSection id="error-boundaries" title="Error Boundaries" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -720,10 +720,10 @@ function App() {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Keys Explained: The Reset Button */}
-        <section id="keys-explained" className={styles.section}>
+        <FullscreenSection id="keys-explained" title="Keys Explained" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -841,10 +841,10 @@ function App() {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Event Listeners: Memory Leak Prevention */}
-        <section id="event-listeners" className={styles.section}>
+        <FullscreenSection id="event-listeners" title="Event Listeners" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -942,10 +942,10 @@ const ResponsiveComponent = () => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* useId: The SSR Hydration Fix */}
-        <section id="use-id" className={styles.section}>
+        <FullscreenSection id="use-id" title="Use Id" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1052,10 +1052,10 @@ const ContactForm = () => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* useDeferredValue: The UX "Shock Absorber" */}
-        <section id="use-deferred-value" className={styles.section}>
+        <FullscreenSection id="use-deferred-value" title="Use Deferred Value" sectionClassName={styles.section}>
           <Card className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1177,7 +1177,7 @@ const SearchFeature = () => {
               />
             </Stack>
           </Card>
-        </section>
+        </FullscreenSection>
 
         {/* Navigation */}
         <div className={styles.navigation}>

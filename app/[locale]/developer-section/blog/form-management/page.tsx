@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function FormManagementPage() {
       </div>
 
       {/* React Hook Form Patterns */}
-      <section id="react-hook-form" className={styles.section}>
+      <FullscreenSection id="react-hook-form" title="React Hook Form" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -153,10 +153,10 @@ function AdvancedForm() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Zod Schema Validation */}
-      <section id="zod-validation" className={styles.section}>
+      <FullscreenSection id="zod-validation" title="Zod Validation" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -238,10 +238,10 @@ const orderSchema = z.object({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Multi-step Forms */}
-      <section id="multi-step-forms" className={styles.section}>
+      <FullscreenSection id="multi-step-forms" title="Multi Step Forms" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -339,10 +339,10 @@ function PersonalInfoStep() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Dynamic Forms */}
-      <section id="dynamic-forms" className={styles.section}>
+      <FullscreenSection id="dynamic-forms" title="Dynamic Forms" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -434,7 +434,7 @@ function ConditionalForm() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

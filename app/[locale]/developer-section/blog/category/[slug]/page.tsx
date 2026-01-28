@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
+import { localize } from "@/lib/localize";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { getCategoryBySlug } from "@/lib/blogCategories";
 import { notFound } from "next/navigation";
@@ -20,8 +21,9 @@ interface CategoryPageProps {
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
   const [expandedDesc, setExpandedDesc] = useState<Set<string>>(new Set());
   const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
   const category = getCategoryBySlug(params.slug);
@@ -77,7 +79,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             </ButtonLink>
           </li>
           <li className="text-white/40">/</li>
-          <li className="text-white font-medium">{category.title}</li>
+          <li className="text-white font-medium">{localize(category.title, locale)}</li>
         </ol>
       </nav>
 
@@ -116,10 +118,10 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           {category.icon}
         </div>
         <Heading className={styles.title}>
-          {category.title}
+          {localize(category.title, locale)}
         </Heading>
         <Text className={styles.subtitle}>
-          {category.description}
+          {localize(category.description, locale)}
         </Text>
       </div>
 
@@ -204,12 +206,12 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                   type="button"
                   onClick={(e) => toggleTopics(post.id, e)}
                   className={styles.expandButton}
-                  aria-label={expandedTopics.has(post.id) ? "Show fewer topics" : "Show all topics"}
+                  aria-label={expandedTopics.has(post.id) ? t("blog-show-fewer-topics") : t("blog-show-all-topics")}
                 >
                   <span className={styles.expandButtonText}>
                     {expandedTopics.has(post.id)
-                      ? "Show less"
-                      : `+${post.topics.length - TOPICS_COLLAPSE_THRESHOLD} more`}
+                      ? t("blog-show-less")
+                      : `+${post.topics.length - TOPICS_COLLAPSE_THRESHOLD} ${t("blog-more-topics")}`}
                   </span>
                   <svg
                     className={`${styles.expandIcon} ${expandedTopics.has(post.id) ? styles.expandIconRotated : ""}`}
@@ -230,7 +232,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               )}
             </div>
             <div className={styles.sectionCta}>
-              Read Article <i className="fas fa-arrow-right"></i>
+              {t("blog-read-article")} <i className="fas fa-arrow-right"></i>
             </div>
           </a>
         ))}
@@ -243,7 +245,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           href={createLocalizedPath("/developer-section/blog")}
           className="!bg-white !text-purple-600 !border-transparent hover:!bg-gray-100 shadow-lg px-8 py-3 rounded-full font-semibold"
         >
-          ← Back to Categories
+          {t("blog-back-to-categories")}
         </ButtonLink>
       </div>
     </BlogContentLayout>

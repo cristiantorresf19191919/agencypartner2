@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -83,7 +83,7 @@ export default function RefactoringGuruPage() {
       </div>
 
       {/* Introduction Section */}
-      <section className={styles.section} id="introduction">
+      <FullscreenSection id="introduction" title="Introduction" sectionClassName={styles.section}>
         <div className={styles.sectionCard}>
           <Stack direction="col" gap="lg">
             <div>
@@ -114,10 +114,10 @@ export default function RefactoringGuruPage() {
             </div>
           </Stack>
         </div>
-      </section>
+      </FullscreenSection>
 
       {/* Catalog of Refactoring Section */}
-      <section className={styles.section} id="catalog-of-refactoring">
+      <FullscreenSection id="catalog-of-refactoring" title="Catalog Of Refactoring" sectionClassName={styles.section}>
         <div className={styles.sectionCard}>
           <Stack direction="col" gap="lg">
             <div>
@@ -568,10 +568,10 @@ export default function RefactoringGuruPage() {
             </div>
           </Stack>
         </div>
-      </section>
+      </FullscreenSection>
 
       {/* Clean Code Section */}
-      <section className={styles.section} id="clean-code">
+      <FullscreenSection id="clean-code" title="Clean Code" sectionClassName={styles.section}>
         <div className={styles.sectionCard}>
           <Stack direction="col" gap="lg">
             <div>
@@ -654,10 +654,10 @@ export default function RefactoringGuruPage() {
             </div>
           </Stack>
         </div>
-      </section>
+      </FullscreenSection>
 
       {/* Technical Debt Section */}
-      <section className={styles.section} id="technical-debt">
+      <FullscreenSection id="technical-debt" title="Technical Debt" sectionClassName={styles.section}>
         <div className={styles.sectionCard}>
           <Stack direction="col" gap="lg">
             <div>
@@ -802,10 +802,10 @@ export default function RefactoringGuruPage() {
             </div>
           </Stack>
         </div>
-      </section>
+      </FullscreenSection>
 
       {/* When to Refactor Section */}
-      <section className={styles.section} id="when-to-refactor">
+      <FullscreenSection id="when-to-refactor" title="When To Refactor" sectionClassName={styles.section}>
         <div className={styles.sectionCard}>
           <Stack direction="col" gap="lg">
             <div>
@@ -929,10 +929,10 @@ export default function RefactoringGuruPage() {
             </div>
           </Stack>
         </div>
-      </section>
+      </FullscreenSection>
 
       {/* How to Refactor Section */}
-      <section className={styles.section} id="how-to-refactor">
+      <FullscreenSection id="how-to-refactor" title="How To Refactor" sectionClassName={styles.section}>
         <div className={styles.sectionCard}>
           <Stack direction="col" gap="lg">
             <div>
@@ -997,10 +997,10 @@ export default function RefactoringGuruPage() {
             </div>
           </Stack>
         </div>
-      </section>
+      </FullscreenSection>
 
       {/* Refused Bequest Specific Section - Example */}
-      <section className={styles.section} id="refused-bequest-example">
+      <FullscreenSection id="refused-bequest-example" title="Refused Bequest Example" sectionClassName={styles.section}>
         <div className={styles.sectionCard}>
           <Stack direction="col" gap="lg">
             <div>
@@ -1015,7 +1015,7 @@ export default function RefactoringGuruPage() {
             </div>
           </Stack>
         </div>
-      </section>
+      </FullscreenSection>
 
       {/* Signs and Symptoms Section */}
       <section className={styles.section}>

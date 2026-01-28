@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, Stack, Heading, Text, ButtonLink, CodeEditor } from "@/components/ui";
+import { Card, Stack, Heading, Text, ButtonLink, CodeEditor, FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -51,7 +51,7 @@ export default function CompositionPatternPage() {
       </Stack>
 
       {/* Lesson 1: Composition vs Inheritance */}
-      <section id="lesson-1" className="mb-16 scroll-mt-24">
+      <FullscreenSection id="lesson-1" title="Lesson 1" sectionClassName="mb-16 scroll-mt-24">
         <Card variant="elevated" className="p-8 !bg-white/5 !border-white/10">
           <Stack direction="col" gap="md">
             <div>
@@ -247,10 +247,10 @@ class SignUpDialog extends React.Component {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Lesson 2: Thinking in Components */}
-      <section id="lesson-2" className="mb-16 scroll-mt-24">
+      <FullscreenSection id="lesson-2" title="Lesson 2" sectionClassName="mb-16 scroll-mt-24">
         <Card variant="elevated" className="p-8 !bg-white/5 !border-white/10">
           <Stack direction="col" gap="md">
             <div>
@@ -398,10 +398,10 @@ export function ShoppingList() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Lesson 3: The Future of React */}
-      <section id="lesson-3" className="mb-16 scroll-mt-24">
+      <FullscreenSection id="lesson-3" title="Lesson 3" sectionClassName="mb-16 scroll-mt-24">
         <Card variant="elevated" className="p-8 !bg-white/5 !border-white/10">
           <Stack direction="col" gap="md">
             <div>
@@ -573,10 +573,10 @@ export const Cta = {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Lesson 4: OOP Origins (Kotlin) */}
-      <section id="lesson-4" className="mb-16 scroll-mt-24">
+      <FullscreenSection id="lesson-4" title="Lesson 4" sectionClassName="mb-16 scroll-mt-24">
         <Card variant="elevated" className="p-8 !bg-white/5 !border-white/10">
           <Stack direction="col" gap="md">
             <div>
@@ -754,10 +754,10 @@ class CounterSet<T>(
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Summary */}
-      <section id="summary" className="mb-16 scroll-mt-24">
+      <FullscreenSection id="summary" title="Summary" sectionClassName="mb-16 scroll-mt-24">
         <Card variant="elevated" className="p-8 !bg-gradient-to-br !from-purple-500/20 !to-blue-500/20 !border-purple-500/30">
           <Stack direction="col" gap="md">
             <Heading level={2} className="text-3xl font-bold mb-3 text-white">
@@ -795,7 +795,7 @@ class CounterSet<T>(
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Navigation */}
       <div className={styles.navigation}>

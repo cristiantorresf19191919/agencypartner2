@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeEditor, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeEditor, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -48,7 +48,7 @@ export default function ReactDesignPatternsPage() {
       </div>
 
       {/* Modern Component Patterns */}
-      <section id="modern-component-patterns" className={styles.section}>
+      <FullscreenSection id="modern-component-patterns" title="Modern Component Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -104,10 +104,10 @@ function UserProfile({ userId }: { userId: string }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Custom Hooks */}
-      <section id="custom-hooks" className={styles.section}>
+      <FullscreenSection id="custom-hooks" title="Custom Hooks" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -228,10 +228,10 @@ function UserPreferences() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Context API */}
-      <section id="context-api" className={styles.section}>
+      <FullscreenSection id="context-api" title="Context Api" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -305,10 +305,10 @@ function App() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* TypeScript Patterns */}
-      <section id="typescript-patterns" className={styles.section}>
+      <FullscreenSection id="typescript-patterns" title="Typescript Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -422,10 +422,10 @@ function UserSelector() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* React 19 Features */}
-      <section id="react-19-features" className={styles.section}>
+      <FullscreenSection id="react-19-features" title="React 19 Features" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -526,10 +526,10 @@ function AddToCartButton({ productId }: { productId: string }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Modern Frameworks */}
-      <section id="modern-frameworks" className={styles.section}>
+      <FullscreenSection id="modern-frameworks" title="Modern Frameworks" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -605,10 +605,10 @@ export default defineConfig({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Component Libraries */}
-      <section id="component-libraries" className={styles.section}>
+      <FullscreenSection id="component-libraries" title="Component Libraries" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -672,10 +672,10 @@ function UserManagement() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Summary Section */}
-      <section id="summary" className={styles.section}>
+      <FullscreenSection id="summary" title="Summary" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -720,7 +720,7 @@ function UserManagement() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

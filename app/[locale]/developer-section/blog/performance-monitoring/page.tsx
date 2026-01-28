@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function PerformanceMonitoringPage() {
       </div>
 
       {/* React DevTools Profiler */}
-      <section id="react-profiler" className={styles.section}>
+      <FullscreenSection id="react-profiler" title="React Profiler" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -124,10 +124,10 @@ function ExpensiveComponent() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Web Vitals */}
-      <section id="web-vitals" className={styles.section}>
+      <FullscreenSection id="web-vitals" title="Web Vitals" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -197,10 +197,10 @@ measurePerformance('dataProcessing', () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Bundle Analysis */}
-      <section id="bundle-analysis" className={styles.section}>
+      <FullscreenSection id="bundle-analysis" title="Bundle Analysis" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -270,7 +270,7 @@ function useImportCost() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function TypeScriptAdvancedPage() {
       </div>
 
       {/* Generic Components */}
-      <section id="generic-components" className={styles.section}>
+      <FullscreenSection id="generic-components" title="Generic Components" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -181,10 +181,10 @@ function Form<T extends Record<string, any>>({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Utility Types & Mapped Types */}
-      <section id="utility-types" className={styles.section}>
+      <FullscreenSection id="utility-types" title="Utility Types" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -287,10 +287,10 @@ const productId = createProductId('456');
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Discriminated Unions */}
-      <section id="discriminated-unions" className={styles.section}>
+      <FullscreenSection id="discriminated-unions" title="Discriminated Unions" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -400,10 +400,10 @@ function useAsyncState<T>() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Advanced Hooks Typing */}
-      <section id="hooks-typing" className={styles.section}>
+      <FullscreenSection id="hooks-typing" title="Hooks Typing" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -532,10 +532,10 @@ const useUser = createUseApi<User>('/api/user');
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Type Guards & Assertions */}
-      <section id="type-guards" className={styles.section}>
+      <FullscreenSection id="type-guards" title="Type Guards" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -643,7 +643,7 @@ function handleError(error: unknown) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

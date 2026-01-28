@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeEditor, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeEditor, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -48,7 +48,7 @@ export default function ReactQueryPage() {
       </div>
 
       {/* Unit 70: Advanced Mutations (Optimistic Updates) */}
-      <section id="optimistic-updates" className={styles.section}>
+      <FullscreenSection id="optimistic-updates" title="Optimistic Updates" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -143,10 +143,10 @@ const LikeButton = ({ postId }: { postId: string }) => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Unit 71 & 73: Search Grid (Cancellation + KeepPreviousData) */}
-      <section id="search-grid" className={styles.section}>
+      <FullscreenSection id="search-grid" title="Search Grid" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -252,10 +252,10 @@ const ProductTable = () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Unit 72: Infinite Feed with Data Transformation */}
-      <section id="infinite-feed" className={styles.section}>
+      <FullscreenSection id="infinite-feed" title="Infinite Feed" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -364,10 +364,10 @@ const FeedWithAutoLoad = () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Summary Section */}
-      <section id="summary" className={styles.section}>
+      <FullscreenSection id="summary" title="Summary" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -397,7 +397,7 @@ const FeedWithAutoLoad = () => {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

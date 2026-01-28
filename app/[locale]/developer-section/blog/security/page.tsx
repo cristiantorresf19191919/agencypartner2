@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function SecurityPage() {
       </div>
 
       {/* XSS Prevention */}
-      <section id="xss-prevention" className={styles.section}>
+      <FullscreenSection id="xss-prevention" title="Xss Prevention" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -118,10 +118,10 @@ function SafeLink({ href, children }: { href: string; children: React.ReactNode 
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* CSRF Protection */}
-      <section id="csrf-protection" className={styles.section}>
+      <FullscreenSection id="csrf-protection" title="Csrf Protection" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -216,10 +216,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Authentication Patterns */}
-      <section id="authentication" className={styles.section}>
+      <FullscreenSection id="authentication" title="Authentication" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -337,10 +337,10 @@ function RoleProtectedRoute({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Content Security Policy */}
-      <section id="csp" className={styles.section}>
+      <FullscreenSection id="csp" title="Csp" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -414,7 +414,7 @@ function SecurityMetaTags() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

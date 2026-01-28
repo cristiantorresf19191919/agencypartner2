@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, KotlinTypeScriptBlock } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, KotlinTypeScriptBlock , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -483,7 +483,7 @@ export default function DesignPatternsPage() {
         </div>
 
         {/* Factory Method */}
-        <section id="factory-method" className={styles.section}>
+        <FullscreenSection id="factory-method" title="Factory Method" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -652,10 +652,10 @@ dialog.render();`}
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Abstract Factory */}
-        <section id="abstract-factory" className={styles.section}>
+        <FullscreenSection id="abstract-factory" title="Abstract Factory" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -823,10 +823,10 @@ app.paint();`}
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Builder */}
-        <section id="builder" className={styles.section}>
+        <FullscreenSection id="builder" title="Builder" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1001,10 +1001,10 @@ const car = builder.getProduct();`}
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Prototype */}
-        <section id="prototype" className={styles.section}>
+        <FullscreenSection id="prototype" title="Prototype" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1152,10 +1152,10 @@ const copies = shapes.map(s => s.clone());`}
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Singleton */}
-        <section id="singleton" className={styles.section}>
+        <FullscreenSection id="singleton" title="Singleton" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1409,10 +1409,10 @@ const db2 = Database.getInstance();
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Adapter */}
-        <section id="adapter" className={styles.section}>
+        <FullscreenSection id="adapter" title="Adapter" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1580,10 +1580,10 @@ hole.fits(largeAdapter); // false`}
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Bridge */}
-        <section id="bridge" className={styles.section}>
+        <FullscreenSection id="bridge" title="Bridge" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1758,10 +1758,10 @@ advRemote.mute();`}
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Composite */}
-        <section id="composite" className={styles.section}>
+        <FullscreenSection id="composite" title="Composite" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -1898,10 +1898,10 @@ class ImageEditor {
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Decorator */}
-        <section id="decorator" className={styles.section}>
+        <FullscreenSection id="decorator" title="Decorator" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -2109,10 +2109,10 @@ source.writeData("salaryRecords"); // file: encrypted(compressed(salaryRecords))
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Facade */}
-        <section id="facade" className={styles.section}>
+        <FullscreenSection id="facade" title="Facade" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -2238,10 +2238,10 @@ class Application {
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Flyweight */}
-        <section id="flyweight" className={styles.section}>
+        <FullscreenSection id="flyweight" title="Flyweight" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -2377,10 +2377,10 @@ forest.plantTree(3, 4, "Oak", "green", "oak-texture");  // reuses TreeType`}
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Proxy */}
-        <section id="proxy" className={styles.section}>
+        <FullscreenSection id="proxy" title="Proxy" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -2574,10 +2574,10 @@ class Application {
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Chain of Responsibility */}
-        <section id="chain-of-responsibility" className={styles.section}>
+        <FullscreenSection id="chain-of-responsibility" title="Chain Of Responsibility" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -2994,10 +2994,10 @@ class Application {
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Command */}
-        <section id="command" className={styles.section}>
+        <FullscreenSection id="command" title="Command" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -3544,10 +3544,10 @@ class Application {
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Iterator */}
-        <section id="iterator" className={styles.section}>
+        <FullscreenSection id="iterator" title="Iterator" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -4020,10 +4020,10 @@ interface Profile {
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Memento */}
-        <section id="memento" className={styles.section}>
+        <FullscreenSection id="memento" title="Memento" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -4437,10 +4437,10 @@ class Command {
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Mediator */}
-        <section id="mediator" className={styles.section}>
+        <FullscreenSection id="mediator" title="Mediator" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -4929,10 +4929,10 @@ class Checkbox extends Component {
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Observer */}
-        <section id="observer" className={styles.section}>
+        <FullscreenSection id="observer" title="Observer" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -5081,10 +5081,10 @@ sub.setState("hello");`}
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* State */}
-        <section id="state" className={styles.section}>
+        <FullscreenSection id="state" title="State" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -5228,10 +5228,10 @@ class ConcreteStateB implements State {
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Strategy */}
-        <section id="strategy" className={styles.section}>
+        <FullscreenSection id="strategy" title="Strategy" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -5362,10 +5362,10 @@ ctx.run(2, 3);   // 6`}
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Template Method */}
-        <section id="template-method" className={styles.section}>
+        <FullscreenSection id="template-method" title="Template Method" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -5846,10 +5846,10 @@ class MonstersAI extends GameAI {
               </div>
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Visitor */}
-        <section id="visitor" className={styles.section}>
+        <FullscreenSection id="visitor" title="Visitor" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -5903,7 +5903,7 @@ new ElementA().accept(new ConcreteVisitor());`}
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Navigation */}
         <div className={styles.navigation}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -53,7 +53,7 @@ export default function SOLIDPrinciplesPage() {
         </div>
 
         {/* Single Responsibility Principle */}
-        <section id="srp" className={styles.section}>
+        <FullscreenSection id="srp" title="Srp" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -270,10 +270,10 @@ export function OrderForm() {
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Open/Closed Principle */}
-        <section id="ocp" className={styles.section}>
+        <FullscreenSection id="ocp" title="Ocp" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -404,10 +404,10 @@ const SuccessButtonVariant: ButtonVariant = {
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Liskov Substitution Principle */}
-        <section id="lsp" className={styles.section}>
+        <FullscreenSection id="lsp" title="Lsp" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -547,10 +547,10 @@ function FormField({ InputComponent, ...props }: { InputComponent: React.Compone
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Dependency Inversion Principle */}
-        <section id="dip" className={styles.section}>
+        <FullscreenSection id="dip" title="Dip" sectionClassName={styles.section}>
           <div className={styles.sectionCard}>
             <Stack direction="col" gap="md">
               <div>
@@ -781,7 +781,7 @@ export function UserExportForm() {
               />
             </Stack>
           </div>
-        </section>
+        </FullscreenSection>
 
         {/* Navigation */}
         <div className={styles.navigation}>

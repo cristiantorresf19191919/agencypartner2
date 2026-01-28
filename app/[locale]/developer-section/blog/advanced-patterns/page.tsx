@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeEditor, Card } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeEditor, Card , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -48,7 +48,7 @@ export default function AdvancedPatternsPage() {
       </div>
 
       {/* Module 1: Render Props */}
-      <section id="render-props" className={styles.section}>
+      <FullscreenSection id="render-props" title="Render Props" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -158,10 +158,10 @@ export const Toggle = ({ children }: ToggleProps) => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Module 2: Wrapper Components */}
-      <section id="wrapper-components" className={styles.section}>
+      <FullscreenSection id="wrapper-components" title="Wrapper Components" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -280,10 +280,10 @@ export const ErrorBoundaryWrapper = ({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Module 3: Polymorphic Components */}
-      <section id="polymorphic-components" className={styles.section}>
+      <FullscreenSection id="polymorphic-components" title="Polymorphic Components" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -443,10 +443,10 @@ export const Card = <T extends ElementType = 'div'>({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Summary Section */}
-      <section id="summary" className={styles.section}>
+      <FullscreenSection id="summary" title="Summary" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
@@ -476,7 +476,7 @@ export const Card = <T extends ElementType = 'div'>({
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

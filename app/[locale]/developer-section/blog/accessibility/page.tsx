@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function AccessibilityPage() {
       </div>
 
       {/* ARIA Patterns */}
-      <section id="aria-patterns" className={styles.section}>
+      <FullscreenSection id="aria-patterns" title="Aria Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -117,10 +117,10 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Keyboard Navigation */}
-      <section id="keyboard-navigation" className={styles.section}>
+      <FullscreenSection id="keyboard-navigation" title="Keyboard Navigation" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -260,10 +260,10 @@ function Editor() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Focus Management */}
-      <section id="focus-management" className={styles.section}>
+      <FullscreenSection id="focus-management" title="Focus Management" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -379,10 +379,10 @@ function SkipToContent() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Screen Reader Optimization */}
-      <section id="screen-reader" className={styles.section}>
+      <FullscreenSection id="screen-reader" title="Screen Reader" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -496,10 +496,10 @@ function FormField({ id, label, error, required, ...props }: FormFieldProps) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Semantic HTML */}
-      <section id="semantic-html" className={styles.section}>
+      <FullscreenSection id="semantic-html" title="Semantic Html" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -582,10 +582,10 @@ function Layout({ children }: { children: React.ReactNode }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Form Accessibility */}
-      <section id="form-accessibility" className={styles.section}>
+      <FullscreenSection id="form-accessibility" title="Form Accessibility" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -699,7 +699,7 @@ function FormWithErrorSummary({ errors }: { errors: Record<string, string> }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

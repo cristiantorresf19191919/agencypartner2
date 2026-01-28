@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function WebPerformanceCoreWebVitalsPage() {
       </div>
 
       {/* Critical Rendering Path */}
-      <section id="critical-rendering-path" className={styles.section}>
+      <FullscreenSection id="critical-rendering-path" title="Critical Rendering Path" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -241,10 +241,10 @@ function measureCRP() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Resource Hints */}
-      <section id="resource-hints" className={styles.section}>
+      <FullscreenSection id="resource-hints" title="Resource Hints" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -493,10 +493,10 @@ const resourceHintsGuide = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Service Workers & PWA */}
-      <section id="service-workers-pwa" className={styles.section}>
+      <FullscreenSection id="service-workers-pwa" title="Service Workers Pwa" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -770,10 +770,10 @@ function InstallButton() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Web Workers */}
-      <section id="web-workers" className={styles.section}>
+      <FullscreenSection id="web-workers" title="Web Workers" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1038,10 +1038,10 @@ const result = await api.compute([1, 2, 3, 4, 5]);`}
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Image Optimization */}
-      <section id="image-optimization" className={styles.section}>
+      <FullscreenSection id="image-optimization" title="Image Optimization" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1301,10 +1301,10 @@ const imageOptimizationChecklist = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Font Loading Optimization */}
-      <section id="font-optimization" className={styles.section}>
+      <FullscreenSection id="font-optimization" title="Font Optimization" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1507,7 +1507,7 @@ body {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

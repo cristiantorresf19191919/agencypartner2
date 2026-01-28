@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function ServerComponentsPage() {
       </div>
 
       {/* Server vs Client Components */}
-      <section id="server-vs-client" className={styles.section}>
+      <FullscreenSection id="server-vs-client" title="Server Vs Client" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -119,10 +119,10 @@ async function Dashboard() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Data Fetching Patterns */}
-      <section id="data-fetching" className={styles.section}>
+      <FullscreenSection id="data-fetching" title="Data Fetching" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -195,10 +195,10 @@ async function UserProfile({ userId }: { userId: string }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Server Actions */}
-      <section id="server-actions" className={styles.section}>
+      <FullscreenSection id="server-actions" title="Server Actions" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -271,7 +271,7 @@ function UserForm() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

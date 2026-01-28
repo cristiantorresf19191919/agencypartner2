@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function CodeReviewPage() {
       </div>
 
       {/* Effective PR Reviews */}
-      <section id="effective-pr-reviews" className={styles.section}>
+      <FullscreenSection id="effective-pr-reviews" title="Effective Pr Reviews" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -290,10 +290,10 @@ const REVIEW_TOOLS = {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Providing Constructive Feedback */}
-      <section id="constructive-feedback" className={styles.section}>
+      <FullscreenSection id="constructive-feedback" title="Constructive Feedback" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -585,10 +585,10 @@ What do you think?\`;
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Reviewing Architecture Decisions */}
-      <section id="architecture-review" className={styles.section}>
+      <FullscreenSection id="architecture-review" title="Architecture Review" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1055,10 +1055,10 @@ GET /api/users?skip=0&take=20`}
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Security Review Checklist */}
-      <section id="security-review" className={styles.section}>
+      <FullscreenSection id="security-review" title="Security Review" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1818,10 +1818,10 @@ function performSecurityReview(code: Code): SecurityIssues[] {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Best Practices Summary */}
-      <section id="summary" className={styles.section}>
+      <FullscreenSection id="summary" title="Summary" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2054,7 +2054,7 @@ function performSecurityReview(code: Code): SecurityIssues[] {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Navigation */}
       <div className={styles.navigationSection}>

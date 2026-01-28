@@ -1,17 +1,19 @@
 "use client";
 
 import React from "react";
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
 import { useBlogPostContent } from "@/lib/blogTranslations";
 import { getCategoryForPost } from "@/lib/blogCategories";
+import { localize } from "@/lib/localize";
 import styles from "../BlogPostPage.module.css";
 
 export default function NextJSBestPracticesPage() {
   const { t, language } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const locale = language as 'en' | 'es';
   const postContent = useBlogPostContent('nextjs-best-practices', language);
   const category = getCategoryForPost("nextjs-best-practices");
 
@@ -36,7 +38,7 @@ export default function NextJSBestPracticesPage() {
               <li className={styles.breadcrumbSeparator}>/</li>
               <li>
                 <ButtonLink href={createLocalizedPath(`/developer-section/blog/category/${category.slug}`)} variant="secondary" className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20">
-                  {category.title}
+                  {localize(category.title, locale)}
                 </ButtonLink>
               </li>
             </>
@@ -59,7 +61,7 @@ export default function NextJSBestPracticesPage() {
       </div>
 
       {/* Next.js Fundamentals */}
-      <section id="nextjs-fundamentals" className={styles.section}>
+      <FullscreenSection id="nextjs-fundamentals" title="Nextjs Fundamentals" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -199,10 +201,10 @@ export default function DashboardLayout({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Server vs Client Components */}
-      <section id="server-client-components" className={styles.section}>
+      <FullscreenSection id="server-client-components" title="Server Client Components" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -338,10 +340,10 @@ function DashboardClient({ initialData }) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Data Fetching Patterns */}
-      <section id="data-fetching" className={styles.section}>
+      <FullscreenSection id="data-fetching" title="Data Fetching" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -541,10 +543,10 @@ export async function DELETE(
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Caching Strategies */}
-      <section id="caching" className={styles.section}>
+      <FullscreenSection id="caching" title="Caching" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -698,10 +700,10 @@ export default async function BlogPost({ params }: { params: { slug: string } })
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Routing Patterns */}
-      <section id="routing-patterns" className={styles.section}>
+      <FullscreenSection id="routing-patterns" title="Routing Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -891,10 +893,10 @@ export default function NavigationButton() {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Middleware & Edge Runtime */}
-      <section id="middleware" className={styles.section}>
+      <FullscreenSection id="middleware" title="Middleware" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1120,10 +1122,10 @@ export const config = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Performance Optimization */}
-      <section id="performance" className={styles.section}>
+      <FullscreenSection id="performance" title="Performance" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1302,10 +1304,10 @@ export function reportWebVitals(metric: any) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Metadata & SEO */}
-      <section id="metadata-seo" className={styles.section}>
+      <FullscreenSection id="metadata-seo" title="Metadata Seo" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1560,10 +1562,10 @@ export const metadata: Metadata = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Forms & Server Actions */}
-      <section id="forms-server-actions" className={styles.section}>
+      <FullscreenSection id="forms-server-actions" title="Forms Server Actions" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1824,10 +1826,10 @@ export async function createPost(formData: FormData) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* TypeScript Patterns */}
-      <section id="typescript-patterns" className={styles.section}>
+      <FullscreenSection id="typescript-patterns" title="Typescript Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2004,10 +2006,10 @@ export const GET = createApiHandler(async (request) => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Production Patterns */}
-      <section id="production-patterns" className={styles.section}>
+      <FullscreenSection id="production-patterns" title="Production Patterns" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2295,10 +2297,10 @@ module.exports = {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Real-World Examples */}
-      <section id="real-world-examples" className={styles.section}>
+      <FullscreenSection id="real-world-examples" title="Real World Examples" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2555,10 +2557,10 @@ export async function login(prevState: any, formData: FormData) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Senior Tooling & Testing Playbook */}
-      <section id="senior-tooling" className={styles.section}>
+      <FullscreenSection id="senior-tooling" title="Senior Tooling" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -2720,7 +2722,7 @@ describe('getProducts', () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

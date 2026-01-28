@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function TestingStrategiesPage() {
       </div>
 
       {/* React Testing Library Best Practices */}
-      <section id="rtl-best-practices" className={styles.section}>
+      <FullscreenSection id="rtl-best-practices" title="Rtl Best Practices" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -124,10 +124,10 @@ test('increments counter when button is clicked', async () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Testing Custom Hooks */}
-      <section id="testing-hooks" className={styles.section}>
+      <FullscreenSection id="testing-hooks" title="Testing Hooks" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -214,10 +214,10 @@ describe('useDebounce', () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Testing Context & Providers */}
-      <section id="testing-context" className={styles.section}>
+      <FullscreenSection id="testing-context" title="Testing Context" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -315,10 +315,10 @@ test('renders with custom theme', () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Mocking Strategies */}
-      <section id="mocking-strategies" className={styles.section}>
+      <FullscreenSection id="mocking-strategies" title="Mocking Strategies" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -417,10 +417,10 @@ jest.mock('./api', () => ({
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Integration Testing */}
-      <section id="integration-testing" className={styles.section}>
+      <FullscreenSection id="integration-testing" title="Integration Testing" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -511,10 +511,10 @@ test('search and filter integration', async () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* E2E Testing with Playwright */}
-      <section id="e2e-testing" className={styles.section}>
+      <FullscreenSection id="e2e-testing" title="E2e Testing" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -603,10 +603,10 @@ test.describe('Cross-browser testing', () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Accessibility Testing */}
-      <section id="accessibility-testing" className={styles.section}>
+      <FullscreenSection id="accessibility-testing" title="Accessibility Testing" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -681,10 +681,10 @@ test('focus is trapped in modal', async () => {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* TDD Example */}
-      <section id="tdd" className={styles.section}>
+      <FullscreenSection id="tdd" title="Tdd" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -774,7 +774,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

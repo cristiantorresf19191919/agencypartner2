@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Stack, Heading, Text, ButtonLink, Card, FullscreenIframeModal } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, Card, FullscreenIframeModal , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -57,7 +57,7 @@ export default function HowLLMsWorkPage() {
       </div>
 
       {/* Introduction Section */}
-      <section id="introduction" className={styles.section}>
+      <FullscreenSection id="introduction" title="Introduction" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -70,7 +70,7 @@ export default function HowLLMsWorkPage() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Full-Screen Interactive Visualization */}
       <section 
@@ -239,10 +239,10 @@ export default function HowLLMsWorkPage() {
             zIndex: 0,
           }}
         />
-      </section>
+      </FullscreenSection>
 
       {/* Key Concepts Section */}
-      <section id="key-concepts" className={styles.section}>
+      <FullscreenSection id="key-concepts" title="Key Concepts" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -282,10 +282,10 @@ export default function HowLLMsWorkPage() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Conclusion Section */}
-      <section id="conclusion" className={styles.section}>
+      <FullscreenSection id="conclusion" title="Conclusion" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -298,7 +298,7 @@ export default function HowLLMsWorkPage() {
             </div>
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Fullscreen Modal */}
       <FullscreenIframeModal

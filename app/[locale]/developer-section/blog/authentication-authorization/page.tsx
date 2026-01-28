@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } from "@/components/ui";
+import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor , FullscreenSection } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
@@ -42,7 +42,7 @@ export default function AuthenticationAuthorizationPage() {
       </div>
 
       {/* JWT Deep Dive */}
-      <section id="jwt-deep-dive" className={styles.section}>
+      <FullscreenSection id="jwt-deep-dive" title="Jwt Deep Dive" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -310,10 +310,10 @@ axios.interceptors.response.use(
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* OAuth 2.0 / OpenID Connect */}
-      <section id="oauth-oidc" className={styles.section}>
+      <FullscreenSection id="oauth-oidc" title="Oauth Oidc" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -589,10 +589,10 @@ async function refreshAccessToken(token: any) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Session Management */}
-      <section id="session-management" className={styles.section}>
+      <FullscreenSection id="session-management" title="Session Management" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -840,10 +840,10 @@ async function deleteRedisSession(sessionId: string) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Refresh Token Strategies */}
-      <section id="refresh-tokens" className={styles.section}>
+      <FullscreenSection id="refresh-tokens" title="Refresh Tokens" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1103,10 +1103,10 @@ async function refreshWithFamily(
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Role-Based Access Control (RBAC) */}
-      <section id="rbac" className={styles.section}>
+      <FullscreenSection id="rbac" title="Rbac" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1339,10 +1339,10 @@ async function getEffectiveRole(
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
 
       {/* Permission-Based Systems */}
-      <section id="permission-based" className={styles.section}>
+      <FullscreenSection id="permission-based" title="Permission Based" sectionClassName={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
@@ -1653,7 +1653,7 @@ function invalidatePermissionCache(userId: string) {
             />
           </Stack>
         </Card>
-      </section>
+      </FullscreenSection>
     </BlogContentLayout>
   );
 }

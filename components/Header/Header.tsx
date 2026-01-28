@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useLocale } from '@/lib/useLocale';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
-import { useProjectAdvisor } from '@/contexts/ProjectAdvisorContext';
+import LanguageSwitcher from './LanguageSwitcher';
+import { ProjectAdvisorStepper } from '@/components/ProjectAdvisor/ProjectAdvisorStepper';
 
 interface NavLink {
   href: string;
@@ -14,10 +16,11 @@ interface NavLink {
 }
 
 const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { openAdvisor } = useProjectAdvisor();
+  const { createLocalizedPath } = useLocale();
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [advisorOpen, setAdvisorOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,24 +104,31 @@ const Header = () => {
                 )}
               </li>
             ))}
-            <li>
-              <button
-                onClick={handleAdvisorClick}
-                className={styles.advisorButton}
-                aria-label="Abrir asesor de proyecto"
-              >
-                <i className="fas fa-robot"></i>
-                <span>Asesor de Proyecto</span>
-              </button>
-            </li>
           </ul>
+
+          {/* Header Actions - Right side on desktop */}
+          <div className={styles.headerActions}>
+            <LanguageSwitcher />
+
+            <button
+              type="button"
+              className={styles.advisorCta}
+              onClick={() => setAdvisorOpen(true)}
+            >
+              <span className={styles.advisorCtaGlow} />
+              <span className={styles.advisorCtaInner}>
+                <i className="fa-solid fa-wand-magic-sparkles" />
+                <span className={styles.advisorCtaText}>Planear mi proyecto con IA</span>
+              </span>
+            </button>
+          </div>
         </nav>
 
         <div className={styles.headerWaveContainer}>
-          <svg 
-            width="100%" 
-            height="180" 
-            viewBox="0 0 1440 180" 
+          <svg
+            width="100%"
+            height="180"
+            viewBox="0 0 1440 180"
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
             style={{ display: 'block', width: '100%', height: '180px' }}
