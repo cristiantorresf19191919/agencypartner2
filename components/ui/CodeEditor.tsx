@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from "react";
+import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ChevronDown, Code2 } from "lucide-react";
@@ -108,6 +109,7 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
   const [isFullscreen, setIsFullscreen] = useState(defaultFullscreen);
+  const [showFullscreenPortal, setShowFullscreenPortal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [outputHtml, setOutputHtml] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -130,6 +132,10 @@ export function CodeEditor({
     !readOnly && (["javascript", "typescript", "jsx", "tsx", "react"].includes(normalizedLang) || isKotlin);
 
   useEffect(() => setIsMounted(true), []);
+
+  useEffect(() => {
+    if (isFullscreen) setShowFullscreenPortal(true);
+  }, [isFullscreen]);
 
   useEffect(() => {
     // Auto-inject imports if enabled and missing
@@ -193,7 +199,7 @@ export function CodeEditor({
       formatOnType: true,
       // Mobile: no error gutter (avoids clipped red markers), no line numbers to reduce noise
       glyphMargin: !isMobile,
-      lineNumbers: isMobile ? "off" : "on",
+      lineNumbers: (isMobile ? "off" : "on") as "on" | "off",
       folding: !isMobile,
     }),
     [fontSize, readOnly, isMobile]
@@ -541,38 +547,42 @@ export function solution() {
   const mobileEditorHeight = 320;
 
   const mobileStaticBlock = showStaticBlock && (
-    <div className="relative flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden max-w-full min-w-0 w-full code-editor-contained">
-      <div className="flex items-center justify-between gap-2 px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
-        <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
-          <span className="w-2 h-2 rounded-full bg-emerald-400/80" />
-          {language}
+    <div className={`relative flex flex-col border border-white/10 bg-[#0b1020] rounded-xl overflow-hidden max-w-full min-w-0 w-full code-editor-contained shadow-lg ${isFullscreen ? "flex-1 min-h-0" : ""}`}>
+      {/* Editor-style toolbar: same visual language as full editor, scrolls on very narrow screens */}
+      <div className="flex flex-nowrap items-center justify-between gap-3 overflow-x-auto overflow-y-hidden px-4 py-3 bg-[#0e1628] border-b border-white/10 shrink-0 min-h-[52px]">
+        <div className="flex items-center gap-2.5 min-w-0 shrink-0">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 border border-white/10 shrink-0" aria-hidden>
+            <Code2 className="h-4 w-4 text-cyan-400/90" strokeWidth={2} />
+          </span>
+          <span className="text-sm font-semibold text-slate-200 uppercase tracking-wide truncate">{language}</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={handleCopy}
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-slate-100"
+            className="inline-flex h-10 min-w-[5rem] items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-sm font-medium text-slate-200 transition-colors active:bg-white/10 active:scale-[0.98] touch-manipulation shrink-0"
             aria-label="Copy code"
           >
-            <Copy className="h-3.5 w-3.5" />
-            {copyDone ? "Copied" : "Copy"}
+            <Copy className="h-4 w-4 shrink-0" strokeWidth={2} />
+            <span>{copyDone ? "Copied" : "Copy"}</span>
           </button>
           <button
             type="button"
             onClick={() => setMobileEditorOpen(true)}
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-cyan-500/20 border border-cyan-500/30 px-3 text-xs font-medium text-cyan-300 hover:bg-cyan-500/30"
+            className="inline-flex h-10 min-w-[5rem] items-center justify-center gap-2 rounded-lg bg-cyan-500/25 border border-cyan-500/40 px-4 text-sm font-semibold text-cyan-200 transition-colors active:bg-cyan-500/35 active:scale-[0.98] touch-manipulation shadow-[0_0_0_1px_rgba(34,211,238,0.15)] shrink-0"
             aria-label="Open editor"
           >
-            <Code2 className="h-3.5 w-3.5" />
-            Open editor
+            <Code2 className="h-4 w-4 shrink-0" strokeWidth={2} />
+            <span>Open editor</span>
           </button>
         </div>
       </div>
+      {/* Code area with editor-like gutter accent */}
       <div
-        className="overflow-auto border-0 rounded-b-lg"
-        style={{ minHeight: 120, maxHeight: 320 }}
+        className="overflow-auto border-0 rounded-b-xl border-l-2 border-l-cyan-500/20 bg-[#0b1020]"
+        style={{ minHeight: 140, maxHeight: 320 }}
       >
-        <pre className="p-4 m-0 text-sm font-mono text-slate-200 whitespace-pre overflow-x-auto">
+        <pre className="p-4 pl-5 m-0 text-[13px] sm:text-sm font-mono leading-relaxed text-slate-200 whitespace-pre overflow-x-auto">
           <code>{currentCode}</code>
         </pre>
       </div>
@@ -581,24 +591,24 @@ export function solution() {
 
   const editorSection = !showStaticBlock && (
     <div
-      className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden max-w-full min-w-0 w-full code-editor-contained"
+      className={`flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden max-w-full min-w-0 w-full code-editor-contained ${isFullscreen ? "flex-1 min-h-0" : ""}`}
       style={{
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        minHeight: isMobile ? 200 : (height === "auto" ? 400 : editorHeightNum),
-        maxHeight: isMobile ? "none" : undefined,
+        minHeight: isFullscreen ? undefined : (isMobile ? 200 : (height === "auto" ? 400 : editorHeightNum)),
+        maxHeight: isMobile && !isFullscreen ? "none" : undefined,
       }}
     >
-      <div className="flex flex-nowrap items-center justify-between gap-2 overflow-x-auto px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
-        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+      <div className="flex flex-nowrap items-center justify-between gap-4 px-4 py-3 bg-white/5 border-b border-white/10 shrink-0 min-h-[52px]">
+        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden shrink-0">
           {enableMultiFile && files.length > 1 ? (
             <div className="flex items-center gap-1 overflow-x-auto flex-1">
               {files.map((file, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveFileIndex(idx)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors shrink-0 ${idx === activeFileIndex
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors shrink-0 ${idx === activeFileIndex
                     ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
                     : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
                     }`}
@@ -620,7 +630,7 @@ export function solution() {
               ))}
               <button
                 onClick={addFile}
-                className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors shrink-0"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors shrink-0"
                 aria-label="Add new file"
               >
                 <FilePlus className="h-3.5 w-3.5" />
@@ -628,59 +638,59 @@ export function solution() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_6px_rgba(16,185,129,0.2)]" />
-              {enableMultiFile && currentFile ? currentFile.name : language}
+            <div className="flex items-center gap-2.5 h-8 px-3 rounded-lg bg-white/5 border border-white/10 shrink-0">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" aria-hidden />
+              <span className="text-xs font-semibold text-slate-200 uppercase tracking-wide truncate">{enableMultiFile && currentFile ? currentFile.name : language}</span>
             </div>
           )}
         </div>
-        <div className="flex min-w-max flex-shrink-0 flex-nowrap items-center gap-2">
+        <div className="flex flex-nowrap items-center gap-2.5 min-w-0 justify-end shrink-0">
           {isMobile && (
             <button
               type="button"
               onClick={() => setMobileEditorOpen(false)}
-              className="inline-flex h-8 items-center gap-1 rounded-lg border border-white/10 bg-transparent px-2 text-xs font-medium text-slate-400 hover:bg-white/10 hover:text-slate-200"
+              className="inline-flex h-9 min-w-[5rem] shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-sm font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 active:scale-[0.98] touch-manipulation"
               aria-label="Close editor"
             >
-              <X className="h-3.5 w-3.5" />
-              Close
+              <X className="h-4 w-4 shrink-0" strokeWidth={2} />
+              <span>Close</span>
             </button>
           )}
           {!isMobile && (
             <>
               <div
-                className="inline-flex h-8 shrink-0 items-center rounded-lg border border-white/10 bg-white/5 overflow-hidden"
+                className="inline-flex h-9 shrink-0 items-stretch rounded-lg border border-white/10 bg-white/5 overflow-hidden shadow-sm"
                 role="group"
                 aria-label="Font size"
               >
                 <button
                   onClick={() => setFontSize((s) => Math.max(10, s - 1))}
                   aria-label="Decrease font size"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
                 >
                   <Minus className="h-3.5 w-3.5" strokeWidth={2.5} />
                 </button>
-                <span className="flex h-8 min-w-8 flex-shrink-0 items-center justify-center px-1.5 text-xs font-medium tabular-nums leading-none text-slate-300" aria-hidden>
+                <span className="flex h-9 min-w-[2.25rem] flex-shrink-0 items-center justify-center border-x border-white/10 bg-white/5 text-xs font-medium tabular-nums text-slate-200" aria-hidden>
                   {fontSize}
                 </span>
                 <button
                   onClick={() => setFontSize((s) => Math.min(24, s + 1))}
                   aria-label="Increase font size"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
                 >
                   <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
                 </button>
               </div>
-              <span className="h-8 w-px shrink-0 bg-white/10 self-center" aria-hidden />
+              <span className="h-5 w-px shrink-0 bg-white/10 rounded-full" aria-hidden />
             </>
           )}
           <button
             onClick={handleCopy}
             aria-label="Copy code"
-            className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 hover:border-white/20 hover:bg-white/10 hover:text-slate-100"
+            className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 active:scale-[0.98] touch-manipulation min-w-[4.5rem] sm:min-w-0"
           >
-            <Copy className="h-3.5 w-3.5 shrink-0" />
-            {copyDone ? "Copied" : "Copy"}
+            <Copy className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+            <span>{copyDone ? "Copied" : "Copy"}</span>
           </button>
           {!readOnly && (
             <>
@@ -689,12 +699,11 @@ export function solution() {
                   <button
                     type="button"
                     onClick={() => setMobileMenuOpen((v) => !v)}
-                    className="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 hover:bg-white/10"
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-colors hover:bg-white/10 active:scale-[0.98] touch-manipulation"
                     aria-label="More options"
                     aria-expanded={mobileMenuOpen}
                   >
-                    <ChevronDown className="h-3.5 w-3.5" />
-                    <span>⋯</span>
+                    <ChevronDown className="h-4 w-4" strokeWidth={2} />
                   </button>
                   {mobileMenuOpen && (
                     <>
@@ -702,15 +711,15 @@ export function solution() {
                       <div className="absolute right-0 top-full mt-1 z-20 flex flex-col rounded-lg border border-white/10 bg-[#0b1020] py-1 min-w-[120px]">
                         <button
                           onClick={() => { handleReset(); setMobileMenuOpen(false); }}
-                          className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-white/10 text-left"
+                          className="flex min-h-[44px] items-center gap-2 px-4 py-3 text-sm text-slate-300 active:bg-white/10 text-left touch-manipulation"
                         >
-                          <RotateCcw className="h-3.5 w-3.5" /> Reset
+                          <RotateCcw className="h-4 w-4" /> Reset
                         </button>
                         <button
                           onClick={() => { setIsFullscreen(true); setMobileMenuOpen(false); }}
-                          className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-white/10 text-left"
+                          className="flex min-h-[44px] items-center gap-2 px-4 py-3 text-sm text-slate-300 active:bg-white/10 text-left touch-manipulation"
                         >
-                          <Maximize2 className="h-3.5 w-3.5" /> Fullscreen
+                          <Maximize2 className="h-4 w-4" /> Fullscreen
                         </button>
                       </div>
                     </>
@@ -721,7 +730,7 @@ export function solution() {
                   <button
                     onClick={handleReset}
                     aria-label="Reset code"
-                    className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
+                    className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
                   >
                     <RotateCcw className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
                     Reset
@@ -731,7 +740,7 @@ export function solution() {
                       onClick={runCode}
                       disabled={isRunning}
                       aria-label={isRunning ? "Running" : "Run code"}
-                      className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-xs font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.4)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(34,211,238,0.5)] hover:from-cyan-300 hover:via-blue-300 hover:to-indigo-300 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-[0_2px_12px_rgba(34,211,238,0.4)] ${isRunning ? "cursor-wait" : ""}`}
+                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-xs font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.4)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(34,211,238,0.5)] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] disabled:opacity-70 disabled:cursor-not-allowed min-w-[4.5rem] ${isRunning ? "cursor-wait" : ""}`}
                     >
                       <Play className="h-3.5 w-3.5 shrink-0 fill-current" strokeWidth={2} />
                       {isRunning ? "Running…" : "Run"}
@@ -745,10 +754,10 @@ export function solution() {
                   onClick={runCode}
                   disabled={isRunning}
                   aria-label={isRunning ? "Running" : "Run code"}
-                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-3 text-xs font-semibold text-[#0a0f1a]"
+                  className="inline-flex h-10 min-w-[5rem] shrink-0 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-sm font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.3)] active:scale-[0.98] touch-manipulation disabled:opacity-70"
                 >
-                  <Play className="h-3.5 w-3.5 shrink-0 fill-current" />
-                  {isRunning ? "…" : "Run"}
+                  <Play className="h-4 w-4 shrink-0 fill-current" strokeWidth={2} />
+                  <span>{isRunning ? "…" : "Run"}</span>
                 </button>
               )}
             </>
@@ -757,7 +766,7 @@ export function solution() {
             <button
               onClick={() => setIsFullscreen((v) => !v)}
               aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
-              className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
+              className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] min-w-[4.5rem]"
             >
               {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} /> : <Maximize2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
               {isFullscreen ? "Exit" : "Maximize"}
@@ -771,13 +780,13 @@ export function solution() {
         style={{
           display: "flex",
           flexDirection: "column",
-          minHeight: isMobile ? 200 : 300,
-          maxHeight: isMobile ? 320 : undefined,
+          minHeight: isFullscreen ? 0 : (isMobile ? 200 : 300),
+          maxHeight: isFullscreen ? undefined : (isMobile ? 320 : undefined),
         }}
       >
         <div className="min-h-0 flex-1 w-full overflow-hidden" style={{ width: "100%", maxWidth: "100%" }}>
           <MonacoEditor
-            height={isMobile ? mobileEditorHeight : (height === "auto" ? 400 : height)}
+            height={isFullscreen ? "100%" : (isMobile ? mobileEditorHeight : (height === "auto" ? 400 : height))}
             language={isReactLike ? "typescript" : (enableMultiFile && currentFile ? currentFile.language : normalizedLang)}
             path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : (enableMultiFile && currentFile ? currentFile.name : "App.tsx")}
             value={currentCode}
@@ -796,22 +805,22 @@ export function solution() {
 
   const previewSection =
     isRunnable && !isKotlin ? (
-      <div className="mt-4 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020]">
-        <div className="grid min-h-0 md:grid-cols-2">
+      <div className={`mt-4 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020] ${isFullscreen ? "flex-1 min-h-0 flex flex-col mt-0" : ""}`}>
+        <div className={`grid min-h-0 grid-cols-1 md:grid-cols-2 md:min-w-0 ${isFullscreen ? "flex-1 min-h-0" : ""}`}>
           {/* Preview */}
-          <div className="flex flex-col border-b border-white/10 md:border-b-0 md:border-r md:border-r-white/10">
-            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
-              <Monitor className="h-3.5 w-3.5 text-cyan-400/80" strokeWidth={2} />
+          <div className="flex min-h-0 flex-col border-b border-white/10 md:min-h-[16rem] md:border-b-0 md:border-r md:border-r-white/10">
+            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-3 py-2 sm:px-4 sm:py-2.5">
+              <Monitor className="h-3.5 w-3.5 shrink-0 text-cyan-400/80" strokeWidth={2} />
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Preview</span>
             </div>
-            <div className="relative flex min-h-72 flex-1 flex-col p-3">
+            <div className="relative flex min-h-[12rem] flex-1 flex-col p-3 sm:min-h-[14rem] md:min-h-[16rem]">
               {!outputHtml ? (
-                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5">
-                  <div className="mb-2 rounded-full bg-white/5 p-3">
-                    <Play className="h-5 w-5 text-slate-500" strokeWidth={2} />
+                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5 py-8 sm:py-10">
+                  <div className="mb-3 rounded-full bg-white/5 p-3 sm:mb-4 sm:p-4">
+                    <Play className="h-5 w-5 text-slate-500 sm:h-6 sm:w-6" strokeWidth={2} />
                   </div>
-                  <p className="text-sm text-slate-500">Run the code to see the preview</p>
-                  <p className="mt-0.5 text-xs text-slate-600">Press Run or ⌘↵</p>
+                  <p className="text-center text-sm text-slate-500">Run the code to see the preview</p>
+                  <p className="mt-1 text-center text-xs text-slate-600">Press Run or ⌘↵</p>
                 </div>
               ) : (
                 <iframe
@@ -819,21 +828,21 @@ export function solution() {
                   title="playground-preview"
                   sandbox="allow-scripts allow-same-origin"
                   srcDoc={outputHtml}
-                  className="min-h-60 w-full flex-1 rounded-lg border border-white/10 bg-[#0e1628]"
+                  className="min-h-[10rem] w-full flex-1 rounded-lg border border-white/10 bg-[#0e1628]"
                 />
               )}
               {error && (
                 <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2">
                   <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" strokeWidth={2} />
-                  <p className="text-xs text-red-300">{error}</p>
+                  <p className="text-xs text-red-300 break-words">{error}</p>
                 </div>
               )}
             </div>
           </div>
           {/* Console */}
-          <div className="flex flex-col">
-            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
-              <Terminal className="h-3.5 w-3.5 text-emerald-400/80" strokeWidth={2} />
+          <div className="flex min-h-0 flex-col md:min-h-[16rem]">
+            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-3 py-2 sm:px-4 sm:py-2.5">
+              <Terminal className="h-3.5 w-3.5 shrink-0 text-emerald-400/80" strokeWidth={2} />
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Console</span>
               {logs.length > 0 && (
                 <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium tabular-nums text-slate-400">
@@ -841,19 +850,19 @@ export function solution() {
                 </span>
               )}
             </div>
-            <div className="flex min-h-72 flex-1 flex-col overflow-hidden p-3">
+            <div className="flex min-h-[12rem] flex-1 flex-col overflow-hidden p-3 sm:min-h-[14rem] md:min-h-[16rem]">
               {logs.length === 0 ? (
-                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5">
-                  <Terminal className="mb-2 h-8 w-8 text-slate-600" strokeWidth={1.5} />
-                  <p className="text-sm text-slate-500">Logs will appear here</p>
-                  <p className="mt-0.5 text-xs text-slate-600">console.log, warnings, errors</p>
+                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5 py-8 sm:py-10">
+                  <Terminal className="mb-3 h-6 w-6 text-slate-600 sm:mb-4 sm:h-8 sm:w-8" strokeWidth={1.5} />
+                  <p className="text-center text-sm text-slate-500">Logs will appear here</p>
+                  <p className="mt-1 text-center text-xs text-slate-600">console.log, warnings, errors</p>
                 </div>
               ) : (
                 <div className="flex-1 overflow-auto rounded-lg border border-white/10 bg-[#0a0f1a] px-3 py-2 font-mono text-xs leading-relaxed text-slate-200">
                   {logs.map((line, idx) => (
                     <div
                       key={`${line}-${idx}`}
-                      className="whitespace-pre-wrap wrap-break-word border-b border-white/5 py-1.5 last:border-b-0"
+                      className="whitespace-pre-wrap break-words border-b border-white/5 py-1.5 last:border-b-0"
                     >
                       <span className="select-none pr-2 text-slate-600">{idx + 1}</span>
                       {line}
@@ -868,36 +877,47 @@ export function solution() {
     ) : null;
 
   const shell = (
-    <div className={`rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-3 max-w-full min-w-0 overflow-x-hidden ${className}`}>
+    <div
+      className={`rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-2 sm:p-3 max-w-full min-w-0 overflow-x-hidden ${isFullscreen ? "flex flex-1 min-h-0 flex-col h-full overflow-hidden" : ""} ${className}`}
+    >
       {mobileStaticBlock}
       {editorSection}
       {previewSection}
     </div>
   );
 
+  const fullscreenOverlay =
+    showFullscreenPortal &&
+    isMounted &&
+    typeof document !== "undefined" &&
+    createPortal(
+      <motion.div
+        className="fixed inset-0 z-[2147483647] flex flex-col bg-[#0b0f1a] isolate"
+        style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, width: "100vw", height: "100dvh", maxWidth: "100%", maxHeight: "100%" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isFullscreen ? 1 : 0 }}
+        transition={{ duration: 0.15 }}
+        onAnimationComplete={() => {
+          if (!isFullscreen) setShowFullscreenPortal(false);
+        }}
+      >
+        {/* Full-screen editor: fills viewport with safe-area padding */}
+        <motion.div
+          className="flex flex-1 flex-col min-h-0 p-3 sm:p-4 md:p-5 overflow-hidden w-full h-full"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.15 }}
+        >
+          {shell}
+        </motion.div>
+      </motion.div>,
+      document.body
+    );
+
   return (
     <>
       {shell}
-      <AnimatePresence>
-        {isFullscreen && isMounted && (
-          <motion.div
-            className="fixed inset-0 z-2000 bg-[#0b0f1a]/80 backdrop-blur-md flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="w-full h-full max-w-[1400px] max-h-[90vh] overflow-auto"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.97, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-            >
-              {shell}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {fullscreenOverlay}
     </>
   );
 }
