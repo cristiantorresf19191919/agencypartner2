@@ -11,6 +11,15 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 768px) {
+  .breadcrumbList {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .breadcrumbSeparator {
   color: rgba(255, 255, 255, 0.5);
   margin: 0 0.25rem;
@@ -24,6 +33,12 @@
 .headerSection {
   width: 100%;
   margin-bottom: 4rem;
+}
+
+@media (max-width: 767px) {
+  .headerSection {
+    margin-bottom: 2rem;
+  }
 }
 
 .title {
@@ -188,13 +203,70 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(168, 85, 247, 0.6) 50%, 
-    transparent 100%);
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(168, 85, 247, 0.6) 50%,
+      transparent 100%);
 }
 
-.navigation > * {
+.heroImage {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.conceptImage {
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.conceptImage img {
+  max-width: 100%;
+  height: auto;
+}
+
+.challengeList {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 0 0 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.challengeList li {
+  margin-bottom: 0.75rem;
+}
+
+.challengeList code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.answerKeyToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: rgba(147, 197, 253, 1);
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.answerKeyToggle:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.navigation>* {
   flex: 1;
   max-width: 360px;
 }
@@ -204,11 +276,9 @@
     flex-direction: column;
     gap: 1rem;
   }
-  
-  .navigation > * {
+
+  .navigation>* {
     max-width: 100%;
     width: 100%;
   }
 }
-
-

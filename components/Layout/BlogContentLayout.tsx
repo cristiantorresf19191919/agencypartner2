@@ -1,17 +1,19 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import SearchSection from "@/components/Search/SearchSection";
+import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "./BlogContentLayout.module.css";
 
 // Dynamically import DocSidebar with error boundary
 const DocSidebar = dynamic(
   () => import("@/components/Sidebar/DocSidebar"),
-  { 
+  {
     ssr: false,
     loading: () => null
   }
@@ -36,11 +38,27 @@ const muiTheme = createTheme({
 });
 
 function BlogContentLayout({ children }: BlogContentLayoutProps) {
+  const pathname = usePathname();
+  const { t } = useLanguage();
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  const pageTitle = useMemo(() => {
+    const normalized = pathname?.replace(/^\/[a-z]{2}\//, "/") ?? "";
+    if (normalized.includes("/developer-section/blog") || normalized === "/developer-section/blog") return t("nav-blog");
+    if (normalized.includes("/developer-section/challenges") || normalized === "/developer-section/challenges") return t("nav-challenges");
+    if (normalized.includes("/developer-section")) return t("nav-developer-section");
+    return t("nav-blog");
+  }, [pathname, t]);
+
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <main>
-        <DeveloperHeader />
+        <DeveloperHeader
+          pageTitle={pageTitle}
+          onOpenDrawer={() => setMobileDrawerOpen(true)}
+          drawerOpen={mobileDrawerOpen}
+        />
         <SearchSection />
         <div className={styles.blogLayout}>
           <div className={styles.backgroundEffects}>
@@ -48,8 +66,11 @@ function BlogContentLayout({ children }: BlogContentLayoutProps) {
           </div>
           <div className={styles.container}>
             <div className={styles.contentWrapper}>
-              {/* Sidebar - dynamically loaded client-side only */}
-              <DocSidebar />
+              <DocSidebar
+                mobileOpen={mobileDrawerOpen}
+                onMobileClose={() => setMobileDrawerOpen(false)}
+                hideMobileTrigger
+              />
 
               {/* Main Content */}
               <div className={styles.mainContent}>

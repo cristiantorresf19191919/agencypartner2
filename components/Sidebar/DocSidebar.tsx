@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import { motion } from "framer-motion";
@@ -54,14 +54,38 @@ interface SidebarSection {
   color?: string;
 }
 
-function DocSidebar() {
+export interface DocSidebarProps {
+  /** When provided, mobile drawer is controlled by parent (e.g. header hamburger). */
+  mobileOpen?: boolean;
+  /** Called when mobile drawer should close. */
+  onMobileClose?: () => void;
+  /** When true, do not render the floating mobile trigger; parent opens the drawer. */
+  hideMobileTrigger?: boolean;
+}
+
+function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobileTrigger = false }: DocSidebarProps = {}) {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const pathname = usePathname();
   const [activeId, setActiveId] = useState<string>("");
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [internalMobileOpen, setInternalMobileOpen] = useState(false);
+
+  const isControlled = controlledMobileOpen !== undefined && onMobileClose != null;
+  const mobileOpen = isControlled ? controlledMobileOpen : internalMobileOpen;
+  const setMobileOpen = isControlled ? (open: boolean) => { if (!open) onMobileClose?.(); } : setInternalMobileOpen;
+  const prevPathnameRef = useRef(pathname);
+
+  // Close controlled mobile drawer when route changes (e.g. user clicked a link)
+  useEffect(() => {
+    if (isControlled && mobileOpen && prevPathnameRef.current !== pathname) {
+      prevPathnameRef.current = pathname;
+      onMobileClose?.();
+    } else {
+      prevPathnameRef.current = pathname;
+    }
+  }, [pathname, isControlled, mobileOpen, onMobileClose]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -119,45 +143,45 @@ function DocSidebar() {
       color: "#61DAFB",
       defaultOpen: true,
       items: [
-        { 
-          id: "composition-pattern", 
-          titleKey: "composition-pattern-title", 
-          href: "/developer-section/blog/composition-pattern", 
+        {
+          id: "composition-pattern",
+          titleKey: "composition-pattern-title",
+          href: "/developer-section/blog/composition-pattern",
           icon: <ExtensionIcon sx={{ fontSize: 20 }} />,
           color: "#4FC3F7"
         },
-        { 
-          id: "compound-components", 
-          titleKey: "react-patterns-compound-title", 
-          href: "/developer-section/blog/react-patterns#compound-components", 
+        {
+          id: "compound-components",
+          titleKey: "react-patterns-compound-title",
+          href: "/developer-section/blog/react-patterns#compound-components",
           icon: <LayersIcon sx={{ fontSize: 20 }} />,
           color: "#AB47BC"
         },
-        { 
-          id: "custom-hooks", 
-          titleKey: "react-patterns-hooks-title", 
-          href: "/developer-section/blog/react-patterns#custom-hooks", 
+        {
+          id: "custom-hooks",
+          titleKey: "react-patterns-hooks-title",
+          href: "/developer-section/blog/react-patterns#custom-hooks",
           icon: <HookIcon sx={{ fontSize: 20 }} />,
           color: "#26A69A"
         },
-        { 
-          id: "hoc", 
-          titleKey: "react-patterns-hoc-title", 
-          href: "/developer-section/blog/react-patterns#hoc", 
+        {
+          id: "hoc",
+          titleKey: "react-patterns-hoc-title",
+          href: "/developer-section/blog/react-patterns#hoc",
           icon: <TrendingUpIcon sx={{ fontSize: 20 }} />,
           color: "#FF7043"
         },
-        { 
-          id: "render-props", 
-          titleKey: "react-patterns-render-props-title", 
-          href: "/developer-section/blog/react-patterns#render-props", 
+        {
+          id: "render-props",
+          titleKey: "react-patterns-render-props-title",
+          href: "/developer-section/blog/react-patterns#render-props",
           icon: <CodeIcon sx={{ fontSize: 20 }} />,
           color: "#42A5F5"
         },
-        { 
-          id: "selective-hydration", 
-          titleKey: "react-patterns-hydration-title", 
-          href: "/developer-section/blog/react-patterns#selective-hydration", 
+        {
+          id: "selective-hydration",
+          titleKey: "react-patterns-hydration-title",
+          href: "/developer-section/blog/react-patterns#selective-hydration",
           icon: <WaterDropIcon sx={{ fontSize: 20 }} />,
           color: "#66BB6A"
         },
@@ -215,24 +239,24 @@ function DocSidebar() {
       color: "#3F51B5",
       defaultOpen: true,
       items: [
-        { 
-          id: "srp", 
-          titleKey: "solid-srp-title", 
-          href: "/developer-section/blog/solid-principles#srp", 
+        {
+          id: "srp",
+          titleKey: "solid-srp-title",
+          href: "/developer-section/blog/solid-principles#srp",
           icon: <GpsFixedIcon sx={{ fontSize: 20 }} />,
           color: "#F44336"
         },
-        { 
-          id: "ocp", 
-          titleKey: "Open/Closed Principle", 
-          href: "/developer-section/blog/solid-principles#ocp", 
+        {
+          id: "ocp",
+          titleKey: "Open/Closed Principle",
+          href: "/developer-section/blog/solid-principles#ocp",
           icon: <LockOpenIcon sx={{ fontSize: 20 }} />,
           color: "#4CAF50"
         },
-        { 
-          id: "lsp", 
-          titleKey: "Liskov Substitution Principle", 
-          href: "/developer-section/blog/solid-principles#lsp", 
+        {
+          id: "lsp",
+          titleKey: "Liskov Substitution Principle",
+          href: "/developer-section/blog/solid-principles#lsp",
           icon: <SwapHorizIcon sx={{ fontSize: 20 }} />,
           color: "#FFC107"
         },
@@ -244,73 +268,73 @@ function DocSidebar() {
       color: "#00BCD4",
       defaultOpen: true,
       items: [
-        { 
-          id: "use-transition", 
-          titleKey: "useTransition", 
-          href: "/developer-section/blog/advanced-react-hooks#use-transition", 
+        {
+          id: "use-transition",
+          titleKey: "useTransition",
+          href: "/developer-section/blog/advanced-react-hooks#use-transition",
           icon: <SwapHorizIcon sx={{ fontSize: 20 }} />,
           color: "#00BCD4"
         },
-        { 
-          id: "use-layout-effect", 
-          titleKey: "useLayoutEffect", 
-          href: "/developer-section/blog/advanced-react-hooks#use-layout-effect", 
+        {
+          id: "use-layout-effect",
+          titleKey: "useLayoutEffect",
+          href: "/developer-section/blog/advanced-react-hooks#use-layout-effect",
           icon: <VisibilityIcon sx={{ fontSize: 20 }} />,
           color: "#4CAF50"
         },
-        { 
-          id: "callback-ref", 
-          titleKey: "useCallback As Ref", 
-          href: "/developer-section/blog/advanced-react-hooks#callback-ref", 
+        {
+          id: "callback-ref",
+          titleKey: "useCallback As Ref",
+          href: "/developer-section/blog/advanced-react-hooks#callback-ref",
           icon: <CodeIcon sx={{ fontSize: 20 }} />,
           color: "#FF9800"
         },
-        { 
-          id: "modern-architecture", 
-          titleKey: "Async React Router", 
-          href: "/developer-section/blog/advanced-react-hooks#modern-architecture", 
+        {
+          id: "modern-architecture",
+          titleKey: "Async React Router",
+          href: "/developer-section/blog/advanced-react-hooks#modern-architecture",
           icon: <AccountTreeIcon sx={{ fontSize: 20 }} />,
           color: "#9C27B0"
         },
-        { 
-          id: "react-portals", 
-          titleKey: "React Portals", 
-          href: "/developer-section/blog/advanced-react-hooks#react-portals", 
+        {
+          id: "react-portals",
+          titleKey: "React Portals",
+          href: "/developer-section/blog/advanced-react-hooks#react-portals",
           icon: <WaterDropIcon sx={{ fontSize: 20 }} />,
           color: "#2196F3"
         },
-        { 
-          id: "error-boundaries", 
-          titleKey: "Error Boundaries", 
-          href: "/developer-section/blog/advanced-react-hooks#error-boundaries", 
+        {
+          id: "error-boundaries",
+          titleKey: "Error Boundaries",
+          href: "/developer-section/blog/advanced-react-hooks#error-boundaries",
           icon: <FactoryIcon sx={{ fontSize: 20 }} />,
           color: "#F44336"
         },
-        { 
-          id: "keys-explained", 
-          titleKey: "Keys Explained", 
-          href: "/developer-section/blog/advanced-react-hooks#keys-explained", 
+        {
+          id: "keys-explained",
+          titleKey: "Keys Explained",
+          href: "/developer-section/blog/advanced-react-hooks#keys-explained",
           icon: <GpsFixedIcon sx={{ fontSize: 20 }} />,
           color: "#E91E63"
         },
-        { 
-          id: "event-listeners", 
-          titleKey: "Event Listeners", 
-          href: "/developer-section/blog/advanced-react-hooks#event-listeners", 
+        {
+          id: "event-listeners",
+          titleKey: "Event Listeners",
+          href: "/developer-section/blog/advanced-react-hooks#event-listeners",
           icon: <SportsEsportsIcon sx={{ fontSize: 20 }} />,
           color: "#FF5722"
         },
-        { 
-          id: "use-id", 
-          titleKey: "useId", 
-          href: "/developer-section/blog/advanced-react-hooks#use-id", 
+        {
+          id: "use-id",
+          titleKey: "useId",
+          href: "/developer-section/blog/advanced-react-hooks#use-id",
           icon: <LockOpenIcon sx={{ fontSize: 20 }} />,
           color: "#00ACC1"
         },
-        { 
-          id: "use-deferred-value", 
-          titleKey: "useDeferredValue", 
-          href: "/developer-section/blog/advanced-react-hooks#use-deferred-value", 
+        {
+          id: "use-deferred-value",
+          titleKey: "useDeferredValue",
+          href: "/developer-section/blog/advanced-react-hooks#use-deferred-value",
           icon: <TrendingUpIcon sx={{ fontSize: 20 }} />,
           color: "#8BC34A"
         },
@@ -322,24 +346,24 @@ function DocSidebar() {
       color: "#FF6B6B",
       defaultOpen: true,
       items: [
-        { 
-          id: "optimistic-updates", 
-          titleKey: "Optimistic Updates", 
-          href: "/developer-section/blog/react-query#optimistic-updates", 
+        {
+          id: "optimistic-updates",
+          titleKey: "Optimistic Updates",
+          href: "/developer-section/blog/react-query#optimistic-updates",
           icon: <SwapHorizIcon sx={{ fontSize: 20 }} />,
           color: "#FF6B6B"
         },
-        { 
-          id: "search-grid", 
-          titleKey: "Search Grid (Cancellation)", 
-          href: "/developer-section/blog/react-query#search-grid", 
+        {
+          id: "search-grid",
+          titleKey: "Search Grid (Cancellation)",
+          href: "/developer-section/blog/react-query#search-grid",
           icon: <CodeIcon sx={{ fontSize: 20 }} />,
           color: "#4ECDC4"
         },
-        { 
-          id: "infinite-feed", 
-          titleKey: "Infinite Feed (Data Transform)", 
-          href: "/developer-section/blog/react-query#infinite-feed", 
+        {
+          id: "infinite-feed",
+          titleKey: "Infinite Feed (Data Transform)",
+          href: "/developer-section/blog/react-query#infinite-feed",
           icon: <TrendingUpIcon sx={{ fontSize: 20 }} />,
           color: "#95E1D3"
         },
@@ -351,24 +375,24 @@ function DocSidebar() {
       color: "#9B59B6",
       defaultOpen: true,
       items: [
-        { 
-          id: "render-props", 
-          titleKey: "Render Props (Headless)", 
-          href: "/developer-section/blog/advanced-patterns#render-props", 
+        {
+          id: "render-props",
+          titleKey: "Render Props (Headless)",
+          href: "/developer-section/blog/advanced-patterns#render-props",
           icon: <CodeIcon sx={{ fontSize: 20 }} />,
           color: "#9B59B6"
         },
-        { 
-          id: "wrapper-components", 
-          titleKey: "Wrapper Components (Guard)", 
-          href: "/developer-section/blog/advanced-patterns#wrapper-components", 
+        {
+          id: "wrapper-components",
+          titleKey: "Wrapper Components (Guard)",
+          href: "/developer-section/blog/advanced-patterns#wrapper-components",
           icon: <AccountTreeIcon sx={{ fontSize: 20 }} />,
           color: "#3498DB"
         },
-        { 
-          id: "polymorphic-components", 
-          titleKey: "Polymorphic Components", 
-          href: "/developer-section/blog/advanced-patterns#polymorphic-components", 
+        {
+          id: "polymorphic-components",
+          titleKey: "Polymorphic Components",
+          href: "/developer-section/blog/advanced-patterns#polymorphic-components",
           icon: <ExtensionIcon sx={{ fontSize: 20 }} />,
           color: "#E74C3C"
         },
@@ -380,38 +404,38 @@ function DocSidebar() {
       color: "#10B981",
       defaultOpen: true,
       items: [
-        { 
-          id: "use-immer", 
-          titleKey: "useImmer (Immutable Updates)", 
-          href: "/developer-section/blog/state-management#use-immer", 
+        {
+          id: "use-immer",
+          titleKey: "useImmer (Immutable Updates)",
+          href: "/developer-section/blog/state-management#use-immer",
           icon: <SwapHorizIcon sx={{ fontSize: 20 }} />,
           color: "#10B981"
         },
-        { 
-          id: "use-immer-reducer", 
-          titleKey: "useImmerReducer", 
-          href: "/developer-section/blog/state-management#use-immer-reducer", 
+        {
+          id: "use-immer-reducer",
+          titleKey: "useImmerReducer",
+          href: "/developer-section/blog/state-management#use-immer-reducer",
           icon: <CodeIcon sx={{ fontSize: 20 }} />,
           color: "#3B82F6"
         },
-        { 
-          id: "remote-state", 
-          titleKey: "Remote State (TanStack Query)", 
-          href: "/developer-section/blog/state-management#remote-state", 
+        {
+          id: "remote-state",
+          titleKey: "Remote State (TanStack Query)",
+          href: "/developer-section/blog/state-management#remote-state",
           icon: <ExtensionIcon sx={{ fontSize: 20 }} />,
           color: "#8B5CF6"
         },
-        { 
-          id: "shared-state-zustand", 
-          titleKey: "Shared State (Zustand)", 
-          href: "/developer-section/blog/state-management#shared-state-zustand", 
+        {
+          id: "shared-state-zustand",
+          titleKey: "Shared State (Zustand)",
+          href: "/developer-section/blog/state-management#shared-state-zustand",
           icon: <AccountTreeIcon sx={{ fontSize: 20 }} />,
           color: "#F59E0B"
         },
-        { 
-          id: "url-state", 
-          titleKey: "URL State (nuqs)", 
-          href: "/developer-section/blog/state-management#url-state", 
+        {
+          id: "url-state",
+          titleKey: "URL State (nuqs)",
+          href: "/developer-section/blog/state-management#url-state",
           icon: <GpsFixedIcon sx={{ fontSize: 20 }} />,
           color: "#EF4444"
         },
@@ -423,52 +447,52 @@ function DocSidebar() {
       color: "#6366F1",
       defaultOpen: true,
       items: [
-        { 
-          id: "modern-component-patterns", 
-          titleKey: "Modern Component Patterns", 
-          href: "/developer-section/blog/react-design-patterns#modern-component-patterns", 
+        {
+          id: "modern-component-patterns",
+          titleKey: "Modern Component Patterns",
+          href: "/developer-section/blog/react-design-patterns#modern-component-patterns",
           icon: <CodeIcon sx={{ fontSize: 20 }} />,
           color: "#6366F1"
         },
-        { 
-          id: "custom-hooks", 
-          titleKey: "Custom Hooks", 
-          href: "/developer-section/blog/react-design-patterns#custom-hooks", 
+        {
+          id: "custom-hooks",
+          titleKey: "Custom Hooks",
+          href: "/developer-section/blog/react-design-patterns#custom-hooks",
           icon: <HookIcon sx={{ fontSize: 20 }} />,
           color: "#8B5CF6"
         },
-        { 
-          id: "context-api", 
-          titleKey: "Context API", 
-          href: "/developer-section/blog/react-design-patterns#context-api", 
+        {
+          id: "context-api",
+          titleKey: "Context API",
+          href: "/developer-section/blog/react-design-patterns#context-api",
           icon: <AccountTreeIcon sx={{ fontSize: 20 }} />,
           color: "#EC4899"
         },
-        { 
-          id: "typescript-patterns", 
-          titleKey: "TypeScript Patterns", 
-          href: "/developer-section/blog/react-design-patterns#typescript-patterns", 
+        {
+          id: "typescript-patterns",
+          titleKey: "TypeScript Patterns",
+          href: "/developer-section/blog/react-design-patterns#typescript-patterns",
           icon: <ExtensionIcon sx={{ fontSize: 20 }} />,
           color: "#3B82F6"
         },
-        { 
-          id: "react-19-features", 
-          titleKey: "React 19 Features", 
-          href: "/developer-section/blog/react-design-patterns#react-19-features", 
+        {
+          id: "react-19-features",
+          titleKey: "React 19 Features",
+          href: "/developer-section/blog/react-design-patterns#react-19-features",
           icon: <TrendingUpIcon sx={{ fontSize: 20 }} />,
           color: "#10B981"
         },
-        { 
-          id: "modern-frameworks", 
-          titleKey: "Modern Frameworks", 
-          href: "/developer-section/blog/react-design-patterns#modern-frameworks", 
+        {
+          id: "modern-frameworks",
+          titleKey: "Modern Frameworks",
+          href: "/developer-section/blog/react-design-patterns#modern-frameworks",
           icon: <LayersIcon sx={{ fontSize: 20 }} />,
           color: "#F59E0B"
         },
-        { 
-          id: "component-libraries", 
-          titleKey: "Component Libraries", 
-          href: "/developer-section/blog/react-design-patterns#component-libraries", 
+        {
+          id: "component-libraries",
+          titleKey: "Component Libraries",
+          href: "/developer-section/blog/react-design-patterns#component-libraries",
           icon: <VisibilityIcon sx={{ fontSize: 20 }} />,
           color: "#EF4444"
         },
@@ -480,55 +504,74 @@ function DocSidebar() {
       color: "#7C3AED",
       defaultOpen: true,
       items: [
-        { 
-          id: "unidirectional-state", 
-          titleKey: "Unidirectional State", 
-          href: "/developer-section/blog/kotlin-multiplatform#unidirectional-state", 
+        {
+          id: "unidirectional-state",
+          titleKey: "Unidirectional State",
+          href: "/developer-section/blog/kotlin-multiplatform#unidirectional-state",
           icon: <LayersIcon sx={{ fontSize: 20 }} />,
           color: "#7C3AED"
         },
-        { 
-          id: "platform-adapter", 
-          titleKey: "Expect/Actual UI Adapter", 
-          href: "/developer-section/blog/kotlin-multiplatform#platform-adapter", 
+        {
+          id: "platform-adapter",
+          titleKey: "Expect/Actual UI Adapter",
+          href: "/developer-section/blog/kotlin-multiplatform#platform-adapter",
           icon: <ExtensionIcon sx={{ fontSize: 20 }} />,
           color: "#06B6D4"
         },
-        { 
-          id: "adaptive-layouts", 
-          titleKey: "Adaptive Layouts", 
-          href: "/developer-section/blog/kotlin-multiplatform#adaptive-layouts", 
+        {
+          id: "adaptive-layouts",
+          titleKey: "Adaptive Layouts",
+          href: "/developer-section/blog/kotlin-multiplatform#adaptive-layouts",
           icon: <CategoryIcon sx={{ fontSize: 20 }} />,
           color: "#22C55E"
         },
-        { 
-          id: "shared-navigation", 
-          titleKey: "Type-safe Navigation", 
-          href: "/developer-section/blog/kotlin-multiplatform#shared-navigation", 
+        {
+          id: "shared-navigation",
+          titleKey: "Type-safe Navigation",
+          href: "/developer-section/blog/kotlin-multiplatform#shared-navigation",
           icon: <AccountTreeIcon sx={{ fontSize: 20 }} />,
           color: "#6366F1"
         },
-        { 
-          id: "design-system", 
-          titleKey: "Design System Bridge", 
-          href: "/developer-section/blog/kotlin-multiplatform#design-system", 
+        {
+          id: "design-system",
+          titleKey: "Design System Bridge",
+          href: "/developer-section/blog/kotlin-multiplatform#design-system",
           icon: <VisibilityIcon sx={{ fontSize: 20 }} />,
           color: "#F59E0B"
         },
-        { 
-          id: "compose-resources", 
-          titleKey: "Compose Resources", 
-          href: "/developer-section/blog/kotlin-multiplatform#compose-resources", 
+        {
+          id: "compose-resources",
+          titleKey: "Compose Resources",
+          href: "/developer-section/blog/kotlin-multiplatform#compose-resources",
           icon: <WaterDropIcon sx={{ fontSize: 20 }} />,
           color: "#0EA5E9"
         },
-        { 
-          id: "native-interactions", 
-          titleKey: "Native Back & Gestures", 
-          href: "/developer-section/blog/kotlin-multiplatform#native-interactions", 
+        {
+          id: "native-interactions",
+          titleKey: "Native Back & Gestures",
+          href: "/developer-section/blog/kotlin-multiplatform#native-interactions",
           icon: <SwapHorizIcon sx={{ fontSize: 20 }} />,
           color: "#F97316"
         },
+      ],
+    },
+    {
+      titleKey: "Kotlin Coroutines",
+      icon: <TrendingUpIcon sx={{ fontSize: 24 }} />,
+      color: "#8B5CF6",
+      defaultOpen: false,
+      items: [
+        { id: "module-1-foundations", titleKey: "Module 1: Foundations", href: "/developer-section/blog/kotlin-coroutines#module-1-foundations", icon: <CodeIcon sx={{ fontSize: 20 }} />, color: "#8B5CF6" },
+        { id: "module-2-async", titleKey: "Module 2: Async & Parallelism", href: "/developer-section/blog/kotlin-coroutines#module-2-async", icon: <SwapHorizIcon sx={{ fontSize: 20 }} />, color: "#7C3AED" },
+        { id: "module-3-context-cancellation", titleKey: "Module 3: Context & Cancellation", href: "/developer-section/blog/kotlin-coroutines#module-3-context-cancellation", icon: <LockOpenIcon sx={{ fontSize: 20 }} />, color: "#6D28D9" },
+        { id: "module-4-channels", titleKey: "Module 4: Channels", href: "/developer-section/blog/kotlin-coroutines#module-4-channels", icon: <WaterDropIcon sx={{ fontSize: 20 }} />, color: "#5B21B6" },
+        { id: "module-5-fan-out-in", titleKey: "Module 5: Fan-Out & Fan-In", href: "/developer-section/blog/kotlin-coroutines#module-5-fan-out-in", icon: <AccountTreeIcon sx={{ fontSize: 20 }} />, color: "#4C1D95" },
+        { id: "module-6-select", titleKey: "Module 6: Select Expression", href: "/developer-section/blog/kotlin-coroutines#module-6-select", icon: <GpsFixedIcon sx={{ fontSize: 20 }} />, color: "#3B0764" },
+        { id: "example-a-non-blocking", titleKey: "Example A: Non-Blocking", href: "/developer-section/blog/kotlin-coroutines#example-a-non-blocking", icon: <VisibilityIcon sx={{ fontSize: 20 }} />, color: "#8B5CF6" },
+        { id: "example-b-async-trap", titleKey: "Example B: Async Trap", href: "/developer-section/blog/kotlin-coroutines#example-b-async-trap", icon: <VisibilityIcon sx={{ fontSize: 20 }} />, color: "#7C3AED" },
+        { id: "example-c-scope-hierarchy", titleKey: "Example C: Scope & Hierarchy", href: "/developer-section/blog/kotlin-coroutines#example-c-scope-hierarchy", icon: <VisibilityIcon sx={{ fontSize: 20 }} />, color: "#6D28D9" },
+        { id: "challenge-retry", titleKey: "Challenge 1.5: Retry", href: "/developer-section/blog/kotlin-coroutines#challenge-retry", icon: <SportsEsportsIcon sx={{ fontSize: 20 }} />, color: "#F59E0B" },
+        { id: "capstone-stock-monitor", titleKey: "Capstone: Stock Monitor", href: "/developer-section/blog/kotlin-coroutines#capstone-stock-monitor", icon: <FactoryIcon sx={{ fontSize: 20 }} />, color: "#A78BFA" },
       ],
     },
   ], []);
@@ -544,8 +587,8 @@ function DocSidebar() {
         const normalizedPathname = pathname.replace(/^\/+|\/+$/g, '');
         // Check if pathname exactly matches or starts with the item path
         // This prevents false matches (e.g., /blog/composition matching /blog/nextjs-best-practices)
-        return normalizedPathname === normalizedItemPath || 
-               normalizedPathname.startsWith(normalizedItemPath + '/');
+        return normalizedPathname === normalizedItemPath ||
+          normalizedPathname.startsWith(normalizedItemPath + '/');
       });
       if (hasActiveItem || section.defaultOpen) {
         newExpanded.add(`section-${idx}`);
@@ -653,8 +696,8 @@ function DocSidebar() {
               const itemBasePath = item.href.split("#")[0];
               const normalizedItemPath = itemBasePath.replace(/^\/+|\/+$/g, '');
               const normalizedPathname = pathname.replace(/^\/+|\/+$/g, '');
-              const isCurrentPage = normalizedPathname === normalizedItemPath || 
-                                    normalizedPathname.startsWith(normalizedItemPath + '/');
+              const isCurrentPage = normalizedPathname === normalizedItemPath ||
+                normalizedPathname.startsWith(normalizedItemPath + '/');
               const isActive = activeId === item.id;
               return isCurrentPage && isActive;
             });
@@ -668,11 +711,10 @@ function DocSidebar() {
                   bgcolor: hasActiveItem
                     ? alpha(section.color || "#61DAFB", 0.15)
                     : alpha("#ffffff", 0.03),
-                  border: `1px solid ${
-                    hasActiveItem
-                      ? alpha(section.color || "#61DAFB", 0.3)
-                      : alpha("#ffffff", 0.08)
-                  }`,
+                  border: `1px solid ${hasActiveItem
+                    ? alpha(section.color || "#61DAFB", 0.3)
+                    : alpha("#ffffff", 0.08)
+                    }`,
                   overflow: "hidden",
                   transition: "all 0.3s ease",
                 }}
@@ -721,10 +763,10 @@ function DocSidebar() {
                         }
                       />
                       <motion.div
-              animate={{ rotate: isExpanded ? 90 : 0 }}
+                        animate={{ rotate: isExpanded ? 90 : 0 }}
                         transition={{ duration: 0.2 }}
                       >
-              <ChevronRightIcon
+                        <ChevronRightIcon
                           sx={{
                             color: hasActiveItem
                               ? section.color || "#61DAFB"
@@ -745,8 +787,8 @@ function DocSidebar() {
                       const itemBasePath = item.href.split("#")[0];
                       const normalizedItemPath = itemBasePath.replace(/^\/+|\/+$/g, '');
                       const normalizedPathname = pathname.replace(/^\/+|\/+$/g, '');
-                      const isCurrentPage = normalizedPathname === normalizedItemPath || 
-                                            normalizedPathname.startsWith(normalizedItemPath + '/');
+                      const isCurrentPage = normalizedPathname === normalizedItemPath ||
+                        normalizedPathname.startsWith(normalizedItemPath + '/');
                       const isItemActive = isCurrentPage && isActive;
 
                       return (
@@ -775,11 +817,10 @@ function DocSidebar() {
                                 bgcolor: isItemActive
                                   ? alpha(item.color || "#4FC3F7", 0.25)
                                   : alpha("#ffffff", 0.08),
-                                borderLeft: `3px solid ${
-                                  isItemActive
-                                    ? item.color || "#4FC3F7"
-                                    : alpha("#ffffff", 0.3)
-                                }`,
+                                borderLeft: `3px solid ${isItemActive
+                                  ? item.color || "#4FC3F7"
+                                  : alpha("#ffffff", 0.3)
+                                  }`,
                               },
                               transition: "all 0.2s ease",
                             }}
@@ -858,28 +899,33 @@ function DocSidebar() {
         {sidebarContent}
       </Box>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer — trigger hidden when hideMobileTrigger (header hamburger opens it) */}
       <Box sx={{ display: { xs: "block", lg: "none" } }}>
-        <IconButton
-          onClick={() => setMobileOpen(true)}
-          sx={{
-            position: "fixed",
-            top: 100,
-            left: 16,
-            zIndex: 1300,
-            bgcolor: alpha("#1a1a2e", 0.95),
-            color: "#ffffff",
-            "&:hover": {
-              bgcolor: alpha("#1a1a2e", 1),
-            },
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
+        {!hideMobileTrigger && (
+          <IconButton
+            onClick={() => setMobileOpen(true)}
+            sx={{
+              position: "fixed",
+              top: 100,
+              left: 16,
+              zIndex: 1300,
+              bgcolor: alpha("#1a1a2e", 0.95),
+              color: "#ffffff",
+              "&:hover": {
+                bgcolor: alpha("#1a1a2e", 1),
+              },
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
         <Drawer
           anchor="left"
           open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
+          onClose={() => {
+            if (isControlled) onMobileClose?.();
+            else setInternalMobileOpen(false);
+          }}
           PaperProps={{
             sx: {
               width: 320,
@@ -890,7 +936,10 @@ function DocSidebar() {
         >
           <Box sx={{ position: "relative" }}>
             <IconButton
-              onClick={() => setMobileOpen(false)}
+              onClick={() => {
+                if (isControlled) onMobileClose?.();
+                else setInternalMobileOpen(false);
+              }}
               sx={{
                 position: "absolute",
                 top: 16,

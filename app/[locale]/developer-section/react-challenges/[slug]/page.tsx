@@ -177,11 +177,11 @@ export default function ReactChallengePage() {
 
     try {
       const src = getEditorCode();
-      
+
       // Check if code already defines App or has default export
       const hasApp = /\b(App|window\.__APP__)\s*[=:]/.test(src);
       const hasDefaultExport = /export\s+default\s+/.test(src);
-      
+
       let wrapped = src;
       if (!hasApp && !hasDefaultExport) {
         // Try to find exported component names
@@ -189,12 +189,12 @@ export default function ReactChallengePage() {
           ...src.matchAll(/export\s+(?:const|function|class)\s+(\w+)/g),
           ...src.matchAll(/export\s+{\s*(\w+)/g),
         ];
-        
+
         // Also try to find non-exported components (common in challenges)
         const componentMatches = [
           ...src.matchAll(/(?:const|function|class)\s+(\w+)\s*[=:]\s*(?:\([^)]*\)\s*=>|\([^)]*\)\s*\{)/g),
         ];
-        
+
         let componentName: string | null = null;
         if (exportMatches.length > 0) {
           componentName = exportMatches[0][1];
@@ -210,7 +210,7 @@ export default function ReactChallengePage() {
             }
           }
         }
-        
+
         if (componentName) {
           // Wrap code to capture component and create App
           wrapped = `${src}
@@ -327,7 +327,7 @@ export default function ReactChallengePage() {
     setError(null);
     setSubmitResult(null);
     setShowSuccess(false);
-    
+
     const src = getEditorCode();
     let passed = 0;
     const total = challenge.testCases.length;
@@ -346,7 +346,7 @@ export default function ReactChallengePage() {
         setShowSuccess(true);
         try {
           confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-        } catch (_) {}
+        } catch (_) { }
         resetAttemptCount(challenge.id);
       } else {
         const newCount = incrementAttemptCount(challenge.id);
@@ -379,7 +379,7 @@ export default function ReactChallengePage() {
   const handleEditorMount: OnMount = (editor, monaco) => {
     monacoRef.current = { editor, monaco };
     monaco.editor.setTheme("vs-dark");
-    
+
     // Configure TypeScript compiler options for React/TSX
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ES2020,
@@ -392,7 +392,7 @@ export default function ReactChallengePage() {
       moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
       lib: ["ES2020", "DOM", "DOM.Iterable"],
     });
-    
+
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: false,
       noSyntaxValidation: false,
@@ -794,7 +794,7 @@ export default function ReactChallengePage() {
       reactTypes,
       'file:///node_modules/@types/react/index.d.ts'
     );
-    
+
     // Also add to JavaScript defaults for better support
     if (monaco.languages.typescript.javascriptDefaults) {
       monaco.languages.typescript.javascriptDefaults.addExtraLib(
@@ -838,10 +838,10 @@ export default function ReactChallengePage() {
             <h1 className={playStyles.descTitle}>{challenge.title}</h1>
             <div className={playStyles.descBody}>
               <p style={{ whiteSpace: "pre-wrap", marginBottom: "16px" }}>{challenge.description}</p>
-              
+
               {showAttemptWarning && (
-                <div style={{ 
-                  padding: "12px", 
+                <div style={{
+                  padding: "12px",
                   marginBottom: "16px",
                   background: "rgba(255, 193, 7, 0.1)",
                   border: "1px solid rgba(255, 193, 7, 0.3)",
@@ -858,8 +858,8 @@ export default function ReactChallengePage() {
               )}
 
               {attemptCount >= MAX_ATTEMPTS && (
-                <div style={{ 
-                  padding: "12px", 
+                <div style={{
+                  padding: "12px",
                   marginBottom: "16px",
                   background: "rgba(255, 152, 0, 0.1)",
                   border: "1px solid rgba(255, 152, 0, 0.3)",
@@ -929,7 +929,7 @@ export default function ReactChallengePage() {
 
           {/* Right: editor + output */}
           <div className={playStyles.editorColumn}>
-            <div className={playStyles.editorWrap} style={{ height: "500px" }}>
+            <div className={`${playStyles.editorWrap} code-editor-contained`}>
               <MonacoEditor
                 height="100%"
                 language="typescript"
@@ -969,9 +969,9 @@ export default function ReactChallengePage() {
                 <div className={playStyles.outputHead}>
                   Preview
                 </div>
-                <div style={{ 
-                  padding: "12px", 
-                  background: "#0b1020", 
+                <div style={{
+                  padding: "12px",
+                  background: "#0b1020",
                   borderRadius: "4px",
                   minHeight: "200px",
                   border: "1px solid rgba(255, 255, 255, 0.1)"
@@ -990,10 +990,10 @@ export default function ReactChallengePage() {
                     }}
                   />
                   {previewError && (
-                    <div style={{ 
-                      marginTop: "12px", 
-                      padding: "12px", 
-                      background: "rgba(244, 67, 54, 0.1)", 
+                    <div style={{
+                      marginTop: "12px",
+                      padding: "12px",
+                      background: "rgba(244, 67, 54, 0.1)",
                       border: "1px solid rgba(244, 67, 54, 0.3)",
                       borderRadius: "4px",
                       color: "#ff6b6b",

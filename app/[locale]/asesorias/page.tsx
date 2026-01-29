@@ -7,7 +7,6 @@ import FAQ from '@/components/FAQ/FAQ';
 import Portfolio from '@/components/Portfolio/Portfolio';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
-import FAB from '@/components/FAB/FAB';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const mentoringCases = [
@@ -219,7 +218,6 @@ export default function AsesoriasPage() {
       />
       <Contact />
       <Footer />
-      <FAB />
     </main>
   );
 }

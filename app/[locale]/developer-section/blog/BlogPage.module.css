@@ -60,6 +60,19 @@
   }
 }
 
+@media (max-width: 767px) {
+  .breadcrumb {
+    display: none;
+  }
+
+  .breadcrumbList {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .headerSection {
   display: flex;
   flex-direction: column;
@@ -102,6 +115,13 @@
   line-height: 1.1;
 }
 
+@media (max-width: 767px) {
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+}
+
 .subtitle {
   text-align: center;
   max-width: 52rem;
@@ -111,6 +131,13 @@
   font-size: clamp(1rem, 2vw, 1.375rem);
   line-height: 1.8;
   letter-spacing: 0.01em;
+}
+
+@media (max-width: 767px) {
+  .subtitle {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
 }
 
 .sectionsGrid {

@@ -8,7 +8,6 @@ import FAQ from '@/components/FAQ/FAQ';
 import Portfolio from '@/components/Portfolio/Portfolio';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
-import FAB from '@/components/FAB/FAB';
 
 export default function Home() {
   return (
@@ -27,7 +26,6 @@ export default function Home() {
       <Portfolio />
       <Contact />
       <Footer />
-      <FAB />
     </main>
   );
 }

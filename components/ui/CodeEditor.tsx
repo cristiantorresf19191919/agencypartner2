@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X } from "lucide-react";
+import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ChevronDown, Code2 } from "lucide-react";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
 
@@ -13,6 +13,21 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
   loading: () => <div className="w-full h-40 grid place-items-center text-sm text-slate-300">Loading editor…</div>,
 });
+
+/** Mobile breakpoint: editor uses static block by default and contained layout. */
+const MOBILE_BREAKPOINT = 768;
+
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(true);
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const update = () => setIsMobile(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+  return isMobile;
+}
 
 interface CodeFile {
   name: string;
@@ -44,18 +59,18 @@ const REACT_UMD = `
 // Helper function to detect React usage and generate imports
 const detectAndInjectImports = (code: string, isReactLike: boolean): string => {
   if (!isReactLike) return code;
-  
+
   // Check if imports already exist (look for any import statement, not just at start)
   const hasReactImport = /import\s+.*from\s+["']react["']/.test(code);
   if (hasReactImport) return code;
-  
+
   // Detect React features used
   const usesJSX = /<[A-Z]/.test(code) || /<[a-z]+[^>]*>/.test(code);
   const usesHooks = /\b(useState|useEffect|useCallback|useMemo|useRef|useContext|useReducer|useLayoutEffect|useImperativeHandle|useDebugValue|useId|useTransition|useDeferredValue|useSyncExternalStore|useInsertionEffect)\b/.test(code);
   const usesReact = /\bReact\./.test(code);
-  
+
   if (!usesJSX && !usesHooks && !usesReact) return code;
-  
+
   // Build import statement - only include hooks that are actually used
   const imports: string[] = [];
   if (usesHooks) {
@@ -72,9 +87,9 @@ const detectAndInjectImports = (code: string, isReactLike: boolean): string => {
   if ((usesJSX || usesReact) && !imports.includes("React")) {
     imports.unshift("React");
   }
-  
+
   if (imports.length === 0) return code;
-  
+
   const importStatement = `import { ${imports.join(", ")} } from "react";\n\n`;
   return importStatement + code;
 };
@@ -101,8 +116,12 @@ export function CodeEditor({
   const [fontSize, setFontSize] = useState(14);
   const [files, setFiles] = useState<CodeFile[]>([{ name: "App.tsx", content: initialCode, language }]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
+  const [mobileEditorOpen, setMobileEditorOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [copyDone, setCopyDone] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const uniqueId = useId();
+  const isMobile = useIsMobile();
 
   const normalizedLang = language.toLowerCase();
   const isKotlin = normalizedLang.includes("kotlin");
@@ -121,14 +140,14 @@ export function CodeEditor({
         processedCode = codeWithImports;
       }
     }
-    
+
     setCode(processedCode);
     if (enableMultiFile) {
       setFiles([{ name: "App.tsx", content: processedCode, language }]);
       setActiveFileIndex(0);
     }
   }, [initialCode, enableMultiFile, language, autoInjectImports, isReactLike, readOnly]);
-  
+
   // Get current file content
   const currentFile = enableMultiFile && files.length > 0 ? files[activeFileIndex] : null;
   const currentCode = enableMultiFile && currentFile ? currentFile.content : code;
@@ -160,20 +179,24 @@ export function CodeEditor({
   const editorOptions = useMemo(
     () => ({
       minimap: { enabled: false },
-      fontSize,
+      fontSize: isMobile ? 13 : fontSize,
       fontLigatures: true,
       smoothScrolling: true,
       scrollBeyondLastLine: false,
       automaticLayout: true,
       renderLineHighlight: "all" as const,
       suggest: { preview: true, showWords: true },
-      quickSuggestions: true,
+      quickSuggestions: !isMobile,
       tabSize: 2,
       formatOnPaste: true,
       readOnly,
       formatOnType: true,
+      // Mobile: no error gutter (avoids clipped red markers), no line numbers to reduce noise
+      glyphMargin: !isMobile,
+      lineNumbers: isMobile ? "off" : "on",
+      folding: !isMobile,
     }),
-    [fontSize, readOnly]
+    [fontSize, readOnly, isMobile]
   );
 
   const buildPreviewHTML = (jsCode: string) => {
@@ -233,7 +256,7 @@ export function solution() {
     setFiles([...files, newFile]);
     setActiveFileIndex(files.length);
   }, [enableMultiFile, files]);
-  
+
   const removeFile = useCallback((index: number) => {
     if (!enableMultiFile || files.length <= 1) return;
     const newFiles = files.filter((_, i) => i !== index);
@@ -244,7 +267,7 @@ export function solution() {
       setActiveFileIndex(activeFileIndex - 1);
     }
   }, [enableMultiFile, files, activeFileIndex]);
-  
+
   const updateFileContent = useCallback((index: number, content: string) => {
     if (!enableMultiFile) {
       setCode(content);
@@ -258,20 +281,20 @@ export function solution() {
       onChange(content);
     }
   }, [enableMultiFile, files, activeFileIndex, onChange]);
-  
+
   // Build combined code from all files for execution
   const buildCombinedCode = useCallback((): string => {
     if (!enableMultiFile || files.length === 1) {
       return autoInjectImports ? detectAndInjectImports(currentCode, isReactLike) : currentCode;
     }
-    
+
     // Combine all files, making non-main files available for import
     const mainFile = files[0];
     const otherFiles = files.slice(1);
-    
+
     // Create a module system for imports
     let combined = autoInjectImports ? detectAndInjectImports(mainFile.content, isReactLike) : mainFile.content;
-    
+
     // Add other files as exportable modules
     if (otherFiles.length > 0) {
       combined += "\n\n// Additional files available for import:\n";
@@ -283,7 +306,7 @@ export function solution() {
         combined += `(function() {\n  const ${moduleName}Module = {};\n  const exports = ${moduleName}Module;\n  ${fileContent}\n  window.__modules__ = window.__modules__ || {};\n  window.__modules__['${file.name}'] = ${moduleName}Module;\n})();\n`;
       });
     }
-    
+
     return combined;
   }, [enableMultiFile, files, currentCode, autoInjectImports, isReactLike]);
 
@@ -295,25 +318,25 @@ export function solution() {
     try {
       // Get combined code with auto-injected imports
       const codeToRun = buildCombinedCode();
-      
+
       // For React/TSX code, automatically detect and wrap exported components
       let wrapped = codeToRun;
       if (isReactLike) {
         // Check if code already defines App or has default export
         const hasApp = /\b(App|window\.__APP__)\s*[=:]/.test(code);
         const hasDefaultExport = /export\s+default\s+/.test(code);
-        
+
         if (!hasApp && !hasDefaultExport) {
           // Try to find exported component names
           const exportMatches = [
             ...code.matchAll(/export\s+(?:const|function|class)\s+(\w+)/g),
             ...code.matchAll(/export\s+{\s*(\w+)/g),
           ];
-          
+
           if (exportMatches.length > 0) {
             // Get the first exported component name
             const componentName = exportMatches[0][1];
-            
+
             // Wrap code to capture exports and create App
             wrapped = `${code}
 
@@ -420,6 +443,16 @@ export function solution() {
     if (onChange) onChange(initialCode);
   }, [initialCode, onChange, enableMultiFile, language]);
 
+  const handleCopy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(currentCode);
+      setCopyDone(true);
+      setTimeout(() => setCopyDone(false), 2000);
+    } catch {
+      /* ignore */
+    }
+  }, [currentCode]);
+
   useEffect(() => {
     if (!isRunnable || isKotlin) return;
     const handler = (e: KeyboardEvent) => {
@@ -471,7 +504,7 @@ export function solution() {
         lib: ["ES2020", "DOM", "DOM.Iterable"],
         types: ["react", "react-dom"],
       });
-      
+
       // Add React type definitions for better autocomplete
       if (isReactLike) {
         monaco.languages.typescript.typescriptDefaults.addExtraLib(
@@ -502,21 +535,73 @@ export function solution() {
     [disableLinting, isRunnable, isReactLike, normalizedLang]
   );
 
-  const editorSection = (
-    <div className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden" style={{ display: 'flex', flexDirection: 'column', minHeight: height === "auto" ? 400 : typeof height === 'number' ? height : 400 }}>
-      <div className="flex items-center justify-between px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
+  // Mobile: default to static read-only block; "Open editor" expands inline (contained, no fixed/sticky/portal)
+  const showStaticBlock = isMobile && !mobileEditorOpen;
+  const editorHeightNum = typeof height === "number" ? height : height === "auto" ? 400 : 400;
+  const mobileEditorHeight = 320;
+
+  const mobileStaticBlock = showStaticBlock && (
+    <div className="relative flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden max-w-full min-w-0 w-full code-editor-contained">
+      <div className="flex items-center justify-between gap-2 px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
+        <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
+          <span className="w-2 h-2 rounded-full bg-emerald-400/80" />
+          {language}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-slate-100"
+            aria-label="Copy code"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            {copyDone ? "Copied" : "Copy"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileEditorOpen(true)}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-cyan-500/20 border border-cyan-500/30 px-3 text-xs font-medium text-cyan-300 hover:bg-cyan-500/30"
+            aria-label="Open editor"
+          >
+            <Code2 className="h-3.5 w-3.5" />
+            Open editor
+          </button>
+        </div>
+      </div>
+      <div
+        className="overflow-auto border-0 rounded-b-lg"
+        style={{ minHeight: 120, maxHeight: 320 }}
+      >
+        <pre className="p-4 m-0 text-sm font-mono text-slate-200 whitespace-pre overflow-x-auto">
+          <code>{currentCode}</code>
+        </pre>
+      </div>
+    </div>
+  );
+
+  const editorSection = !showStaticBlock && (
+    <div
+      className="flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden max-w-full min-w-0 w-full code-editor-contained"
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: isMobile ? 200 : (height === "auto" ? 400 : editorHeightNum),
+        maxHeight: isMobile ? "none" : undefined,
+      }}
+    >
+      <div className="flex flex-nowrap items-center justify-between gap-2 overflow-x-auto px-3 py-2 bg-white/5 border-b border-white/10 shrink-0">
+        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
           {enableMultiFile && files.length > 1 ? (
             <div className="flex items-center gap-1 overflow-x-auto flex-1">
               {files.map((file, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveFileIndex(idx)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors shrink-0 ${
-                    idx === activeFileIndex
-                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
-                  }`}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors shrink-0 ${idx === activeFileIndex
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                    }`}
                 >
                   <span>{file.name}</span>
                   {files.length > 1 && (
@@ -544,81 +629,155 @@ export function solution() {
             </div>
           ) : (
             <div className="flex items-center gap-2 text-xs text-slate-200 font-semibold uppercase tracking-wide">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_6px_rgba(16,185,129,0.2)]"></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_6px_rgba(16,185,129,0.2)]" />
               {enableMultiFile && currentFile ? currentFile.name : language}
             </div>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          {/* Font size */}
-          <div
-            className="inline-flex items-center rounded-lg border border-white/10 bg-white/5 overflow-hidden"
-            role="group"
-            aria-label="Font size"
+        <div className="flex min-w-max flex-shrink-0 flex-nowrap items-center gap-2">
+          {isMobile && (
+            <button
+              type="button"
+              onClick={() => setMobileEditorOpen(false)}
+              className="inline-flex h-8 items-center gap-1 rounded-lg border border-white/10 bg-transparent px-2 text-xs font-medium text-slate-400 hover:bg-white/10 hover:text-slate-200"
+              aria-label="Close editor"
+            >
+              <X className="h-3.5 w-3.5" />
+              Close
+            </button>
+          )}
+          {!isMobile && (
+            <>
+              <div
+                className="inline-flex h-8 shrink-0 items-center rounded-lg border border-white/10 bg-white/5 overflow-hidden"
+                role="group"
+                aria-label="Font size"
+              >
+                <button
+                  onClick={() => setFontSize((s) => Math.max(10, s - 1))}
+                  aria-label="Decrease font size"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
+                >
+                  <Minus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                </button>
+                <span className="flex h-8 min-w-8 flex-shrink-0 items-center justify-center px-1.5 text-xs font-medium tabular-nums leading-none text-slate-300" aria-hidden>
+                  {fontSize}
+                </span>
+                <button
+                  onClick={() => setFontSize((s) => Math.min(24, s + 1))}
+                  aria-label="Increase font size"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
+                >
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                </button>
+              </div>
+              <span className="h-8 w-px shrink-0 bg-white/10 self-center" aria-hidden />
+            </>
+          )}
+          <button
+            onClick={handleCopy}
+            aria-label="Copy code"
+            className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 hover:border-white/20 hover:bg-white/10 hover:text-slate-100"
           >
-            <button
-              onClick={() => setFontSize((s) => Math.max(10, s - 1))}
-              aria-label="Decrease font size"
-              className="flex h-8 w-8 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
-            >
-              <Minus className="h-3.5 w-3.5" strokeWidth={2.5} />
-            </button>
-            <span
-              className="min-w-8 px-1.5 text-center text-xs font-medium tabular-nums text-slate-300"
-              aria-hidden
-            >
-              {fontSize}
-            </span>
-            <button
-              onClick={() => setFontSize((s) => Math.min(24, s + 1))}
-              aria-label="Increase font size"
-              className="flex h-8 w-8 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
-            >
-              <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
-            </button>
-          </div>
-          <span className="h-4 w-px bg-white/10" aria-hidden />
+            <Copy className="h-3.5 w-3.5 shrink-0" />
+            {copyDone ? "Copied" : "Copy"}
+          </button>
           {!readOnly && (
             <>
-              <button
-                onClick={handleReset}
-                aria-label="Reset code"
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
-              >
-                <RotateCcw className="h-3.5 w-3.5" strokeWidth={2} />
-                Reset
-              </button>
-              {!isKotlin && (
+              {isMobile ? (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen((v) => !v)}
+                    className="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 hover:bg-white/10"
+                    aria-label="More options"
+                    aria-expanded={mobileMenuOpen}
+                  >
+                    <ChevronDown className="h-3.5 w-3.5" />
+                    <span>⋯</span>
+                  </button>
+                  {mobileMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" aria-hidden onClick={() => setMobileMenuOpen(false)} />
+                      <div className="absolute right-0 top-full mt-1 z-20 flex flex-col rounded-lg border border-white/10 bg-[#0b1020] py-1 min-w-[120px]">
+                        <button
+                          onClick={() => { handleReset(); setMobileMenuOpen(false); }}
+                          className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-white/10 text-left"
+                        >
+                          <RotateCcw className="h-3.5 w-3.5" /> Reset
+                        </button>
+                        <button
+                          onClick={() => { setIsFullscreen(true); setMobileMenuOpen(false); }}
+                          className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-white/10 text-left"
+                        >
+                          <Maximize2 className="h-3.5 w-3.5" /> Fullscreen
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={handleReset}
+                    aria-label="Reset code"
+                    className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+                    Reset
+                  </button>
+                  {!isKotlin && (
+                    <button
+                      onClick={runCode}
+                      disabled={isRunning}
+                      aria-label={isRunning ? "Running" : "Run code"}
+                      className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-xs font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.4)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(34,211,238,0.5)] hover:from-cyan-300 hover:via-blue-300 hover:to-indigo-300 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-[0_2px_12px_rgba(34,211,238,0.4)] ${isRunning ? "cursor-wait" : ""}`}
+                    >
+                      <Play className="h-3.5 w-3.5 shrink-0 fill-current" strokeWidth={2} />
+                      {isRunning ? "Running…" : "Run"}
+                      <kbd className="ml-0.5 hidden rounded bg-black/20 px-1.5 py-0.5 font-sans text-[10px] sm:inline">⌘↵</kbd>
+                    </button>
+                  )}
+                </>
+              )}
+              {isMobile && !isKotlin && (
                 <button
                   onClick={runCode}
                   disabled={isRunning}
                   aria-label={isRunning ? "Running" : "Run code"}
-                  className={`inline-flex h-8 items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-xs font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.4)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(34,211,238,0.5)] hover:from-cyan-300 hover:via-blue-300 hover:to-indigo-300 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-[0_2px_12px_rgba(34,211,238,0.4)] ${
-                    isRunning ? "cursor-wait" : ""
-                  }`}
+                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-3 text-xs font-semibold text-[#0a0f1a]"
                 >
-                  <Play className="h-3.5 w-3.5 fill-current" strokeWidth={2} />
-                  {isRunning ? "Running…" : "Run"}
-                  <kbd className="ml-0.5 hidden rounded bg-black/20 px-1.5 py-0.5 font-sans text-[10px] sm:inline">⌘↵</kbd>
+                  <Play className="h-3.5 w-3.5 shrink-0 fill-current" />
+                  {isRunning ? "…" : "Run"}
                 </button>
               )}
             </>
           )}
-          <button
-            onClick={() => setIsFullscreen((v) => !v)}
-            aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
-          >
-            {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" strokeWidth={2} /> : <Maximize2 className="h-3.5 w-3.5" strokeWidth={2} />}
-            {isFullscreen ? "Exit" : "Maximize"}
-          </button>
+          {!isMobile && (
+            <button
+              onClick={() => setIsFullscreen((v) => !v)}
+              aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
+              className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-transparent px-3 text-xs font-medium text-slate-300 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
+            >
+              {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} /> : <Maximize2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
+              {isFullscreen ? "Exit" : "Maximize"}
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="flex-1 min-h-0" style={{ display: 'flex', flexDirection: 'column' }}>
-        <div className="flex-1" style={{ minHeight: 300 }}>
+      <div
+        className="flex-1 min-h-0 overflow-auto"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: isMobile ? 200 : 300,
+          maxHeight: isMobile ? 320 : undefined,
+        }}
+      >
+        <div className="min-h-0 flex-1 w-full overflow-hidden" style={{ width: "100%", maxWidth: "100%" }}>
           <MonacoEditor
-            height={height === "auto" ? 400 : height}
+            height={isMobile ? mobileEditorHeight : (height === "auto" ? 400 : height)}
             language={isReactLike ? "typescript" : (enableMultiFile && currentFile ? currentFile.language : normalizedLang)}
             path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : (enableMultiFile && currentFile ? currentFile.name : "App.tsx")}
             value={currentCode}
@@ -709,7 +868,8 @@ export function solution() {
     ) : null;
 
   const shell = (
-    <div className={`rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-3 ${className}`}>
+    <div className={`rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-3 max-w-full min-w-0 overflow-x-hidden ${className}`}>
+      {mobileStaticBlock}
       {editorSection}
       {previewSection}
     </div>

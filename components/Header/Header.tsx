@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
 import { useProjectAdvisor } from '@/contexts/ProjectAdvisorContext';
+import { useLocale } from '@/lib/useLocale';
 
 interface NavLink {
   href: string;
@@ -18,6 +19,7 @@ const Header = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { openAdvisor } = useProjectAdvisor();
+  const { createLocalizedPath } = useLocale();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -102,6 +104,16 @@ const Header = () => {
               </li>
             ))}
             <li>
+              <Link
+                href={createLocalizedPath('/developer-section')}
+                className={styles.devLink}
+                title="Developer section — blog, challenges & tools"
+              >
+                <span className={styles.devLinkIcon}>&lt;/&gt;</span>
+                <span>Dev</span>
+              </Link>
+            </li>
+            <li>
               <button
                 onClick={handleAdvisorClick}
                 className={styles.advisorButton}
@@ -115,10 +127,10 @@ const Header = () => {
         </nav>
 
         <div className={styles.headerWaveContainer}>
-          <svg 
-            width="100%" 
-            height="180" 
-            viewBox="0 0 1440 180" 
+          <svg
+            width="100%"
+            height="180"
+            viewBox="0 0 1440 180"
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
             style={{ display: 'block', width: '100%', height: '180px' }}

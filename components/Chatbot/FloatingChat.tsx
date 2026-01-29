@@ -173,11 +173,11 @@ export default function FloatingChat() {
       }
 
       const data = (await res.json()) as ChatApiResponse;
-      
+
       if (data.error) {
         throw new Error(data.error);
       }
-      
+
       const responseText = data.response || 'Lo siento, no pude procesar tu mensaje en este momento.';
 
       const aiMessage: Message = {
@@ -217,7 +217,7 @@ export default function FloatingChat() {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.96 }}
         animate={{
-          y: fabIsOpen ? -90 : 0,
+          y: fabIsOpen ? -118 : 0,
         }}
         transition={{
           type: 'spring',
@@ -267,12 +267,12 @@ export default function FloatingChat() {
             <Avatar className={styles.headerAvatar}>
               <SmartToy fontSize="small" />
             </Avatar>
-            <Box>
-              <Typography className={styles.headerTitle}>
+            <Box className={styles.headerText}>
+              <Typography className={styles.headerTitle} title="Asistente OptimusAgency">
                 Asistente OptimusAgency
               </Typography>
               <Typography className={styles.headerSubtitle}>
-                Convierte clics en clientes en 14 días 🚀
+                En línea
               </Typography>
             </Box>
           </Box>

@@ -61,6 +61,10 @@
   color: var(--text-primary);
   margin-bottom: 1rem;
   line-height: 1.2;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
 }
 
 .sectionTitle strong {
@@ -76,6 +80,7 @@
   color: var(--text-secondary);
   font-size: 1.1rem;
   line-height: 1.6;
+  background: transparent;
 }
 
 .teamGrid {

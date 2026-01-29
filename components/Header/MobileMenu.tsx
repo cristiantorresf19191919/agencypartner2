@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useProjectAdvisor } from '@/contexts/ProjectAdvisorContext';
+import { useLocale } from '@/lib/useLocale';
 import styles from './MobileMenu.module.css';
 
 interface MobileMenuProps {
@@ -21,6 +22,7 @@ interface NavItem {
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
   const { theme, toggleTheme } = useTheme();
   const { openAdvisor } = useProjectAdvisor();
+  const { createLocalizedPath } = useLocale();
 
   const navItems: NavItem[] = [
     {
@@ -46,6 +48,12 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
       icon: 'fas fa-users',
       title: 'Agentes',
       description: 'Nuestro equipo',
+    },
+    {
+      href: createLocalizedPath('/developer-section'),
+      icon: 'fas fa-code',
+      title: 'Dev',
+      description: 'Blog, challenges y herramientas',
     },
   ];
 

@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'epicwebsol.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'kotlinlang.org',
+      },
     ],
   },
 }

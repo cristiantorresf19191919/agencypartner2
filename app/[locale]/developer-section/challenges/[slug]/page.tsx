@@ -125,7 +125,7 @@ export default function ChallengePlayPage() {
     }
     const pre = `var __input=(__inputStr||"").split("\\n"); var __line=0; function readline(){ return __input[__line++]||""; }`;
     const body = `"use strict";\n${pre}\n${js}`;
-    const AsyncFn = Object.getPrototypeOf(async function () {}).constructor as typeof Function;
+    const AsyncFn = Object.getPrototypeOf(async function () { }).constructor as typeof Function;
     const fn = new AsyncFn("__inputStr", "console", "setTimeout", "setInterval", "clearTimeout", "clearInterval", "Date", "Math", "JSON", body);
     const con = { log: (...a: unknown[]) => append(a.length === 1 ? formatValue(a[0]) : a.map(formatValue).join(" ")), warn: (...a: unknown[]) => append("⚠️ " + a.map(formatValue).join(" ")), error: (...a: unknown[]) => append("❌ " + a.map(formatValue).join(" ")) };
     try {
@@ -201,7 +201,7 @@ export default function ChallengePlayPage() {
     setSubmitResult({ passed, total, success: passed === total });
     if (passed === total) {
       setShowSuccess(true);
-      try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch (_) {}
+      try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch (_) { }
     }
     setIsSubmitting(false);
   }, [challenge, lang, getEditorCode, runTS, runKotlin]);
@@ -290,7 +290,7 @@ export default function ChallengePlayPage() {
               </button>
             </div>
 
-            <div className={playStyles.editorWrap}>
+            <div className={`${playStyles.editorWrap} code-editor-contained`}>
               <MonacoEditor
                 key={lang}
                 height="100%"

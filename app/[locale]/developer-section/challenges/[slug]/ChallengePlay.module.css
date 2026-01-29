@@ -25,6 +25,14 @@
   padding: 20px 0;
 }
 
+/* On mobile/single-column: no sticky — page scrolls as one block; editor stays in flow */
+@media (max-width: 1100px) {
+  .description {
+    position: static;
+    top: auto;
+  }
+}
+
 .descHeader {
   display: flex;
   align-items: center;
@@ -122,6 +130,22 @@
   border-radius: 12px;
   overflow: hidden;
   backdrop-filter: blur(8px);
+  position: relative;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .editorWrap {
+    height: 500px;
+  }
+}
+
+@media (max-width: 767px) {
+  .editorWrap {
+    height: 320px;
+    max-height: 50vh;
+  }
 }
 
 .editorLoading {
@@ -144,7 +168,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .toolbar {
@@ -174,7 +200,8 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-.runBtn, .submitBtn {
+.runBtn,
+.submitBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;

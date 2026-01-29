@@ -150,3 +150,55 @@ body {
     scroll-behavior: auto;
   }
 }
+
+/* Code editor: contained block on mobile — never floating/sticky/portal */
+.code-editor-contained {
+  position: relative !important;
+  overflow: hidden;
+  contain: layout style;
+}
+
+@media (max-width: 767px) {
+  .code-editor-contained {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .code-editor-contained .monaco-editor,
+  .code-editor-contained [data-uri] {
+    max-width: 100% !important;
+  }
+}
+
+/* Floating actions: chat + FAB stacked harmonically (mobile-friendly) */
+.floatingActionsWrapper {
+  position: fixed;
+  bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+  right: max(1.5rem, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 12px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.floatingActionsWrapper > * {
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .floatingActionsWrapper {
+    bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+    right: max(1.25rem, env(safe-area-inset-right, 0px));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floatingActionsWrapper {
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    right: max(1rem, env(safe-area-inset-right, 0px));
+    gap: 8px;
+  }
+}

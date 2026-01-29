@@ -8,7 +8,9 @@ import {
   useState,
   ReactNode,
 } from 'react';
+import { usePathname } from 'next/navigation';
 import translations from '@/lib/translations';
+import { pathnameHasLocale, getLocaleFromPathname } from '@/lib/i18n';
 
 type SupportedLanguage = 'es' | 'en';
 
@@ -22,7 +24,7 @@ type LanguageContextValue = {
 
 const LanguageContext = createContext<LanguageContextValue>({
   language: 'es',
-  setLanguage: () => {},
+  setLanguage: () => { },
   t: (key: string) => key,
 });
 
@@ -39,18 +41,36 @@ type LanguageProviderProps = {
 };
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
+  const pathname = usePathname();
   const [language, setLanguageState] = useState<SupportedLanguage>('es');
   const [mounted, setMounted] = useState(false);
 
+  // Sync language from URL locale: /es → Spanish, /en → English
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (pathnameHasLocale(pathname)) {
+      const locale = getLocaleFromPathname(pathname) as SupportedLanguage;
+      setLanguageState(locale);
+      window.localStorage.setItem('language', locale);
+      document.documentElement.lang = locale;
+    }
+  }, [pathname]);
+
+  // Initial mount: prefer URL locale, then localStorage, then default
   useEffect(() => {
     setMounted(true);
     if (typeof window !== 'undefined') {
-      const savedLang =
-        (window.localStorage.getItem('language') as SupportedLanguage) || 'es';
-      setLanguageState(savedLang);
-      if (typeof document !== 'undefined') {
-        document.documentElement.lang = savedLang;
+      let lang: SupportedLanguage = 'es';
+      if (pathnameHasLocale(pathname)) {
+        lang = getLocaleFromPathname(pathname) as SupportedLanguage;
+      } else {
+        const saved =
+          (window.localStorage.getItem('language') as SupportedLanguage) || 'es';
+        lang = saved === 'es' || saved === 'en' ? saved : 'es';
       }
+      setLanguageState(lang);
+      window.localStorage.setItem('language', lang);
+      document.documentElement.lang = lang;
     }
   }, []);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { Stack, Heading, Text, ButtonLink } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -13,18 +13,19 @@ const DESCRIPTION_COLLAPSE_THRESHOLD = 110;
 const TOPICS_COLLAPSE_THRESHOLD = 4;
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string;
     locale: string;
-  };
+  }>;
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = use(params);
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const [expandedDesc, setExpandedDesc] = useState<Set<string>>(new Set());
   const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
-  const category = getCategoryBySlug(params.slug);
+  const category = getCategoryBySlug(slug);
 
   const toggleDesc = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -58,9 +59,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       <nav className={styles.breadcrumb} aria-label="Breadcrumb">
         <ol className={styles.breadcrumbList}>
           <li>
-            <ButtonLink 
-              href={createLocalizedPath("/")} 
-              variant="secondary" 
+            <ButtonLink
+              href={createLocalizedPath("/")}
+              variant="secondary"
               className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
             >
               {t("blog-breadcrumb-home")}
@@ -68,9 +69,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           </li>
           <li className="text-white/40">/</li>
           <li>
-            <ButtonLink 
-              href={createLocalizedPath("/developer-section/blog")} 
-              variant="secondary" 
+            <ButtonLink
+              href={createLocalizedPath("/developer-section/blog")}
+              variant="secondary"
               className="text-xs px-2 py-1 !bg-white/10 !border-white/20 !text-white hover:!bg-white/20"
             >
               {t("nav-blog")}
@@ -86,27 +87,25 @@ export default function CategoryPage({ params }: CategoryPageProps) {
         <div
           className={styles.iconContainer}
           style={{
-            background: `linear-gradient(to bottom right, ${
-              category.color.includes('indigo') 
-                ? 'rgba(129, 140, 248, 0.25)' 
-                : category.color.includes('blue') 
-                  ? 'rgba(147, 197, 253, 0.25)' 
-                  : category.color.includes('purple') 
-                    ? 'rgba(196, 181, 253, 0.25)' 
-                    : category.color.includes('orange')
-                      ? 'rgba(251, 146, 60, 0.25)'
-                      : 'rgba(134, 239, 172, 0.25)'
-            }, ${
-              category.color.includes('purple') 
-                ? 'rgba(196, 181, 253, 0.25)' 
-                : category.color.includes('cyan') 
-                  ? 'rgba(165, 243, 252, 0.25)' 
-                  : category.color.includes('pink') 
-                    ? 'rgba(251, 146, 60, 0.25)' 
+            background: `linear-gradient(to bottom right, ${category.color.includes('indigo')
+              ? 'rgba(129, 140, 248, 0.25)'
+              : category.color.includes('blue')
+                ? 'rgba(147, 197, 253, 0.25)'
+                : category.color.includes('purple')
+                  ? 'rgba(196, 181, 253, 0.25)'
+                  : category.color.includes('orange')
+                    ? 'rgba(251, 146, 60, 0.25)'
+                    : 'rgba(134, 239, 172, 0.25)'
+              }, ${category.color.includes('purple')
+                ? 'rgba(196, 181, 253, 0.25)'
+                : category.color.includes('cyan')
+                  ? 'rgba(165, 243, 252, 0.25)'
+                  : category.color.includes('pink')
+                    ? 'rgba(251, 146, 60, 0.25)'
                     : category.color.includes('red')
                       ? 'rgba(248, 113, 113, 0.25)'
                       : 'rgba(110, 231, 183, 0.25)'
-            })`,
+              })`,
             width: "5rem",
             height: "5rem",
             fontSize: "2.5rem",
@@ -134,27 +133,25 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             <div
               className={styles.iconContainer}
               style={{
-                background: `linear-gradient(to bottom right, ${
-                  post.color.includes('indigo') 
-                    ? 'rgba(129, 140, 248, 0.25)' 
-                    : post.color.includes('blue') 
-                      ? 'rgba(147, 197, 253, 0.25)' 
-                      : post.color.includes('purple') 
-                        ? 'rgba(196, 181, 253, 0.25)' 
-                        : post.color.includes('orange')
-                          ? 'rgba(251, 146, 60, 0.25)'
-                          : 'rgba(134, 239, 172, 0.25)'
-                }, ${
-                  post.color.includes('purple') 
-                    ? 'rgba(196, 181, 253, 0.25)' 
-                    : post.color.includes('cyan') 
-                      ? 'rgba(165, 243, 252, 0.25)' 
-                      : post.color.includes('pink') 
-                        ? 'rgba(251, 146, 60, 0.25)' 
+                background: `linear-gradient(to bottom right, ${post.color.includes('indigo')
+                  ? 'rgba(129, 140, 248, 0.25)'
+                  : post.color.includes('blue')
+                    ? 'rgba(147, 197, 253, 0.25)'
+                    : post.color.includes('purple')
+                      ? 'rgba(196, 181, 253, 0.25)'
+                      : post.color.includes('orange')
+                        ? 'rgba(251, 146, 60, 0.25)'
+                        : 'rgba(134, 239, 172, 0.25)'
+                  }, ${post.color.includes('purple')
+                    ? 'rgba(196, 181, 253, 0.25)'
+                    : post.color.includes('cyan')
+                      ? 'rgba(165, 243, 252, 0.25)'
+                      : post.color.includes('pink')
+                        ? 'rgba(251, 146, 60, 0.25)'
                         : post.color.includes('red')
                           ? 'rgba(248, 113, 113, 0.25)'
                           : 'rgba(110, 231, 183, 0.25)'
-                })`
+                  })`
               }}
             >
               {post.icon}
@@ -165,11 +162,10 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               </Heading>
               <div className={styles.descriptionWrapper}>
                 <Text
-                  className={`${styles.sectionDescription} ${
-                    !expandedDesc.has(post.id) && post.description.length > DESCRIPTION_COLLAPSE_THRESHOLD
-                      ? styles.sectionDescriptionCollapsed
-                      : ""
-                  }`}
+                  className={`${styles.sectionDescription} ${!expandedDesc.has(post.id) && post.description.length > DESCRIPTION_COLLAPSE_THRESHOLD
+                    ? styles.sectionDescriptionCollapsed
+                    : ""
+                    }`}
                 >
                   {post.description}
                 </Text>

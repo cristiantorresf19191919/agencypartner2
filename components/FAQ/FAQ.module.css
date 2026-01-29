@@ -2,10 +2,24 @@
   padding: var(--space-2xl) var(--space-md);
   background: var(--background);
   text-align: center;
+  overflow: visible;
 }
 
 [data-theme="dark"] .faqSection {
   background: #181c22;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(160, 106, 249, 0.1);
+  border-radius: 50px;
+  color: var(--purple-1, #a06af9);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
 }
 
 .sectionTitle {
@@ -13,6 +27,9 @@
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 3rem;
+  overflow: visible;
+  word-wrap: break-word;
+  max-width: 100%;
 }
 
 .sectionTitle strong {
@@ -20,6 +37,114 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.faqGrid {
+  max-width: 800px;
+  margin: 3rem auto 0 auto;
+  text-align: left;
+}
+
+.faqCard {
+  background: var(--white);
+  border-radius: 18px;
+  margin-bottom: 1.1rem;
+  border: 1px solid rgba(160, 106, 249, 0.18);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+  overflow: visible;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+[data-theme="dark"] .faqCard {
+  background: #23243a;
+}
+
+.faqCard.open {
+  background: #f8f5ff;
+  box-shadow: 0 16px 50px rgba(15, 23, 42, 0.25);
+  border-color: rgba(160, 106, 249, 0.6);
+}
+
+[data-theme="dark"] .faqCard.open {
+  background: #292a3a;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.5rem 0 1.5rem;
+}
+
+.iconContainer {
+  flex-shrink: 0;
+  color: #a06af9;
+  font-size: 1.25rem;
+}
+
+.cardTrigger {
+  flex: 1;
+  width: 100%;
+  padding: 1rem 1.5rem 1.25rem 0;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cardTrigger h3 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.cardTrigger:hover {
+  color: #a06af9;
+}
+
+.cardContent {
+  overflow: hidden;
+}
+
+.answerContent {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding-left: 1.5rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 1.05rem;
+  background: rgba(160, 106, 249, 0.07);
+  border-radius: 0 0 18px 18px;
+}
+
+[data-theme="dark"] .answerContent {
+  background: rgba(160, 106, 249, 0.13);
+  color: #e9ecef;
+}
+
+.faqCard.open .answerContent {
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+}
+
+.answerContent p {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.answerIcon {
+  flex-shrink: 0;
+  color: #35E4B2;
+  font-size: 1.1rem;
 }
 
 .accordion {
@@ -152,10 +277,10 @@
 }
 
 @media (max-width: 600px) {
+
   .accordionTrigger,
   .accordionContent {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 }
-

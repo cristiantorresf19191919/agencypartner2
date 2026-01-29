@@ -155,7 +155,7 @@ const Hero = () => {
   return (
     <section className={styles.hero}>
       <div id="particles-hero" ref={particlesRef} className={styles.particles}></div>
-      
+
       <div className={styles.heroContent}>
         <motion.div
           className={styles.pill}
@@ -227,8 +227,8 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <a 
-            href="#contacto" 
+          <a
+            href="#contacto"
             className={styles.ctaButtonPrimary}
             onClick={() => {
               if (typeof window !== 'undefined') {
@@ -239,8 +239,8 @@ const Hero = () => {
           >
             <i className="fas fa-rocket"></i> {t('cta-start')}
           </a>
-          <a 
-            href="#servicios" 
+          <a
+            href="#servicios"
             className={styles.ctaButtonSecondary}
             onClick={() => {
               if (typeof window !== 'undefined') {

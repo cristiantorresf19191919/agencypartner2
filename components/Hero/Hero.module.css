@@ -22,6 +22,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-xl) var(--space-sm);
+  width: 100%;
 }
 
 .pill {
@@ -197,18 +198,29 @@
 }
 
 @media (max-width: 768px) {
+  /* Content starts closer to header — no awkward gap above "Fast Professional Tailored" */
   .hero {
-    min-height: 80vh;
-    padding: var(--space-xl) var(--space-sm);
+    align-items: flex-start;
+    min-height: auto;
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-2xl);
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+  }
+
+  .heroContent {
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-xl);
   }
 
   .heroTitle {
     font-size: clamp(2rem, 6vw, 3rem);
   }
 
+  /* Tighter flow below "Professional web development for your business" — CTAs sit closer */
   .heroSubtitle {
     font-size: 1.05rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
   }
 
   .floatingBanner {
@@ -218,6 +230,7 @@
 
   .heroFeatures {
     gap: 2rem;
+    margin: 1.25rem 0;
   }
 
   .heroStatValue {
@@ -227,6 +240,7 @@
   .heroButtons {
     flex-direction: column;
     align-items: stretch;
+    margin-top: 1.25rem;
   }
 
   .ctaButtonPrimary,

@@ -1,7 +1,5 @@
 .floatingButton {
-  position: fixed;
-  bottom: 96px;
-  right: 2rem;
+  position: relative;
   width: 60px;
   height: 60px;
   background: linear-gradient(135deg, #1d4ed8 0%, #22c55e 100%);
@@ -16,6 +14,7 @@
   z-index: 1000;
   transition: all 0.3s ease;
   overflow: visible;
+  flex-shrink: 0;
 }
 
 .floatingButton:hover {
@@ -41,12 +40,14 @@
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     transform: scale(1);
     filter: brightness(1);
     box-shadow: 0 10px 40px rgba(15, 23, 42, 0.6);
   }
+
   50% {
     transform: scale(1.05);
     filter: brightness(1.2);
@@ -55,15 +56,18 @@
 }
 
 @keyframes wave {
+
   0%,
   100% {
     transform: rotate(0deg) scale(1);
   }
+
   20%,
   50%,
   80% {
     transform: rotate(5deg) scale(1.02);
   }
+
   40%,
   60% {
     transform: rotate(-5deg) scale(1.02);
@@ -71,11 +75,13 @@
 }
 
 @keyframes blink {
+
   0%,
   100% {
     transform: scale(1);
     filter: brightness(1);
   }
+
   50% {
     transform: scale(1.02);
     filter: brightness(1.1);
@@ -107,7 +113,7 @@
 }
 
 .header {
-  padding: 20px 24px;
+  padding: 14px 16px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.25);
   background: radial-gradient(circle at top left, #1e293b, #020617);
   color: white;
@@ -120,27 +126,36 @@
 .headerContent {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+  min-width: 0;
+}
+
+.headerText {
+  min-width: 0;
 }
 
 .headerAvatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
   background: radial-gradient(circle, rgba(96, 165, 250, 0.4), transparent);
   color: white;
 }
 
 .headerTitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   margin: 0;
   color: #e5e7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .headerSubtitle {
-  font-size: 0.8rem;
-  opacity: 0.9;
-  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.85;
+  margin: 0.125rem 0 0;
   color: #94a3b8;
 }
 
@@ -332,8 +347,6 @@
   .floatingButton {
     width: 56px;
     height: 56px;
-    bottom: 88px;
-    right: 1.5rem;
   }
 
   .chatIcon {
@@ -341,7 +354,20 @@
   }
 
   .header {
-    padding: 18px;
+    padding: 12px 14px;
+  }
+
+  .headerAvatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .headerTitle {
+    font-size: 0.95rem;
+  }
+
+  .headerSubtitle {
+    font-size: 0.7rem;
   }
 
   .messagesContainer {
@@ -353,13 +379,9 @@
   .floatingButton {
     width: 52px;
     height: 52px;
-    bottom: 76px;
-    right: 1.5rem;
   }
 
   .chatIcon {
     font-size: 22px;
   }
 }
-
-

@@ -1,9 +1,11 @@
 .fabContainer {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  position: relative;
   z-index: 1000;
   pointer-events: none;
+  /* Reserve space for expanded radial so buttons aren’t clipped; secondaries extend up/left */
+  overflow: visible;
+  min-width: 56px;
+  min-height: 56px;
 }
 
 .fabMain {
@@ -83,11 +85,3 @@
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
-
-@media (max-width: 768px) {
-  .fabContainer {
-    bottom: 1.5rem;
-    right: 1.5rem;
-  }
-}
-

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -28,11 +29,11 @@ const FAB = () => {
     // WhatsApp is handled as a link, no need to close FAB
   };
 
-  // Radial fan positions (135° arc, counterclockwise from top) – closer to main FAB
+  // Radial fan: 135° arc (45°–135°), radius ~72px so 48px buttons don’t overlap
   const fabPositions: Array<{ x: number; y: number }> = [
-    { x: -85, y: -30 }, // Language (top-left)
-    { x: -45, y: -75 }, // Theme (top)
-    { x: 15, y: -85 },  // WhatsApp (top-right)
+    { x: -51, y: -51 }, // Language (upper-left, 135°)
+    { x: 0, y: -72 },   // Theme (top, 90°)
+    { x: 51, y: -51 },  // WhatsApp (upper-right, 45°)
   ];
 
   const fabVariants = {
