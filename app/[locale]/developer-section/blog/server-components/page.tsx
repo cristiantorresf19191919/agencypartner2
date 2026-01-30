@@ -135,14 +135,24 @@ async function Dashboard() {
             </div>
 
             <CodeEditor
-              code={`// ✅ Server Component data fetching
-// app/products/page.tsx
-async function ProductsPage() {
-  // This runs on the server
-  const products = await fetch('https://api.example.com/products', {
-    cache: 'no-store' // Always fetch fresh
-  }).then(res => res.json());
+              code={`// Server Component pattern (client demo with mock data)
+const MOCK_PRODUCTS = [
+  { id: '1', name: 'React Guide', price: 29.99 },
+  { id: '2', name: 'TypeScript Book', price: 34.99 },
+];
 
+function ProductList({ products }: { products: typeof MOCK_PRODUCTS }) {
+  return (
+    <ul>
+      {products.map((p) => (
+        <li key={p.id}>{p.name} – ${p.price}</li>
+      ))}
+    </ul>
+  );
+}
+
+function ProductsPage() {
+  const products = MOCK_PRODUCTS;
   return (
     <div>
       <h1>Products</h1>
@@ -151,47 +161,10 @@ async function ProductsPage() {
   );
 }
 
-// ✅ Caching strategies
-async function getProduct(id: string) {
-  const res = await fetch(\`https://api.example.com/products/\${id}\`, {
-    next: { revalidate: 3600 } // Revalidate every hour
-  });
-  return res.json();
-}
-
-// ✅ Parallel data fetching
-async function ProductPage({ params }: { params: { id: string } }) {
-  // These fetch in parallel
-  const [product, reviews, related] = await Promise.all([
-    fetchProduct(params.id),
-    fetchReviews(params.id),
-    fetchRelated(params.id)
-  ]);
-
-  return (
-    <div>
-      <ProductDetails product={product} />
-      <Reviews reviews={reviews} />
-      <RelatedProducts products={related} />
-    </div>
-  );
-}
-
-// ✅ Sequential data fetching
-async function UserProfile({ userId }: { userId: string }) {
-  const user = await fetchUser(userId);
-  // This waits for user to complete
-  const posts = await fetchUserPosts(user.id);
-
-  return (
-    <div>
-      <UserInfo user={user} />
-      <UserPosts posts={posts} />
-    </div>
-  );
-}`}
+function App() { return <ProductsPage />; }
+export default App;`}
               language="tsx"
-              readOnly={true}
+              readOnly={false}
             />
           </Stack>
         </Card>
@@ -211,63 +184,45 @@ async function UserProfile({ userId }: { userId: string }) {
             </div>
 
             <CodeEditor
-              code={`// ✅ Server Action
-// app/actions.ts
-'use server';
-
-export async function createUser(formData: FormData) {
+              code={`// Client demo: form + useTransition (mock server action)
+async function createUser(formData: FormData) {
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
-
-  // This runs on the server
-  const user = await db.user.create({
-    data: { name, email }
-  });
-
-  return user;
+  await new Promise((r) => setTimeout(r, 500));
+  return { name, email };
 }
-
-// ✅ Using Server Action in form
-// app/users/page.tsx
-import { createUser } from './actions';
-
-function UserForm() {
-  return (
-    <form action={createUser}>
-      <input name="name" required />
-      <input name="email" type="email" required />
-      <button type="submit">Create User</button>
-    </form>
-  );
-}
-
-// ✅ Server Action with useTransition
-'use client';
-
-import { useTransition } from 'react';
-import { createUser } from './actions';
 
 function UserForm() {
   const [isPending, startTransition] = useTransition();
+  const [result, setResult] = useState<string | null>(null);
 
-  const handleSubmit = (formData: FormData) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      await createUser(formData);
+      const user = await createUser(formData);
+      setResult(\`Created: \${user.name} (\${user.email})\`);
     });
   };
 
   return (
-    <form action={handleSubmit}>
-      <input name="name" required />
-      <input name="email" type="email" required />
-      <button type="submit" disabled={isPending}>
-        {isPending ? 'Creating...' : 'Create User'}
-      </button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input name="name" placeholder="Name" required />
+        <input name="email" type="email" placeholder="Email" required />
+        <button type="submit" disabled={isPending}>
+          {isPending ? 'Creating...' : 'Create User'}
+        </button>
+      </form>
+      {result && <p style={{ marginTop: 8 }}>{result}</p>}
+    </div>
   );
-}`}
+}
+
+function App() { return <UserForm />; }
+export default App;`}
               language="tsx"
-              readOnly={true}
+              readOnly={false}
             />
           </Stack>
         </Card>

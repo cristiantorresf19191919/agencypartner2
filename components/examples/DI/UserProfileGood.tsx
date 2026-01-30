@@ -3,24 +3,26 @@
 import { useEffect, useState } from "react";
 
 // Implementation A: Real API
-const useRealApiUser = (userId) => {
-  const [user, setUser] = useState(null);
+type User = { name: string };
+
+const useRealApiUser = (userId: string | number) => {
+  const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
-     /* fetch logic */ 
-     setUser({ name: "Live User from API" })
+    /* fetch logic */
+    setUser({ name: "Live User from API" })
   }, [userId]);
   return user;
 };
 
 // Implementation B: Mock Data (For testing/development)
-const useMockUser = (userId) => {
+const useMockUser = (_userId: string | number) => {
   // Returns instant data without network
   return { name: "Test User (Mock)" };
 };
 
 // 2. High-Level Component (Pure UI)
 // ✅ DIP: It accepts the "hook" as a dependency prop (useDataSource)
-const UserProfile = ({ userId, useDataSource }) => {
+const UserProfile = ({ userId, useDataSource }: { userId: string | number; useDataSource: (id: string | number) => User | null }) => {
   // The component doesn't know if it's hitting an API or a Mock
   const user = useDataSource(userId);
 

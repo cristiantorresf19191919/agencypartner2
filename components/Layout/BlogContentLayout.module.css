@@ -22,7 +22,7 @@
   z-index: 10;
   width: 100%;
   margin: 0;
-  padding: 6rem 0 3rem 0;
+  padding: 2rem 0 3rem 0;
 }
 
 @media (min-width: 768px) {
@@ -49,12 +49,26 @@
   box-sizing: border-box;
 }
 
+/* Let code editor use more width on small mobile */
+@media (max-width: 480px) {
+  .mainContent {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
 /* Account for fixed sidebar on large screens - always reserve space for sidebar */
 @media (min-width: 1024px) {
   .mainContent {
-    margin-left: 320px; /* Sidebar open width - ensures consistent spacing */
+    margin-left: 320px;
+    /* Sidebar open width - ensures consistent spacing */
     width: calc(100% - 320px);
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .contentWrapper.sidebarCollapsed .mainContent {
+    margin-left: 80px;
+    width: calc(100% - 80px);
   }
 }
 
@@ -88,14 +102,37 @@
   }
 }
 
-/* Improve text readability in main content */
-.mainContent p {
-  line-height: 1.9;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 1.5rem;
+/* Constrain article text width for readability (640–720px); editor can be wider */
+.mainContent {
+  --blog-text-max: 720px;
 }
 
-.mainContent p + p {
+/* Safe area so floating widgets (chat, etc.) don’t cover editor/content */
+.mainContent {
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+@media (min-width: 480px) {
+  .mainContent {
+    padding-right: max(1.5rem, calc(env(safe-area-inset-right) + 8px));
+  }
+}
+
+@media (min-width: 768px) {
+  .mainContent {
+    padding-right: max(2.5rem, calc(env(safe-area-inset-right) + 16px));
+  }
+}
+
+/* Improve text readability: line-length and line-height */
+.mainContent p {
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+  max-width: var(--blog-text-max);
+}
+
+.mainContent p+p {
   margin-top: 1.5rem;
 }
 
@@ -114,13 +151,21 @@
 
 @media (min-width: 768px) {
   .mainContent p {
-    line-height: 2;
+    line-height: 1.7;
     margin-bottom: 1.75rem;
   }
-  
+
   .mainContent h2 {
     margin-top: 3rem;
   }
 }
 
-
+/* Headings and lists can use same max-width for consistency */
+.mainContent h1,
+.mainContent h2,
+.mainContent h3,
+.mainContent h4,
+.mainContent ul,
+.mainContent ol {
+  max-width: var(--blog-text-max);
+}

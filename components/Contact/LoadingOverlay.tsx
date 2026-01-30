@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './LoadingOverlay.module.css';
 
 interface LoadingTip {
@@ -31,7 +31,7 @@ const loadingTips: LoadingTip[] = [
   },
 ];
 
-const LoadingOverlay = ({ show }: LoadingOverlayProps): JSX.Element | null => {
+const LoadingOverlay = ({ show }: LoadingOverlayProps): React.JSX.Element | null => {
   const [currentTip, setCurrentTip] = useState<number>(0);
 
   useEffect(() => {

@@ -106,21 +106,26 @@ export default function ContainerPresentationalPatternPage() {
             </div>
 
             <CodeEditor
-              code={`// UserProfile.js
+              code={`// UserProfile.js - mock: simulate fetch with mock data
+const MOCK_USER = { name: "Alex", email: "alex@example.com" };
+
 const UserProfile = () => {
   const [user, setUser] = useState(null);
 
-  // ❌ Business logic mixed with UI
   useEffect(() => {
-    fetch('/api/current-user').then(d => setUser(d));
+    const t = setTimeout(() => setUser(MOCK_USER), 500);
+    return () => clearTimeout(t);
   }, []);
 
   if (!user) return <div>Loading...</div>;
   return <h1>{user.name}</h1>;
-};`}
+};
+
+function App() { return <UserProfile />; }
+export default App;`}
               language="tsx"
-              readOnly={true}
-              height={200}
+              readOnly={false}
+              height={240}
             />
 
             <div className="bg-red-500/10 border-l-4 border-red-500 p-6 rounded-lg mt-8">
@@ -169,9 +174,7 @@ const UserProfile = () => {
               <CodeEditor
                 code={`import { useState, useEffect } from 'react';
 
-// 🏗️ The Container (Logic Layer)
-// It takes a "getData" function and passes the result to "children"
-export const DataSource = ({ getDataFunc, resourceName, children }) => {
+const DataSource = ({ getDataFunc, resourceName, children }) => {
   const [state, setState] = useState(null);
 
   useEffect(() => {
@@ -181,16 +184,28 @@ export const DataSource = ({ getDataFunc, resourceName, children }) => {
     })();
   }, [getDataFunc]);
 
-  // ⚠️ Render Prop Magic:
-  // We don't render HTML. We call the 'children' function with the data.
-  // We dynamically name the prop using [resourceName]
   if (!state) return <p>Loading...</p>;
-  
   return children({ [resourceName]: state });
-};`}
+};
+
+const MOCK_USER = { name: "Jordan", email: "jordan@example.com" };
+const getMockUser = () => new Promise(r => setTimeout(() => r(MOCK_USER), 400));
+
+function UserInfo({ user }) {
+  return <div><h2>{user.name}</h2><p>{user.email}</p></div>;
+}
+
+function App() {
+  return (
+    <DataSource getDataFunc={getMockUser} resourceName="user">
+      {({ user }) => <UserInfo user={user} />}
+    </DataSource>
+  );
+}
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={300}
+                readOnly={false}
+                height={380}
               />
             </div>
 
@@ -226,23 +241,35 @@ export const DataSource = ({ getDataFunc, resourceName, children }) => {
             </div>
 
             <CodeEditor
-              code={`// 🎨 The Presentational Layer (UI Layer)
-export const UserInfo = ({ user }) => (
-  <div className="border p-4">
-    <h1 className="text-xl font-bold">{user.name}</h1>
+              code={`const UserInfo = ({ user }) => (
+  <div style={{ border: '1px solid #333', padding: 16 }}>
+    <h1 style={{ fontSize: '1.25rem' }}>{user.name}</h1>
     <p>Email: {user.email}</p>
   </div>
 );
 
-export const ProductInfo = ({ product }) => (
-  <div className="bg-gray-100 p-4">
+const ProductInfo = ({ product }) => (
+  <div style={{ background: '#222', padding: 16 }}>
     <h2>{product.title}</h2>
-    <p>Price: \${product.price}</p>
+    <p>Price: ${product.price}</p>
   </div>
-);`}
+);
+
+const MOCK_USER = { name: "Sam", email: "sam@example.com" };
+const MOCK_PRODUCT = { title: "React Book", price: 29.99 };
+
+function App() {
+  return (
+    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+      <UserInfo user={MOCK_USER} />
+      <ProductInfo product={MOCK_PRODUCT} />
+    </div>
+  );
+}
+export default App;`}
               language="tsx"
-              readOnly={true}
-              height={250}
+              readOnly={false}
+              height={320}
             />
 
             <div className="bg-purple-500/10 border-l-4 border-purple-500 p-6 rounded-lg mt-8">
@@ -277,34 +304,41 @@ export const ProductInfo = ({ product }) => (
             </div>
 
             <CodeEditor
-              code={`import { DataSource } from './DataSource';
-import { UserInfo, ProductInfo } from './components';
-import { api } from './api'; // assume this has fetch functions
+              code={`import { useState, useEffect } from 'react';
 
-const App = () => {
+const DataSource = ({ getDataFunc, resourceName, children }) => {
+  const [state, setState] = useState(null);
+  useEffect(() => {
+    (async () => { const data = await getDataFunc(); setState(data); })();
+  }, [getDataFunc]);
+  if (!state) return <p>Loading...</p>;
+  return children({ [resourceName]: state });
+};
+
+const UserInfo = ({ user }) => <div><h3>{user.name}</h3><p>{user.email}</p></div>;
+const ProductInfo = ({ product }) => <div><h3>{product.title}</h3><p>${product.price}</p></div>;
+
+const api = {
+  getCurrentUser: () => new Promise(r => setTimeout(() => r({ name: "Demo User", email: "demo@example.com" }), 300)),
+  getProduct: () => new Promise(r => setTimeout(() => r({ title: "React Guide", price: 39.99 }), 300)),
+};
+
+function App() {
   return (
-    <>
-      {/* Scenario 1: Fetching a User */}
-      <DataSource 
-        getDataFunc={api.getCurrentUser} 
-        resourceName="user"
-      >
+    <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+      <DataSource getDataFunc={api.getCurrentUser} resourceName="user">
         {({ user }) => <UserInfo user={user} />}
       </DataSource>
-
-      {/* Scenario 2: Fetching a Product (Reusing the SAME logic!) */}
-      <DataSource 
-        getDataFunc={() => api.getProduct(123)} 
-        resourceName="product"
-      >
+      <DataSource getDataFunc={() => api.getProduct(123)} resourceName="product">
         {({ product }) => <ProductInfo product={product} />}
       </DataSource>
-    </>
+    </div>
   );
-};`}
+}
+export default App;`}
               language="tsx"
-              readOnly={true}
-              height={350}
+              readOnly={false}
+              height={420}
             />
 
             <div className="bg-blue-500/10 border-l-4 border-blue-500 p-6 rounded-lg mt-8">
@@ -340,27 +374,32 @@ const App = () => {
             </div>
 
             <CodeEditor
-              code={`// 🏗️ LocalStorage Loader
-export const LocalStorageLoader = ({ keyName, children }) => {
+              code={`const LocalStorageLoader = ({ keyName, children }) => {
   const [data, setData] = useState(null);
-
   useEffect(() => {
-    const savedData = localStorage.getItem(keyName);
-    setData(JSON.parse(savedData));
+    try {
+      const saved = localStorage.getItem(keyName);
+      setData(saved ? JSON.parse(saved) : null);
+    } catch {
+      setData(null);
+    }
   }, [keyName]);
-
   return children({ data });
 };
 
-// Usage
-<LocalStorageLoader keyName="theme-preferences">
-  {({ data }) => (
-    <div>Current Theme: {data?.color || 'Default'}</div>
-  )}
-</LocalStorageLoader>`}
+function App() {
+  return (
+    <LocalStorageLoader keyName="theme-preferences">
+      {({ data }) => (
+        <div>Current Theme: {data?.color ?? 'Default'}</div>
+      )}
+    </LocalStorageLoader>
+  );
+}
+export default App;`}
               language="tsx"
-              readOnly={true}
-              height={300}
+              readOnly={false}
+              height={320}
             />
 
             <div className="bg-orange-500/10 border-l-4 border-orange-500 p-6 rounded-lg mt-8">

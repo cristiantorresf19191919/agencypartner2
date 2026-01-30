@@ -145,6 +145,7 @@ const mentoringCases = [
       '"Gracias a la mentoría, conseguí mi primer trabajo como desarrolladora y lancé mi portafolio en React."',
     image:
       'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
+    link: '#',
     stats: [
       { icon: 'fas fa-code', value: '+3', label: 'Proyectos lanzados' },
       { icon: 'fas fa-user-graduate', value: '1er empleo', label: 'Logrado' },
@@ -157,6 +158,7 @@ const mentoringCases = [
       '"Me ayudaron a estructurar mi backend con Spring Boot y Docker. Ahora mi app es escalable y segura."',
     image:
       'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=600&q=80',
+    link: '#',
     stats: [
       { icon: 'fas fa-server', value: '+2', label: 'Microservicios' },
       { icon: 'fas fa-database', value: '+3', label: 'Bases de datos' },
@@ -169,6 +171,7 @@ const mentoringCases = [
       '"Las clases personalizadas de Flutter me permitieron lanzar mi primera app en Google Play."',
     image:
       'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
+    link: '#',
     stats: [
       { icon: 'fab fa-google-play', value: '1', label: 'App publicada' },
       { icon: 'fas fa-mobile-alt', value: 'Flutter', label: 'Stack' },

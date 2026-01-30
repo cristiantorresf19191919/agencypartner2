@@ -4,16 +4,21 @@
 import React, { useState, useEffect } from "react";
 
 // ❌ Problem: Component has to know about all service details
+type User = { name: string };
+type Order = unknown;
+type Notification = unknown;
+type Preferences = unknown;
+
 const UserDashboard = ({ userId }: { userId: number }) => {
-  const [user, setUser] = useState(null);
-  const [orders, setOrders] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [preferences, setPreferences] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [preferences, setPreferences] = useState<Preferences | null>(null);
 
   useEffect(() => {
     // ❌ Complex initialization with multiple API calls
     // Component has to orchestrate everything
-    
+
     // Fetch user
     fetch(`/api/users/${userId}`)
       .then((res) => res.json())

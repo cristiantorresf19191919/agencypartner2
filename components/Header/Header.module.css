@@ -146,6 +146,13 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  text-decoration: none;
+}
+
+.gradientLink:hover,
+.gradientLink:focus,
+.gradientLink:visited {
+  text-decoration: none;
 }
 
 .gradientLink::before {
@@ -833,6 +840,7 @@
 
 /* Developer: hide mobile slots on desktop only */
 @media (min-width: 769px) {
+
   .developerHeader .navLeft,
   .developerHeader .navCenter,
   .developerHeader .navRight {

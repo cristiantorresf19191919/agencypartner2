@@ -73,108 +73,82 @@ export default function AdvancedReactConceptsPage() {
               <CodeComparison
                 language="tsx"
                 wrong={`// ❌ Rigid & Hard to Maintain
-// The Card component needs to know about Button, Icon, etc.
-// What if we want a "Delete" button instead of "Edit"?
-// What if we want a Link instead of a Button?
-import { Button } from './Button';
-import { Icon } from './Icon';
+// Card needs to know about Button, Icon, etc. - limited flexibility
+const Button = ({ variant, children }) => <button className={variant}>{children}</button>;
+const Icon = ({ name }) => <span>[{name}]</span>;
+const UserProfile = () => <div>User content</div>;
 
 type CardProps = {
   title: string;
-  showEditButton?: boolean;  // What if we want a "Delete" button instead?
+  showEditButton?: boolean;
   showIcon?: boolean;
-  iconName?: string;          // Now we need another prop for the icon name...
+  iconName?: string;
   footerText?: string;
 };
 
-export const Card = ({ 
-  title, 
-  showEditButton, 
-  showIcon, 
-  iconName,
-  footerText 
-}: CardProps) => {
-  return (
-    <div className="card">
-      <div className="header">
-        <h1>{title}</h1>
-        {showIcon && iconName && <Icon name={iconName} />}
-        {showEditButton && <Button variant="ghost">Edit</Button>}
-      </div>
-      <div className="content">{/* children */}</div>
-      {footerText && <div className="footer">{footerText}</div>}
+const Card = ({ title, showEditButton, showIcon, iconName, footerText, children }) => (
+  <div className="card">
+    <div className="header">
+      <h1>{title}</h1>
+      {showIcon && iconName && <Icon name={iconName} />}
+      {showEditButton && <Button variant="ghost">Edit</Button>}
     </div>
-  );
-};
+    <div className="content">{children}</div>
+    {footerText && <div className="footer">{footerText}</div>}
+  </div>
+);
 
-// Usage - Limited flexibility
-<Card 
-  title="Profile" 
-  showEditButton={true}
-  showIcon={false}
-  iconName="user"
-  footerText="Last updated: Today"
->
-  <UserProfile />
-</Card>`}
-                good={`// ✅ Flexible & Composable
-// The Card component doesn't care what you pass - it just renders it
-// You have full control over what goes in each slot
+function App() {
+  return (
+    <Card
+      title="Profile"
+      showEditButton={true}
+      showIcon={false}
+      iconName="user"
+      footerText="Last updated: Today"
+    >
+      <UserProfile />
+    </Card>
+  );
+}
+export default App;`}
+                good={`// ✅ Flexible & Composable - Card doesn't care what you pass
 import { ReactNode } from 'react';
+
+const Button = ({ variant, children }) => <button className={variant}>{children}</button>;
+const Link = ({ href, children }) => <a href={href}>{children}</a>;
+const UserProfile = () => <div>User content</div>;
 
 type CardProps = {
   title: string;
-  // We accept a ReactElement (an instance) or ReactNode
-  headerAction?: ReactNode; 
+  headerAction?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
 };
 
-export const Card = ({ title, headerAction, footer, children }: CardProps) => {
-  return (
-    <div className="card">
-      <div className="header">
-        <h1>{title}</h1>
-        {/* We just render the slot. We don't care what it is. */}
-        <div className="actions">{headerAction}</div>
-      </div>
-      <div className="content">{children}</div>
-      {footer && <div className="footer">{footer}</div>}
+const Card = ({ title, headerAction, footer, children }: CardProps) => (
+  <div className="card">
+    <div className="header">
+      <h1>{title}</h1>
+      <div className="actions">{headerAction}</div>
     </div>
+    <div className="content">{children}</div>
+    {footer && <div className="footer">{footer}</div>}
+  </div>
+);
+
+function App() {
+  return (
+    <Card
+      title="Profile"
+      headerAction={<Button variant="ghost">Edit</Button>}
+      footer={<span className="text-sm">Last updated: Today</span>}
+    >
+      <UserProfile />
+    </Card>
   );
-};
-
-// Usage - Maximum flexibility
-<Card 
-  title="Profile" 
-  // We can pass a Button, a Link, or nothing. The Card doesn't care.
-  headerAction={<Button variant="ghost">Edit</Button>} 
-  footer={<span className="text-sm">Last updated: Today</span>}
->
-  <UserProfile />
-</Card>
-
-// Or with a Delete button instead
-<Card 
-  title="Profile" 
-  headerAction={<Button variant="danger">Delete</Button>}
-  footer={<Link href="/settings">Settings</Link>}
->
-  <UserProfile />
-</Card>
-
-// Or with multiple actions
-<Card 
-  title="Profile" 
-  headerAction={
-    <>
-      <Button variant="ghost">Edit</Button>
-      <Button variant="danger">Delete</Button>
-    </>
-  }
->
-  <UserProfile />
-</Card>`}
+}
+export default App;`}
               />
             </Stack>
           </Card>
@@ -246,11 +220,20 @@ export const useAuth = () => {
   return context;
 };
 
-// Usage - LogoutButton re-renders when user changes (even though it doesn't need to)
 const LogoutButton = () => {
-  const { logout } = useAuth(); // ❌ Re-renders when user changes!
+  const { logout } = useAuth();
   return <button onClick={logout}>Logout</button>;
-};`}
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <LogoutButton />
+      <UserProfile />
+    </AuthProvider>
+  );
+}
+export default App;`}
                 good={`// ✅ Context Splitting - Separate state and actions
 import { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 
@@ -308,11 +291,20 @@ const LogoutButton = () => {
   return <button onClick={logout}>Logout</button>;
 };
 
-// UserProfile re-renders when user changes (as it should)
 const UserProfile = () => {
-  const user = useUser(); // ✅ Only subscribes to state context
+  const user = useUser();
   return <div>{user?.name}</div>;
-};`}
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <LogoutButton />
+      <UserProfile />
+    </AuthProvider>
+  );
+}
+export default App;`}
               />
             </Stack>
           </Card>
@@ -343,20 +335,14 @@ const UserProfile = () => {
 
               <CodeComparison
                 language="tsx"
-                wrong={`// ❌ Bad: Double Render & Complexity
-// Using an effect to sync state causes two renders:
-// 1. First render with old filteredItems
-// 2. Effect runs, updates filteredItems
-// 3. Second render with new filteredItems
+                wrong={`// ❌ Bad: Double Render - effect syncs state (two renders)
 import { useState, useEffect } from 'react';
 
 type Item = { id: string; category: string; name: string };
 
-const ProductList = ({ items, filter }: { items: Item[]; filter: string }) => {
-  const [filteredItems, setFilteredItems] = useState<Item[]>([]);
+const ProductList = ({ items, filter }) => {
+  const [filteredItems, setFilteredItems] = useState([]);
 
-  // 🛑 PROBLEM: This triggers a second render immediately after the first one
-  // Also creates a race condition if 'items' or 'filter' change rapidly
   useEffect(() => {
     setFilteredItems(items.filter(i => i.category === filter));
   }, [items, filter]);
@@ -370,26 +356,29 @@ const ProductList = ({ items, filter }: { items: Item[]; filter: string }) => {
   );
 };
 
-// ❌ Another Anti-Pattern: Effects for User Events
-const [submitted, setSubmitted] = useState(false);
+const MOCK_ITEMS = [
+  { id: '1', category: 'A', name: 'Item 1' },
+  { id: '2', category: 'B', name: 'Item 2' },
+  { id: '3', category: 'A', name: 'Item 3' },
+];
 
-useEffect(() => {
-  if (submitted) {
-    postDataToAPI(); // ⚠️ Why is this here? It belongs in the handler.
-  }
-}, [submitted]);
-
-return <button onClick={() => setSubmitted(true)}>Submit</button>;`}
-                good={`// ✅ Good: Single Render & Source of Truth
-// Calculate directly during render. React simply recalculates this on every render.
-// It is fast. You likely don't even need useMemo unless 'items' is huge (10,000+ items).
-import { useMemo } from 'react';
+function App() {
+  const [filter, setFilter] = useState('A');
+  return (
+    <div>
+      <button onClick={() => setFilter('A')}>Category A</button>
+      <button onClick={() => setFilter('B')}>Category B</button>
+      <ProductList items={MOCK_ITEMS} filter={filter} />
+    </div>
+  );
+}
+export default App;`}
+                good={`// ✅ Good: Single render - derive during render
+import { useMemo, useState } from 'react';
 
 type Item = { id: string; category: string; name: string };
 
-const ProductList = ({ items, filter }: { items: Item[]; filter: string }) => {
-  // ✅ Calculate directly during render
-  // If the calculation is expensive (e.g., 10,000+ items), use useMemo
+const ProductList = ({ items, filter }) => {
   const filteredItems = useMemo(
     () => items.filter(i => i.category === filter),
     [items, filter]
@@ -404,30 +393,23 @@ const ProductList = ({ items, filter }: { items: Item[]; filter: string }) => {
   );
 };
 
-// For most cases, you don't even need useMemo:
-const ProductListSimple = ({ items, filter }: { items: Item[]; filter: string }) => {
-  // ✅ Simple and fast - React is optimized for this
-  const filteredItems = items.filter(i => i.category === filter);
+const MOCK_ITEMS = [
+  { id: '1', category: 'A', name: 'Item 1' },
+  { id: '2', category: 'B', name: 'Item 2' },
+  { id: '3', category: 'A', name: 'Item 3' },
+];
 
+function App() {
+  const [filter, setFilter] = useState('A');
   return (
-    <ul>
-      {filteredItems.map(item => (
-        <li key={item.id}>{item.name}</li>
-      ))}
-    </ul>
+    <div>
+      <button onClick={() => setFilter('A')}>Category A</button>
+      <button onClick={() => setFilter('B')}>Category B</button>
+      <ProductList items={MOCK_ITEMS} filter={filter} />
+    </div>
   );
-};
-
-// ✅ Good: Event Handlers for User Actions
-// Place logic where the user action happens. Keep Effects strictly for
-// synchronization with external systems (like connecting to a socket or observing DOM changes).
-const handleSubmit = async () => {
-  // No state needed. Just run the logic.
-  await postDataToAPI();
-  toast.success("Done!");
-};
-
-return <button onClick={handleSubmit}>Submit</button>;`}
+}
+export default App;`}
               />
             </Stack>
           </Card>
@@ -464,52 +446,41 @@ return <button onClick={handleSubmit}>Submit</button>;`}
 
               <CodeComparison
                 language="tsx"
-                wrong={`// ❌ Don't use useEffect for:
-// - Transforming data (use derived state)
-// - User events (use event handlers)
-// - Conditional logic based on state (use conditional rendering)
-// - Fetching data on mount (use router loaders or React Query)
+                wrong={`// ❌ Don't use useEffect for transforming data or user events
+import { useState, useEffect } from 'react';
 
-useEffect(() => {
-  // ❌ Don't do this
-  const filtered = items.filter(i => i.category === filter);
-  setFilteredItems(filtered);
-}, [items, filter]);
+function App() {
+  const [items] = useState([{ id: '1', category: 'A', name: 'Item 1' }]);
+  const [filter] = useState('A');
+  const [filteredItems, setFilteredItems] = useState([]);
 
-useEffect(() => {
-  // ❌ Don't do this
-  if (submitted) {
-    postData();
-  }
-}, [submitted]);`}
-                good={`// ✅ Use useEffect for synchronization with external systems:
+  useEffect(() => {
+    setFilteredItems(items.filter(i => i.category === filter));
+  }, [items, filter]);
 
-// 1. WebSocket connection
-useEffect(() => {
-  const ws = new WebSocket('wss://api.example.com');
-  ws.onmessage = (event) => {
-    setMessage(JSON.parse(event.data));
-  };
-  return () => ws.close(); // Cleanup
-}, []);
+  return (
+    <div>
+      <p>Anti-pattern: effect syncing state (causes extra render)</p>
+      <ul>{filteredItems.map(item => <li key={item.id}>{item.name}</li>)}</ul>
+    </div>
+  );
+}
+export default App;`}
+                good={`// ✅ Use useEffect for sync with external systems (e.g. resize)
+import { useState, useEffect } from 'react';
 
-// 2. Event listeners
-useEffect(() => {
-  const handleResize = () => setWidth(window.innerWidth);
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
+function App() {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
-// 3. Third-party library integration
-useEffect(() => {
-  const chart = new Chart(canvasRef.current, config);
-  return () => chart.destroy();
-}, [data]);
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-// 4. Browser API synchronization
-useEffect(() => {
-  localStorage.setItem('theme', theme);
-}, [theme]);`}
+  return <div>Window width: {width}px (resize to see)</div>;
+}
+export default App;`}
               />
             </Stack>
           </Card>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -12,10 +13,14 @@ import {
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
-import CollaborativeEditor from "@/components/CollaborativeEditor/CollaborativeEditor";
 import styles from "./CollaborativePage.module.css";
 
-export default function CollaborativePage() {
+const CollaborativeEditor = dynamic(
+  () => import("@/components/CollaborativeEditor/CollaborativeEditor"),
+  { ssr: false }
+);
+
+function CollaborativePageContent() {
   const { createLocalizedPath } = useLocale();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -160,5 +165,17 @@ console.log("Room ID: ${roomId}");
 
       <Footer />
     </main>
+  );
+}
+
+export default function CollaborativePage() {
+  return (
+    <Suspense fallback={
+      <main className={styles.page}>
+        <div className={styles.loading}>Loading...</div>
+      </main>
+    }>
+      <CollaborativePageContent />
+    </Suspense>
   );
 }

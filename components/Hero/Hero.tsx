@@ -70,7 +70,7 @@ const Hero = () => {
     }
 
     // Animate stats
-    const animateNumber = (ref: React.RefObject<HTMLSpanElement>, end: number, suffix: string = ''): void => {
+    const animateNumber = (ref: React.RefObject<HTMLSpanElement | null>, end: number, suffix: string = ''): void => {
       if (!ref.current) return;
       let current = 0;
       const increment = end / 60; // 60 frames

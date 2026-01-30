@@ -4,8 +4,10 @@
 import React, { useState, useEffect } from "react";
 
 // ❌ Problem: Data loads immediately when component mounts
+type UserData = { name: string; email: string };
+
 const UserProfile = ({ userId }: { userId: number }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {

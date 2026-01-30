@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
+import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebaseClient';
@@ -25,7 +25,7 @@ interface Toast {
   message: string;
 }
 
-const Contact = (): JSX.Element => {
+const Contact = (): React.JSX.Element => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -284,9 +284,8 @@ const Contact = (): JSX.Element => {
       <LoadingOverlay show={isSubmitting} />
       {toast && (
         <div
-          className={`${styles.toast} ${
-            toast.type === 'success' ? styles.toastSuccess : styles.toastError
-          }`}
+          className={`${styles.toast} ${toast.type === 'success' ? styles.toastSuccess : styles.toastError
+            }`}
         >
           <span className={styles.toastIcon}>
             {toast.type === 'success' ? '✓' : '!'}

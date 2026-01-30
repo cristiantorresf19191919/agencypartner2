@@ -191,7 +191,7 @@ fun UserScreen(viewModel: UserViewModel = androidx.lifecycle.viewmodel.compose.v
     if (state.isLoading) {
         CircularProgressIndicator()
     } else {
-        Text("Welcome, ${state.name}")
+        Text("Welcome, \${state.name}")
     }
 }`,
     explanation: `ViewModel holds business logic and survives configuration changes. \`StateFlow\` is a hot flow that emits the current state to collectors. \`collectAsStateWithLifecycle\` automatically stops collecting when the lifecycle is destroyed, preventing leaks.`,

@@ -6,7 +6,7 @@ import PageTransition from '@/components/Layout/PageTransition';
 
 type LocaleLayoutProps = {
   children: ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 };
 
 export function generateStaticParams() {
@@ -107,15 +107,15 @@ const metadataByLocale: Record<Locale, Metadata> = {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const metadata = metadataByLocale[locale];
+  const metadata = metadataByLocale[locale as Locale];
 
   if (!metadata) {
     notFound();
   }
-  
+
   // Determine the base URL for metadata
   const getMetadataBase = (): URL => {
     if (process.env.NEXT_PUBLIC_SITE_URL) {
@@ -147,9 +147,9 @@ export default async function LocaleLayout({
   params,
 }: LocaleLayoutProps) {
   const { locale } = await params;
-  
-  // Validate locale
-  if (!locales.includes(locale)) {
+
+  // Validate locale (params.locale is string; narrow to Locale)
+  if (!(locales as readonly string[]).includes(locale)) {
     notFound();
   }
 

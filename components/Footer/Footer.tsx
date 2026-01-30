@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -8,12 +9,12 @@ import { useLocale } from '@/lib/useLocale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Footer.module.css';
 
-const Footer = (): JSX.Element => {
+const Footer = (): React.JSX.Element => {
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
   const pathname = usePathname();
   const isDeveloperSection = pathname?.includes('/developer-section');
-  
+
   return (
     <footer className={styles.footer}>
       <div className={styles.footerWave}>
@@ -61,12 +62,8 @@ const Footer = (): JSX.Element => {
             Transformamos ideas en activos digitales que venden. Especialistas en landing pages
             de alta conversión y desarrollo web profesional.
           </p>
-          <p className={styles.madeWith}>
-            Hecho con <i className="fas fa-heart"></i> y <i className="fas fa-bolt"></i> en
-            Colombia
-          </p>
           <p>© {new Date().getFullYear()} OptimusAgency. Todos los derechos reservados.</p>
-          
+
           {isDeveloperSection && (
             <div className={styles.developerInfo}>
               <Image
@@ -79,7 +76,7 @@ const Footer = (): JSX.Element => {
               <p className={styles.developerName}>Cris Developer Senior</p>
             </div>
           )}
-          
+
           <div className={styles.footerLinks}>
             <Link href="#">Política de Privacidad</Link>
             <Link href="#">Términos de Servicio</Link>

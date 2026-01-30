@@ -60,7 +60,7 @@
 .heroTitle strong::after {
   content: '';
   position: absolute;
-   bottom: 0.05em;
+  bottom: 0.05em;
   left: 0;
   right: 0;
   height: 0.05em;
@@ -104,10 +104,12 @@
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -198,6 +200,7 @@
 }
 
 @media (max-width: 768px) {
+
   /* Content starts closer to header — no awkward gap above "Fast Professional Tailored" */
   .hero {
     align-items: flex-start;
@@ -248,4 +251,3 @@
     text-align: center;
   }
 }
-

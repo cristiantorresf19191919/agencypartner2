@@ -1,8 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CodeEditor } from "./CodeEditor";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+const MOBILE_BREAKPOINT = 768;
+
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(true);
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const update = () => setIsMobile(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+  return isMobile;
+}
 
 interface CodeComparisonProps {
   wrong: string;
@@ -10,6 +24,14 @@ interface CodeComparisonProps {
   language?: string;
   kotlinExample?: string;
   showKotlin?: boolean;
+  /** 2–3 bullets above the "bad" example (e.g. "Why it's wrong", "What breaks"). */
+  whatToNoticeBad?: string[];
+  /** 2–3 bullets above the "good" example (e.g. "What we improve"). */
+  whatToNoticeGood?: string[];
+  /** Use blog-friendly defaults: collapsed panels, compact toolbar, max code height. */
+  blogMode?: boolean;
+  /** Unique id for this comparison so React keeps wrong/good panels distinct (avoids both showing same code). */
+  comparisonId?: string;
 }
 
 export function CodeComparison({
@@ -18,9 +40,26 @@ export function CodeComparison({
   language = "tsx",
   kotlinExample,
   showKotlin = false,
+  whatToNoticeBad,
+  whatToNoticeGood,
+  blogMode = true,
+  comparisonId,
 }: CodeComparisonProps) {
   const { t } = useLanguage();
-  
+  const isMobile = useIsMobile();
+  const isReact = ["tsx", "jsx", "react"].includes((language ?? "tsx").toLowerCase());
+  const baseKey = comparisonId ?? "cmp";
+
+  const sharedEditorProps = blogMode
+    ? {
+      collapsePanelsByDefault: isMobile ? true : !isReact,
+      compactToolbar: true,
+      maxCodeHeight: 400,
+      height: "auto" as const,
+      enableMultiFile: true,
+    }
+    : { height: "auto" as const, enableMultiFile: true };
+
   return (
     <div className="space-y-6 w-full block">
       {showKotlin && kotlinExample && (
@@ -40,36 +79,56 @@ export function CodeComparison({
           </div>
         </div>
       )}
-      
-      <div className="flex flex-col gap-6 w-full block">
-        <div className="w-full block">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wide">
-              {t("code-bad-example")}
-            </span>
-          </div>
+
+      <div className="flex flex-col w-full block" style={{ gap: "2rem" }}>
+        <div className="w-full block" key={`${baseKey}-bad`}>
+          {whatToNoticeBad && whatToNoticeBad.length > 0 && (
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-red-400/90 uppercase tracking-wide mb-1.5">
+                {t("code-what-to-notice")}
+              </p>
+              <ul className="list-disc list-inside text-sm text-white/85 space-y-0.5">
+                {whatToNoticeBad.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="w-full block">
             <CodeEditor
+              key={`${baseKey}-bad-editor`}
               code={wrong}
               language={language}
               readOnly={false}
-              height="auto"
+              exampleVariant="bad"
+              exampleBadgeLabel={t("code-bad-example")}
+              {...sharedEditorProps}
             />
           </div>
         </div>
-        
-        <div className="w-full block">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-xs font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide">
-              {t("code-good-example")}
-            </span>
-          </div>
+
+        <div className="w-full block" key={`${baseKey}-good`}>
+          {whatToNoticeGood && whatToNoticeGood.length > 0 && (
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-green-400/90 uppercase tracking-wide mb-1.5">
+                {t("code-what-to-notice")}
+              </p>
+              <ul className="list-disc list-inside text-sm text-white/85 space-y-0.5">
+                {whatToNoticeGood.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="w-full block">
             <CodeEditor
+              key={`${baseKey}-good-editor`}
               code={good}
               language={language}
               readOnly={false}
-              height="auto"
+              exampleVariant="good"
+              exampleBadgeLabel={t("code-good-example")}
+              {...sharedEditorProps}
             />
           </div>
         </div>
@@ -77,4 +136,3 @@ export function CodeComparison({
     </div>
   );
 }
-

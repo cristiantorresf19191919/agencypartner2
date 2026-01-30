@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Stack, Heading, Text, ButtonLink, Card, CodeEditor } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -177,9 +178,220 @@ const exampleCCode = [
   "}",
 ].join("\n");
 
+// --- Solution code for each challenge ---
+const solution1Code = [
+  "import kotlinx.coroutines.*",
+  "",
+  "fun main() = runBlocking {",
+  "    launch {",
+  "        makeCoffee()",
+  "        toastBread()",
+  "        println(\"Breakfast is ready!\")",
+  "    }.join()",
+  "}",
+  "",
+  "suspend fun makeCoffee() {",
+  "    println(\"Making coffee...\")",
+  "    delay(1000L)",
+  "    println(\"Coffee done!\")",
+  "}",
+  "",
+  "suspend fun toastBread() {",
+  "    println(\"Toasting bread...\")",
+  "    delay(2000L)",
+  "    println(\"Toast done!\")",
+  "}",
+].join("\n");
+
+const solution2Code = [
+  "import kotlinx.coroutines.*",
+  "",
+  "fun main() = runBlocking {",
+  "    val time = kotlin.system.measureTimeMillis {",
+  "        val likes = async { getFacebookLikes() }",
+  "        val followers = async { getTwitterFollowers() }",
+  "        val total = likes.await() + followers.await()",
+  "        println(\"Total: $total (Facebook + Twitter)\")",
+  "    }",
+  "    println(\"Completed in $time ms\") // ~3000ms",
+  "}",
+  "",
+  "suspend fun getFacebookLikes(): Int { delay(3000); return 1000 }",
+  "suspend fun getTwitterFollowers(): Int { delay(1000); return 500 }",
+].join("\n");
+
+const solution3Code = [
+  "import kotlinx.coroutines.*",
+  "",
+  "fun main() = runBlocking {",
+  "    val result = withTimeoutOrNull(2000) {",
+  "        downloadLargeFile()",
+  "        \"done\"",
+  "    }",
+  "    if (result == null) println(\"Download timed out, retrying...\")",
+  "}",
+  "",
+  "suspend fun downloadLargeFile() {",
+  "    repeat(20) { i ->",
+  "        println(\"Downloading ${i * 5}%\")",
+  "        delay(500)",
+  "    }",
+  "}",
+].join("\n");
+
+const solution4Code = [
+  "import kotlinx.coroutines.*",
+  "",
+  "fun main() = runBlocking {",
+  "    val channel = Channel<Int>(capacity = 2)",
+  "    launch {",
+  "        repeat(10) { i ->",
+  "            if (channel.isClosedForSend) return@repeat",
+  "            delay(100)",
+  "            println(\"Barista made coffee #${i + 1}\")",
+  "            channel.send(i + 1)",
+  "        }",
+  "        channel.close()",
+  "    }",
+  "    launch {",
+  "        for (coffee in channel) {",
+  "            println(\"Serving coffee #$coffee... (counter can fill up)\")",
+  "            delay(1000)",
+  "        }",
+  "    }",
+  "}",
+].join("\n");
+
+const solution5Code = [
+  "import kotlinx.coroutines.*",
+  "",
+  "fun main() = runBlocking {",
+  "    val results = Channel<String>()",
+  "    launch {",
+  "        coroutineScope {",
+  "            launch { searchGoogle(results) }",
+  "            launch { searchBing(results) }",
+  "            launch { searchYahoo(results) }",
+  "        }",
+  "        results.close()",
+  "    }",
+  "    for (msg in results) println(msg)",
+  "}",
+  "",
+  "suspend fun searchGoogle(ch: Channel<String>) {",
+  "    delay(500); ch.send(\"Found in Google\")",
+  "}",
+  "suspend fun searchBing(ch: Channel<String>) {",
+  "    delay(800); ch.send(\"Found in Bing\")",
+  "}",
+  "suspend fun searchYahoo(ch: Channel<String>) {",
+  "    delay(300); ch.send(\"Found in Yahoo\")",
+  "}",
+].join("\n");
+
+const solution6Code = [
+  "import kotlinx.coroutines.*",
+  "import kotlinx.coroutines.selects.select",
+  "",
+  "fun main() = runBlocking {",
+  "    val us = async { getUSServer() }",
+  "    val eu = async { getEUServer() }",
+  "    val first = select<String> {",
+  "        us.onAwait { it }",
+  "        eu.onAwait { it }",
+  "    }",
+  "    println(\"Fastest: $first\")",
+  "}",
+  "",
+  "suspend fun getUSServer(): String {",
+  "    delay((1000..3000).random().toLong())",
+  "    return \"US: 42ms\"",
+  "}",
+  "suspend fun getEUServer(): String {",
+  "    delay((1000..3000).random().toLong())",
+  "    return \"EU: 38ms\"",
+  "}",
+].join("\n");
+
+const solutionRetryCode = [
+  "import kotlinx.coroutines.*",
+  "",
+  "fun main() = runBlocking {",
+  "    val result = retryWithBackoff(maxRetries = 3) {",
+  "        unstableNetworkCall()",
+  "    }",
+  "    println(result)",
+  "}",
+  "",
+  "suspend fun unstableNetworkCall(): String {",
+  "    delay(500)",
+  "    if (kotlin.random.Random.nextDouble() < 0.8) throw RuntimeException(\"Network error\")",
+  "    return \"Success!\"",
+  "}",
+  "",
+  "suspend fun <T> retryWithBackoff(maxRetries: Int, block: suspend () -> T): T {",
+  "    var delayMs = 1000L",
+  "    repeat(maxRetries) { attempt ->",
+  "        try { return block() }",
+  "        catch (e: Exception) {",
+  "            if (attempt == maxRetries - 1) throw e",
+  "            delay(delayMs)",
+  "            delayMs *= 2",
+  "        }",
+  "    }",
+  "    return block()",
+  "}",
+].join("\n");
+
+const solutionCapstoneCode = [
+  "import kotlinx.coroutines.*",
+  "import kotlinx.coroutines.channels.Channel",
+  "",
+  "data class StockPrice(val symbol: String, val price: Double)",
+  "",
+  "fun main() = runBlocking {",
+  "    val alerts = Channel<StockPrice>(Channel.UNLIMITED)",
+  "    val scope = CoroutineScope(Dispatchers.Default)",
+  "    scope.launch {",
+  "        withTimeout(10000) {",
+  "            launch { emitPrices(\"TSLA\", 500, alerts) }",
+  "            launch { emitPrices(\"AAPL\", 200, alerts) }",
+  "            launch {",
+  "                var last = 0.0",
+  "                for (sp in alerts) {",
+  "                    if (kotlin.math.abs(sp.price - last) >= 1.0) {",
+  "                        println(\"Alert: ${sp.symbol} = ${sp.price}\")",
+  "                        last = sp.price",
+  "                    }",
+  "                }",
+  "            }",
+  "        }",
+  "    }.join()",
+  "    println(\"System shut down after 10s\")",
+  "}",
+  "",
+  "suspend fun emitPrices(symbol: String, intervalMs: Long, ch: Channel<StockPrice>) {",
+  "    while (true) {",
+  "        val price = (100..500).random().toDouble()",
+  "        ch.send(StockPrice(symbol, price))",
+  "        delay(intervalMs)",
+  "    }",
+  "}",
+].join("\n");
+
 export default function KotlinCoroutinesPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const [visibleSolutions, setVisibleSolutions] = useState<Set<string>>(new Set());
+
+  const toggleSolution = (id: string) => {
+    setVisibleSolutions((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <BlogContentLayout>
@@ -242,6 +454,38 @@ export default function KotlinCoroutinesPage() {
         </div>
       </div>
 
+      {/* Zero to hero: What & Why */}
+      <section id="what-why" className={styles.section}>
+        <Card className={styles.sectionCard}>
+          <Stack direction="col" gap="md">
+            <Heading level={2} className={styles.sectionTitle}>
+              What are Kotlin Coroutines?
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              Coroutines are Kotlin&apos;s way of writing <strong>asynchronous, non-blocking code</strong> in a sequential style. Think of them as lightweight threads: you can launch thousands of coroutines without the overhead of real threads. They &quot;suspend&quot; instead of block—when one waits for I/O, the underlying thread is free to run other coroutines.
+            </Text>
+            <Heading level={3} className={styles.sectionTitle}>
+              Why use them?
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              On Android and in backend services, blocking the main or worker thread is a sin. Network calls, file I/O, and database access must not block. Coroutines let you write clear, linear code that runs efficiently: start a network request, suspend until the result arrives, then continue—all without callbacks or complex threading.
+            </Text>
+            <Heading level={3} className={styles.sectionTitle}>
+              Prerequisites
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              Basic Kotlin (functions, lambdas, <code>suspend</code> keyword). You need a Kotlin project with <code>kotlinx-coroutines-core</code> (and on Android, <code>kotlinx-coroutines-android</code>). Use IntelliJ IDEA or Android Studio to run the examples.
+            </Text>
+            <Heading level={3} className={styles.sectionTitle}>
+              How to use this guide
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              Work through the modules in order. For each challenge, try to solve it yourself first; when you&apos;re stuck or want to compare, use the <strong>See solution</strong> button to reveal a reference solution. Copy and run code in your IDE to build muscle memory.
+            </Text>
+          </Stack>
+        </Card>
+      </section>
+
       {/* Module 1 */}
       <section id="module-1-foundations" className={styles.section}>
         <Card className={styles.sectionCard}>
@@ -270,6 +514,20 @@ export default function KotlinCoroutinesPage() {
                 🔥 <strong>Challenge 1: The Breakfast Chef</strong> — Write a program that simulates making breakfast. Create <code>makeCoffee()</code> (1 second) and <code>toastBread()</code> (2 seconds). Launch them sequentially inside <code>runBlocking</code>. Bonus: print &quot;Breakfast is ready!&quot; only after both are done.
               </Text>
             </div>
+            <button
+              type="button"
+              onClick={() => toggleSolution("ch1")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("ch1")}
+            >
+              {visibleSolutions.has("ch1") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("ch1") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solution1Code} language="kotlin" readOnly height={280} />
+              </div>
+            )}
           </Stack>
         </Card>
       </section>
@@ -293,6 +551,20 @@ export default function KotlinCoroutinesPage() {
                 🔥 <strong>Challenge 2: The Racer</strong> — Create <code>getFacebookLikes()</code> (3s) and <code>getTwitterFollowers()</code> (1s). Run them in parallel and print the total count. Constraint: total execution time must be around 3 seconds, not 4.
               </Text>
             </div>
+            <button
+              type="button"
+              onClick={() => toggleSolution("ch2")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("ch2")}
+            >
+              {visibleSolutions.has("ch2") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("ch2") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solution2Code} language="kotlin" readOnly height={260} />
+              </div>
+            )}
           </Stack>
         </Card>
       </section>
@@ -316,6 +588,20 @@ export default function KotlinCoroutinesPage() {
                 🔥 <strong>Challenge 3: The Timeout</strong> — Create <code>downloadLargeFile()</code> that prints &quot;Downloading %&quot; every 500ms for 10 seconds. Wrap it in <code>withTimeoutOrNull(2000)</code>. Ensure the download stops cleanly after 2 seconds and prints &quot;Download timed out, retrying...&quot;
               </Text>
             </div>
+            <button
+              type="button"
+              onClick={() => toggleSolution("ch3")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("ch3")}
+            >
+              {visibleSolutions.has("ch3") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("ch3") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solution3Code} language="kotlin" readOnly height={280} />
+              </div>
+            )}
           </Stack>
         </Card>
       </section>
@@ -339,6 +625,20 @@ export default function KotlinCoroutinesPage() {
                 🔥 <strong>Challenge 4: The Barista</strong> — Create a <code>Channel&lt;Int&gt;</code> with capacity 2 (coffee counter). Producer makes 10 coffees fast (every 100ms). Consumer serves coffee slowly (every 1000ms). When the buffer fills, print &quot;Counter full, Barista waiting...&quot;
               </Text>
             </div>
+            <button
+              type="button"
+              onClick={() => toggleSolution("ch4")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("ch4")}
+            >
+              {visibleSolutions.has("ch4") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("ch4") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solution4Code} language="kotlin" readOnly height={320} />
+              </div>
+            )}
           </Stack>
         </Card>
       </section>
@@ -362,6 +662,20 @@ export default function KotlinCoroutinesPage() {
                 🔥 <strong>Challenge 5: The Search Engine</strong> — Create a Fan-In system. Launch <code>searchGoogle()</code>, <code>searchBing()</code>, and <code>searchYahoo()</code>. All send results into a single channel. Main should print results as they arrive: &quot;Found in Google&quot;, &quot;Found in Bing&quot;, etc.
               </Text>
             </div>
+            <button
+              type="button"
+              onClick={() => toggleSolution("ch5")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("ch5")}
+            >
+              {visibleSolutions.has("ch5") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("ch5") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solution5Code} language="kotlin" readOnly height={320} />
+              </div>
+            )}
           </Stack>
         </Card>
       </section>
@@ -385,6 +699,20 @@ export default function KotlinCoroutinesPage() {
                 🔥 <strong>Challenge 6: The Fastest Server</strong> — Create <code>getUSServer()</code> (random delay 1–3s) and <code>getEUServer()</code> (random delay 1–3s). Use <code>select</code> to return data from whichever responds first. Optionally cancel the other request.
               </Text>
             </div>
+            <button
+              type="button"
+              onClick={() => toggleSolution("ch6")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("ch6")}
+            >
+              {visibleSolutions.has("ch6") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("ch6") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solution6Code} language="kotlin" readOnly height={320} />
+              </div>
+            )}
           </Stack>
         </Card>
       </section>
@@ -459,6 +787,20 @@ export default function KotlinCoroutinesPage() {
             <Text className={styles.sectionDescription}>
               In real life, networks fail. Write a retry wrapper. Create <code>unstableNetworkCall()</code> that fails (throws) 80% of the time and succeeds (returns &quot;Success!&quot;) 20%, taking 500ms. Write <code>retryWithBackoff</code> that runs the block, and on failure waits 1s then retries, then 2s (double), max 3 retries. Launch it and see if you get &quot;Success!&quot;
             </Text>
+            <button
+              type="button"
+              onClick={() => toggleSolution("ch-retry")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("ch-retry")}
+            >
+              {visibleSolutions.has("ch-retry") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("ch-retry") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solutionRetryCode} language="kotlin" readOnly height={340} />
+              </div>
+            )}
             <div className={`${styles.infoBox} ${styles.infoBoxOrange}`}>
               <Text className={styles.infoText}>
                 Try solving this before moving to Channels. Paste your solution for a code review and then get Module 2&apos;s deep dive.
@@ -486,6 +828,20 @@ export default function KotlinCoroutinesPage() {
                 This capstone ties together coroutines, channels/flow, cancellation, and timeouts. Once you finish Challenge 1, paste your solution for review and get the Module 2 deep dive.
               </Text>
             </div>
+            <button
+              type="button"
+              onClick={() => toggleSolution("capstone")}
+              className={styles.answerKeyToggle}
+              aria-expanded={visibleSolutions.has("capstone")}
+            >
+              {visibleSolutions.has("capstone") ? t("hide-solution") : t("see-solution")}
+            </button>
+            {visibleSolutions.has("capstone") && (
+              <div className={styles.solutionBlock}>
+                <Text className={styles.sectionDescription}><strong>Solution:</strong></Text>
+                <CodeEditor code={solutionCapstoneCode} language="kotlin" readOnly height={380} />
+              </div>
+            )}
           </Stack>
         </Card>
       </section>

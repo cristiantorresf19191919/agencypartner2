@@ -1,0 +1,1273 @@
+/* ========== Root & shell ========== */
+.root {
+  border-radius: 0.875rem;
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.15),
+    0 10px 20px -5px rgb(0 0 0 / 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #0d1322 0%, #0b1020 100%);
+  padding: 0.25rem;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: 0.125rem;
+    border-radius: 0.625rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .root {
+    padding: 0.75rem;
+  }
+}
+
+/* Mobile blog: break out of card padding so editor uses full width edge-to-edge */
+.rootFullBleedMobile {
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .rootFullBleedMobile {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
+    max-width: calc(100% + 2rem);
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .rootFullBleedMobile {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    width: calc(100% + 1rem);
+    max-width: calc(100% + 1rem);
+  }
+}
+
+.rootFullscreen {
+  composes: root;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========== Loading ========== */
+.loading {
+  width: 100%;
+  height: 10rem;
+  display: grid;
+  place-items: center;
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+/* ========== Mobile static block ========== */
+.staticBlock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0b1020;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.staticBlockFullscreen {
+  composes: staticBlock;
+  flex: 1;
+  min-height: 0;
+}
+
+.staticToolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0.75rem;
+  background: #0e1628;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  min-height: 52px;
+}
+
+@media (max-width: 420px) {
+  .staticToolbar {
+    gap: 0.5rem;
+    padding: 0.5rem 0.5rem;
+    min-height: 48px;
+  }
+}
+
+.staticToolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.staticToolbarIcon {
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.staticToolbarLang {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staticToolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 420px) {
+  .staticToolbarRight {
+    gap: 0.375rem;
+  }
+}
+
+/* Hide button labels on very small screens to prevent cramping */
+.staticToolbarBtnLabel {
+  display: inline;
+}
+
+@media (max-width: 380px) {
+  .staticToolbarBtnLabel {
+    display: none;
+  }
+}
+
+.staticCodeWrap {
+  overflow: auto;
+  border: 0;
+  border-bottom-left-radius: 0.75rem;
+  border-left: 2px solid rgba(34, 211, 238, 0.2);
+  background: #0b1020;
+  min-height: 140px;
+  max-height: 320px;
+}
+
+.staticPre {
+  padding: 0.75rem 0.75rem;
+  margin: 0;
+  font-size: 13px;
+  font-family: ui-monospace, monospace;
+  line-height: 1.625;
+  color: #e2e8f0;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+@media (min-width: 640px) {
+  .staticPre {
+    font-size: 0.875rem;
+  }
+}
+
+/* ========== Editor section ========== */
+.editorSection {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(11, 16, 32, 0.8);
+  border-radius: 0.625rem;
+  overflow: hidden;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+.editorSectionFullscreen {
+  composes: editorSection;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ========== Toolbar (main editor) ========== */
+.toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.625rem 1rem;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  min-height: 52px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+@media (max-width: 480px) {
+  .toolbar {
+    gap: 0.5rem;
+    padding: 0.5rem 0.5rem;
+    min-height: 48px;
+  }
+}
+
+.toolbarLeft {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.toolbarFiles {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow-x: auto;
+  flex: 1;
+}
+
+.toolbarFile {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.toolbarFile:hover {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.toolbarFileActive {
+  composes: toolbarFile;
+  background: rgba(34, 211, 238, 0.2);
+  color: #67e8f9;
+  border-color: rgba(34, 211, 238, 0.3);
+}
+
+.toolbarFileRemove {
+  margin-left: 0.25rem;
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.toolbarFileRemove:hover {
+  color: #f87171;
+}
+
+.toolbarFileAdd {
+  composes: toolbarFile;
+}
+
+.toolbarLangBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2rem;
+  padding: 0 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-left: 3px solid rgba(34, 211, 238, 0.6);
+  flex-shrink: 0;
+}
+
+.toolbarLangDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #22d3ee;
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.5);
+  flex-shrink: 0;
+}
+
+.toolbarLangLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Example badge in toolbar (bad / good) */
+.toolbarExampleBadgeBad {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: 0.375rem;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fca5a5;
+  flex-shrink: 0;
+}
+
+.toolbarExampleBadgeGood {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: 0.375rem;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #86efac;
+  flex-shrink: 0;
+}
+
+.toolbarExampleBadgeIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+}
+
+.toolbarExampleBadgeLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Tertiary menu button (⋯) */
+.btnTertiary {
+  composes: btn;
+  min-width: 0;
+  width: 2.25rem;
+  padding: 0;
+}
+
+.btnTertiary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mobileMenuItemFontSize {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: default;
+}
+
+.mobileMenuItemLabel {
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+/* Toolbar right: actions row */
+.toolbarRight {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .toolbarRight {
+    gap: 0.375rem;
+  }
+}
+
+/* Hide secondary button labels on small mobile to prevent cramping */
+.toolbarBtnLabel {
+  display: inline;
+}
+
+@media (max-width: 400px) {
+  .toolbarBtnLabel {
+    display: none;
+  }
+}
+
+.toolbarDivider {
+  height: 1.25rem;
+  width: 1px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+
+/* ----- Toolbar buttons (unified) ----- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.5);
+  outline: none;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.btnClose {
+  composes: btn;
+  min-width: 5rem;
+  font-size: 0.875rem;
+}
+
+/* Copy button (secondary) */
+.btnCopy {
+  composes: btn;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+
+.btnCopy:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(34, 211, 238, 0.25);
+  color: #fff;
+  box-shadow: 0 0 16px -4px rgba(34, 211, 238, 0.2);
+}
+
+.btnCopy:focus-visible {
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.5);
+}
+
+@media (min-width: 640px) {
+  .btnCopy {
+    min-width: 0;
+  }
+}
+
+.btnCopyMinWidth {
+  min-width: 4.5rem;
+}
+
+/* Font size control group */
+.fontSizeGroup {
+  display: inline-flex;
+  align-items: stretch;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.fontSizeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  width: 2.25rem;
+  flex-shrink: 0;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.fontSizeBtn:focus {
+  outline: none;
+}
+
+.fontSizeBtn:focus-visible {
+  box-shadow: inset 0 0 0 2px rgba(34, 211, 238, 0.6);
+}
+
+.fontSizeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+}
+
+.fontSizeValue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #e2e8f0;
+}
+
+/* Maximize / fullscreen button */
+.btnMaximize {
+  composes: btn;
+  min-width: 4.5rem;
+}
+
+/* Reset button */
+.btnReset {
+  composes: btn;
+}
+
+/* Run button (primary) */
+.btnRun {
+  composes: btn;
+  min-width: 4.5rem;
+  background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 50%, #0ea5e9 100%);
+  color: #0c1222;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(34, 211, 238, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 400px) {
+  .btnRun {
+    min-width: 2.5rem;
+    padding: 0 0.5rem;
+  }
+}
+
+.btnRun:hover {
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+  filter: brightness(1.05);
+}
+
+.btnRun:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btnRunRunning {
+  cursor: wait;
+}
+
+.btnRunMobile {
+  composes: btnRun;
+  height: 2.5rem;
+  min-width: 5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(34, 211, 238, 0.3);
+}
+
+.btnRunKbd {
+  margin-left: 0.125rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 10px;
+}
+
+@media (max-width: 639px) {
+  .btnRunKbd {
+    display: none;
+  }
+}
+
+/* Mobile: Open editor (CTA) */
+.btnOpenEditor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  min-width: 5.5rem;
+  padding: 0 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(to right, #06b6d4, #14b8a6);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 20px -5px rgba(34, 211, 238, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: box-shadow 0.2s, filter 0.2s;
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
+
+@media (max-width: 380px) {
+  .btnOpenEditor {
+    min-width: 2.5rem;
+    padding: 0 0.5rem;
+  }
+}
+
+.btnOpenEditor:focus {
+  outline: none;
+}
+
+.btnOpenEditor:focus-visible {
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.6);
+}
+
+.btnOpenEditor:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 24px -4px rgba(34, 211, 238, 0.45);
+}
+
+.btnOpenEditor:active {
+  transform: scale(0.98);
+}
+
+/* Static block Copy button */
+.btnCopyStatic {
+  composes: btnCopy;
+  min-width: 5.5rem;
+  height: 2.5rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 380px) {
+  .btnCopyStatic {
+    min-width: 2.5rem;
+    padding: 0 0.5rem;
+  }
+}
+
+/* Mobile menu (dropdown) */
+.mobileMenuWrap {
+  position: relative;
+}
+
+.mobileMenuBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.15s;
+  touch-action: manipulation;
+}
+
+.mobileMenuBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mobileMenuBtn:active {
+  transform: scale(0.98);
+}
+
+.mobileMenuBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+/* Portal tertiary menu: above all editor content */
+.tertiaryMenuBackdropPortal {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+}
+
+.tertiaryMenuDropdownPortal {
+  min-width: 140px;
+  z-index: 9999;
+}
+
+.mobileMenuDropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.25rem;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0b1020;
+  padding: 0.25rem 0;
+  min-width: 120px;
+}
+
+.mobileMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s;
+  touch-action: manipulation;
+}
+
+.mobileMenuItem:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Icon sizes (used with Lucide) */
+.iconSm {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+.iconMd {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.iconCyan {
+  color: rgba(34, 211, 238, 0.9);
+}
+
+.iconCyanMuted {
+  color: rgba(34, 211, 238, 0.8);
+}
+
+.iconEmerald {
+  color: rgba(52, 211, 153, 0.8);
+}
+
+.iconSlate {
+  color: #94a3b8;
+}
+
+.iconRed {
+  color: #f87171;
+}
+
+.iconCopyOpacity {
+  opacity: 0.9;
+}
+
+/* ========== Editor area ========== */
+.editorArea {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.editorContainer {
+  min-height: 0;
+  width: 100%;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ========== Resizable layout ========== */
+.resizerVertical {
+  flex-shrink: 0;
+  height: 10px;
+  min-height: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.08) 100%);
+  cursor: ns-resize;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resizerVertical:hover,
+.resizerVertical:active {
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.15) 0%, rgba(34, 211, 238, 0.3) 100%);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+}
+
+.resizerVertical::after {
+  content: "";
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.resizerVertical:hover::after,
+.resizerVertical:active::after {
+  background: rgba(34, 211, 238, 0.8);
+}
+
+.resizerHorizontal {
+  flex-shrink: 0;
+  width: 10px;
+  min-width: 10px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.08) 100%);
+  cursor: ew-resize;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resizerHorizontal:hover,
+.resizerHorizontal:active {
+  background: linear-gradient(90deg, rgba(34, 211, 238, 0.15) 0%, rgba(34, 211, 238, 0.3) 100%);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+}
+
+.resizerHorizontal::after {
+  content: "";
+  width: 4px;
+  height: 28px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.resizerHorizontal:hover::after,
+.resizerHorizontal:active::after {
+  background: rgba(34, 211, 238, 0.8);
+}
+
+.resizableBottomPanel {
+  display: flex;
+  flex-direction: row;
+  min-height: 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #0a0f1a 0%, #0b1020 100%);
+}
+
+/* When both Preview and Console are collapsed: single compact row, no empty space */
+.resizableBottomPanelCollapsed {
+  flex-shrink: 0;
+  min-height: 48px;
+  max-height: 48px;
+}
+
+.resizableBottomPanelCollapsed .previewHeader {
+  padding: 0.5rem 0.75rem;
+  min-height: 48px;
+}
+
+.previewColResizable {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.previewColCollapsed {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.previewColCollapsed .previewBody {
+  display: none;
+}
+
+/* When both panels collapsed: tab bar style, equal width tabs */
+.previewColCollapsedBar {
+  flex: 1;
+  min-width: 0;
+}
+
+.previewColCollapsedBar:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ========== Preview section ========== */
+.previewSection {
+  margin-top: 1rem;
+  overflow: hidden;
+  border-radius: 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #0d1322 0%, #0b1020 100%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+}
+
+.previewSectionFullscreen {
+  composes: previewSection;
+  margin-top: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.previewGrid {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .previewGrid {
+    grid-template-columns: 1fr 1fr;
+    min-width: 0;
+  }
+}
+
+.previewGridFullscreen {
+  composes: previewGrid;
+  flex: 1;
+  min-height: 0;
+}
+
+.previewCol {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 768px) {
+  .previewCol {
+    min-height: 16rem;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+.previewColConsole {
+  composes: previewCol;
+}
+
+.previewHeader {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.8);
+  padding: 0.5rem 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .previewHeader {
+    padding: 0.625rem 1rem;
+  }
+}
+
+.previewHeaderLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.previewHeaderBadge {
+  margin-left: auto;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.125rem 0.5rem;
+  font-size: 10px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #94a3b8;
+}
+
+.previewBody {
+  position: relative;
+  display: flex;
+  min-height: 8rem;
+  flex: 1;
+  flex-direction: column;
+  padding: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .previewBody {
+    min-height: 14rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .previewBody {
+    min-height: 16rem;
+  }
+}
+
+.previewEmpty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.625rem;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.5);
+  padding: 1rem 0.5rem;
+  min-height: 6rem;
+}
+
+@media (min-width: 640px) {
+  .previewEmpty {
+    padding: 2rem 0;
+    min-height: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .previewEmpty {
+    padding: 2.5rem 0;
+  }
+}
+
+.previewEmptyIconWrap {
+  margin-bottom: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(34, 211, 238, 0.08);
+  padding: 0.625rem;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+}
+
+@media (min-width: 640px) {
+  .previewEmptyIconWrap {
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+}
+
+.previewEmptyIcon {
+  color: #22d3ee;
+  opacity: 0.9;
+}
+
+.previewEmptyIconSm {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .previewEmptyIconSm {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+.previewEmptyText {
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+@media (min-width: 640px) {
+  .previewEmptyText {
+    font-size: 0.875rem;
+  }
+}
+
+.previewEmptyHint {
+  margin-top: 0.25rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  color: #64748b;
+}
+
+@media (min-width: 640px) {
+  .previewEmptyHint {
+    font-size: 0.75rem;
+  }
+}
+
+.previewIframe {
+  min-height: 10rem;
+  width: 100%;
+  flex: 1;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0e1628;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.previewError {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  background: rgba(239, 68, 68, 0.08);
+  padding: 0.625rem 0.875rem;
+}
+
+.previewErrorIcon {
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  color: #f87171;
+}
+
+.previewErrorText {
+  font-size: 0.8125rem;
+  color: #fecaca;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+
+.consoleEmptyIcon {
+  margin-bottom: 0.75rem;
+  color: #475569;
+}
+
+@media (min-width: 640px) {
+  .consoleEmptyIcon {
+    margin-bottom: 1rem;
+  }
+}
+
+.consoleEmptyIconLg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .consoleEmptyIconLg {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.consoleLogs {
+  flex: 1;
+  overflow: auto;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #080c14;
+  padding: 0.5rem 0.75rem;
+  font-family: ui-monospace, "SF Mono", Monaco, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
+
+.consoleLine {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 0.375rem 0;
+}
+
+.consoleLine:last-child {
+  border-bottom: none;
+}
+
+.consoleLineNum {
+  user-select: none;
+  padding-right: 0.5rem;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========== Fullscreen portal ========== */
+.fullscreenPortal {
+  /* class used for portal root; layout via inline style */
+}
+
+.fullscreenInner {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========== Placeholder when editor is fullscreen ========== */
+.fullscreenPlaceholder {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(11, 16, 32, 0.8);
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  min-height: 48px;
+}

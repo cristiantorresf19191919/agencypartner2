@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search as SearchIcon, Close as CloseIcon } from "@mui/icons-material";
 import { useLocale } from "@/lib/useLocale";
@@ -12,7 +11,6 @@ export default function SearchSection() {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
 
@@ -20,7 +18,9 @@ export default function SearchSection() {
     e.preventDefault();
     if (query.trim()) {
       const searchPath = createLocalizedPath(`/developer-section/search?q=${encodeURIComponent(query.trim())}`);
-      router.push(searchPath);
+      // Use full page navigation so the search page renders correctly. Client-side
+      // router.push to the same path with new search params was causing a black screen.
+      window.location.href = searchPath;
       setIsFocused(false);
     }
   };

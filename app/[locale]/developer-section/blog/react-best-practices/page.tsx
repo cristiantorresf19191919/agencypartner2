@@ -55,13 +55,20 @@ export default function ReactBestPracticesPage() {
           {postContent?.subtitle ||
             "Comprehensive performance optimization guide for React and Next.js applications from Vercel Engineering. 45+ rules across 8 categories: eliminating waterfalls, bundle size, server-side performance, client data fetching, re-renders, rendering, JavaScript micro-optimizations, and advanced patterns. Each rule includes editable code examples with live preview."}
         </Text>
+        {postContent?.introParagraph && (
+          <Text className={`${styles.sectionDescription} mt-3`}>
+            {postContent.introParagraph}
+          </Text>
+        )}
       </div>
 
-      <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
-        <Text className={styles.infoText}>
-          <strong>Categories by priority:</strong> 1. Eliminating Waterfalls (CRITICAL) • 2. Bundle Size (CRITICAL) • 3. Server-Side (HIGH) • 4. Client Data Fetching (MEDIUM-HIGH) • 5. Re-render (MEDIUM) • 6. Rendering (MEDIUM) • 7. JavaScript (LOW-MEDIUM) • 8. Advanced (LOW). All code blocks are editable—try Run (⌘/Ctrl+Enter) to see the preview.
-        </Text>
-      </div>
+      {(postContent?.categoriesDescription) && (
+        <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
+          <Text className={styles.infoText}>
+            {postContent.categoriesDescription}
+          </Text>
+        </div>
+      )}
 
       {/* 1. Eliminating Waterfalls */}
       <section id="eliminating-waterfalls" className={styles.section}>
@@ -75,21 +82,71 @@ export default function ReactBestPracticesPage() {
             </Text>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Promise.all() for Independent Operations</Heading>
+            <Text className="text-white/80 text-sm mb-3">Run both panels to see the difference: the bad example waits for each fetch one after another; the good example runs them in parallel.</Text>
             <CodeComparison
-              language="typescript"
-              wrong={`const user = await fetchUser()
-const posts = await fetchPosts()
-const comments = await fetchComments()`}
-              good={`const [user, posts, comments] = await Promise.all([
-  fetchUser(),
-  fetchPosts(),
-  fetchComments()
-])`}
+              comparisonId="waterfalls-promise-all"
+              language="tsx"
+              whatToNoticeBad={[
+                "Three sequential awaits: each call waits for the previous to finish.",
+                "Total time = sum of all latencies (e.g. 300ms + 300ms + 300ms).",
+              ]}
+              whatToNoticeGood={[
+                "Promise.all() starts all fetches at once.",
+                "Total time = slowest single request (e.g. ~300ms).",
+              ]}
+              wrong={`// ❌ Sequential: each await blocks the next (waterfall)
+const fetchUser = () => new Promise(r => setTimeout(() => r({ name: 'User' }), 400));
+const fetchPosts = () => new Promise(r => setTimeout(() => r([{ id: 1 }]), 400));
+const fetchComments = () => new Promise(r => setTimeout(() => r([{ id: 1 }]), 400));
+
+function App() {
+  const [result, setResult] = React.useState(null);
+  const [timing, setTiming] = React.useState('');
+  React.useEffect(() => {
+    const start = performance.now();
+    (async () => {
+      const user = await fetchUser();
+      const posts = await fetchPosts();
+      const comments = await fetchComments();
+      setResult({ user, posts, comments });
+      setTiming(((performance.now() - start) / 1000).toFixed(2) + 's');
+    })();
+  }, []);
+  return <div>Sequential: {timing || 'loading...'} (3 × 400ms)</div>;
+}
+export default App;`}
+              good={`// ✅ Parallel: all fetches start together
+const fetchUser = () => new Promise(r => setTimeout(() => r({ name: 'User' }), 400));
+const fetchPosts = () => new Promise(r => setTimeout(() => r([{ id: 1 }]), 400));
+const fetchComments = () => new Promise(r => setTimeout(() => r([{ id: 1 }]), 400));
+
+function App() {
+  const [result, setResult] = React.useState(null);
+  const [timing, setTiming] = React.useState('');
+  React.useEffect(() => {
+    const start = performance.now();
+    Promise.all([fetchUser(), fetchPosts(), fetchComments()]).then(([user, posts, comments]) => {
+      setResult({ user, posts, comments });
+      setTiming(((performance.now() - start) / 1000).toFixed(2) + 's');
+    });
+  }, []);
+  return <div>Parallel: {timing || 'loading...'} (~400ms)</div>;
+}
+export default App;`}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Defer Await Until Needed</Heading>
             <CodeComparison
+              comparisonId="waterfalls-defer-await"
               language="typescript"
+              whatToNoticeBad={[
+                "await runs before the skip check: we always fetch userData even when we will skip.",
+                "Wastes latency and server work when skipProcessing is true.",
+              ]}
+              whatToNoticeGood={[
+                "Early return before any await: no fetch when we are going to skip.",
+                "Only fetch when we actually need the data.",
+              ]}
               wrong={`async function handleRequest(userId: string, skipProcessing: boolean) {
   const userData = await fetchUserData(userId)
   if (skipProcessing) return { skipped: true }
@@ -104,7 +161,16 @@ const comments = await fetchComments()`}
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Dependency-Based Parallelization (better-all)</Heading>
             <CodeComparison
+              comparisonId="waterfalls-better-all"
               language="typescript"
+              whatToNoticeBad={[
+                "First we wait for user and config; then we wait for profile (depends on user.id).",
+                "Two round-trips: cannot start fetchProfile until user is ready.",
+              ]}
+              whatToNoticeGood={[
+                "better-all runs independent tasks in parallel and resolves dependencies (profile needs user).",
+                "user and config start immediately; profile starts as soon as user is available.",
+              ]}
               wrong={`const [user, config] = await Promise.all([fetchUser(), fetchConfig()])
 const profile = await fetchProfile(user.id)`}
               good={`import { all } from 'better-all'
@@ -120,7 +186,16 @@ const { user, config, profile } = await all({
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Prevent Waterfall Chains in API Routes</Heading>
             <CodeComparison
+              comparisonId="waterfalls-api-routes"
               language="typescript"
+              whatToNoticeBad={[
+                "Each await blocks the next: session → config → data in sequence.",
+                "Total latency = sum of auth + fetchConfig + fetchData.",
+              ]}
+              whatToNoticeGood={[
+                "Start auth and fetchConfig immediately; only await session before fetchData (it depends on session).",
+                "config loads in parallel with session; then data loads using session.user.id.",
+              ]}
               wrong={`export async function GET(request: Request) {
   const session = await auth()
   const config = await fetchConfig()
@@ -141,7 +216,16 @@ const { user, config, profile } = await all({
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Strategic Suspense Boundaries</Heading>
             <CodeComparison
+              comparisonId="waterfalls-suspense"
               language="tsx"
+              whatToNoticeBad={[
+                "Page is async and awaits fetchData: nothing renders until data is ready.",
+                "User sees a blank page until the slowest data loads (blocking).",
+              ]}
+              whatToNoticeGood={[
+                "Suspense wraps only the part that needs data; Sidebar, Header, Footer render immediately.",
+                "DataDisplay fetches inside; Suspense shows Skeleton until ready (streaming).",
+              ]}
               wrong={`async function Page() {
   const data = await fetchData()
   return (
@@ -188,6 +272,7 @@ async function DataDisplay() {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Avoid Barrel File Imports</Heading>
             <CodeComparison
+              comparisonId="bundle-barrel"
               language="tsx"
               wrong={`import { Check, X, Menu } from 'lucide-react'
 import { Button, TextField } from '@mui/material'`}
@@ -200,6 +285,7 @@ import TextField from '@mui/material/TextField'
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Dynamic Imports for Heavy Components</Heading>
             <CodeComparison
+              comparisonId="bundle-dynamic"
               language="tsx"
               wrong={`import { MonacoEditor } from './monaco-editor'
 
@@ -220,6 +306,7 @@ function CodePanel({ code }) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Defer Non-Critical Third-Party Libraries</Heading>
             <CodeComparison
+              comparisonId="bundle-defer-thirdparty"
               language="tsx"
               wrong={`import { Analytics } from '@vercel/analytics/react'
 
@@ -294,6 +381,7 @@ export default function RootLayout({ children }) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Per-Request Deduplication with React.cache()</Heading>
             <CodeComparison
+              comparisonId="server-cache"
               language="typescript"
               wrong={`const getUser = cache(async (params: { uid: number }) => {
   return await db.user.findUnique({ where: { id: params.uid } })
@@ -337,6 +425,7 @@ export async function getUser(id: string) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Minimize Serialization at RSC Boundaries</Heading>
             <CodeComparison
+              comparisonId="server-serialization"
               language="tsx"
               wrong={`async function Page() {
   const user = await fetchUser()
@@ -358,6 +447,7 @@ function Profile({ name }) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Parallel Data Fetching with Composition</Heading>
             <CodeComparison
+              comparisonId="server-parallel"
               language="tsx"
               wrong={`export default async function Page() {
   const header = await fetchHeader()
@@ -392,6 +482,7 @@ export default function Page() {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use after() for Non-Blocking Operations</Heading>
             <CodeComparison
+              comparisonId="server-after"
               language="tsx"
               wrong={`export async function POST(request: Request) {
   await updateDatabase(request)
@@ -428,6 +519,7 @@ export async function POST(request: Request) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Use SWR for Automatic Deduplication</Heading>
             <CodeComparison
+              comparisonId="client-swr"
               language="tsx"
               wrong={`function UserList() {
   const [users, setUsers] = useState([])
@@ -475,6 +567,7 @@ function useKeyboardShortcut(key, callback) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Passive Event Listeners for Scroll</Heading>
             <CodeComparison
+              comparisonId="client-passive"
               language="typescript"
               wrong={`document.addEventListener('touchstart', handleTouch)
 document.addEventListener('wheel', handleWheel)`}
@@ -487,6 +580,7 @@ document.addEventListener('wheel', handleWheel, { passive: true })`}
               Add version prefix to keys and store only needed fields. Prevents schema conflicts and accidental storage of sensitive data. Always wrap in try-catch as getItem/setItem throw in incognito mode or when quota is exceeded.
             </Text>
             <CodeComparison
+              comparisonId="client-localstorage"
               language="typescript"
               wrong={`// No version, stores everything, no error handling
 localStorage.setItem('userConfig', JSON.stringify(fullUserObject))
@@ -552,6 +646,7 @@ function cachePrefs(user: FullUser) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Defer State Reads to Usage Point</Heading>
             <CodeComparison
+              comparisonId="rerender-share"
               language="tsx"
               wrong={`function ShareButton({ chatId }) {
   const searchParams = useSearchParams()
@@ -571,6 +666,7 @@ function cachePrefs(user: FullUser) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Extract to Memoized Components</Heading>
             <CodeComparison
+              comparisonId="rerender-profile"
               language="tsx"
               wrong={`function Profile({ user, loading }) {
   const avatar = useMemo(() => <Avatar id={computeAvatarId(user)} />, [user])
@@ -682,6 +778,7 @@ export const App = () => {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Narrow Effect Dependencies</Heading>
             <CodeComparison
+              comparisonId="rerender-effect-deps"
               language="tsx"
               wrong={`useEffect(() => { console.log(user.id) }, [user])`}
               good={`useEffect(() => { console.log(user.id) }, [user.id])`}
@@ -692,6 +789,7 @@ export const App = () => {
               Subscribe to derived boolean state instead of continuous values to reduce re-render frequency. Re-renders only when the boolean changes, not on every pixel change.
             </Text>
             <CodeComparison
+              comparisonId="rerender-sidebar"
               language="tsx"
               wrong={`function Sidebar() {
   const width = useWindowWidth()  // updates continuously
@@ -783,6 +881,7 @@ export const App = () => {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Functional setState Updates</Heading>
             <CodeComparison
+              comparisonId="rerender-callback"
               language="tsx"
               wrong={`const addItems = useCallback((newItems) => {
   setItems([...items, ...newItems])
@@ -899,6 +998,7 @@ export const App = () => <TodoList />`}
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Lazy State Initialization</Heading>
             <CodeComparison
+              comparisonId="rerender-settings"
               language="tsx"
               wrong={`const [settings, setSettings] = useState(
   JSON.parse(localStorage.getItem('settings') || '{}')
@@ -1018,6 +1118,7 @@ export const App = () => <SettingsPanel />`}
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Transitions for Non-Urgent Updates</Heading>
             <CodeComparison
+              comparisonId="rerender-transitions"
               language="tsx"
               wrong={`useEffect(() => {
   const handler = () => setScrollY(window.scrollY)
@@ -1129,6 +1230,7 @@ export const App = () => <ScrollTracker />`}
               Many browsers don't have hardware acceleration for CSS3 animations on SVG elements. Wrap SVG in a &lt;div&gt; and animate the wrapper instead for GPU-accelerated animations.
             </Text>
             <CodeComparison
+              comparisonId="rendering-spinner"
               language="tsx"
               wrong={`function LoadingSpinner() {
   return (
@@ -1298,6 +1400,7 @@ export const App = () => {
               Extract static JSX outside components to avoid re-creation on every render. Especially helpful for large and static SVG nodes.
             </Text>
             <CodeComparison
+              comparisonId="rendering-skeleton"
               language="tsx"
               wrong={`function LoadingSkeleton() {
   return <div className="animate-pulse h-20 bg-gray-200" />
@@ -1328,6 +1431,7 @@ function Container() {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Prevent Hydration Mismatch Without Flickering</Heading>
             <CodeComparison
+              comparisonId="rendering-theme"
               language="tsx"
               wrong={`function ThemeWrapper({ children }) {
   const [theme, setTheme] = useState('light')
@@ -1372,6 +1476,7 @@ function Dropdown({ isOpen }) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Explicit Conditional (Ternary, Not &&)</Heading>
             <CodeComparison
+              comparisonId="rendering-badge"
               language="tsx"
               wrong={`function Badge({ count }) {
   return <div>{count && <span className="badge">{count}</span>}</div>
@@ -1499,6 +1604,7 @@ export const App = () => {
               Reduce SVG coordinate precision to decrease file size. The optimal precision depends on the viewBox size, but in general reducing precision should be considered.
             </Text>
             <CodeComparison
+              comparisonId="js-precision"
               language="html"
               wrong={`<!-- Excessive precision: 15 bytes -->
 <path d="M 10.293847 20.847362 L 30.938472 40.192837" />`}
@@ -1575,6 +1681,7 @@ export const App = () => {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Batch DOM CSS Changes</Heading>
             <CodeComparison
+              comparisonId="js-width"
               language="typescript"
               wrong={`element.style.width = '100px'
 const w = element.offsetWidth
@@ -1586,6 +1693,7 @@ const { width, height } = element.getBoundingClientRect()`}
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Set/Map for O(1) Lookups</Heading>
             <CodeComparison
+              comparisonId="js-includes"
               language="typescript"
               wrong={`const allowedIds = ['a', 'b', 'c']
 items.filter(item => allowedIds.includes(item.id))`}
@@ -1595,6 +1703,7 @@ items.filter(item => allowedIds.has(item.id))`}
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Build Index Maps for Repeated Lookups</Heading>
             <CodeComparison
+              comparisonId="js-map"
               language="typescript"
               wrong={`return orders.map(order => ({
   ...order,
@@ -1609,6 +1718,7 @@ return orders.map(order => ({
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Cache Property Access in Loops</Heading>
             <CodeComparison
+              comparisonId="js-for"
               language="typescript"
               wrong={`for (let i = 0; i < arr.length; i++) {
   process(obj.config.settings.value)
@@ -1620,6 +1730,7 @@ for (let i = 0; i < len; i++) process(value)`}
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Cache Repeated Function Calls</Heading>
             <CodeComparison
+              comparisonId="js-map-sideeffect"
               language="typescript"
               wrong={`projects.map(p => {
   const slug = slugify(p.name)
@@ -1660,6 +1771,7 @@ function setLocalStorage(key, value) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Combine Multiple Array Iterations</Heading>
             <CodeComparison
+              comparisonId="js-filter"
               language="typescript"
               wrong={`const admins = users.filter(u => u.isAdmin)
 const testers = users.filter(u => u.isTester)
@@ -1674,6 +1786,7 @@ for (const user of users) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Early Length Check for Array Comparisons</Heading>
             <CodeComparison
+              comparisonId="js-haschanges"
               language="typescript"
               wrong={`function hasChanges(current, original) {
   return current.sort().join() !== original.sort().join()
@@ -1688,6 +1801,7 @@ for (const user of users) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Early Return from Functions</Heading>
             <CodeComparison
+              comparisonId="js-validate"
               language="typescript"
               wrong={`function validateUsers(users) {
   let hasError = false, errorMessage = ''
@@ -1708,6 +1822,7 @@ for (const user of users) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Hoist RegExp Creation</Heading>
             <CodeComparison
+              comparisonId="advanced-highlighter"
               language="tsx"
               wrong={`function Highlighter({ text, query }) {
   const regex = new RegExp(\`(\${query})\`, 'gi')
@@ -1726,6 +1841,7 @@ for (const user of users) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Loop for Min/Max Instead of Sort</Heading>
             <CodeComparison
+              comparisonId="advanced-getlatest"
               language="typescript"
               wrong={`function getLatestProject(projects) {
   const sorted = [...projects].sort((a, b) => b.updatedAt - a.updatedAt)
@@ -1743,6 +1859,7 @@ for (const user of users) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use toSorted() Instead of sort()</Heading>
             <CodeComparison
+              comparisonId="advanced-usememo"
               language="tsx"
               wrong={`const sorted = useMemo(
   () => users.sort((a, b) => a.name.localeCompare(b.name)),
@@ -1770,6 +1887,7 @@ for (const user of users) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Store Event Handlers in Refs</Heading>
             <CodeComparison
+              comparisonId="advanced-windowevent"
               language="tsx"
               wrong={`function useWindowEvent(event, handler) {
   useEffect(() => {
@@ -1790,6 +1908,7 @@ for (const user of users) {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">useLatest for Stable Callback Refs</Heading>
             <CodeComparison
+              comparisonId="advanced-search"
               language="tsx"
               wrong={`function SearchInput({ onSearch }) {
   const [query, setQuery] = useState('')

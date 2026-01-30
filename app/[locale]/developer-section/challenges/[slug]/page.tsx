@@ -22,6 +22,7 @@ import confetti from "canvas-confetti";
 import styles from "../ChallengesPage.module.css";
 import playStyles from "./ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
+import { ensureEmmetJSX } from "@/lib/emmetMonaco";
 
 const PISTON_EXECUTE_URL = "https://emkc.org/api/v2/piston/execute";
 
@@ -225,6 +226,10 @@ export default function ChallengePlayPage() {
     formatOnType: true,
   }), [lang]);
 
+  const handleBeforeMount = (monaco: any) => {
+    ensureEmmetJSX(monaco);
+  };
+
   const handleEditorMount: OnMount = (editor, monaco) => {
     monacoRef.current = { editor, monaco };
     monaco.editor.setTheme("vs-dark");
@@ -299,6 +304,7 @@ export default function ChallengePlayPage() {
                 value={code}
                 onChange={(v) => setCode(v ?? "")}
                 options={editorOptions}
+                beforeMount={handleBeforeMount}
                 onMount={handleEditorMount}
                 theme="vs-dark"
               />

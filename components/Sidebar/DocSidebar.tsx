@@ -61,9 +61,11 @@ export interface DocSidebarProps {
   onMobileClose?: () => void;
   /** When true, do not render the floating mobile trigger; parent opens the drawer. */
   hideMobileTrigger?: boolean;
+  /** Called when desktop sidebar is collapsed or expanded so layout can adjust main content. */
+  onSidebarOpenChange?: (open: boolean) => void;
 }
 
-function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobileTrigger = false }: DocSidebarProps = {}) {
+function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobileTrigger = false, onSidebarOpenChange }: DocSidebarProps = {}) {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const pathname = usePathname();
@@ -76,6 +78,11 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
   const mobileOpen = isControlled ? controlledMobileOpen : internalMobileOpen;
   const setMobileOpen = isControlled ? (open: boolean) => { if (!open) onMobileClose?.(); } : setInternalMobileOpen;
   const prevPathnameRef = useRef(pathname);
+
+  // Notify parent of sidebar open state (for layout margin) when it changes or on mount
+  useEffect(() => {
+    onSidebarOpenChange?.(sidebarOpen);
+  }, [sidebarOpen, onSidebarOpenChange]);
 
   // Close controlled mobile drawer when route changes (e.g. user clicked a link)
   useEffect(() => {
@@ -609,12 +616,23 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
     });
   };
 
+  /** When collapsed: expand sidebar and open this section. When open: just toggle section. */
+  const handleSectionHeaderClick = (sectionKey: string) => {
+    if (!sidebarOpen) {
+      setSidebarOpen(true);
+      onSidebarOpenChange?.(true);
+      setExpandedSections((prev) => new Set(prev).add(sectionKey));
+    } else {
+      toggleSection(sectionKey);
+    }
+  };
+
   const sidebarContent = (
     <Box
       sx={{
         width: sidebarOpen ? 320 : 80,
         height: "100%",
-        minHeight: "100vh",
+        minHeight: 0,
         display: "flex",
         flexDirection: "column",
         bgcolor: alpha("#1a1a2e", 0.95),
@@ -624,15 +642,17 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
         overflow: "hidden",
       }}
     >
-      {/* Toggle Button */}
+      {/* Toggle Button — visible header row so expand/collapse is easy to find */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: sidebarOpen ? "space-between" : "center",
-          p: 2,
-          minHeight: 64,
+          p: 1.5,
+          minHeight: 56,
+          flexShrink: 0,
           borderBottom: `1px solid ${alpha("#ffffff", 0.1)}`,
+          bgcolor: alpha("#000000", 0.2),
         }}
       >
         {sidebarOpen && (
@@ -641,7 +661,7 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
             sx={{
               color: "#ffffff",
               fontWeight: 700,
-              fontSize: "1.1rem",
+              fontSize: "1rem",
               letterSpacing: "0.5px",
             }}
           >
@@ -649,11 +669,20 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
           </Typography>
         )}
         <IconButton
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+          onClick={() => {
+            const next = !sidebarOpen;
+            setSidebarOpen(next);
+            onSidebarOpenChange?.(next);
+          }}
+          aria-label={sidebarOpen ? (t("sidebar-collapse") || "Collapse sidebar") : (t("sidebar-expand") || "Expand sidebar")}
+          title={sidebarOpen ? (t("sidebar-collapse") || "Collapse sidebar") : (t("sidebar-expand") || "Expand sidebar")}
           sx={{
             color: "#ffffff",
+            bgcolor: alpha("#ffffff", 0.08),
+            border: `1px solid ${alpha("#ffffff", 0.15)}`,
             "&:hover": {
-              bgcolor: alpha("#ffffff", 0.1),
+              bgcolor: alpha("#ffffff", 0.15),
+              borderColor: alpha("#ffffff", 0.25),
             },
           }}
         >
@@ -721,7 +750,8 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
               >
                 {/* Section Header */}
                 <ListItemButton
-                  onClick={() => toggleSection(sectionKey)}
+                  onClick={() => handleSectionHeaderClick(sectionKey)}
+                  title={!sidebarOpen ? `${sectionTitle} — ${t("sidebar-expand") || "Click to expand"}` : undefined}
                   sx={{
                     py: 2.5,
                     px: sidebarOpen ? 2.5 : 1.5,
@@ -884,14 +914,14 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
 
   return (
     <>
-      {/* Desktop Sidebar */}
+      {/* Desktop Sidebar — starts below header so toggle is visible */}
       <Box
         sx={{
           display: { xs: "none", lg: "block" },
           position: "fixed",
           left: 0,
-          top: 0,
-          height: "100vh",
+          top: 64,
+          height: "calc(100vh - 64px)",
           flexShrink: 0,
           zIndex: 100,
         }}

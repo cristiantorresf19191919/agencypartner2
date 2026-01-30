@@ -6,13 +6,15 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from 
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ChevronDown, Code2 } from "lucide-react";
+import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ChevronDown, ChevronRight, ChevronUp, Code2, MoreVertical, Check, XCircle } from "lucide-react";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
+import { ensureEmmetJSX } from "@/lib/emmetMonaco";
+import styles from "./CodeEditor.module.css";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
-  loading: () => <div className="w-full h-40 grid place-items-center text-sm text-slate-300">Loading editor…</div>,
+  loading: () => <div className={styles.loading}>Loading editor…</div>,
 });
 
 /** Mobile breakpoint: editor uses static block by default and contained layout. */
@@ -50,6 +52,16 @@ interface CodeEditorProps {
   enableMultiFile?: boolean;
   /** Auto-inject React imports when React hooks/JSX are detected */
   autoInjectImports?: boolean;
+  /** When true, Preview and Console panels start collapsed (blog/comparison mode). */
+  collapsePanelsByDefault?: boolean;
+  /** Show a badge in the toolbar: "bad" = avoid, "good" = recommended. */
+  exampleVariant?: "bad" | "good";
+  /** Label for the badge when exampleVariant is set (e.g. "Ejemplo a evitar"). */
+  exampleBadgeLabel?: string;
+  /** Max height (px) for the code area; internal scroll. Desktop default 400, mobile 280. */
+  maxCodeHeight?: number;
+  /** Use compact toolbar: primary Run, secondary Copy, tertiary (Reset, font, Maximize) in ⋯ menu. */
+  compactToolbar?: boolean;
 }
 
 const REACT_UMD = `
@@ -84,14 +96,18 @@ const detectAndInjectImports = (code: string, isReactLike: boolean): string => {
       imports.push(...Array.from(hooks).sort());
     }
   }
-  // React is needed for JSX or React.* usage
-  if ((usesJSX || usesReact) && !imports.includes("React")) {
-    imports.unshift("React");
-  }
+  // React is needed for JSX or React.* usage (default export, not named)
+  const needsDefaultReact = (usesJSX || usesReact) && !imports.includes("React");
 
-  if (imports.length === 0) return code;
+  if (imports.length === 0 && !needsDefaultReact) return code;
 
-  const importStatement = `import { ${imports.join(", ")} } from "react";\n\n`;
+  // Use default import for React so preview iframe (UMD) works: import React, { useState } from "react"
+  const defaultPart = needsDefaultReact ? "React" : "";
+  const namedPart =
+    imports.length > 0
+      ? (defaultPart ? ", " : "") + "{ " + imports.join(", ") + " }"
+      : "";
+  const importStatement = `import ${defaultPart}${namedPart} from "react";\n\n`;
   return importStatement + code;
 };
 
@@ -106,6 +122,11 @@ export function CodeEditor({
   disableLinting = true,
   enableMultiFile = false,
   autoInjectImports = true,
+  collapsePanelsByDefault = false,
+  exampleVariant,
+  exampleBadgeLabel,
+  maxCodeHeight,
+  compactToolbar = false,
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
   const [isFullscreen, setIsFullscreen] = useState(defaultFullscreen);
@@ -120,10 +141,80 @@ export function CodeEditor({
   const [activeFileIndex, setActiveFileIndex] = useState(0);
   const [mobileEditorOpen, setMobileEditorOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [tertiaryMenuOpen, setTertiaryMenuOpen] = useState(false);
+  const [tertiaryMenuRect, setTertiaryMenuRect] = useState<DOMRect | null>(null);
   const [copyDone, setCopyDone] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const editorContainerRef = useRef<HTMLDivElement | null>(null);
+  const editorInstanceRef = useRef<{ layout: () => void } | null>(null);
+  const tertiaryMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [fullscreenEditorHeight, setFullscreenEditorHeight] = useState(400);
   const uniqueId = useId();
   const isMobile = useIsMobile();
+
+  // Resizable layout: editor gets more space by default (70%), Preview/Console split 50/50
+  const [editorPanelRatio, setEditorPanelRatio] = useState(0.7);
+  const [previewConsoleRatio, setPreviewConsoleRatio] = useState(0.5);
+  const [previewCollapsed, setPreviewCollapsed] = useState(collapsePanelsByDefault);
+  const [consoleCollapsed, setConsoleCollapsed] = useState(collapsePanelsByDefault);
+  const [resizingVertical, setResizingVertical] = useState(false);
+  const [resizingHorizontal, setResizingHorizontal] = useState(false);
+  const resizableContainerRef = useRef<HTMLDivElement | null>(null);
+  const lastInitialCodeRef = useRef<string | null>(null);
+
+  const handleVerticalResize = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startRatio = editorPanelRatio;
+    const onMove = (moveEvent: MouseEvent) => {
+      const el = resizableContainerRef.current;
+      if (!el) return;
+      const h = el.getBoundingClientRect().height;
+      const delta = moveEvent.clientY - startY;
+      const ratioDelta = delta / h;
+      const next = Math.max(0.25, Math.min(0.85, startRatio + ratioDelta));
+      setEditorPanelRatio(next);
+    };
+    const onUp = () => {
+      setResizingVertical(false);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    setResizingVertical(true);
+    document.body.style.cursor = "ns-resize";
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, [editorPanelRatio]);
+
+  const handleHorizontalResize = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startRatio = previewConsoleRatio;
+    const onMove = (moveEvent: MouseEvent) => {
+      const el = resizableContainerRef.current;
+      if (!el) return;
+      const w = el.getBoundingClientRect().width;
+      const delta = moveEvent.clientX - startX;
+      const ratioDelta = delta / w;
+      const next = Math.max(0.2, Math.min(0.8, startRatio + ratioDelta));
+      setPreviewConsoleRatio(next);
+    };
+    const onUp = () => {
+      setResizingHorizontal(false);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    setResizingHorizontal(true);
+    document.body.style.cursor = "ew-resize";
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, [previewConsoleRatio]);
 
   const normalizedLang = language.toLowerCase();
   const isKotlin = normalizedLang.includes("kotlin");
@@ -138,7 +229,41 @@ export function CodeEditor({
   }, [isFullscreen]);
 
   useEffect(() => {
-    // Auto-inject imports if enabled and missing
+    if (!isFullscreen || !editorContainerRef.current) return;
+    const el = editorContainerRef.current;
+    const updateHeight = () => setFullscreenEditorHeight(el.clientHeight);
+    updateHeight();
+    const ro = new ResizeObserver(updateHeight);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [isFullscreen, showFullscreenPortal]);
+
+  // When editor container scrolls into view, re-layout Monaco so code is visible (fixes blank editor when below fold)
+  useEffect(() => {
+    const el = editorContainerRef.current;
+    const useStaticBlock = isMobile && !mobileEditorOpen;
+    if (!el || useStaticBlock) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            editorInstanceRef.current?.layout();
+            break;
+          }
+        }
+      },
+      { root: null, rootMargin: "0px", threshold: 0.1 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [isMobile, mobileEditorOpen]);
+
+  // Only sync initialCode to code when the prop value actually changes (not when other deps change).
+  // This prevents the editor from being wiped when parent re-renders or when user collapses/expands panels.
+  useEffect(() => {
+    if (lastInitialCodeRef.current !== null && initialCode === lastInitialCodeRef.current) return;
+    lastInitialCodeRef.current = initialCode;
+
     let processedCode = initialCode;
     if (autoInjectImports && isReactLike && !readOnly) {
       const codeWithImports = detectAndInjectImports(initialCode, isReactLike);
@@ -162,9 +287,11 @@ export function CodeEditor({
     const handler = (event: MessageEvent) => {
       if (event.data?.type === "playground-log") {
         setLogs((prev) => [...prev.slice(-50), event.data.message]);
+        setConsoleCollapsed(false);
       }
       if (event.data?.type === "playground-error") {
         setError(event.data.message);
+        setPreviewCollapsed(false);
       }
     };
     window.addEventListener("message", handler);
@@ -182,6 +309,44 @@ export function CodeEditor({
     };
   }, [isFullscreen]);
 
+  // Position tertiary menu dropdown: measure button when open so portal can render above everything
+  useEffect(() => {
+    if (!tertiaryMenuOpen) {
+      setTertiaryMenuRect(null);
+      return;
+    }
+    const el = tertiaryMenuButtonRef.current;
+    if (!el) return;
+    const update = () => setTertiaryMenuRect(el.getBoundingClientRect());
+    const raf = requestAnimationFrame(update);
+    const onScroll = () => update();
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [tertiaryMenuOpen]);
+
+  // Re-layout Monaco when panel collapse/expand, fullscreen, or resize ratios change so the editor re-paints and doesn't appear blank.
+  useEffect(() => {
+    if (isMobile && !mobileEditorOpen) return;
+    const id = requestAnimationFrame(() => {
+      editorInstanceRef.current?.layout();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [previewCollapsed, consoleCollapsed, isFullscreen, editorPanelRatio, previewConsoleRatio, isMobile, mobileEditorOpen]);
+
+  // When entering fullscreen (portal), Monaco may mount in a container that isn't sized yet; layout again after a short delay.
+  useEffect(() => {
+    if (!isFullscreen || (isMobile && !mobileEditorOpen)) return;
+    const t = setTimeout(() => {
+      editorInstanceRef.current?.layout();
+    }, 100);
+    return () => clearTimeout(t);
+  }, [isFullscreen, isMobile, mobileEditorOpen]);
+
   const editorOptions = useMemo(
     () => ({
       minimap: { enabled: false },
@@ -197,6 +362,8 @@ export function CodeEditor({
       formatOnPaste: true,
       readOnly,
       formatOnType: true,
+      // Richer syntax/semantic colors so code is easier to read (keywords, strings, etc.)
+      semanticHighlighting: { enabled: true },
       // Mobile: no error gutter (avoids clipped red markers), no line numbers to reduce noise
       glyphMargin: !isMobile,
       lineNumbers: (isMobile ? "off" : "on") as "on" | "off",
@@ -205,13 +372,31 @@ export function CodeEditor({
     [fontSize, readOnly, isMobile]
   );
 
-  const buildPreviewHTML = (jsCode: string) => {
+  const buildPreviewHTML = (jsCode: string, moduleFileNames: string[] = []) => {
+    const moduleNamesJson = JSON.stringify(moduleFileNames);
+    const requireBody =
+      moduleFileNames.length === 0
+        ? `if (name === "react") return window.React;
+        if (name === "react-dom") return window.ReactDOM;
+        throw new Error("Module not found: " + name);`
+        : `if (name === "react") return window.React;
+        if (name === "react-dom") return window.ReactDOM;
+        var mods = window.__modules__ || {};
+        var key = name.replace(/^\\.\\//, "").replace(/\\.(tsx?|jsx?)$/, "");
+        for (var i = 0; i < moduleFileNames.length; i++) {
+          var f = moduleFileNames[i];
+          var base = f.replace(/\\.(tsx?|jsx?)$/, "");
+          if (base === key || f === name || f === name.replace(/^\\.\\//, "")) {
+            if (mods[f]) return mods[f];
+            return mods[base + ".tsx"] || mods[base + ".jsx"] || mods[base + ".ts"] || mods[base + ".js"] || mods[f];
+          }
+        }
+        throw new Error("Module not found: " + name);`;
     return `
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
-    ${REACT_UMD}
     <style>
       body { margin: 0; padding: 16px; background:#0b1020; color:#e5edff; font-family: Inter, system-ui, -apple-system, sans-serif;}
       #root { min-height: 100px; }
@@ -220,28 +405,64 @@ export function CodeEditor({
   </head>
   <body>
     <div id="root"></div>
+    ${REACT_UMD}
     <script>
       const parentWindow = window.parent;
+      const moduleFileNames = ${moduleNamesJson};
       const safeConsole = {
         log: (...args) => parentWindow.postMessage({ type: "playground-log", message: args.map(a => typeof a === "object" ? JSON.stringify(a) : String(a)).join(" ") }, "*"),
         warn: (...args) => parentWindow.postMessage({ type: "playground-log", message: "⚠️ " + args.join(" ") }, "*"),
         error: (...args) => parentWindow.postMessage({ type: "playground-log", message: "❌ " + args.join(" ") }, "*"),
       };
-      try {
-        ${jsCode}
-        const App = window.__APP__;
-        if (App && window.React && window.ReactDOM) {
-          const root = document.getElementById("root");
-          const React = window.React;
-          const ReactDOM = window.ReactDOM;
-          ReactDOM.createRoot(root).render(React.createElement(App));
-        } else if (window.ReactDOM) {
-          const root = document.getElementById("root");
-          root.innerHTML = "<pre style='color:#e5edff;white-space:pre-wrap'>No default export named App was found. Console output is still captured.</pre>";
-        }
-      } catch (err) {
-        parentWindow.postMessage({ type: "playground-error", message: err?.message || String(err) }, "*");
+      var module = { exports: {} };
+      var exports = module.exports;
+      function require(name) {
+        ${requireBody}
       }
+      function runPreview() {
+        var rootEl = document.getElementById("root");
+        var React = window.React;
+        var ReactDOM = window.ReactDOM;
+        if (typeof React === "undefined" || !React.createElement) {
+          rootEl.innerHTML = "<pre style='color:#f87171;white-space:pre-wrap'>React did not load. Check network or try again.</pre>";
+          return;
+        }
+        if (!ReactDOM || !ReactDOM.createRoot) {
+          rootEl.innerHTML = "<pre style='color:#f87171;white-space:pre-wrap'>ReactDOM did not load. Check network or try again.</pre>";
+          return;
+        }
+        try {
+          ${jsCode}
+          var ComponentToRender = window.__APP__ != null ? window.__APP__ : (module.exports && (module.exports.default !== undefined ? module.exports.default : module.exports));
+          if (ComponentToRender && typeof ComponentToRender === "function") {
+            function PreviewErrorBoundary(props) {
+              React.Component.call(this, props);
+              this.state = { hasError: false, error: null };
+            }
+            PreviewErrorBoundary.prototype = Object.create(React.Component.prototype);
+            PreviewErrorBoundary.prototype.constructor = PreviewErrorBoundary;
+            PreviewErrorBoundary.getDerivedStateFromError = function(err) { return { hasError: true, error: err }; };
+            PreviewErrorBoundary.prototype.componentDidCatch = function(err) {
+              parentWindow.postMessage({ type: "playground-error", message: err?.message || String(err) }, "*");
+            };
+            PreviewErrorBoundary.prototype.render = function() {
+              if (this.state && this.state.hasError && this.state.error) {
+                return React.createElement("pre", { style: { color: "#f87171", whiteSpace: "pre-wrap", padding: "16px", margin: 0 } }, this.state.error?.message || String(this.state.error));
+              }
+              return this.props.children;
+            };
+            var RootWithBoundary = React.createElement(PreviewErrorBoundary, null, React.createElement(ComponentToRender));
+            var root = ReactDOM.createRoot(rootEl);
+            root.render(RootWithBoundary);
+          } else {
+            rootEl.innerHTML = "<pre style='color:#e5edff;white-space:pre-wrap'>No default export (App) was found. Export a component: export default App;</pre>";
+          }
+        } catch (err) {
+          parentWindow.postMessage({ type: "playground-error", message: err?.message || String(err) }, "*");
+          rootEl.innerHTML = "<pre style='color:#f87171;white-space:pre-wrap'>" + (err?.message || String(err)) + "</pre>";
+        }
+      }
+      window.addEventListener("load", runPreview);
     </script>
   </body>
 </html>
@@ -288,32 +509,28 @@ export function solution() {
     }
   }, [enableMultiFile, files, activeFileIndex, onChange]);
 
-  // Build combined code from all files for execution
-  const buildCombinedCode = useCallback((): string => {
+  // Build combined code from all files for execution. Other files run first so window.__modules__ is populated for require().
+  const buildCombinedCode = useCallback((): { code: string; moduleFileNames: string[] } => {
+    const mainContent = autoInjectImports ? detectAndInjectImports(currentCode, isReactLike) : currentCode;
     if (!enableMultiFile || files.length === 1) {
-      return autoInjectImports ? detectAndInjectImports(currentCode, isReactLike) : currentCode;
+      return { code: mainContent, moduleFileNames: [] };
     }
 
-    // Combine all files, making non-main files available for import
     const mainFile = files[0];
     const otherFiles = files.slice(1);
+    const moduleFileNames = otherFiles.map((f) => f.name);
 
-    // Create a module system for imports
-    let combined = autoInjectImports ? detectAndInjectImports(mainFile.content, isReactLike) : mainFile.content;
+    // Run other files first so window.__modules__ is available when main file does require('./solution-1')
+    let combined = "window.__modules__ = window.__modules__ || {};\n";
+    otherFiles.forEach((file) => {
+      const moduleName = file.name.replace(/\.(tsx?|jsx?)$/, "");
+      const fileContent = autoInjectImports ? detectAndInjectImports(file.content, isReactLike) : file.content;
+      combined += `(function() {\n  var __exports = {};\n  var exports = __exports;\n  var module = { exports: __exports };\n  ${fileContent}\n  window.__modules__["${file.name}"] = __exports;\n  window.__modules__["${moduleName}"] = __exports;\n})();\n`;
+    });
+    combined += "\n// Main file (App.tsx)\n";
+    combined += autoInjectImports ? detectAndInjectImports(mainFile.content, isReactLike) : mainFile.content;
 
-    // Add other files as exportable modules
-    if (otherFiles.length > 0) {
-      combined += "\n\n// Additional files available for import:\n";
-      otherFiles.forEach((file, idx) => {
-        const moduleName = file.name.replace(/\.(tsx?|jsx?)$/, "");
-        combined += `\n// File: ${file.name}\n`;
-        // Inject imports in solution files too
-        const fileContent = autoInjectImports ? detectAndInjectImports(file.content, isReactLike) : file.content;
-        combined += `(function() {\n  const ${moduleName}Module = {};\n  const exports = ${moduleName}Module;\n  ${fileContent}\n  window.__modules__ = window.__modules__ || {};\n  window.__modules__['${file.name}'] = ${moduleName}Module;\n})();\n`;
-      });
-    }
-
-    return combined;
+    return { code: combined, moduleFileNames };
   }, [enableMultiFile, files, currentCode, autoInjectImports, isReactLike]);
 
   const runCode = useCallback(async () => {
@@ -322,29 +539,29 @@ export function solution() {
     setError(null);
     setLogs([]);
     try {
-      // Get combined code with auto-injected imports
-      const codeToRun = buildCombinedCode();
+      // Get combined code with auto-injected imports (and module file names for cross-file require)
+      const { code: codeToRun, moduleFileNames } = buildCombinedCode();
 
       // For React/TSX code, automatically detect and wrap exported components
       let wrapped = codeToRun;
       if (isReactLike) {
-        // Check if code already defines App or has default export
-        const hasApp = /\b(App|window\.__APP__)\s*[=:]/.test(code);
-        const hasDefaultExport = /export\s+default\s+/.test(code);
+        // Check if code already defines App or has default export (use codeToRun so we see same content as will run)
+        const hasApp = /\b(App|window\.__APP__)\s*[=:]/.test(codeToRun);
+        const hasDefaultExport = /export\s+default\s+/.test(codeToRun);
 
         if (!hasApp && !hasDefaultExport) {
           // Try to find exported component names
           const exportMatches = [
-            ...code.matchAll(/export\s+(?:const|function|class)\s+(\w+)/g),
-            ...code.matchAll(/export\s+{\s*(\w+)/g),
+            ...codeToRun.matchAll(/export\s+(?:const|function|class)\s+(\w+)/g),
+            ...codeToRun.matchAll(/export\s+{\s*(\w+)/g),
           ];
 
           if (exportMatches.length > 0) {
             // Get the first exported component name
             const componentName = exportMatches[0][1];
 
-            // Wrap code to capture exports and create App
-            wrapped = `${code}
+            // Wrap code to capture exports and create App (use codeToRun so injected imports are included)
+            wrapped = `${codeToRun}
 
 // Auto-generated preview wrapper
 (function() {
@@ -381,7 +598,7 @@ export function solution() {
 })();`;
           } else {
             // No exports found, create generic wrapper
-            wrapped = `${code}
+            wrapped = `${codeToRun}
 
 // Auto-generated preview wrapper
 (function() {
@@ -412,25 +629,43 @@ export function solution() {
           }
         } else {
           // Has App or default export, use existing pattern
-          wrapped = `${code}
+          wrapped = `${codeToRun}
 ;window.__APP__ = typeof App !== "undefined" ? App : (typeof exports !== "undefined" ? exports.default : null);`;
         }
       } else {
         // Non-React code
-        wrapped = `${code}
+        wrapped = `${codeToRun}
 ;window.__APP__ = typeof App !== "undefined" ? App : (typeof exports !== "undefined" ? exports.default : null);`;
       }
 
-      const result = Babel.transform(wrapped, {
-        presets: ["env", "react", "typescript"],
-        sourceType: "module",
-        filename: "App.tsx",
-      }).code;
+      let transpiled: string;
+      try {
+        const transformed = Babel.transform(wrapped, {
+          presets: [
+            ["env", { modules: "commonjs" }],
+            "react",
+            "typescript",
+          ],
+          sourceType: "module",
+          filename: "App.tsx",
+        });
+        transpiled = transformed?.code ?? "";
+      } catch (transformErr) {
+        const msg = (transformErr as Error).message ?? String(transformErr);
+        setError(`Transpile failed: ${msg}`);
+        setPreviewCollapsed(false);
+        setOutputHtml(
+          `<!DOCTYPE html><html><body style="margin:0;padding:16px;background:#1e1e1e;color:#f87171;font-family:monospace;white-space:pre-wrap">${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</body></html>`
+        );
+        return;
+      }
 
-      const html = buildPreviewHTML(result || "");
+      const html = buildPreviewHTML(transpiled, moduleFileNames);
       setOutputHtml(html);
+      setPreviewCollapsed(false);
     } catch (err) {
       setError((err as Error).message);
+      setPreviewCollapsed(false);
     } finally {
       setIsRunning(false);
     }
@@ -474,8 +709,17 @@ export function solution() {
     return () => window.removeEventListener("keydown", handler);
   }, [isRunnable, isKotlin, runCode, isFullscreen]);
 
+  const handleBeforeMount = useCallback((monaco: any) => {
+    ensureEmmetJSX(monaco);
+  }, []);
+
   const handleEditorMount = useCallback(
-    (_editor: any, monaco: any) => {
+    (editor: any, monaco: any) => {
+      editorInstanceRef.current = editor;
+      // Layout once after mount so code is visible when editor is in view (fixes blank editor when below fold)
+      requestAnimationFrame(() => {
+        editor?.layout();
+      });
       // Avoid editor.focus() on mount: it causes the page to scroll to the focused
       // editor. Blog posts have many CodeEditors; the last one to mount would
       // scroll the page to the bottom. Users can click into an editor to focus it.
@@ -546,43 +790,38 @@ export function solution() {
   const editorHeightNum = typeof height === "number" ? height : height === "auto" ? 400 : 400;
   const mobileEditorHeight = 320;
 
+  const effectiveMaxCodeHeight = maxCodeHeight ?? (isMobile ? 280 : 400);
+
   const mobileStaticBlock = showStaticBlock && (
-    <div className={`relative flex flex-col border border-white/10 bg-[#0b1020] rounded-xl overflow-hidden max-w-full min-w-0 w-full code-editor-contained shadow-lg ${isFullscreen ? "flex-1 min-h-0" : ""}`}>
-      {/* Editor-style toolbar: same visual language as full editor, scrolls on very narrow screens */}
-      <div className="flex flex-nowrap items-center justify-between gap-3 overflow-x-auto overflow-y-hidden px-4 py-3 bg-[#0e1628] border-b border-white/10 shrink-0 min-h-[52px]">
-        <div className="flex items-center gap-2.5 min-w-0 shrink-0">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 border border-white/10 shrink-0" aria-hidden>
-            <Code2 className="h-4 w-4 text-cyan-400/90" strokeWidth={2} />
+    <div className={isFullscreen ? styles.staticBlockFullscreen : styles.staticBlock}>
+      <div className={styles.staticToolbar}>
+        <div className={styles.staticToolbarLeft}>
+          <span className={styles.staticToolbarIcon} aria-hidden>
+            <Code2 className={`${styles.iconMd} ${styles.iconCyan}`} strokeWidth={2} />
           </span>
-          <span className="text-sm font-semibold text-slate-200 uppercase tracking-wide truncate">{language}</span>
+          <span className={styles.staticToolbarLang}>{language}</span>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="inline-flex h-10 min-w-[5rem] items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-sm font-medium text-slate-200 transition-colors active:bg-white/10 active:scale-[0.98] touch-manipulation shrink-0"
-            aria-label="Copy code"
-          >
-            <Copy className="h-4 w-4 shrink-0" strokeWidth={2} />
-            <span>{copyDone ? "Copied" : "Copy"}</span>
+        <div className={styles.staticToolbarRight}>
+          <button type="button" onClick={handleCopy} className={styles.btnCopyStatic} aria-label="Copy code">
+            <Copy className={`${styles.iconMd} ${styles.iconCopyOpacity}`} strokeWidth={2} />
+            <span className={styles.staticToolbarBtnLabel}>{copyDone ? "Copied" : "Copy"}</span>
           </button>
           <button
             type="button"
-            onClick={() => setMobileEditorOpen(true)}
-            className="inline-flex h-10 min-w-[5rem] items-center justify-center gap-2 rounded-lg bg-cyan-500/25 border border-cyan-500/40 px-4 text-sm font-semibold text-cyan-200 transition-colors active:bg-cyan-500/35 active:scale-[0.98] touch-manipulation shadow-[0_0_0_1px_rgba(34,211,238,0.15)] shrink-0"
-            aria-label="Open editor"
+            onClick={() => {
+              setMobileEditorOpen(true);
+              setIsFullscreen(true);
+            }}
+            className={styles.btnOpenEditor}
+            aria-label="Open editor fullscreen"
           >
-            <Code2 className="h-4 w-4 shrink-0" strokeWidth={2} />
-            <span>Open editor</span>
+            <Code2 className={styles.iconMd} strokeWidth={2} />
+            <span className={styles.staticToolbarBtnLabel}>Open editor</span>
           </button>
         </div>
       </div>
-      {/* Code area with editor-like gutter accent */}
-      <div
-        className="overflow-auto border-0 rounded-b-xl border-l-2 border-l-cyan-500/20 bg-[#0b1020]"
-        style={{ minHeight: 140, maxHeight: 320 }}
-      >
-        <pre className="p-4 pl-5 m-0 text-[13px] sm:text-sm font-mono leading-relaxed text-slate-200 whitespace-pre overflow-x-auto">
+      <div className={styles.staticCodeWrap} style={{ minHeight: 140, maxHeight: 320 }}>
+        <pre className={styles.staticPre}>
           <code>{currentCode}</code>
         </pre>
       </div>
@@ -591,7 +830,7 @@ export function solution() {
 
   const editorSection = !showStaticBlock && (
     <div
-      className={`flex flex-col border border-white/5 bg-[#0b1020] rounded-lg overflow-hidden max-w-full min-w-0 w-full code-editor-contained ${isFullscreen ? "flex-1 min-h-0" : ""}`}
+      className={isFullscreen ? styles.editorSectionFullscreen : styles.editorSection}
       style={{
         position: "relative",
         display: "flex",
@@ -600,126 +839,134 @@ export function solution() {
         maxHeight: isMobile && !isFullscreen ? "none" : undefined,
       }}
     >
-      <div className="flex flex-nowrap items-center justify-between gap-4 px-4 py-3 bg-white/5 border-b border-white/10 shrink-0 min-h-[52px]">
-        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden shrink-0">
-          {enableMultiFile && files.length > 1 ? (
-            <div className="flex items-center gap-1 overflow-x-auto flex-1">
+      <div className={styles.toolbar}>
+        <div className={styles.toolbarLeft}>
+          {enableMultiFile ? (
+            <div className={styles.toolbarFiles}>
               {files.map((file, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveFileIndex(idx)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors shrink-0 ${idx === activeFileIndex
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
-                    }`}
+                  className={idx === activeFileIndex ? styles.toolbarFileActive : styles.toolbarFile}
                 >
                   <span>{file.name}</span>
                   {files.length > 1 && (
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         removeFile(idx);
                       }}
-                      className="ml-1 hover:text-red-400 transition-colors"
+                      className={styles.toolbarFileRemove}
                       aria-label="Remove file"
                     >
-                      <X className="h-3 w-3" />
+                      <X className={styles.iconSm} />
                     </button>
                   )}
                 </button>
               ))}
-              <button
-                onClick={addFile}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors shrink-0"
-                aria-label="Add new file"
-              >
-                <FilePlus className="h-3.5 w-3.5" />
+              <button onClick={addFile} className={styles.toolbarFileAdd} aria-label="Add new file">
+                <FilePlus className={styles.iconSm} />
                 <span>New File</span>
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2.5 h-8 px-3 rounded-lg bg-white/5 border border-white/10 shrink-0">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" aria-hidden />
-              <span className="text-xs font-semibold text-slate-200 uppercase tracking-wide truncate">{enableMultiFile && currentFile ? currentFile.name : language}</span>
-            </div>
+            <>
+              <div className={styles.toolbarLangBadge}>
+                <span className={styles.toolbarLangDot} aria-hidden />
+                <span className={styles.toolbarLangLabel}>{enableMultiFile && currentFile ? currentFile.name : language}</span>
+              </div>
+              {exampleVariant && (
+                <span
+                  className={exampleVariant === "bad" ? styles.toolbarExampleBadgeBad : styles.toolbarExampleBadgeGood}
+                  aria-label={exampleBadgeLabel ?? (exampleVariant === "bad" ? "Example to avoid" : "Recommended example")}
+                >
+                  {exampleVariant === "bad" ? <XCircle className={styles.toolbarExampleBadgeIcon} strokeWidth={2} /> : <Check className={styles.toolbarExampleBadgeIcon} strokeWidth={2.5} />}
+                  <span className={styles.toolbarExampleBadgeLabel}>{exampleBadgeLabel ?? (exampleVariant === "bad" ? "Evitar" : "Recomendado")}</span>
+                </span>
+              )}
+            </>
           )}
         </div>
-        <div className="flex flex-nowrap items-center gap-2.5 min-w-0 justify-end shrink-0">
+        <div className={styles.toolbarRight}>
           {isMobile && (
             <button
               type="button"
-              onClick={() => setMobileEditorOpen(false)}
-              className="inline-flex h-9 min-w-[5rem] shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-sm font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 active:scale-[0.98] touch-manipulation"
+              onClick={() => {
+                setMobileEditorOpen(false);
+                if (isFullscreen) setIsFullscreen(false);
+              }}
+              className={styles.btnClose}
               aria-label="Close editor"
             >
-              <X className="h-4 w-4 shrink-0" strokeWidth={2} />
-              <span>Close</span>
+              <X className={styles.iconMd} strokeWidth={2} />
+              <span className={styles.toolbarBtnLabel}>Close</span>
             </button>
           )}
-          {!isMobile && (
+          {!isMobile && !compactToolbar && (
             <>
-              <div
-                className="inline-flex h-9 shrink-0 items-stretch rounded-lg border border-white/10 bg-white/5 overflow-hidden shadow-sm"
-                role="group"
-                aria-label="Font size"
-              >
+              <div className={styles.fontSizeGroup} role="group" aria-label="Font size">
                 <button
+                  type="button"
                   onClick={() => setFontSize((s) => Math.max(10, s - 1))}
                   aria-label="Decrease font size"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
+                  className={styles.fontSizeBtn}
                 >
-                  <Minus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  <Minus className={styles.iconSm} strokeWidth={2.5} />
                 </button>
-                <span className="flex h-9 min-w-[2.25rem] flex-shrink-0 items-center justify-center border-x border-white/10 bg-white/5 text-xs font-medium tabular-nums text-slate-200" aria-hidden>
+                <span className={styles.fontSizeValue} aria-hidden>
                   {fontSize}
                 </span>
                 <button
+                  type="button"
                   onClick={() => setFontSize((s) => Math.min(24, s + 1))}
                   aria-label="Increase font size"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-inset"
+                  className={styles.fontSizeBtn}
                 >
-                  <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  <Plus className={styles.iconSm} strokeWidth={2.5} />
                 </button>
               </div>
-              <span className="h-5 w-px shrink-0 bg-white/10 rounded-full" aria-hidden />
+              <span className={styles.toolbarDivider} aria-hidden />
             </>
           )}
           <button
             onClick={handleCopy}
             aria-label="Copy code"
-            className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 active:scale-[0.98] touch-manipulation min-w-[4.5rem] sm:min-w-0"
+            className={`${styles.btnCopy} ${isMobile ? styles.btnCopyMinWidth : ""}`}
           >
-            <Copy className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
-            <span>{copyDone ? "Copied" : "Copy"}</span>
+            <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />
+            <span className={styles.toolbarBtnLabel}>{copyDone ? "Copied" : "Copy"}</span>
           </button>
           {!readOnly && (
             <>
               {isMobile ? (
-                <div className="relative">
+                <div className={styles.mobileMenuWrap}>
                   <button
                     type="button"
                     onClick={() => setMobileMenuOpen((v) => !v)}
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-200 transition-colors hover:bg-white/10 active:scale-[0.98] touch-manipulation"
+                    className={styles.mobileMenuBtn}
                     aria-label="More options"
                     aria-expanded={mobileMenuOpen}
                   >
-                    <ChevronDown className="h-4 w-4" strokeWidth={2} />
+                    <ChevronDown className={styles.iconMd} strokeWidth={2} />
                   </button>
                   {mobileMenuOpen && (
                     <>
-                      <div className="fixed inset-0 z-10" aria-hidden onClick={() => setMobileMenuOpen(false)} />
-                      <div className="absolute right-0 top-full mt-1 z-20 flex flex-col rounded-lg border border-white/10 bg-[#0b1020] py-1 min-w-[120px]">
+                      <div className={styles.mobileMenuBackdrop} aria-hidden onClick={() => setMobileMenuOpen(false)} />
+                      <div className={styles.mobileMenuDropdown}>
                         <button
+                          type="button"
                           onClick={() => { handleReset(); setMobileMenuOpen(false); }}
-                          className="flex min-h-[44px] items-center gap-2 px-4 py-3 text-sm text-slate-300 active:bg-white/10 text-left touch-manipulation"
+                          className={styles.mobileMenuItem}
                         >
-                          <RotateCcw className="h-4 w-4" /> Reset
+                          <RotateCcw className={styles.iconMd} /> Reset
                         </button>
                         <button
+                          type="button"
                           onClick={() => { setIsFullscreen(true); setMobileMenuOpen(false); }}
-                          className="flex min-h-[44px] items-center gap-2 px-4 py-3 text-sm text-slate-300 active:bg-white/10 text-left touch-manipulation"
+                          className={styles.mobileMenuItem}
                         >
-                          <Maximize2 className="h-4 w-4" /> Fullscreen
+                          <Maximize2 className={styles.iconMd} /> Fullscreen
                         </button>
                       </div>
                     </>
@@ -727,48 +974,107 @@ export function solution() {
                 </div>
               ) : (
                 <>
-                  <button
-                    onClick={handleReset}
-                    aria-label="Reset code"
-                    className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628]"
-                  >
-                    <RotateCcw className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
-                    Reset
-                  </button>
+                  {!compactToolbar && (
+                    <button type="button" onClick={handleReset} aria-label="Reset code" className={styles.btnReset}>
+                      <RotateCcw className={styles.iconSm} strokeWidth={2} />
+                      Reset
+                    </button>
+                  )}
                   {!isKotlin && (
                     <button
+                      type="button"
                       onClick={runCode}
                       disabled={isRunning}
                       aria-label={isRunning ? "Running" : "Run code"}
-                      className={`inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-xs font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.4)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(34,211,238,0.5)] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] disabled:opacity-70 disabled:cursor-not-allowed min-w-[4.5rem] ${isRunning ? "cursor-wait" : ""}`}
+                      className={`${styles.btnRun} ${isMobile ? styles.btnRunMobile : ""} ${isRunning ? styles.btnRunRunning : ""}`}
                     >
-                      <Play className="h-3.5 w-3.5 shrink-0 fill-current" strokeWidth={2} />
-                      {isRunning ? "Running…" : "Run"}
-                      <kbd className="ml-0.5 hidden rounded bg-black/20 px-1.5 py-0.5 font-sans text-[10px] sm:inline">⌘↵</kbd>
+                      <Play className={styles.iconSm} fill="currentColor" strokeWidth={2} />
+                      <span className={styles.toolbarBtnLabel}>{isRunning ? "Running…" : "Run"}</span>
+                      <kbd className={styles.btnRunKbd}>⌘↵</kbd>
                     </button>
+                  )}
+                  {compactToolbar && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setIsFullscreen((v) => !v)}
+                        aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
+                        className={styles.btnMaximize}
+                      >
+                        {isFullscreen ? <Minimize2 className={styles.iconSm} strokeWidth={2} /> : <Maximize2 className={styles.iconSm} strokeWidth={2} />}
+                        {isFullscreen ? "Exit" : "Maximize"}
+                      </button>
+                      <div className={styles.mobileMenuWrap}>
+                        <button
+                          ref={tertiaryMenuButtonRef}
+                          type="button"
+                          onClick={() => setTertiaryMenuOpen((v) => !v)}
+                          className={styles.btnTertiary}
+                          aria-label="More options"
+                          aria-expanded={tertiaryMenuOpen}
+                        >
+                          <MoreVertical className={styles.iconSm} strokeWidth={2} />
+                        </button>
+                        {tertiaryMenuOpen && tertiaryMenuRect && !isFullscreen && typeof document !== "undefined" &&
+                          createPortal(
+                            <>
+                              <div className={styles.tertiaryMenuBackdropPortal} aria-hidden onClick={() => setTertiaryMenuOpen(false)} />
+                              <div
+                                className={styles.tertiaryMenuDropdownPortal}
+                                style={{
+                                  position: "fixed",
+                                  top: tertiaryMenuRect.bottom + 4,
+                                  right: window.innerWidth - tertiaryMenuRect.right,
+                                }}
+                              >
+                                <div className={styles.mobileMenuDropdown}>
+                                  <button type="button" onClick={() => { handleReset(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
+                                    <RotateCcw className={styles.iconMd} /> Reset
+                                  </button>
+                                  <div className={styles.mobileMenuItemFontSize}>
+                                    <span className={styles.mobileMenuItemLabel}>Font size</span>
+                                    <div className={styles.fontSizeGroup}>
+                                      <button type="button" onClick={() => setFontSize((s) => Math.max(10, s - 1))} aria-label="Decrease font size" className={styles.fontSizeBtn}>
+                                        <Minus className={styles.iconSm} strokeWidth={2.5} />
+                                      </button>
+                                      <span className={styles.fontSizeValue}>{fontSize}</span>
+                                      <button type="button" onClick={() => setFontSize((s) => Math.min(24, s + 1))} aria-label="Increase font size" className={styles.fontSizeBtn}>
+                                        <Plus className={styles.iconSm} strokeWidth={2.5} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </>,
+                            document.body
+                          )}
+                      </div>
+                    </>
                   )}
                 </>
               )}
               {isMobile && !isKotlin && (
                 <button
+                  type="button"
                   onClick={runCode}
                   disabled={isRunning}
                   aria-label={isRunning ? "Running" : "Run code"}
-                  className="inline-flex h-10 min-w-[5rem] shrink-0 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 px-4 text-sm font-semibold text-[#0a0f1a] shadow-[0_2px_12px_rgba(34,211,238,0.3)] active:scale-[0.98] touch-manipulation disabled:opacity-70"
+                  className={styles.btnRunMobile}
                 >
-                  <Play className="h-4 w-4 shrink-0 fill-current" strokeWidth={2} />
+                  <Play className={styles.iconMd} fill="currentColor" strokeWidth={2} />
                   <span>{isRunning ? "…" : "Run"}</span>
                 </button>
               )}
             </>
           )}
-          {!isMobile && (
+          {!isMobile && !compactToolbar && (
             <button
+              type="button"
               onClick={() => setIsFullscreen((v) => !v)}
               aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
-              className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-xs font-medium text-slate-200 transition-colors hover:bg-white/10 hover:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0e1628] min-w-[4.5rem]"
+              className={styles.btnMaximize}
             >
-              {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} /> : <Maximize2 className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
+              {isFullscreen ? <Minimize2 className={styles.iconSm} strokeWidth={2} /> : <Maximize2 className={styles.iconSm} strokeWidth={2} />}
               {isFullscreen ? "Exit" : "Maximize"}
             </button>
           )}
@@ -776,25 +1082,32 @@ export function solution() {
       </div>
 
       <div
-        className="flex-1 min-h-0 overflow-auto"
+        className={styles.editorArea}
         style={{
-          display: "flex",
-          flexDirection: "column",
-          minHeight: isFullscreen ? 0 : (isMobile ? 200 : 300),
-          maxHeight: isFullscreen ? undefined : (isMobile ? 320 : undefined),
+          minHeight: isFullscreen ? "40vh" : undefined,
+          maxHeight: isFullscreen ? undefined : (isMobile ? 320 : effectiveMaxCodeHeight),
         }}
       >
-        <div className="min-h-0 flex-1 w-full overflow-hidden" style={{ width: "100%", maxWidth: "100%" }}>
+        <div
+          ref={editorContainerRef}
+          className={styles.editorContainer}
+          style={{
+            width: "100%",
+            maxWidth: "100%",
+            ...(isFullscreen ? { minHeight: 300, height: "100%" } : {}),
+          }}
+        >
           <MonacoEditor
-            height={isFullscreen ? "100%" : (isMobile ? mobileEditorHeight : (height === "auto" ? 400 : height))}
+            height={isFullscreen ? fullscreenEditorHeight : (isMobile ? mobileEditorHeight : (height === "auto" ? effectiveMaxCodeHeight : Math.min(Number(height) || 400, effectiveMaxCodeHeight)))}
             language={isReactLike ? "typescript" : (enableMultiFile && currentFile ? currentFile.language : normalizedLang)}
-            path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : (enableMultiFile && currentFile ? currentFile.name : "App.tsx")}
+            path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : (enableMultiFile && currentFile ? currentFile.name : `App-${uniqueId.replace(/:/g, "")}.tsx`)}
             value={currentCode}
             onChange={(value) => {
               const next = value || "";
               updateFileContent(activeFileIndex, next);
             }}
             options={editorOptions}
+            beforeMount={handleBeforeMount}
             onMount={handleEditorMount}
             theme="vs-dark"
           />
@@ -803,82 +1116,201 @@ export function solution() {
     </div>
   );
 
+  const previewColContent = (
+    <>
+      <div className={styles.previewBody}>
+        {!outputHtml ? (
+          <div className={styles.previewEmpty}>
+            <div className={styles.previewEmptyIconWrap}>
+              <Play className={`${styles.previewEmptyIcon} ${styles.previewEmptyIconSm}`} strokeWidth={2} />
+            </div>
+            <p className={styles.previewEmptyText}>Run the code to see the preview</p>
+            <p className={styles.previewEmptyHint}>Press Run or ⌘↵</p>
+          </div>
+        ) : (
+          <iframe
+            ref={iframeRef}
+            title="playground-preview"
+            sandbox="allow-scripts allow-same-origin"
+            srcDoc={outputHtml}
+            className={styles.previewIframe}
+          />
+        )}
+        {error && (
+          <div className={styles.previewError}>
+            <AlertCircle className={styles.previewErrorIcon} strokeWidth={2} />
+            <p className={styles.previewErrorText}>{error}</p>
+          </div>
+        )}
+      </div>
+    </>
+  );
+
+  const consoleColContent = (
+    <div className={styles.previewBody}>
+      {logs.length === 0 ? (
+        <div className={styles.previewEmpty}>
+          <Terminal className={`${styles.consoleEmptyIcon} ${styles.consoleEmptyIconLg}`} strokeWidth={1.5} />
+          <p className={styles.previewEmptyText}>Logs will appear here</p>
+          <p className={styles.previewEmptyHint}>console.log, warnings, errors</p>
+        </div>
+      ) : (
+        <div className={styles.consoleLogs}>
+          {logs.map((line, idx) => (
+            <div key={`${line}-${idx}`} className={styles.consoleLine}>
+              <span className={styles.consoleLineNum}>{idx + 1}</span>
+              {line}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   const previewSection =
     isRunnable && !isKotlin ? (
-      <div className={`mt-4 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020] ${isFullscreen ? "flex-1 min-h-0 flex flex-col mt-0" : ""}`}>
-        <div className={`grid min-h-0 grid-cols-1 md:grid-cols-2 md:min-w-0 ${isFullscreen ? "flex-1 min-h-0" : ""}`}>
-          {/* Preview */}
-          <div className="flex min-h-0 flex-col border-b border-white/10 md:min-h-[16rem] md:border-b-0 md:border-r md:border-r-white/10">
-            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-3 py-2 sm:px-4 sm:py-2.5">
-              <Monitor className="h-3.5 w-3.5 shrink-0 text-cyan-400/80" strokeWidth={2} />
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Preview</span>
+      <div className={isFullscreen ? styles.previewSectionFullscreen : styles.previewSection}>
+        <div className={isFullscreen ? styles.previewGridFullscreen : styles.previewGrid}>
+          <div className={styles.previewCol}>
+            <div className={styles.previewHeader}>
+              <Monitor className={`${styles.iconSm} ${styles.iconCyanMuted}`} strokeWidth={2} />
+              <span className={styles.previewHeaderLabel}>Preview</span>
             </div>
-            <div className="relative flex min-h-[12rem] flex-1 flex-col p-3 sm:min-h-[14rem] md:min-h-[16rem]">
-              {!outputHtml ? (
-                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5 py-8 sm:py-10">
-                  <div className="mb-3 rounded-full bg-white/5 p-3 sm:mb-4 sm:p-4">
-                    <Play className="h-5 w-5 text-slate-500 sm:h-6 sm:w-6" strokeWidth={2} />
-                  </div>
-                  <p className="text-center text-sm text-slate-500">Run the code to see the preview</p>
-                  <p className="mt-1 text-center text-xs text-slate-600">Press Run or ⌘↵</p>
-                </div>
-              ) : (
-                <iframe
-                  ref={iframeRef}
-                  title="playground-preview"
-                  sandbox="allow-scripts allow-same-origin"
-                  srcDoc={outputHtml}
-                  className="min-h-[10rem] w-full flex-1 rounded-lg border border-white/10 bg-[#0e1628]"
-                />
-              )}
-              {error && (
-                <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2">
-                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" strokeWidth={2} />
-                  <p className="text-xs text-red-300 break-words">{error}</p>
-                </div>
-              )}
-            </div>
+            {previewColContent}
           </div>
-          {/* Console */}
-          <div className="flex min-h-0 flex-col md:min-h-[16rem]">
-            <div className="flex shrink-0 items-center gap-2 border-b border-white/10 bg-white/5 px-3 py-2 sm:px-4 sm:py-2.5">
-              <Terminal className="h-3.5 w-3.5 shrink-0 text-emerald-400/80" strokeWidth={2} />
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Console</span>
+          <div className={styles.previewColConsole}>
+            <div className={styles.previewHeader}>
+              <Terminal className={`${styles.iconSm} ${styles.iconEmerald}`} strokeWidth={2} />
+              <span className={styles.previewHeaderLabel}>Console</span>
               {logs.length > 0 && (
-                <span className="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium tabular-nums text-slate-400">
-                  {logs.length}
-                </span>
+                <span className={styles.previewHeaderBadge}>{logs.length}</span>
               )}
             </div>
-            <div className="flex min-h-[12rem] flex-1 flex-col overflow-hidden p-3 sm:min-h-[14rem] md:min-h-[16rem]">
-              {logs.length === 0 ? (
-                <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5 py-8 sm:py-10">
-                  <Terminal className="mb-3 h-6 w-6 text-slate-600 sm:mb-4 sm:h-8 sm:w-8" strokeWidth={1.5} />
-                  <p className="text-center text-sm text-slate-500">Logs will appear here</p>
-                  <p className="mt-1 text-center text-xs text-slate-600">console.log, warnings, errors</p>
-                </div>
-              ) : (
-                <div className="flex-1 overflow-auto rounded-lg border border-white/10 bg-[#0a0f1a] px-3 py-2 font-mono text-xs leading-relaxed text-slate-200">
-                  {logs.map((line, idx) => (
-                    <div
-                      key={`${line}-${idx}`}
-                      className="whitespace-pre-wrap break-words border-b border-white/5 py-1.5 last:border-b-0"
-                    >
-                      <span className="select-none pr-2 text-slate-600">{idx + 1}</span>
-                      {line}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            {consoleColContent}
           </div>
         </div>
       </div>
     ) : null;
 
-  const shell = (
+  const useResizableLayout = isRunnable && !isKotlin && !showStaticBlock && !isMobile;
+  const bothPanelsCollapsed = previewCollapsed && consoleCollapsed;
+
+  const bottomPanelWithResize = useResizableLayout && (
     <div
-      className={`rounded-xl shadow-lg border border-white/10 bg-[#0b1020] p-2 sm:p-3 max-w-full min-w-0 overflow-x-hidden ${isFullscreen ? "flex flex-1 min-h-0 flex-col h-full overflow-hidden" : ""} ${className}`}
+      className={`${styles.resizableBottomPanel} ${bothPanelsCollapsed ? styles.resizableBottomPanelCollapsed : ""}`}
+      style={{
+        flex: bothPanelsCollapsed ? "0 0 auto" : `0 0 ${(1 - editorPanelRatio) * 100}%`,
+        minHeight: bothPanelsCollapsed ? 48 : 120,
+        height: bothPanelsCollapsed ? 48 : undefined,
+        display: "flex",
+        flexDirection: "row",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        className={`${previewCollapsed ? styles.previewColCollapsed : styles.previewColResizable} ${bothPanelsCollapsed ? styles.previewColCollapsedBar : ""}`}
+        style={{
+          width: previewCollapsed ? (bothPanelsCollapsed ? undefined : 40) : `${previewConsoleRatio * 100}%`,
+          flex: previewCollapsed && bothPanelsCollapsed ? 1 : undefined,
+          minWidth: previewCollapsed ? (bothPanelsCollapsed ? 0 : 40) : 120,
+        }}
+      >
+        <div
+          className={styles.previewHeader}
+          style={{ cursor: "pointer" }}
+          onClick={() => setPreviewCollapsed((c) => !c)}
+          title={previewCollapsed ? "Expand Preview" : "Collapse Preview"}
+        >
+          <Monitor className={`${styles.iconSm} ${styles.iconCyanMuted}`} strokeWidth={2} />
+          <span className={styles.previewHeaderLabel}>Preview</span>
+          {previewCollapsed ? (
+            <ChevronRight className={styles.iconSm} style={{ marginLeft: "auto" }} />
+          ) : (
+            <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} />
+          )}
+        </div>
+        {!previewCollapsed && previewColContent}
+      </div>
+      {!previewCollapsed && !consoleCollapsed && (
+        <div
+          className={styles.resizerHorizontal}
+          onMouseDown={handleHorizontalResize}
+          title="Drag to resize"
+          aria-label="Resize Preview and Console"
+        />
+      )}
+      <div
+        className={`${consoleCollapsed ? styles.previewColCollapsed : styles.previewColResizable} ${bothPanelsCollapsed ? styles.previewColCollapsedBar : ""}`}
+        style={{
+          flex: consoleCollapsed ? (bothPanelsCollapsed ? 1 : "none") : 1,
+          width: consoleCollapsed ? (bothPanelsCollapsed ? undefined : 40) : undefined,
+          minWidth: consoleCollapsed ? (bothPanelsCollapsed ? 0 : 40) : 120,
+        }}
+      >
+        <div
+          className={styles.previewHeader}
+          style={{ cursor: "pointer" }}
+          onClick={() => setConsoleCollapsed((c) => !c)}
+          title={consoleCollapsed ? "Expand Console" : "Collapse Console"}
+        >
+          <Terminal className={`${styles.iconSm} ${styles.iconEmerald}`} strokeWidth={2} />
+          <span className={styles.previewHeaderLabel}>Console</span>
+          {logs.length > 0 && (
+            <span className={styles.previewHeaderBadge}>{logs.length}</span>
+          )}
+          {consoleCollapsed ? (
+            <ChevronRight className={styles.iconSm} style={{ marginLeft: "auto" }} />
+          ) : (
+            <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} />
+          )}
+        </div>
+        {!consoleCollapsed && consoleColContent}
+      </div>
+    </div>
+  );
+
+  const shellHeight = collapsePanelsByDefault && previewCollapsed && consoleCollapsed ? 520 : 640;
+  const rootClassName = [
+    isFullscreen ? styles.rootFullscreen : styles.root,
+    isMobile && compactToolbar ? styles.rootFullBleedMobile : "",
+    className,
+  ].filter(Boolean).join(" ");
+
+  const shell = useResizableLayout ? (
+    <div
+      ref={resizableContainerRef}
+      className={rootClassName}
+      style={{
+        ...(isFullscreen ? { height: "100%", minHeight: 0 } : { height: shellHeight, minHeight: collapsePanelsByDefault ? 380 : 480 }),
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
+      {mobileStaticBlock}
+      <div
+        style={{
+          flex: `0 0 ${editorPanelRatio * 100}%`,
+          minHeight: 200,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        {editorSection}
+      </div>
+      <div
+        className={styles.resizerVertical}
+        onMouseDown={handleVerticalResize}
+        title="Drag to resize"
+        aria-label="Resize editor and output"
+      />
+      {bottomPanelWithResize}
+    </div>
+  ) : (
+    <div
+      className={rootClassName}
+      style={isFullscreen ? { height: "100%", minHeight: 0 } : undefined}
     >
       {mobileStaticBlock}
       {editorSection}
@@ -892,8 +1324,25 @@ export function solution() {
     typeof document !== "undefined" &&
     createPortal(
       <motion.div
-        className="fixed inset-0 z-[2147483647] flex flex-col bg-[#0b0f1a] isolate"
-        style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, width: "100vw", height: "100dvh", maxWidth: "100%", maxHeight: "100%" }}
+        className={styles.fullscreenPortal}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: "100vw",
+          height: "100dvh",
+          minHeight: "100vh",
+          maxWidth: "100vw",
+          maxHeight: "100dvh",
+          zIndex: 2147483647,
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#0b0f1a",
+          isolation: "isolate",
+          overflow: "hidden",
+        }}
         initial={{ opacity: 0 }}
         animate={{ opacity: isFullscreen ? 1 : 0 }}
         transition={{ duration: 0.15 }}
@@ -901,14 +1350,53 @@ export function solution() {
           if (!isFullscreen) setShowFullscreenPortal(false);
         }}
       >
-        {/* Full-screen editor: fills viewport with safe-area padding */}
+        {/* Full-screen editor: fills viewport; inner has explicit height so flex children get space */}
         <motion.div
-          className="flex flex-1 flex-col min-h-0 p-3 sm:p-4 md:p-5 overflow-hidden w-full h-full"
+          className={styles.fullscreenInner}
+          style={{
+            height: "100%",
+            minHeight: 0,
+            padding: "env(safe-area-inset-top) max(env(safe-area-inset-right), 12px) env(safe-area-inset-bottom) max(env(safe-area-inset-left), 12px)",
+            position: "relative",
+          }}
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.15 }}
         >
           {shell}
+          {/* When fullscreen, render tertiary menu here so it appears above the editor (portal to body would be behind overlay z-index) */}
+          {isFullscreen && tertiaryMenuOpen && tertiaryMenuRect && (
+            <>
+              <div className={styles.tertiaryMenuBackdropPortal} aria-hidden onClick={() => setTertiaryMenuOpen(false)} />
+              <div
+                className={styles.tertiaryMenuDropdownPortal}
+                style={{
+                  position: "fixed",
+                  top: tertiaryMenuRect.bottom + 4,
+                  right: window.innerWidth - tertiaryMenuRect.right,
+                  zIndex: 9999,
+                }}
+              >
+                <div className={styles.mobileMenuDropdown}>
+                  <button type="button" onClick={() => { handleReset(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
+                    <RotateCcw className={styles.iconMd} /> Reset
+                  </button>
+                  <div className={styles.mobileMenuItemFontSize}>
+                    <span className={styles.mobileMenuItemLabel}>Font size</span>
+                    <div className={styles.fontSizeGroup}>
+                      <button type="button" onClick={() => setFontSize((s) => Math.max(10, s - 1))} aria-label="Decrease font size" className={styles.fontSizeBtn}>
+                        <Minus className={styles.iconSm} strokeWidth={2.5} />
+                      </button>
+                      <span className={styles.fontSizeValue}>{fontSize}</span>
+                      <button type="button" onClick={() => setFontSize((s) => Math.min(24, s + 1))} aria-label="Increase font size" className={styles.fontSizeBtn}>
+                        <Plus className={styles.iconSm} strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </motion.div>
       </motion.div>,
       document.body
@@ -916,7 +1404,13 @@ export function solution() {
 
   return (
     <>
-      {shell}
+      {showFullscreenPortal ? (
+        <div className={styles.fullscreenPlaceholder} style={{ minHeight: 48 }} aria-hidden>
+          Editor open in fullscreen. Use Exit or Close to return.
+        </div>
+      ) : (
+        shell
+      )}
       {fullscreenOverlay}
     </>
   );

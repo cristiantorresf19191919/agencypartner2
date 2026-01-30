@@ -5,9 +5,10 @@ import dynamic from "next/dynamic";
 import * as Y from "yjs";
 import { MonacoBinding } from "y-monaco";
 import { FirebaseProvider } from "@/lib/firebaseYjsProvider";
-import { collection, query, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
+import { collection, query, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc, type Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
 import type { OnMount } from "@monaco-editor/react";
+import { ensureEmmetJSX } from "@/lib/emmetMonaco";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -42,7 +43,7 @@ export default function CollaborativeEditor({
 
   useEffect(() => {
     let mounted = true;
-    
+
     try {
       // Initialize Yjs document
       const ydoc = new Y.Doc();
@@ -51,7 +52,7 @@ export default function CollaborativeEditor({
       // Connect to Firebase
       const provider = new FirebaseProvider(roomId, ydoc);
       providerRef.current = provider;
-      
+
       // Mark as connected after a brief delay to ensure setup is complete
       setTimeout(() => {
         if (mounted) {
@@ -60,66 +61,64 @@ export default function CollaborativeEditor({
         }
       }, 300);
 
-    // Track user presence in Firestore
-    const userPresenceRef = doc(db, 'collaborative-rooms', roomId, 'users', userIdRef.current);
-    setDoc(userPresenceRef, {
-      name: userName,
-      color: userColorRef.current,
-      lastSeen: serverTimestamp(),
-    }).catch((e) => {
-      console.error('Error setting user presence:', e);
-      if (mounted) setError('Failed to connect to collaboration server');
-    });
-
-    // Update lastSeen periodically
-    const presenceInterval = setInterval(() => {
+      // Track user presence in Firestore
+      const userPresenceRef = doc(db, 'collaborative-rooms', roomId, 'users', userIdRef.current);
       setDoc(userPresenceRef, {
         name: userName,
         color: userColorRef.current,
         lastSeen: serverTimestamp(),
-      }, { merge: true });
-    }, 30000); // Update every 30 seconds
+      }).catch((e) => {
+        console.error('Error setting user presence:', e);
+        if (mounted) setError('Failed to connect to collaboration server');
+      });
 
-    // Listen for other users
-    const usersQuery = query(
-      collection(db, 'collaborative-rooms', roomId, 'users')
-    );
-    
-    const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
-      const now = Date.now();
-      const userList = snapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .filter((user) => {
-          // Filter out users who haven't been seen in 2 minutes
-          const lastSeen = user.lastSeen?.toMillis?.() || 0;
-          return user.id !== userIdRef.current && (now - lastSeen) < 120000;
-        }) as Array<{
-          name: string;
-          color: string;
-          id: string;
-        }>;
-      setUsers(userList);
-    });
+      // Update lastSeen periodically
+      const presenceInterval = setInterval(() => {
+        setDoc(userPresenceRef, {
+          name: userName,
+          color: userColorRef.current,
+          lastSeen: serverTimestamp(),
+        }, { merge: true });
+      }, 30000); // Update every 30 seconds
 
-    // Cleanup
-    return () => {
-      mounted = false;
-      clearInterval(presenceInterval);
-      unsubscribeUsers();
-      // Remove user presence on disconnect
-      deleteDoc(userPresenceRef).catch(console.error);
-      bindingRef.current?.destroy();
-      provider.destroy();
-      ydoc.destroy();
-    };
+      // Listen for other users
+      const usersQuery = query(
+        collection(db, 'collaborative-rooms', roomId, 'users')
+      );
+
+      const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
+        const now = Date.now();
+        type UserDoc = { id: string; name?: string; color?: string; lastSeen?: Timestamp };
+        const userList = snapshot.docs
+          .map((d) => ({ id: d.id, ...d.data() } as UserDoc))
+          .filter((user) => {
+            const lastSeen = user.lastSeen?.toMillis?.() ?? 0;
+            return user.id !== userIdRef.current && (now - lastSeen) < 120000;
+          })
+          .map((u) => ({ id: u.id, name: u.name ?? "Anonymous", color: u.color ?? "#888" }));
+        setUsers(userList);
+      });
+
+      // Cleanup
+      return () => {
+        mounted = false;
+        clearInterval(presenceInterval);
+        unsubscribeUsers();
+        // Remove user presence on disconnect
+        deleteDoc(userPresenceRef).catch(console.error);
+        bindingRef.current?.destroy();
+        provider.destroy();
+        ydoc.destroy();
+      };
     } catch (e) {
       console.error('Error initializing collaborative editor:', e);
       setError('Failed to initialize editor');
     }
   }, [roomId, userName]);
+
+  const handleBeforeMount = (monaco: any) => {
+    ensureEmmetJSX(monaco);
+  };
 
   const handleEditorMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -136,7 +135,7 @@ export default function CollaborativeEditor({
       try {
         // Get or create Yjs text type
         const ytext = ydocRef.current.getText("monaco");
-        
+
         // Set initial content if provided and document is empty
         // Use a delay to ensure Firestore has loaded any existing content
         setTimeout(() => {
@@ -270,6 +269,7 @@ export default function CollaborativeEditor({
           automaticLayout: true,
           scrollBeyondLastLine: false,
         }}
+        beforeMount={handleBeforeMount}
         onMount={handleEditorMount}
       />
 

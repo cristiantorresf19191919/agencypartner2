@@ -102,7 +102,8 @@ export const SearchFeature = () => {
       <HeavyList query={query} />
     </div>
   );
-};`}
+};
+export default SearchFeature;`}
                 good={`// ✅ GOOD: Split urgent vs. non-urgent updates
 import { useState, useTransition } from 'react';
 
@@ -146,7 +147,8 @@ export const SearchFeature = () => {
       <HeavyList query={query} />
     </div>
   );
-};`}
+};
+export default SearchFeature;`}
               />
             </Stack>
           </Card>
@@ -178,17 +180,14 @@ export const SearchFeature = () => {
                 wrong={`// ❌ WRONG: Tooltip appears in wrong position, then jumps
 import { useState, useEffect, useRef } from 'react';
 
-export const Tooltip = ({ targetRef, children }) => {
+const Tooltip = ({ targetRef, children }) => {
   const [coords, setCoords] = useState({ top: 0, left: 0 });
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef(null);
 
-  // 🛑 PROBLEM: useEffect runs AFTER the browser paints
-  // User sees: Tooltip at (0,0) → flash → Tooltip at correct position
   useEffect(() => {
     if (targetRef.current && tooltipRef.current) {
       const targetRect = targetRef.current.getBoundingClientRect();
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
-
       setCoords({
         top: targetRect.top - tooltipRect.height - 10,
         left: targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2)
@@ -197,56 +196,70 @@ export const Tooltip = ({ targetRef, children }) => {
   }, [targetRef]);
 
   return (
-    <div 
+    <div
       ref={tooltipRef}
-      style={{ 
-        position: 'fixed', 
-        top: coords.top, 
-        left: coords.left
-      }}
+      style={{ position: 'fixed', top: coords.top, left: coords.left }}
       className="bg-black text-white p-2 rounded shadow-lg"
     >
       {children}
     </div>
   );
-};`}
+};
+
+function App() {
+  const targetRef = useRef(null);
+  return (
+    <div>
+      <button ref={targetRef}>Hover target</button>
+      <Tooltip targetRef={targetRef}>Tooltip content</Tooltip>
+    </div>
+  );
+}
+export default App;`}
                 good={`// ✅ GOOD: Calculate position before paint (no flicker)
 import { useState, useLayoutEffect, useRef } from 'react';
 
-export const SmartTooltip = ({ targetRef, children }) => {
+const SmartTooltip = ({ targetRef, children }) => {
   const [coords, setCoords] = useState({ top: 0, left: 0 });
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef(null);
 
-  // ✅ Senior Pattern: Measure DOM layout synchronously
-  // This runs BEFORE the browser paints, so the tooltip appears in the correct position immediately
   useLayoutEffect(() => {
     if (targetRef.current && tooltipRef.current) {
       const targetRect = targetRef.current.getBoundingClientRect();
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
-
-      // Calculate position so it's centered above the target
       setCoords({
         top: targetRect.top - tooltipRect.height - 10,
         left: targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2)
       });
     }
-  }, [targetRef]); // Dependency ensures we recalc if target changes
+  }, [targetRef]);
 
   return (
-    <div 
+    <div
       ref={tooltipRef}
-      style={{ 
-        position: 'fixed', 
-        top: coords.top, 
+      style={{
+        position: 'fixed',
+        top: coords.top,
         left: coords.left,
-        opacity: coords.top === 0 ? 0 : 1 // Hide until calculated
+        opacity: coords.top === 0 ? 0 : 1
       }}
       className="bg-black text-white p-2 rounded shadow-lg"
     >
       {children}
     </div>
   );
-};`}
+};
+
+function App() {
+  const targetRef = useRef(null);
+  return (
+    <div>
+      <button ref={targetRef}>Hover target</button>
+      <SmartTooltip targetRef={targetRef}>Tooltip content</SmartTooltip>
+    </div>
+  );
+}
+export default App;`}
               />
             </Stack>
           </Card>
@@ -305,7 +318,8 @@ export const DynamicMeasurer = () => {
       )}
     </div>
   );
-};`}
+};
+export default DynamicMeasurer;`}
                 good={`// ✅ GOOD: Callback ref fires exactly when node mounts
 import { useState, useCallback } from 'react';
 
@@ -343,7 +357,8 @@ export const DynamicMeasurer = () => {
       )}
     </div>
   );
-};`}
+};
+export default DynamicMeasurer;`}
               />
             </Stack>
           </Card>
@@ -373,41 +388,25 @@ export const DynamicMeasurer = () => {
               <CodeComparison
                 language="tsx"
                 wrong={`// ❌ WRONG: Data fetching waterfall in every component
-// Component renders → Spinner → Fetch → Render
+// Mock API for demo (in real app this would be fetch)
+const fetchUser = (id) => Promise.resolve({ name: 'Jane', email: 'j@example.com' });
+
 import { useState, useEffect } from 'react';
 
-export const UserProfile = ({ userId }: { userId: string }) => {
+const UserProfile = ({ userId }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🛑 PROBLEM: Waterfall pattern
-  // 1. Component mounts
-  // 2. Shows loading spinner
-  // 3. Fetches data
-  // 4. Updates state
-  // 5. Re-renders with data
-  // This creates a poor UX with multiple loading states
   useEffect(() => {
     setLoading(true);
-    fetch(\`/api/users/\${userId}\`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch');
-        return res.json();
-      })
-      .then(data => {
-        setUser(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+    fetchUser(userId)
+      .then(data => { setUser(data); setLoading(false); })
+      .catch(err => { setError(err.message); setLoading(false); });
   }, [userId]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  
   return (
     <div>
       <h1>{user.name}</h1>
@@ -416,40 +415,16 @@ export const UserProfile = ({ userId }: { userId: string }) => {
   );
 };
 
-// Problems:
-// - Loading spinner on every navigation
-// - Data fetching happens AFTER component mounts
-// - Can't prefetch data
-// - Multiple components = multiple waterfalls`}
-                good={`// ✅ GOOD: Router-level data fetching (React Router v6.4+)
-// router.tsx (Definition)
-import { createBrowserRouter } from "react-router-dom";
-import { UserProfile } from "./UserProfile";
+function App() {
+  return <UserProfile userId="1" />;
+}
+export default App;`}
+                good={`// ✅ GOOD: Router-level data fetching (concept demo with mock loader)
+// Mock: In a real app useRouter() provides loader data. Here we stub it for demo.
+const useLoaderData = () => ({ name: 'Jane', email: 'j@example.com' });
 
-export const router = createBrowserRouter([
-  {
-    path: "/user/:id",
-    element: <UserProfile />,
-    // ✅ Senior Pattern: The "Loader"
-    // This runs in parallel with the code bundle downloading.
-    // By the time the component mounts, data is often already there.
-    loader: async ({ params }) => {
-      const res = await fetch(\`/api/users/\${params.id}\`);
-      if (res.status === 404) throw new Response("Not Found", { status: 404 });
-      return res.json();
-    },
-    // ✅ Error Boundaries are native now
-    errorElement: <div className="p-4 bg-red-100">User not found or API crashed!</div>
-  }
-]);
-
-// UserProfile.tsx (Component)
-import { useLoaderData } from "react-router-dom";
-
-export const UserProfile = () => {
-  // No loading state needed! The component ONLY renders if data is ready.
-  const user = useLoaderData() as { name: string; email: string };
-
+const UserProfile = () => {
+  const user = useLoaderData();
   return (
     <div>
       <h1>{user.name}</h1>
@@ -458,13 +433,10 @@ export const UserProfile = () => {
   );
 };
 
-// Benefits:
-// ✅ Data fetches in parallel with code download
-// ✅ Component only renders when data is ready
-// ✅ No loading spinners needed
-// ✅ Error handling at router level
-// ✅ Can prefetch data on hover/link focus
-// ✅ Eliminates waterfall patterns`}
+function App() {
+  return <UserProfile />;
+}
+export default App;`}
               />
             </Stack>
           </Card>
@@ -506,22 +478,16 @@ const Container = () => {
   );
 };
 
-const Tooltip = ({ children }) => {
-  return (
-    <div style={{ 
-      position: 'absolute', 
-      top: '-50px',
-      background: 'black',
-      color: 'white',
-      padding: '8px'
-    }}>
-      {children}
-    </div>
-  );
-};
+const Tooltip = ({ children }) => (
+  <div style={{ position: 'absolute', top: '-50px', background: 'black', color: 'white', padding: '8px' }}>
+    {children}
+  </div>
+);
 
-// Problems:
-// - Tooltip gets clipped by parent's overflow: hidden
+function App() { return <Container />; }
+export default App;
+
+// Problems: Tooltip gets clipped by parent's overflow: hidden
 // - Z-index conflicts with parent stacking contexts
 // - Dropdowns can't escape container boundaries`}
                 good={`// ✅ GOOD: Portal renders at document.body level
@@ -580,12 +546,14 @@ const Tooltip = ({ targetElement, children }) => {
     }}>
       {children}
     </div>,
-    document.body // ✅ Renders here, not in the parent tree
+    document.body
   );
 };
 
-// Benefits:
-// ✅ Escapes overflow: hidden constraints
+function App() { return <Container />; }
+export default App;
+
+// Benefits: Escapes overflow, bypasses z-index
 // ✅ Bypasses z-index stacking contexts
 // ✅ Perfect for modals, tooltips, dropdowns
 // ✅ Component logic stays in child, DOM renders elsewhere`}
@@ -635,7 +603,11 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
   }
 }
 
-// 🛑 PROBLEM: If PaymentForm crashes, entire dashboard dies
+const Dashboard = () => <div>Dashboard</div>;
+const PaymentForm = () => <div>Payment Form</div>;
+const ThirdPartyGraph = () => <div>Graph</div>;
+const UserSettings = () => <div>Settings</div>;
+
 function App() {
   return (
     <AppErrorBoundary>
@@ -646,9 +618,9 @@ function App() {
     </AppErrorBoundary>
   );
 }
+export default App;
 
-// Problems:
-// - One crash = entire app down
+// Problems: One crash = entire app down
 // - No granular error recovery
 // - Poor user experience`}
                 good={`// ✅ GOOD: Granular Error Boundaries
@@ -683,34 +655,25 @@ class ErrorBoundary extends Component<
   }
 }
 
-// ✅ Senior Pattern: Granular Boundaries
-// Each high-risk widget has its own boundary
+const Dashboard = ({ children }) => <div><h2>Dashboard</h2>{children}</div>;
+const PaymentForm = () => <div>Payment Form</div>;
+const ThirdPartyGraph = () => <div>Graph</div>;
+const UserSettings = () => <div>Settings</div>;
+
 function App() {
   return (
     <Dashboard>
-      {/* ✅ If PaymentForm crashes, only this section shows error */}
-      <ErrorBoundary
-        fallback={<div>Payment form unavailable. Please try again later.</div>}
-        onError={(error) => {
-          // Log to error tracking service
-          console.error('PaymentForm error:', error);
-        }}
-      >
+      <ErrorBoundary fallback={<div>Payment form unavailable.</div>}>
         <PaymentForm />
       </ErrorBoundary>
-
-      {/* ✅ If ThirdPartyGraph crashes, dashboard still works */}
-      <ErrorBoundary
-        fallback={<div>Graph unavailable. Other features still work.</div>}
-      >
+      <ErrorBoundary fallback={<div>Graph unavailable.</div>}>
         <ThirdPartyGraph />
       </ErrorBoundary>
-
-      {/* ✅ UserSettings is safe, no boundary needed */}
       <UserSettings />
     </Dashboard>
   );
 }
+export default App;
 
 // Benefits:
 // ✅ Isolated failures don't crash entire app
@@ -755,12 +718,8 @@ const UserProfile = ({ userId }: { userId: string }) => {
   // 🛑 PROBLEM: When userId changes, React reuses the component
   // The form fields still contain User A's data when switching to User B
   useEffect(() => {
-    fetch(\`/api/users/\${userId}\`)
-      .then(res => res.json())
-      .then(user => {
-        setName(user.name);
-        setEmail(user.email);
-      });
+    const mock = (id) => Promise.resolve({ name: id === 'user-1' ? 'Alice' : 'Bob', email: id + '@ex.com' });
+    mock(userId).then(user => { setName(user.name); setEmail(user.email); });
   }, [userId]);
 
   return (
@@ -773,16 +732,15 @@ const UserProfile = ({ userId }: { userId: string }) => {
 
 function App() {
   const [selectedUserId, setSelectedUserId] = useState('user-1');
-
   return (
     <div>
       <button onClick={() => setSelectedUserId('user-1')}>User 1</button>
       <button onClick={() => setSelectedUserId('user-2')}>User 2</button>
-      {/* ❌ React reuses component, form might show stale data */}
       <UserProfile userId={selectedUserId} />
     </div>
   );
 }
+export default App;
 
 // Problems:
 // - Form fields keep old values when switching users
@@ -796,12 +754,8 @@ const UserProfile = ({ userId }: { userId: string }) => {
   const [email, setEmail] = useState('');
 
   useEffect(() => {
-    fetch(\`/api/users/\${userId}\`)
-      .then(res => res.json())
-      .then(user => {
-        setName(user.name);
-        setEmail(user.email);
-      });
+    const mock = (id) => Promise.resolve({ name: id === 'user-1' ? 'Alice' : 'Bob', email: id + '@ex.com' });
+    mock(userId).then(user => { setName(user.name); setEmail(user.email); });
   }, [userId]);
 
   return (
@@ -814,17 +768,15 @@ const UserProfile = ({ userId }: { userId: string }) => {
 
 function App() {
   const [selectedUserId, setSelectedUserId] = useState('user-1');
-
   return (
     <div>
       <button onClick={() => setSelectedUserId('user-1')}>User 1</button>
       <button onClick={() => setSelectedUserId('user-2')}>User 2</button>
-      {/* ✅ Senior Pattern: Key forces full remount */}
-      {/* When userId changes, React destroys old instance and creates new one */}
       <UserProfile key={selectedUserId} userId={selectedUserId} />
     </div>
   );
 }
+export default App;
 
 // How it works:
 // 1. User clicks "User 2" → selectedUserId changes to 'user-2'
@@ -885,8 +837,10 @@ const ScrollTracker = () => {
   return <div>Scroll position: {scrollY}px</div>;
 };
 
-// Problems:
-// - Memory leak: listeners accumulate on every mount
+function App() { return <ScrollTracker />; }
+export default App;
+
+// Problems: Memory leak, listeners accumulate
 // - Performance degrades over time
 // - App gets slower with each navigation
 // - Can cause browser tab to freeze`}
@@ -934,11 +888,15 @@ const ResponsiveComponent = () => {
   return <div>Width: {width}px</div>;
 };
 
-// Benefits:
-// ✅ No memory leaks
-// ✅ Consistent performance
-// ✅ Proper resource cleanup
-// ✅ Prevents ghost listeners`}
+function App() {
+  return (
+    <div>
+      <ScrollTracker />
+      <ResponsiveComponent />
+    </div>
+  );
+}
+export default App;`}
               />
             </Stack>
           </Card>
@@ -990,11 +948,10 @@ const FormField = ({ label }: { label: string }) => {
   );
 };
 
-// Problems:
-// - Hydration mismatch errors in SSR
-// - IDs don't match between server/client
-// - Breaks accessibility (screen readers)
-// - Unpredictable behavior`}
+function App() { return <FormField label="Name" />; }
+export default App;
+
+// Problems: Hydration mismatch in SSR, IDs don't match`}
                 good={`// ✅ GOOD: useId generates stable IDs for SSR
 import { useId } from 'react';
 
@@ -1043,12 +1000,8 @@ const ContactForm = () => {
   );
 };
 
-// Benefits:
-// ✅ No hydration mismatches
-// ✅ Stable IDs across server/client
-// ✅ Perfect for accessibility (ARIA)
-// ✅ Works with Next.js, Remix, any SSR framework
-// ✅ Each component instance gets unique ID`}
+function App() { return <ContactForm />; }
+export default App;`}
               />
             </Stack>
           </Card>
@@ -1080,36 +1033,29 @@ const ContactForm = () => {
                 wrong={`// ❌ WRONG: Debouncing feels sluggish
 import { useState, useEffect } from 'react';
 
+const HeavySearchResults = ({ query }) => {
+  const items = Array.from({ length: 100 }, (_, i) => \`Item \${i}\`);
+  const filtered = items.filter(item => item.includes(query));
+  return <ul>{filtered.map(item => <li key={item}>{item}</li>)}</ul>;
+};
+
 const SearchFeature = () => {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
-  // 🛑 PROBLEM: User types, nothing happens for 500ms
-  // Then results appear. Feels laggy and unresponsive.
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
-
+    const timer = setTimeout(() => setDebouncedQuery(query), 500);
     return () => clearTimeout(timer);
   }, [query]);
 
   return (
     <div>
-      <input 
-        value={query} 
-        onChange={(e) => setQuery(e.target.value)}
-        // Input updates immediately, but results are delayed
-      />
+      <input value={query} onChange={(e) => setQuery(e.target.value)} />
       <HeavySearchResults query={debouncedQuery} />
     </div>
   );
 };
-
-// Problems:
-// - User types, sees nothing for 500ms
-// - Feels unresponsive and laggy
-// - Artificial delay hurts UX`}
+export default SearchFeature;`}
                 good={`// ✅ GOOD: useDeferredValue feels snappy
 import { useState, useDeferredValue } from 'react';
 
@@ -1159,6 +1105,7 @@ const SearchFeature = () => {
     </div>
   );
 };
+export default SearchFeature;
 
 // How it works:
 // 1. User types "a" → query updates immediately → input shows "a"

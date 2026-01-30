@@ -55,14 +55,30 @@ export default function ConcurrentFeaturesPage() {
             </div>
 
             <CodeEditor
-              code={`// ✅ Suspense with Data Fetching
-import { Suspense } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+              code={`import { Suspense } from 'react';
 
-// Component that throws a promise while loading
+const MOCK_USER = { name: "Demo User", email: "demo@example.com" };
+function fetchUser() {
+  const p = new Promise((r) => setTimeout(() => r(MOCK_USER), 600));
+  (p as any).status = undefined;
+  return p;
+}
+
+function use<T>(promise: Promise<T>): T {
+  const p = promise as any;
+  if (p.status === 'fulfilled') return p.value;
+  if (p.status === 'rejected') throw p.reason;
+  if (p.status === 'pending') throw promise;
+  p.status = 'pending';
+  promise.then(
+    (result) => { p.status = 'fulfilled'; p.value = result; },
+    (reason) => { p.status = 'rejected'; p.reason = reason; }
+  );
+  throw promise;
+}
+
 function UserProfile({ userId }: { userId: string }) {
-  const user = use(fetchUser(userId)); // use() throws promise
-  
+  const user = use(fetchUser());
   return (
     <div>
       <h1>{user.name}</h1>
@@ -71,67 +87,19 @@ function UserProfile({ userId }: { userId: string }) {
   );
 }
 
-// Using the experimental use() hook
-function use<T>(promise: Promise<T>): T {
-  if (promise.status === 'fulfilled') {
-    return promise.value;
-  } else if (promise.status === 'rejected') {
-    throw promise.reason;
-  } else if (promise.status === 'pending') {
-    throw promise;
-  } else {
-    promise.status = 'pending';
-    promise.then(
-      result => {
-        promise.status = 'fulfilled';
-        promise.value = result;
-      },
-      reason => {
-        promise.status = 'rejected';
-        promise.reason = reason;
-      }
-    );
-    throw promise;
-  }
-}
+function ErrorFallback() { return <div style={{ color: '#f87171' }}>Error</div>; }
+function UserProfileSkeleton() { return <div>Loading user...</div>; }
 
-// Usage with Suspense
 function App() {
   return (
-    <ErrorBoundary fallback={<ErrorFallback />}>
-      <Suspense fallback={<UserProfileSkeleton />}>
-        <UserProfile userId="123" />
-      </Suspense>
-    </ErrorBoundary>
+    <Suspense fallback={<UserProfileSkeleton />}>
+      <UserProfile userId="123" />
+    </Suspense>
   );
 }
-
-// ✅ Multiple Suspense Boundaries
-function Dashboard() {
-  return (
-    <div>
-      <ErrorBoundary fallback={<HeaderError />}>
-        <Suspense fallback={<HeaderSkeleton />}>
-          <Header />
-        </Suspense>
-      </ErrorBoundary>
-
-      <ErrorBoundary fallback={<SidebarError />}>
-        <Suspense fallback={<SidebarSkeleton />}>
-          <Sidebar />
-        </Suspense>
-      </ErrorBoundary>
-
-      <ErrorBoundary fallback={<ContentError />}>
-        <Suspense fallback={<ContentSkeleton />}>
-          <MainContent />
-        </Suspense>
-      </ErrorBoundary>
-    </div>
-  );
-}`}
+export default App;`}
               language="tsx"
-              readOnly={true}
+              readOnly={false}
             />
           </Stack>
         </Card>
@@ -304,7 +272,7 @@ function FilterableList({ items }: { items: Item[] }) {
   );
 }`}
               language="tsx"
-              readOnly={true}
+              readOnly={false}
             />
           </Stack>
         </Card>
@@ -395,7 +363,7 @@ function ProgressivePage() {
   );
 }`}
               language="tsx"
-              readOnly={true}
+              readOnly={false}
             />
           </Stack>
         </Card>

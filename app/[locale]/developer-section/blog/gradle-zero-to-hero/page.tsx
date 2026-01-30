@@ -386,7 +386,7 @@ export default function GradleZeroToHeroPage() {
               <li>What&apos;s the purpose of the Gradle Wrapper and which command uses it?</li>
               <li>What&apos;s the difference between <code>build.gradle.kts</code> and <code>build.gradle</code>?</li>
               <li>How do you list all tasks and run only the test task?</li>
-              <li>What does <code>repositories {mavenCentral()}</code> do?</li>
+              <li>What does <code>{'repositories { mavenCentral() }'}</code> do?</li>
             </ol>
 
             <Heading level={3} className={styles.categoryTitle}>
@@ -400,7 +400,7 @@ export default function GradleZeroToHeroPage() {
             </ol>
             <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
               <Text className={styles.infoText}>
-                <strong>Hint for #7:</strong> Use <code>tasks.register("printVersion")</code> and <code>doLast {println(version)}</code>.
+                <strong>Hint for #7:</strong> Use <code>tasks.register("printVersion")</code> and <code>{'doLast { println(version) }'}</code>.
               </Text>
             </div>
             <CodeEditor code={printVersionTaskKts} language="kotlin" readOnly height={140} />

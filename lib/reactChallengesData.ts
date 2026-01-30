@@ -640,7 +640,7 @@ const Parent = () => {
         validate: (code: string) => {
           const childDef = /const\s+Child\s*=/.exec(code);
           const parentDef = /const\s+Parent\s*=/.exec(code);
-          return childDef && parentDef && childDef.index! < parentDef.index!;
+          return !!(childDef && parentDef && childDef.index! < parentDef.index!);
         },
       },
     ],
@@ -1928,7 +1928,7 @@ export default function App() {
     testCases: [
       {
         description: "Creates separate contexts (UserContext and ThemeContext)",
-        validate: (code: string) => /createContext/.test(code) && (/(UserContext|ThemeContext)/.test(code) || /createContext/g.test(code) && code.match(/createContext/g).length >= 2),
+        validate: (code: string) => /createContext/.test(code) && (/(UserContext|ThemeContext)/.test(code) || (/createContext/g.test(code) && (code.match(/createContext/g)?.length ?? 0) >= 2)),
       },
       {
         description: "Uses useMemo to memoize context values",
@@ -2366,7 +2366,7 @@ export default Parent;`,
       },
       {
         description: "Uses forwardRef for Child component",
-        validate: (code: string) => /forwardRef/.test(code) && /Child/.test(code) && code.match(/forwardRef/g).length >= 2,
+        validate: (code: string) => /forwardRef/.test(code) && /Child/.test(code) && (code.match(/forwardRef/g)?.length ?? 0) >= 2,
       },
       {
         description: "Ref is forwarded through the chain (Child -> Grandchild -> input)",

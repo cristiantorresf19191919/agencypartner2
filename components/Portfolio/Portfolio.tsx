@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Portfolio.module.css';
@@ -71,9 +71,9 @@ const Portfolio = ({
   title,
   subtitle,
   cases,
-}: PortfolioProps): JSX.Element => {
+}: PortfolioProps): React.JSX.Element => {
   const { t } = useLanguage();
-  
+
   const defaultPillText = pillText || t('portfolio-pill');
   const defaultTitle = title || (
     <span dangerouslySetInnerHTML={{ __html: t('portfolio-title') }} />

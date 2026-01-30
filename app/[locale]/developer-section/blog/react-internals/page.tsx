@@ -49,13 +49,24 @@ export default function ReactInternalsPage() {
             <CodeEditor
               code={`// Fiber is React's internal data structure
 // Each component has a Fiber node representing its work
-// Fiber enables:
-// - Interruptible rendering
-// - Priority-based updates
-// - Time slicing
-// - Concurrent features`}
+// Fiber enables: Interruptible rendering, Priority-based updates, Time slicing, Concurrent features
+
+function App() {
+  return (
+    <div style={{ padding: 16 }}>
+      <h2>Fiber architecture</h2>
+      <ul>
+        <li>Interruptible rendering</li>
+        <li>Priority-based updates</li>
+        <li>Time slicing</li>
+        <li>Concurrent features</li>
+      </ul>
+    </div>
+  );
+}
+export default App;`}
               language="tsx"
-              readOnly={true}
+              readOnly={false}
             />
           </Stack>
         </Card>

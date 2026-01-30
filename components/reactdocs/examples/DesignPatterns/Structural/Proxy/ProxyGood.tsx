@@ -7,13 +7,15 @@ import React, { useState, lazy, Suspense } from "react";
 // const UserDetails = lazy(() => import("./UserDetails"));
 
 // ✅ Proxy hook: Only fetches data when needed
+type UserData = { name: string; email: string };
+
 const useLazyUser = (userId: number) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const loadUser = async () => {
     if (user) return; // Already loaded
-    
+
     setIsLoading(true);
     try {
       const response = await fetch(`/api/users/${userId}`);

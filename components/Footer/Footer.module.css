@@ -74,19 +74,6 @@
   font-size: 1.05rem;
 }
 
-.madeWith {
-  font-style: italic;
-  margin: 1rem 0;
-}
-
-.madeWith .fa-heart {
-  color: #F8549B;
-}
-
-.madeWith .fa-bolt {
-  color: #35E4B2;
-}
-
 .footerLinks {
   display: flex;
   justify-content: center;

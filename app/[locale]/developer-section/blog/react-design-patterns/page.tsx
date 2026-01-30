@@ -68,16 +68,21 @@ export default function ReactDesignPatternsPage() {
 
             <CodeEditor
               language="tsx"
-              code={`// Function Component with Hooks
+              code={`// Mock data for preview
+const MOCK_USER = { name: "Jane", email: "jane@example.com" };
+const fetchUserData = () => Promise.resolve(MOCK_USER);
+const LoadingSpinner = () => <p>Loading...</p>;
+const ErrorMessage = ({ message }: { message: string }) => <p style={{ color: '#f87171' }}>{message}</p>;
+
 function UserProfile({ userId }: { userId: string }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<typeof MOCK_USER | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchUser() {
+    async function load() {
       setLoading(true);
       try {
-        const userData = await fetchUserData(userId);
+        const userData = await fetchUserData();
         setUser(userData);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
@@ -85,7 +90,7 @@ function UserProfile({ userId }: { userId: string }) {
         setLoading(false);
       }
     }
-    fetchUser();
+    load();
   }, [userId]);
 
   if (loading) return <LoadingSpinner />;
@@ -95,12 +100,14 @@ function UserProfile({ userId }: { userId: string }) {
     <div className="user-profile">
       <h2>{user.name}</h2>
       <p>{user.email}</p>
-      {/* Additional user information */}
     </div>
   );
-}`}
-              readOnly={true}
-              height={400}
+}
+
+function App() { return <UserProfile userId="1" />; }
+export default App;`}
+              readOnly={false}
+              height={420}
             />
           </Stack>
         </Card>
@@ -127,14 +134,11 @@ function UserProfile({ userId }: { userId: string }) {
 
             <CodeEditor
               language="tsx"
-              code={`// Custom hook for handling form input
-function useFormInput(initialValue: string) {
+              code={`function useFormInput(initialValue: string) {
   const [value, setValue] = useState(initialValue);
-
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value);
   }
-
   return {
     value,
     onChange: handleChange,
@@ -142,16 +146,12 @@ function useFormInput(initialValue: string) {
   };
 }
 
-// Usage in a component
 function LoginForm() {
   const email = useFormInput("");
   const password = useFormInput("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Login logic here using email.value and password.value
-
-    // Reset form after submission
     email.reset();
     password.reset();
   }
@@ -222,8 +222,11 @@ function UserPreferences() {
       </label>
     </div>
   );
-}`}
-              readOnly={true}
+}
+
+function App() { return <UserPreferences />; }
+export default App;`}
+              readOnly={false}
               height={650}
             />
           </Stack>
@@ -300,7 +303,7 @@ function App() {
     </ThemeProvider>
   );
 }`}
-              readOnly={true}
+              readOnly={false}
               height={500}
             />
           </Stack>
@@ -417,7 +420,7 @@ function UserSelector() {
     />
   );
 }`}
-              readOnly={true}
+              readOnly={false}
               height={650}
             />
           </Stack>
@@ -521,7 +524,7 @@ function AddToCartButton({ productId }: { productId: string }) {
     </button>
   );
 }`}
-              readOnly={true}
+              readOnly={false}
               height={600}
             />
           </Stack>
@@ -600,7 +603,7 @@ export default defineConfig({
     open: true
   }
 });`}
-              readOnly={true}
+              readOnly={false}
               height={500}
             />
           </Stack>
@@ -667,7 +670,7 @@ function UserManagement() {
     </DataGrid>
   );
 }`}
-              readOnly={true}
+              readOnly={false}
               height={500}
             />
           </Stack>

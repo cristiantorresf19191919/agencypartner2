@@ -382,6 +382,7 @@ class HeaderComponent extends HTMLElement {
   }
 
   private initializeEventListeners(): void {
+    if (!this.shadowRoot) return;
     const mobileMenuToggle = this.shadowRoot.querySelector('#mobile-menu-toggle') as HTMLButtonElement | null;
     const mobileMenuClose = this.shadowRoot.querySelector('#mobile-menu-close') as HTMLButtonElement | null;
     const mobileMenuOverlay = this.shadowRoot.querySelector('#mobile-menu-overlay') as HTMLDivElement | null;

@@ -96,9 +96,12 @@ function WelcomeDialog() {
       </p>
     </FancyBorder>
   );
-}`}
+}
+
+function App() { return <WelcomeDialog />; }
+export default App;`}
                 language="tsx"
-                readOnly={true}
+                readOnly={false}
                 height={300}
               />
             </div>
@@ -126,20 +129,20 @@ function WelcomeDialog() {
   );
 }
 
+function Contacts() { return <div style={{ padding: 8 }}>Contacts (mock)</div>; }
+function Chat() { return <div style={{ padding: 8 }}>Chat (mock)</div>; }
+
 function App() {
   return (
     <SplitPane
-      left={
-        <Contacts />
-      }
-      right={
-        <Chat />
-      } />
+      left={<Contacts />}
+      right={<Chat />} />
   );
-}`}
+}
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={250}
+                readOnly={false}
+                height={280}
               />
             </div>
 
@@ -154,7 +157,15 @@ function App() {
               </Text>
               
               <CodeEditor
-                code={`function Dialog(props) {
+                code={`function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+
+function Dialog(props) {
   return (
     <FancyBorder color="blue">
       <h1 className="Dialog-title">
@@ -173,10 +184,13 @@ function WelcomeDialog() {
       title="Welcome"
       message="Thank you for visiting our spacecraft!" />
   );
-}`}
+}
+
+function App() { return <WelcomeDialog />; }
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={250}
+                readOnly={false}
+                height={320}
               />
             </div>
 
@@ -187,15 +201,19 @@ function WelcomeDialog() {
               </Text>
               
               <CodeEditor
-                code={`function Dialog(props) {
+                code={`function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+
+function Dialog(props) {
   return (
     <FancyBorder color="blue">
-      <h1 className="Dialog-title">
-        {props.title}
-      </h1>
-      <p className="Dialog-message">
-        {props.message}
-      </p>
+      <h1 className="Dialog-title">{props.title}</h1>
+      <p className="Dialog-message">{props.message}</p>
       {props.children}
     </FancyBorder>
   );
@@ -211,13 +229,9 @@ class SignUpDialog extends React.Component {
 
   render() {
     return (
-      <Dialog title="Mars Exploration Program"
-              message="How should we refer to you?">
-        <input value={this.state.login}
-               onChange={this.handleChange} />
-        <button onClick={this.handleSignUp}>
-          Sign Me Up!
-        </button>
+      <Dialog title="Mars Exploration Program" message="How should we refer to you?">
+        <input value={this.state.login} onChange={this.handleChange} />
+        <button onClick={this.handleSignUp}>Sign Me Up!</button>
       </Dialog>
     );
   }
@@ -229,10 +243,13 @@ class SignUpDialog extends React.Component {
   handleSignUp() {
     alert(\`Welcome aboard, \${this.state.login}!\`);
   }
-}`}
+}
+
+function App() { return <SignUpDialog />; }
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={400}
+                readOnly={false}
+                height={420}
               />
             </div>
 
@@ -277,27 +294,33 @@ class SignUpDialog extends React.Component {
               </Text>
               
               <CodeEditor
-                code={`export function ShoppingList() {
-  const { data, isPending } = useQuery(/* ... */)
+                code={`const MOCK_DATA = { assignee: { name: 'Alex' }, content: [{ id: 1, name: 'Milk' }, { id: 2, name: 'Bread' }] };
+const useQuery = () => ({ data: MOCK_DATA, isPending: false });
+const Card = ({ children }: any) => <div style={{ border: '1px solid #333', padding: 16 }}>{children}</div>;
+const CardHeading = ({ children }: any) => <h3>{children}</h3>;
+const CardContent = ({ children }: any) => <div>{children}</div>;
+const UserInfo = ({ name }: any) => <p>Assignee: {name}</p>;
+const Skeleton = () => <div>Loading...</div>;
+const ShoppingItem = ({ name }: any) => <li>{name}</li>;
 
+function ShoppingList() {
+  const { data, isPending } = useQuery();
   return (
     <Card>
       <CardHeading>Welcome 👋</CardHeading>
       <CardContent>
         {data?.assignee ? <UserInfo {...data.assignee} /> : null}
         {isPending ? <Skeleton /> : null}
-        {data
-          ? data.content.map((item) => (
-              <ShoppingItem key={item.id} {...item} />
-            ))
-          : null}
+        {data ? data.content.map((item) => <ShoppingItem key={item.id} {...item} />) : null}
       </CardContent>
     </Card>
-  )
-}`}
+  );
+}
+function App() { return <ShoppingList />; }
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={250}
+                readOnly={false}
+                height={320}
               />
             </div>
 
@@ -308,9 +331,18 @@ class SignUpDialog extends React.Component {
               </Text>
               
               <CodeEditor
-                code={`export function ShoppingList() {
-  const { data, isPending } = useQuery(/* ... */)
+                code={`const MOCK_DATA = { assignee: { name: 'Sam' }, content: [{ id: 1, name: 'Eggs' }] };
+const useQuery = () => ({ data: MOCK_DATA, isPending: false });
+const Card = ({ children }: any) => <div style={{ border: '1px solid #333', padding: 16 }}>{children}</div>;
+const CardHeading = ({ children }: any) => <h3>{children}</h3>;
+const CardContent = ({ children }: any) => <div>{children}</div>;
+const UserInfo = ({ name }: any) => <p>Assignee: {name}</p>;
+const Skeleton = () => <div>Loading...</div>;
+const EmptyScreen = () => <p>No items</p>;
+const ShoppingItem = ({ name }: any) => <li>{name}</li>;
 
+function ShoppingList() {
+  const { data, isPending } = useQuery();
   return (
     <Card>
       <CardHeading>Welcome 👋</CardHeading>
@@ -318,18 +350,16 @@ class SignUpDialog extends React.Component {
         {data?.assignee ? <UserInfo {...data.assignee} /> : null}
         {isPending ? <Skeleton /> : null}
         {!data && !isPending ? <EmptyScreen /> : null}
-        {data
-          ? data.content.map((item) => (
-              <ShoppingItem key={item.id} {...item} />
-            ))
-          : null}
+        {data ? data.content.map((item) => <ShoppingItem key={item.id} {...item} />) : null}
       </CardContent>
     </Card>
-  )
-}`}
+  );
+}
+function App() { return <ShoppingList />; }
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={280}
+                readOnly={false}
+                height={360}
               />
             </div>
 
@@ -343,46 +373,41 @@ class SignUpDialog extends React.Component {
               </Text>
               
               <CodeEditor
-                code={`function Layout(props: { children: ReactNode }) {
+                code={`const Card = ({ children }: any) => <div style={{ border: '1px solid #333', padding: 16 }}>{children}</div>;
+const CardHeading = ({ children }: any) => <h3>{children}</h3>;
+const CardContent = ({ children }: any) => <div>{children}</div>;
+const Skeleton = () => <div>Loading...</div>;
+const EmptyScreen = () => <p>No items</p>;
+const UserInfo = ({ name }: any) => <p>Assignee: {name}</p>;
+const ShoppingItem = ({ name }: any) => <li>{name}</li>;
+const MOCK_DATA = { assignee: { name: 'Jordan' }, content: [{ id: 1, name: 'Apples' }, { id: 2, name: 'Oranges' }] };
+const useQuery = () => ({ data: MOCK_DATA, isPending: false });
+
+function Layout(props: { children: React.ReactNode }) {
   return (
     <Card>
       <CardHeading>Welcome 👋</CardHeading>
       <CardContent>{props.children}</CardContent>
     </Card>
-  )
+  );
 }
 
-export function ShoppingList() {
-  const { data, isPending } = useQuery(/* ... */)
-
-  if (isPending) {
-    return (
-      <Layout>
-        <Skeleton />
-      </Layout>
-    )
-  }
-
-  if (!data) {
-    return (
-      <Layout>
-        <EmptyScreen />
-      </Layout>
-    )
-  }
-
+function ShoppingList() {
+  const { data, isPending } = useQuery();
+  if (isPending) return <Layout><Skeleton /></Layout>;
+  if (!data) return <Layout><EmptyScreen /></Layout>;
   return (
     <Layout>
       {data.assignee ? <UserInfo {...data.assignee} /> : null}
-      {data.content.map((item) => (
-        <ShoppingItem key={item.id} {...item} />
-      ))}
+      {data.content.map((item) => <ShoppingItem key={item.id} {...item} />)}
     </Layout>
-  )
-}`}
+  );
+}
+function App() { return <ShoppingList />; }
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={400}
+                readOnly={false}
+                height={420}
               />
             </div>
 
@@ -427,7 +452,9 @@ export function ShoppingList() {
               </Text>
               
               <CodeEditor
-                code={`interface CtaButtonProps extends React.ComponentProps<'button'> {
+                code={`const Icon = ({ name, size, color }: any) => <span style={{ marginRight: 4, marginLeft: 4, fontSize: size }}>{name}</span>;
+
+interface CtaButtonProps extends React.ComponentProps<'button'> {
   variant?: 'primary' | 'secondary';
   size?: 'small' | 'large';
   iconNameLeft?: string;
@@ -439,7 +466,7 @@ export function ShoppingList() {
   text: string;
 }
 
-export const CtaButton: React.FC<CtaButtonProps> = ({
+const CtaButton: React.FC<CtaButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   iconNameLeft,
@@ -449,41 +476,36 @@ export const CtaButton: React.FC<CtaButtonProps> = ({
   iconSizeLeft,
   iconSizeRight,
   text,
-  className,
+  className = '',
   ...props
 }) => {
   const classes = \`btn \${variant} \${size} \${className}\`;
-
   return (
     <button className={classes} {...props}>
-      {iconNameLeft && (
-        <Icon name={iconNameLeft} size={iconSizeLeft} color={iconColorLeft} />
-      )}
+      {iconNameLeft && <Icon name={iconNameLeft} size={iconSizeLeft} color={iconColorLeft} />}
       <span>{text}</span>
-      {iconNameRight && (
-        <Icon
-          name={iconNameRight}
-          size={iconSizeRight}
-          color={iconColorRight}
-        />
-      )}
+      {iconNameRight && <Icon name={iconNameRight} size={iconSizeRight} color={iconColorRight} />}
     </button>
   );
 };
 
-// Usage - 9 props for a simple button!
-<CtaButton
-   iconNameLeft="+"
-   iconColorLeft="red"
-   iconNameRight="+"
-   iconColorRight="green"
-   iconSizeLeft={20}
-   iconSizeRight={30}
-   text="Add more"
-/>`}
+function App() {
+  return (
+    <CtaButton
+      iconNameLeft="+"
+      iconColorLeft="red"
+      iconNameRight="+"
+      iconColorRight="green"
+      iconSizeLeft={20}
+      iconSizeRight={30}
+      text="Add more"
+    />
+  );
+}
+export default App;`}
                 language="tsx"
-                readOnly={true}
-                height={500}
+                readOnly={false}
+                height={520}
               />
             </div>
 
@@ -497,65 +519,45 @@ export const CtaButton: React.FC<CtaButtonProps> = ({
               </Text>
               
               <CodeEditor
-                code={`interface CtaRootProps extends React.ComponentProps<'button'> {
+                code={`const Icon = ({ name, color, size }: any) => <span style={{ marginRight: 4, fontSize: size }}>{name}</span>;
+
+interface CtaRootProps extends React.ComponentProps<'button'> {
   variant?: 'primary' | 'secondary';
   size?: 'small' | 'large';
+  children?: React.ReactNode;
 }
 
-export const CtaRoot: React.FC<CtaRootProps> = ({
-  variant = 'primary',
-  size = 'medium',
-  className,
-  children,
-  ...props
-}) => {
-  const classes = \`btn \${variant} \${size} \${className}\`;
+const CtaRoot: React.FC<CtaRootProps> = ({ variant = 'primary', size = 'medium', className = '', children, ...props }) => (
+  <button className={\`btn \${variant} \${size} \${className}\`} {...props}>{children}</button>
+);
 
+const CtaIcon = (props: any) => <Icon {...props} />;
+const CtaText = ({ children, ...props }: any) => <span {...props}>{children}</span>;
+
+const Cta = { Root: CtaRoot, Icon: CtaIcon, Text: CtaText };
+
+function App() {
   return (
-    <button className={classes} {...props}>
-      {children}
-    </button>
+    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+      <Cta.Root>
+        <Cta.Icon name="+" color="red" size={20} />
+        <Cta.Text>Add more</Cta.Text>
+      </Cta.Root>
+      <Cta.Root>
+        <Cta.Text>Add more</Cta.Text>
+        <Cta.Icon name="+" color="green" size={20} />
+      </Cta.Root>
+      <Cta.Root>
+        <Cta.Icon name="+" color="red" size={20} />
+        <Cta.Text>Add more</Cta.Text>
+        <Cta.Icon name="+" color="green" size={30} />
+      </Cta.Root>
+    </div>
   );
-};
-
-export const CtaIcon: React.FC<React.ComponentProps<typeof Icon>> = (props) => {
-  return <Icon {...props} />;
-};
-
-export const CtaText: React.FC<React.ComponentProps<'span'>> = ({
-  children,
-  ...props
-}) => {
-  return <span {...props}>{children}</span>;
-};
-
-export const Cta = {
-  Root: CtaRoot,
-  Icon: CtaIcon,
-  Text: CtaText,
-};
-
-// Usage - Clean and readable!
-{/* Icon Left */}
-<Cta.Root>
-  <Cta.Icon name="+" color="red" size={20} />
-  <Cta.Text>Add more</Cta.Text>
-</Cta.Root>
-
-{/* Icon Right */}
-<Cta.Root>
-  <Cta.Text>Add more</Cta.Text>
-  <Cta.Icon name="+" color="green" size={20} />
-</Cta.Root>
-
-{/* Icon Both sides with different colors and sizes */}
-<Cta.Root>
-  <Cta.Icon name="+" color="red" size={20} />
-  <Cta.Text>Add more</Cta.Text>
-  <Cta.Icon name="+" color="green" size={30} />
-</Cta.Root>`}
+}
+export default App;`}
                 language="tsx"
-                readOnly={true}
+                readOnly={false}
                 height={600}
               />
             </div>
@@ -649,7 +651,7 @@ class ImageLoader {
     }
 }`}
                 language="kotlin"
-                readOnly={true}
+                readOnly={false}
                 height={450}
               />
             </div>
@@ -680,7 +682,7 @@ class ImageLoader {
 // With inheritance, you'd be forced to place both functionalities 
 // in a single superclass, leading to complex hierarchies`}
                 language="kotlin"
-                readOnly={true}
+                readOnly={false}
                 height={250}
               />
             </div>
@@ -736,7 +738,7 @@ class CounterSet<T>(
 
 // Now it works correctly!`}
                 language="kotlin"
-                readOnly={true}
+                readOnly={false}
                 height={500}
               />
             </div>

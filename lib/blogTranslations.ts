@@ -17,7 +17,10 @@ type BlogPostContent = {
   title: string;
   subtitle: string;
   breadcrumbLabel: string;
-  // Add more fields as needed for specific posts
+  /** Optional intro paragraph after subtitle */
+  introParagraph?: string;
+  /** Optional description for categories / how to use the page */
+  categoriesDescription?: string;
 };
 
 type BlogTranslations = {
@@ -139,13 +142,41 @@ const blogTranslations: BlogTranslations = {
   'react-best-practices': {
     es: {
       title: 'Vercel React Best Practices',
-      subtitle: 'Guía de optimización de rendimiento para React y Next.js: 45+ reglas en 8 categorías (waterfalls, bundle, servidor, cliente, re-renders, rendering, JavaScript, patrones avanzados). Ejemplos de código editables con vista previa en vivo.',
+      subtitle: 'Guía de optimización de rendimiento para React y Next.js basada en la ingeniería de Vercel. Más de 45 reglas en 8 categorías: eliminación de cascadas de datos, tamaño de bundle, rendimiento en servidor, obtención de datos en cliente, re-renders, rendering, micro-optimizaciones en JavaScript y patrones avanzados. Cada regla incluye ejemplos de código editables con vista previa en vivo.',
       breadcrumbLabel: 'React Best Practices',
+      introParagraph: 'Estas prácticas están ordenadas por impacto: las críticas (waterfalls y bundle) afectan directamente el tiempo de carga y la experiencia del usuario; las de nivel medio (re-renders, rendering) mejoran la fluidez; las avanzadas pulen casos concretos. Usa los ejemplos en el editor: edita, ejecuta (Run) y compara el comportamiento.',
+      categoriesDescription: 'Categorías por prioridad: 1. Eliminar cascadas (CRÍTICO) • 2. Tamaño de bundle (CRÍTICO) • 3. Servidor (ALTO) • 4. Datos en cliente (MEDIO-ALTO) • 5. Re-renders (MEDIO) • 6. Rendering (MEDIO) • 7. JavaScript (BAJO-MEDIO) • 8. Avanzado (BAJO). Todos los bloques son editables; pulsa Run (⌘/Ctrl+Enter) para ver la vista previa.',
     },
     en: {
       title: 'Vercel React Best Practices',
-      subtitle: 'Comprehensive performance optimization guide for React and Next.js from Vercel Engineering. 45+ rules across 8 categories: eliminating waterfalls, bundle size, server-side, client data fetching, re-renders, rendering, JavaScript micro-optimizations, and advanced patterns. Editable code examples with live preview.',
+      subtitle: 'Comprehensive performance optimization guide for React and Next.js from Vercel Engineering. 45+ rules across 8 categories: eliminating waterfalls, bundle size, server-side performance, client data fetching, re-renders, rendering, JavaScript micro-optimizations, and advanced patterns. Each rule includes editable code examples with live preview.',
       breadcrumbLabel: 'React Best Practices',
+      introParagraph: 'These practices are ordered by impact: critical ones (waterfalls and bundle size) directly affect load time and user experience; medium-priority rules (re-renders, rendering) improve responsiveness; advanced ones polish edge cases. Use the examples in the editor: edit, run, and compare behavior.',
+      categoriesDescription: 'Categories by priority: 1. Eliminating Waterfalls (CRITICAL) • 2. Bundle Size (CRITICAL) • 3. Server-Side (HIGH) • 4. Client Data Fetching (MEDIUM-HIGH) • 5. Re-render (MEDIUM) • 6. Rendering (MEDIUM) • 7. JavaScript (LOW-MEDIUM) • 8. Advanced (LOW). All code blocks are editable—try Run (⌘/Ctrl+Enter) to see the preview.',
+    },
+  },
+  'nextjs-best-practices': {
+    es: {
+      title: 'Mejores Prácticas y Patrones de Next.js',
+      subtitle: 'Guía completa de Next.js desde fundamentos hasta avanzado. Aprende App Router, Server Components, patrones de obtención de datos, estrategias de caché, optimización de rendimiento, enrutamiento, rutas API, middleware y patrones listos para producción utilizados por ingenieros senior. Domina Next.js paso a paso con extensos ejemplos del mundo real.',
+      breadcrumbLabel: 'Mejores Prácticas Next.js',
+    },
+    en: {
+      title: 'Next.js Best Practices & Patterns',
+      subtitle: 'Complete Next.js guide from fundamentals to advanced. Learn App Router, Server Components, data fetching patterns, caching strategies, performance optimization, routing, API routes, middleware, and production-ready patterns used by senior engineers. Master Next.js step-by-step with extensive real-world examples.',
+      breadcrumbLabel: 'Next.js Best Practices',
+    },
+  },
+  'terraform': {
+    es: {
+      title: 'Terraform: Maestría en Infraestructura como Código',
+      subtitle: 'Guía completa de Terraform desde fundamentos hasta avanzado. Aprende principios de Infraestructura como Código, gestión de estado, módulos, espacios de trabajo, provisionadores y patrones listos para producción utilizados por ingenieros DevOps senior. Domina Terraform paso a paso con extensos ejemplos del mundo real.',
+      breadcrumbLabel: 'Terraform',
+    },
+    en: {
+      title: 'Terraform: Infrastructure as Code Mastery',
+      subtitle: 'Complete Terraform guide from fundamentals to advanced. Learn Infrastructure as Code principles, state management, modules, workspaces, provisioners, and production-ready patterns used by senior DevOps engineers. Master Terraform step-by-step with extensive real-world examples.',
+      breadcrumbLabel: 'Terraform',
     },
   },
 };

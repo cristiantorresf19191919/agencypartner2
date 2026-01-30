@@ -23,6 +23,7 @@ import confetti from "canvas-confetti";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
+import { ensureEmmetJSX } from "@/lib/emmetMonaco";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -375,6 +376,10 @@ export default function ReactChallengePage() {
     }),
     []
   );
+
+  const handleBeforeMount = (monaco: any) => {
+    ensureEmmetJSX(monaco);
+  };
 
   const handleEditorMount: OnMount = (editor, monaco) => {
     monacoRef.current = { editor, monaco };
@@ -937,6 +942,7 @@ export default function ReactChallengePage() {
                 value={code}
                 onChange={(v) => setCode(v ?? "")}
                 options={editorOptions}
+                beforeMount={handleBeforeMount}
                 onMount={handleEditorMount}
                 theme="vs-dark"
               />

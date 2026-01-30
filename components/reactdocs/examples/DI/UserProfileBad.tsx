@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 
+type User = { name: string };
+
 // This hook creates a real network request
-const useFetchUserFromAPI = (userId) => {
-  const [user, setUser] = useState(null);
-  
+const useFetchUserFromAPI = (userId: string) => {
+  const [user, setUser] = useState<User | null>(null);
+
   useEffect(() => {
     fetch(`https://api.com/users/${userId}`)
       .then(res => res.json())
@@ -16,7 +18,7 @@ const useFetchUserFromAPI = (userId) => {
 };
 
 // 👎 High-level Component
-const UserProfile = ({ userId }) => {
+const UserProfile = ({ userId }: { userId: string }) => {
   // ❌ VIOLATION: Hard dependency on the specific API hook.
   // We cannot reuse this UI with different data sources.
   const user = useFetchUserFromAPI(userId);
