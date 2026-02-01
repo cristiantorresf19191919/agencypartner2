@@ -36,6 +36,7 @@ import {
   SwapHoriz as SwapHorizIcon,
   Menu as MenuIcon,
   Close as CloseIcon,
+  School as SchoolIcon,
 } from "@mui/icons-material";
 
 interface SidebarItem {
@@ -579,6 +580,18 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
         { id: "example-c-scope-hierarchy", titleKey: "Example C: Scope & Hierarchy", href: "/developer-section/blog/kotlin-coroutines#example-c-scope-hierarchy", icon: <VisibilityIcon sx={{ fontSize: 20 }} />, color: "#6D28D9" },
         { id: "challenge-retry", titleKey: "Challenge 1.5: Retry", href: "/developer-section/blog/kotlin-coroutines#challenge-retry", icon: <SportsEsportsIcon sx={{ fontSize: 20 }} />, color: "#F59E0B" },
         { id: "capstone-stock-monitor", titleKey: "Capstone: Stock Monitor", href: "/developer-section/blog/kotlin-coroutines#capstone-stock-monitor", icon: <FactoryIcon sx={{ fontSize: 20 }} />, color: "#A78BFA" },
+        { id: "additional-references", titleKey: "Additional references", href: "/developer-section/blog/kotlin-coroutines#additional-references", icon: <CodeIcon sx={{ fontSize: 20 }} />, color: "#6D28D9" },
+      ],
+    },
+    {
+      titleKey: "Courses",
+      icon: <SchoolIcon sx={{ fontSize: 24 }} />,
+      color: "#61DAFB",
+      defaultOpen: true,
+      items: [
+        { id: "react-course", titleKey: "React Course", href: "/developer-section/react-course", icon: <ExtensionIcon sx={{ fontSize: 20 }} />, color: "#61DAFB" },
+        { id: "typescript-course", titleKey: "TypeScript Course", href: "/developer-section/typescript-course", icon: <CodeIcon sx={{ fontSize: 20 }} />, color: "#3178c6" },
+        { id: "css-course", titleKey: "CSS Course", href: "/developer-section/css-course", icon: <WaterDropIcon sx={{ fontSize: 20 }} />, color: "#F5549B" },
       ],
     },
   ], []);

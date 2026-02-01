@@ -1,19 +1,21 @@
 "use client";
 
 import { useLocale } from "@/lib/useLocale";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { REACT19_LESSONS } from "@/lib/react19InterviewData";
+import { KOTLIN_COURSE_LESSONS } from "@/lib/kotlinCourseData";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { motion } from "framer-motion";
-import { Code as CodeIcon, ArrowForward as ArrowRight, School as SchoolIcon } from "@mui/icons-material";
+import {
+  Code as CodeIcon,
+  ArrowForward as ArrowRight,
+  School as SchoolIcon,
+  IntegrationInstructions as KotlinIcon,
+} from "@mui/icons-material";
 import Link from "next/link";
-import Image from "next/image";
 import styles from "../challenges/ChallengesPage.module.css";
 
-export default function ReactInterviewLandingPage() {
+export default function KotlinCourseLandingPage() {
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
 
   return (
     <main className={styles.page}>
@@ -24,7 +26,7 @@ export default function ReactInterviewLandingPage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <SchoolIcon fontSize="small" />
-          <span>React 19 Interview Prep</span>
+          <span>Kotlin from Scratch</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -32,7 +34,7 @@ export default function ReactInterviewLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Master React 19 Features
+          Learn Kotlin from the Ground Up
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -40,41 +42,29 @@ export default function ReactInterviewLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Learn React 19's revolutionary features through interactive lessons with live code editors,
-          previews, and real-world examples. Perfect for interview preparation.
+          Official Kotlin tour content with an interactive multi-file editor.
+          Practice challenges with run and submit validation—learn by doing.
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
-            <CodeIcon fontSize="small" />
-            React 19
+            <KotlinIcon fontSize="small" />
+            Kotlin
           </span>
-          <span className={styles.badge}>Interactive Lessons</span>
-          <span className={styles.badge}>{REACT19_LESSONS.length} Lessons</span>
+          <span className={styles.badge}>
+            <CodeIcon fontSize="small" />
+            Multi-file Editor
+          </span>
+          <span className={styles.badge}>{KOTLIN_COURSE_LESSONS.length} Steps</span>
         </div>
-        <motion.div
-          className={styles.heroImage}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.4 }}
-        >
-          <Image
-            src="/images/portfolio/react19.jpeg"
-            alt="React 19 features and benefits"
-            width={900}
-            height={506}
-            priority
-            sizes="(max-width: 960px) 100vw, 900px"
-          />
-        </motion.div>
       </section>
 
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>All Lessons</span>
-          <span className={styles.count}>{REACT19_LESSONS.length} lessons</span>
+          <span className={styles.filterLabel}>Course Steps</span>
+          <span className={styles.count}>{KOTLIN_COURSE_LESSONS.length} lessons</span>
         </div>
         <ul className={styles.grid}>
-          {REACT19_LESSONS.map((lesson, i) => (
+          {KOTLIN_COURSE_LESSONS.map((lesson, i) => (
             <motion.li
               key={lesson.id}
               initial={{ opacity: 0, y: 16 }}
@@ -82,20 +72,23 @@ export default function ReactInterviewLandingPage() {
               transition={{ delay: Math.min(i * 0.03, 0.5), duration: 0.35 }}
             >
               <Link
-                href={createLocalizedPath(`/developer-section/react-interview/${lesson.id}`)}
+                href={createLocalizedPath(`/developer-section/kotlin-course/${lesson.id}`)}
                 className={styles.card}
               >
                 <div className={styles.cardTop}>
-                  <span className={styles.difficulty} style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}>
-                    Lesson {lesson.lessonNumber}
+                  <span
+                    className={styles.difficulty}
+                    style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}
+                  >
+                    Step {lesson.step}
                   </span>
                 </div>
                 <h3 className={styles.cardTitle}>{lesson.title}</h3>
-                <p className={styles.cardCategory} style={{ fontSize: "13px", color: "#9fc4ff" }}>
-                  {lesson.concept}
-                </p>
-                <p className={styles.cardCategory} style={{ fontSize: "12px", color: "#7cf4ff", marginTop: "8px" }}>
-                  {lesson.description.substring(0, 120)}...
+                <p
+                  className={styles.cardCategory}
+                  style={{ fontSize: "13px", color: "#9fc4ff", marginTop: "8px" }}
+                >
+                  {lesson.content[0]?.substring(0, 100)}...
                 </p>
                 <div className={styles.cardCta}>
                   <span>Start Lesson</span>
@@ -108,12 +101,21 @@ export default function ReactInterviewLandingPage() {
       </section>
 
       <div className={styles.footerActions}>
-        <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
+        <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
+          <a
+            className={styles.secondaryLink}
+            href={createLocalizedPath("/developer-section/kotlin-playground")}
+          >
+            Kotlin Playground
+          </a>
+          <a
+            className={styles.secondaryLink}
+            href={createLocalizedPath("/developer-section/kotlin-java-interop")}
+          >
+            Kotlin Java InterOp
+          </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/challenges")}>
             Algorithm Challenges
-          </a>
-          <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/react-challenges")}>
-            React Challenges
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
             Back to Developer Hub

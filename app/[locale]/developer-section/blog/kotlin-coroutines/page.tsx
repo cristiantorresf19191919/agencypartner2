@@ -9,6 +9,101 @@ import styles from "../BlogPostPage.module.css";
 import Image from "next/image";
 
 // --- Code blocks ---
+// --- Coroutines basics (official guide) ---
+const basicsSuspendCode = [
+  "suspend fun greet() {",
+  "    println(\"Hello world from a suspending function\")",
+  "}",
+  "",
+  "suspend fun main() {",
+  "    showUserInfo()",
+  "}",
+  "",
+  "suspend fun showUserInfo() {",
+  "    println(\"Loading user...\")",
+  "    greet()",
+  "    println(\"User: John Smith\")",
+  "}",
+].join("\n");
+
+const basicsWithContextLaunchCode = [
+  "import kotlinx.coroutines.*",
+  "import kotlin.time.Duration.Companion.seconds",
+  "",
+  "suspend fun greet() {",
+  "    println(\"The greet() on the thread: ${Thread.currentThread().name}\")",
+  "    delay(1.seconds)",
+  "}",
+  "",
+  "suspend fun main() {",
+  "    withContext(Dispatchers.Default) { // this: CoroutineScope",
+  "        this.launch { greet() }",
+  "        this.launch {",
+  "            println(\"The CoroutineScope.launch() on the thread: ${Thread.currentThread().name}\")",
+  "            delay(1.seconds)",
+  "        }",
+  "        println(\"The withContext() on the thread: ${Thread.currentThread().name}\")",
+  "    }",
+  "}",
+].join("\n");
+
+const basicsCoroutineScopeCode = [
+  "import kotlinx.coroutines.*",
+  "import kotlin.time.Duration.Companion.seconds",
+  "",
+  "suspend fun main() {",
+  "    coroutineScope { // this: CoroutineScope",
+  "        this.launch {",
+  "            this.launch {",
+  "                delay(2.seconds)",
+  "                println(\"Child of the enclosing coroutine completed\")",
+  "            }",
+  "            println(\"Child coroutine 1 completed\")",
+  "        }",
+  "        this.launch {",
+  "            delay(1.seconds)",
+  "            println(\"Child coroutine 2 completed\")",
+  "        }",
+  "    }",
+  "    println(\"Coroutine scope completed\")",
+  "}",
+].join("\n");
+
+const basicsRunBlockingCode = [
+  "// Use runBlocking() only when bridging from non-suspending code",
+  "object MyRepository : Repository {",
+  "    override fun readItem(): Int = runBlocking { myReadItem() }",
+  "}",
+  "suspend fun myReadItem(): Int { delay(100); return 4 }",
+].join("\n");
+
+const basics50kCoroutinesCode = [
+  "import kotlinx.coroutines.*",
+  "import kotlin.time.Duration.Companion.seconds",
+  "",
+  "suspend fun printPeriods() = coroutineScope {",
+  "    repeat(50_000) {",
+  "        this.launch {",
+  "            delay(5.seconds)",
+  "            print(\".\")",
+  "        }",
+  "    }",
+  "}",
+].join("\n");
+
+const basics50kThreadsCode = [
+  "import kotlin.concurrent.thread",
+  "",
+  "fun main() {",
+  "    repeat(50_000) {",
+  "        thread {",
+  "            Thread.sleep(5000L)",
+  "            print(\".\")",
+  "        }",
+  "    }",
+  "}",
+].join("\n");
+
 const module1Code = [
   "import kotlinx.coroutines.*",
   "",
@@ -436,7 +531,7 @@ export default function KotlinCoroutinesPage() {
           Kotlin Coroutines & Channels: Zero to Hero
         </Heading>
         <Text className={styles.subtitle}>
-          A comprehensive course that takes you from beginner to expert in Kotlin Coroutines and Channels. Each module includes concepts, real-world code examples, and a challenge to solve. A coroutine is like a lightweight thread—you can run 100,000 coroutines on a single thread without crashing your app.
+          Kotlin provides only minimal low-level APIs in its standard library; <strong>async</strong> and <strong>await</strong> are not keywords and are not part of the standard library. <strong>kotlinx.coroutines</strong> is the rich library (launch, async, and more). Kotlin&apos;s <strong>suspending functions</strong> give you a safer, less error-prone abstraction than futures and promises. This guide covers the core features with examples—from basics to channels and select.
         </Text>
         <div className={styles.heroImage}>
           <Image
@@ -449,12 +544,12 @@ export default function KotlinCoroutinesPage() {
         </div>
         <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
           <Text className={styles.infoText}>
-            <strong>Course structure:</strong> 6 modules + bridge examples + capstone. Each module has a Concept, a Code Example, and a Challenge. Start with Module 1, copy the code into IntelliJ or Android Studio, and try the challenges.
+            <strong>Dependency:</strong> Add <code>kotlinx-coroutines-core</code> (see the project README). On Android, add <code>kotlinx-coroutines-android</code>. <strong>Course structure:</strong> 6 modules + bridge examples + capstone. Each module has a Concept, a Code Example, and a Challenge. Start with Module 1, copy the code into IntelliJ or Android Studio, and try the challenges.
           </Text>
         </div>
       </div>
 
-      {/* Zero to hero: What & Why */}
+      {/* Zero to hero: What & Why + Table of contents */}
       <section id="what-why" className={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
@@ -462,7 +557,17 @@ export default function KotlinCoroutinesPage() {
               What are Kotlin Coroutines?
             </Heading>
             <Text className={styles.sectionDescription}>
-              Coroutines are Kotlin&apos;s way of writing <strong>asynchronous, non-blocking code</strong> in a sequential style. Think of them as lightweight threads: you can launch thousands of coroutines without the overhead of real threads. They &quot;suspend&quot; instead of block—when one waits for I/O, the underlying thread is free to run other coroutines.
+              To create applications that perform <strong>multiple tasks at once</strong> (concurrency), Kotlin uses <strong>coroutines</strong>. A coroutine is a <strong>suspendable computation</strong> that lets you write concurrent code in a clear, sequential style. Coroutines can run concurrently with other coroutines and potentially in parallel.
+            </Text>
+            <Text className={styles.sectionDescription}>
+              On the JVM and in Kotlin/Native, all concurrent code runs on <strong>threads</strong>, managed by the OS. Coroutines can <strong>suspend</strong> their execution instead of blocking a thread. One coroutine can suspend while waiting for data while another runs on the same thread—effective resource utilization.
+            </Text>
+            <div className={styles.conceptImage} style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "0.5rem" }}>
+              <Image src="/images/portfolio/parallelism-and-concurrency.svg" alt="Parallelism and concurrency" width={350} height={220} style={{ maxWidth: "100%", height: "auto" }} />
+              <Image src="/images/portfolio/coroutines-and-threads.svg" alt="Coroutines and threads" width={350} height={188} style={{ maxWidth: "100%", height: "auto" }} />
+            </div>
+            <Text className={styles.sectionDescription}>
+              Unlike many other languages, <strong>async</strong> and <strong>await</strong> are not keywords in Kotlin; the <strong>suspend</strong> abstraction is safer and less error-prone than futures and promises. Think of coroutines as lightweight threads: you can run many of them without the overhead of real threads—they suspend instead of block.
             </Text>
             <Heading level={3} className={styles.sectionTitle}>
               Why use them?
@@ -470,6 +575,35 @@ export default function KotlinCoroutinesPage() {
             <Text className={styles.sectionDescription}>
               On Android and in backend services, blocking the main or worker thread is a sin. Network calls, file I/O, and database access must not block. Coroutines let you write clear, linear code that runs efficiently: start a network request, suspend until the result arrives, then continue—all without callbacks or complex threading.
             </Text>
+            <Heading level={3} className={styles.sectionTitle}>
+              Suspending functions
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              The most basic building block of coroutines is the <strong>suspending function</strong>. It allows a running operation to pause and resume later without affecting the structure of your code. Declare it with the <code>suspend</code> keyword. You can only call a suspending function from another suspending function. To call suspending functions at the entry point, mark <code>main()</code> with <code>suspend</code> (or use <code>runBlocking()</code> when integrating with non-suspending code).
+            </Text>
+            <CodeEditor code={basicsSuspendCode} language="kotlin" readOnly height={220} />
+            <Text className={styles.sectionDescription}>
+              While <code>suspend</code> is part of the core Kotlin language, most coroutine features come from the <strong>kotlinx.coroutines</strong> library. Add the dependency: <code>implementation(&quot;org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2&quot;)</code> (Gradle Kotlin DSL). On Android, add <code>kotlinx-coroutines-android</code>.
+            </Text>
+            <Heading level={3} className={styles.sectionTitle}>
+              Table of contents (aligned with the official guide)
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              This course maps to the core topics of the Kotlin Coroutines guide so you cover the best:
+            </Text>
+            <ul className={styles.sectionDescription} style={{ marginLeft: "1.5rem", marginTop: "0.5rem" }}>
+              <li><strong>Coroutines basics</strong> → Module 1 (runBlocking, launch, suspend)</li>
+              <li><strong>Tutorial: Intro to coroutines and channels</strong> → Modules 1–4</li>
+              <li><strong>Cancellation and timeouts</strong> → Module 3 (cancel, withTimeoutOrNull)</li>
+              <li><strong>Composing suspending functions</strong> → Module 2, Example B (async/await)</li>
+              <li><strong>Coroutine context and dispatchers</strong> → Modules 2 & 3 (Dispatchers.IO, Default)</li>
+              <li><strong>Asynchronous Flow</strong> → Capstone uses channels; Flow is the next step (see references)</li>
+              <li><strong>Channels</strong> → Modules 4 & 5 (producer/consumer, fan-out, fan-in)</li>
+              <li><strong>Coroutine exceptions handling</strong> → Challenge 1.5 (retry with backoff)</li>
+              <li><strong>Shared mutable state and concurrency</strong> → See official guide &amp; Android best practices</li>
+              <li><strong>Select expression (experimental)</strong> → Module 6</li>
+              <li><strong>Debug coroutines / Debug Flow</strong> → IntelliJ IDEA tutorials (see references)</li>
+            </ul>
             <Heading level={3} className={styles.sectionTitle}>
               Prerequisites
             </Heading>
@@ -491,24 +625,64 @@ export default function KotlinCoroutinesPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              Module 1: The Foundations (Breaking Free from Threads)
+              Module 1: Coroutines basics (Foundations)
             </Heading>
             <Text className={styles.sectionDescription}>
-              <strong>Goal:</strong> Understand what a coroutine is, how to start one, and the magic of <code>suspend</code>.
+              <strong>Goal:</strong> Understand what a coroutine is, how to start one, and the magic of <code>suspend</code>. To create a coroutine you need: a <strong>suspending function</strong>, a <strong>coroutine scope</strong> (e.g. <code>withContext()</code>), a <strong>builder</strong> like <code>CoroutineScope.launch()</code>, and a <strong>dispatcher</strong> to control which threads are used.
             </Text>
+            <Heading level={3} className={styles.sectionTitle}>
+              First coroutines: withContext + launch
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              <code>withContext(Dispatchers.Default)</code> defines a non-blocking entry point on a shared thread pool. Coroutines launched inside share the same scope (structured concurrency). <code>this.launch { }</code> starts a child coroutine; the explicit <code>this</code> highlights that <code>launch</code> is an extension on <code>CoroutineScope</code>.
+            </Text>
+            <CodeEditor code={basicsWithContextLaunchCode} language="kotlin" readOnly height={320} />
+            <Heading level={3} className={styles.sectionTitle}>
+              Coroutine scope and structured concurrency
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              Coroutines form a <strong>tree hierarchy</strong> of parent and child tasks. A parent waits for its children to complete; if the parent is cancelled, all children are recursively cancelled. Use <code>coroutineScope { }</code> to create a new scope—it runs the block and waits until the block and any coroutines launched in it complete. No dispatcher specified? Builders inherit the current context or use <code>Dispatchers.Default</code>.
+            </Text>
+            <CodeEditor code={basicsCoroutineScopeCode} language="kotlin" readOnly height={340} />
+            <Heading level={3} className={styles.sectionTitle}>
+              Coroutine builders
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              <strong>CoroutineScope.launch()</strong> — starts a coroutine without blocking; use when you don&apos;t need a result (fire and forget). Returns a <code>Job</code>. <strong>CoroutineScope.async()</strong> — starts a concurrent computation and returns a <code>Deferred</code>; use <code>.await()</code> to get the result. <strong>runBlocking()</strong> — blocks the current thread until the scope finishes; use only when bridging from non-suspending code (e.g. a third-party interface you can&apos;t change).
+            </Text>
+            <CodeEditor code={basicsRunBlockingCode} language="kotlin" readOnly height={140} />
+            <Heading level={3} className={styles.sectionTitle}>
+              runBlocking + launch (bridge from main)
+            </Heading>
             <Text className={styles.sectionDescription}>
               <strong>Concepts:</strong> <code>runBlocking</code> vs <code>launch</code>, suspend functions (the &quot;pause&quot; button), and the difference between blocking and suspending. The thread is not blocked when you suspend—it can do other work.
             </Text>
             <div className={styles.conceptImage}>
-              <img
-                src="https://kotlinlang.org/docs/images/get-started-coroutines.svg"
-                alt="Kotlin coroutines: get started"
-                width={400}
-                height={200}
-                style={{ maxWidth: "100%", height: "auto" }}
-              />
+              <Image src="https://kotlinlang.org/docs/images/get-started-coroutines.svg" alt="Kotlin coroutines: get started" width={400} height={200} style={{ maxWidth: "100%", height: "auto" }} />
             </div>
             <CodeEditor code={module1Code} language="kotlin" readOnly height={320} />
+            <Heading level={3} className={styles.sectionTitle}>
+              Coroutine dispatchers
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              A <strong>dispatcher</strong> controls which thread or thread pool a coroutine uses. Coroutines can pause on one thread and resume on another. By default, coroutines inherit the dispatcher from their parent scope; if none is set, builders use <code>Dispatchers.Default</code> (shared pool, ideal for CPU-intensive work). Pass a dispatcher to the builder: <code>launch(Dispatchers.Default) { }</code> or run a block with <code>withContext(Dispatchers.Default) { }</code>. See Module 2 &amp; 3 for <code>Dispatchers.IO</code> and <code>Dispatchers.Main</code>.
+            </Text>
+            <Heading level={3} className={styles.sectionTitle}>
+              Comparing coroutines and JVM threads
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              A <strong>thread</strong> is managed by the OS; threads can run in parallel on multiple cores but are resource-intensive (each needs memory for its stack; the JVM typically handles only a few thousand). A <strong>coroutine</strong> is not bound to a specific thread—it can suspend on one and resume on another, so many coroutines share the same thread pool. When a coroutine suspends, the thread is free for other work. That makes coroutines much lighter: you can run millions in one process. Example: 50,000 coroutines each waiting 5 seconds then printing a period:
+            </Text>
+            <CodeEditor code={basics50kCoroutinesCode} language="kotlin" readOnly height={200} />
+            <Text className={styles.sectionDescription}>
+              The same with JVM threads uses far more memory (up to ~100 GB for 50k threads vs ~500 MB for 50k coroutines). The thread version may throw out-of-memory or slow down; the coroutine version runs fine.
+            </Text>
+            <CodeEditor code={basics50kThreadsCode} language="kotlin" readOnly height={160} />
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
+              <Text className={styles.infoText}>
+                <strong>What&apos;s next:</strong> Composing suspending functions (Module 2), Cancellation and timeouts (Module 3), Coroutine context and dispatchers (Modules 2 &amp; 3), Asynchronous Flow (see Additional references).
+              </Text>
+            </div>
             <div className={`${styles.infoBox} ${styles.infoBoxOrange}`}>
               <Text className={styles.infoText}>
                 🔥 <strong>Challenge 1: The Breakfast Chef</strong> — Write a program that simulates making breakfast. Create <code>makeCoffee()</code> (1 second) and <code>toastBread()</code> (2 seconds). Launch them sequentially inside <code>runBlocking</code>. Bonus: print &quot;Breakfast is ready!&quot; only after both are done.
@@ -842,6 +1016,31 @@ export default function KotlinCoroutinesPage() {
                 <CodeEditor code={solutionCapstoneCode} language="kotlin" readOnly height={380} />
               </div>
             )}
+          </Stack>
+        </Card>
+      </section>
+
+      {/* Additional references (official guide) */}
+      <section id="additional-references" className={styles.section}>
+        <Card className={styles.sectionCard}>
+          <Stack direction="col" gap="md">
+            <Heading level={2} className={styles.sectionTitle}>
+              Additional references
+            </Heading>
+            <Text className={styles.sectionDescription}>
+              Official Kotlin Coroutines guide and related resources (edit date: 22 April 2025):
+            </Text>
+            <ul className={styles.sectionDescription} style={{ marginLeft: "1.5rem", marginTop: "0.5rem" }}>
+              <li><a href="https://kotlinlang.org/docs/jvm/coroutines-guide.html" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Guide to UI programming with coroutines</a></li>
+              <li><a href="https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Coroutines design document (KEEP)</a></li>
+              <li><a href="https://kotlinlang.org/api/kotlinx.coroutines/" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Full kotlinx.coroutines API reference</a></li>
+              <li><a href="https://developer.android.com/kotlin/coroutines/coroutines-best-practices" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Best practices for coroutines in Android</a></li>
+              <li><a href="https://developer.android.com/kotlin/coroutines" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Additional Android resources for Kotlin coroutines and Flow</a></li>
+              <li><a href="https://kotlinlang.org/docs/coroutines-guide.html" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Official Coroutines guide (kotlinlang.org)</a></li>
+            </ul>
+            <Text className={styles.sectionDescription}>
+              Tutorials: <a href="https://kotlinlang.org/docs/jvm/debug-coroutines-with-ide.html" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Debug coroutines using IntelliJ IDEA</a>, <a href="https://kotlinlang.org/docs/jvm/debug-flow-with-ide.html" target="_blank" rel="noopener noreferrer" className="underline text-purple-300 hover:text-purple-200">Debug Kotlin Flow using IntelliJ IDEA</a>.
+            </Text>
           </Stack>
         </Card>
       </section>

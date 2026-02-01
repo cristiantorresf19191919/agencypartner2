@@ -4,7 +4,7 @@ import { Stack, Heading, Text } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import { motion } from "framer-motion";
-import { AutoAwesome as Sparkles, Code as Code2, ArrowForward as ArrowRight, Support as SupportIcon, Terminal as TerminalIcon, IntegrationInstructions as KotlinIcon, EmojiEvents as ChallengesIcon, Psychology as ReactIcon, PhoneAndroid as AndroidIcon } from "@mui/icons-material";
+import { AutoAwesome as Sparkles, Code as Code2, ArrowForward as ArrowRight, Support as SupportIcon, Terminal as TerminalIcon, IntegrationInstructions as KotlinIcon, EmojiEvents as ChallengesIcon, Psychology as ReactIcon, PhoneAndroid as AndroidIcon, School as SchoolIcon, CallMerge as InteropIcon, Palette as CssIcon, DataObject as TsIcon } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
@@ -140,6 +140,144 @@ export default function DeveloperSectionPage() {
                   
                   <div className={styles.ctaLink}>
                     <span>Open Kotlin</span>
+                    <ArrowRight className={styles.ctaArrow} />
+                  </div>
+                </div>
+              </motion.a>
+
+              <motion.a
+                href={createLocalizedPath("/developer-section/kotlin-course")}
+                className={styles.blogCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.glowEffect} />
+                <div className={styles.gradientBlob1} />
+                <div className={styles.gradientBlob2} />
+                
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <SchoolIcon className={styles.icon} />
+                  </div>
+                  
+                  <Heading level={2} className={styles.cardTitle}>
+                    Kotlin Course
+                  </Heading>
+                  
+                  <Text className={styles.cardDescription}>
+                    Learn Kotlin from scratch. Official tour content with multi-file editor, run code, and practice challenges with validation.
+                  </Text>
+                  
+                  <div className={styles.ctaLink}>
+                    <span>Start Course</span>
+                    <ArrowRight className={styles.ctaArrow} />
+                  </div>
+                </div>
+              </motion.a>
+
+              <motion.a
+                href={createLocalizedPath("/developer-section/kotlin-java-interop")}
+                className={styles.blogCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.glowEffect} />
+                <div className={styles.gradientBlob1} />
+                <div className={styles.gradientBlob2} />
+                
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <InteropIcon className={styles.icon} />
+                  </div>
+                  
+                  <Heading level={2} className={styles.cardTitle}>
+                    Kotlin Java InterOp
+                  </Heading>
+                  
+                  <Text className={styles.cardDescription}>
+                    Call Java from Kotlin. Platform types, nullability, SAM conversions, getters/setters, and mapped types.
+                  </Text>
+                  
+                  <div className={styles.ctaLink}>
+                    <span>Start Course</span>
+                    <ArrowRight className={styles.ctaArrow} />
+                  </div>
+                </div>
+              </motion.a>
+
+              <motion.a
+                href={createLocalizedPath("/developer-section/react-course")}
+                className={styles.blogCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.glowEffect} />
+                <div className={styles.gradientBlob1} />
+                <div className={styles.gradientBlob2} />
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <ReactIcon className={styles.icon} />
+                  </div>
+                  <Heading level={2} className={styles.cardTitle}>
+                    React Course
+                  </Heading>
+                  <Text className={styles.cardDescription}>
+                    Learn React from scratch. Components, props, hooks. Monaco editor with TypeScript/React autocomplete and live preview.
+                  </Text>
+                  <div className={styles.ctaLink}>
+                    <span>Start Course</span>
+                    <ArrowRight className={styles.ctaArrow} />
+                  </div>
+                </div>
+              </motion.a>
+
+              <motion.a
+                href={createLocalizedPath("/developer-section/typescript-course")}
+                className={styles.blogCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.glowEffect} />
+                <div className={styles.gradientBlob1} />
+                <div className={styles.gradientBlob2} />
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <TsIcon className={styles.icon} />
+                  </div>
+                  <Heading level={2} className={styles.cardTitle}>
+                    TypeScript Course
+                  </Heading>
+                  <Text className={styles.cardDescription}>
+                    Learn TypeScript. Types, interfaces, unions. Monaco editor with autocomplete, run in-browser, and verify.
+                  </Text>
+                  <div className={styles.ctaLink}>
+                    <span>Start Course</span>
+                    <ArrowRight className={styles.ctaArrow} />
+                  </div>
+                </div>
+              </motion.a>
+
+              <motion.a
+                href={createLocalizedPath("/developer-section/css-course")}
+                className={styles.blogCard}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.glowEffect} />
+                <div className={styles.gradientBlob1} />
+                <div className={styles.gradientBlob2} />
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <CssIcon className={styles.icon} />
+                  </div>
+                  <Heading level={2} className={styles.cardTitle}>
+                    CSS Course
+                  </Heading>
+                  <Text className={styles.cardDescription}>
+                    Learn CSS Flexbox. Monaco editor with live HTML+CSS preview and verify—learn by doing.
+                  </Text>
+                  <div className={styles.ctaLink}>
+                    <span>Start Course</span>
                     <ArrowRight className={styles.ctaArrow} />
                   </div>
                 </div>

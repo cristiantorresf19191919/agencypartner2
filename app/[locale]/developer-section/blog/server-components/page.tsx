@@ -145,7 +145,7 @@ function ProductList({ products }: { products: typeof MOCK_PRODUCTS }) {
   return (
     <ul>
       {products.map((p) => (
-        <li key={p.id}>{p.name} – ${p.price}</li>
+        <li key={p.id}>{p.name} – \${p.price}</li>
       ))}
     </ul>
   );

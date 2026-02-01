@@ -251,7 +251,7 @@ export default App;`}
 const ProductInfo = ({ product }) => (
   <div style={{ background: '#222', padding: 16 }}>
     <h2>{product.title}</h2>
-    <p>Price: ${product.price}</p>
+    <p>Price: \${product.price}</p>
   </div>
 );
 
@@ -316,7 +316,7 @@ const DataSource = ({ getDataFunc, resourceName, children }) => {
 };
 
 const UserInfo = ({ user }) => <div><h3>{user.name}</h3><p>{user.email}</p></div>;
-const ProductInfo = ({ product }) => <div><h3>{product.title}</h3><p>${product.price}</p></div>;
+const ProductInfo = ({ product }) => <div><h3>{product.title}</h3><p>\${product.price}</p></div>;
 
 const api = {
   getCurrentUser: () => new Promise(r => setTimeout(() => r({ name: "Demo User", email: "demo@example.com" }), 300)),

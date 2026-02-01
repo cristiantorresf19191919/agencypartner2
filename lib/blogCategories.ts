@@ -519,11 +519,11 @@ export const blogCategories: BlogCategory[] = [
       {
         id: "kotlin-coroutines",
         title: "Kotlin Coroutines & Channels: Zero to Hero",
-        description: "Comprehensive course from beginner to expert in Kotlin Coroutines and Channels. Six modules with concepts, code examples, and challenges: runBlocking, launch, async, Channels, Fan-Out/Fan-In, Select, and a Real-Time Stock Monitor capstone.",
+        description: "Guide aligned with the official Kotlin Coroutines docs: kotlinx.coroutines (launch, async), suspending functions (safer than futures), Coroutines basics, Cancellation and timeouts, Composing suspending functions, Context and dispatchers, Channels, Exceptions, Select (experimental), plus Flow/Android references.",
         icon: "⚡",
         color: "from-violet-500 to-purple-600",
         slug: "kotlin-coroutines",
-        topics: ["runBlocking & launch", "Suspend functions", "async & await", "Dispatchers", "Cancellation", "Channels", "Fan-Out & Fan-In", "Select expression", "Structured concurrency"],
+        topics: ["Coroutines basics", "Intro to coroutines and channels", "Cancellation and timeouts", "Composing suspending functions", "Context and dispatchers", "Asynchronous Flow", "Channels", "Coroutine exceptions", "Shared mutable state", "Select expression", "Debug tutorials", "Additional references"],
       },
       {
         id: "kotlin-spring-core",

@@ -88,6 +88,21 @@
   font-size: 13px;
 }
 
+.heroImage {
+  margin-top: 32px;
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.heroImage img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .listSection {
   position: relative;
   z-index: 1;
