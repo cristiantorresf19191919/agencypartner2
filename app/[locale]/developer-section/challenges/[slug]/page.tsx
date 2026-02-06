@@ -66,6 +66,7 @@ export default function ChallengePlayPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<{ passed: number; total: number; success: boolean } | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [kotlinPhase, setKotlinPhase] = useState<"idle" | "sending" | "compiling" | "running">("idle");
   const monacoRef = useRef<{ editor: any; monaco: any } | null>(null);
 
   const starter = challenge?.starterCode[lang] ?? "";
@@ -137,18 +138,48 @@ export default function ChallengePlayPage() {
     return { logs };
   }, []);
 
-  // --- Kotlin runner (Piston) ---
-  const runKotlin = useCallback(async (source: string, input: string): Promise<{ stdout: string; err?: string }> => {
+  // --- Kotlin runner (Piston) - auto-wraps code in fun main() if needed ---
+  const runKotlin = useCallback(async (source: string, input: string, showPhases = true): Promise<{ stdout: string; err?: string }> => {
+    // Check if code already has a main function
+    const hasMainFn = /fun\s+main\s*\(/.test(source);
+    // Wrap code in main function if it doesn't have one
+    const wrappedSource = hasMainFn ? source : `fun main() {\n${source}\n}`;
+
+    if (showPhases) setKotlinPhase("sending");
+
     const res = await fetch(PISTON_EXECUTE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ language: "kotlin", version: "*", files: [{ name: "Main.kt", content: source }], stdin: input, args: [] }),
+      body: JSON.stringify({ language: "kotlin", version: "*", files: [{ name: "Main.kt", content: wrappedSource }], stdin: input, args: [] }),
     });
-    if (!res.ok) return { stdout: "", err: `HTTP ${res.status}` };
+
+    if (!res.ok) {
+      if (showPhases) setKotlinPhase("idle");
+      return { stdout: "", err: `HTTP ${res.status}` };
+    }
+
+    if (showPhases) setKotlinPhase("compiling");
+    // Small delay to show compiling phase
+    await new Promise(r => setTimeout(r, 300));
+
     const d = (await res.json()) as { compile?: { stderr?: string; code?: number }; run?: { stdout?: string; stderr?: string; code?: number }; message?: string };
-    if (d.message) return { stdout: "", err: d.message };
-    if (d.compile && d.compile.code !== 0) return { stdout: "", err: (d.compile.stderr || "Compilation failed").trim() };
+
+    if (d.message) {
+      if (showPhases) setKotlinPhase("idle");
+      return { stdout: "", err: d.message };
+    }
+    if (d.compile && d.compile.code !== 0) {
+      if (showPhases) setKotlinPhase("idle");
+      return { stdout: "", err: (d.compile.stderr || "Compilation failed").trim() };
+    }
+
+    if (showPhases) setKotlinPhase("running");
+    // Small delay to show running phase
+    await new Promise(r => setTimeout(r, 200));
+
     const run = d.run ?? {};
+    if (showPhases) setKotlinPhase("idle");
+
     if (run.code !== 0 && run.stderr) return { stdout: (run.stdout || "").trim(), err: run.stderr.trim() };
     return { stdout: (run.stdout || "").trim() };
   }, []);
@@ -167,7 +198,7 @@ export default function ChallengePlayPage() {
       setLogs(L);
       if (err) setError(err);
     } else {
-      const { stdout, err } = await runKotlin(src, input);
+      const { stdout, err } = await runKotlin(src, input, true);
       setLogs(stdout ? stdout.split("\n") : []);
       if (err) setError(err);
     }
@@ -192,7 +223,7 @@ export default function ChallengePlayPage() {
         if (err) { setError(`${t('challenge-test-failed')} ${err}`); break; }
         actual = L.join("\n");
       } else {
-        const { stdout, err } = await runKotlin(src, tc.input);
+        const { stdout, err } = await runKotlin(src, tc.input, false);
         if (err) { setError(`${t('challenge-test-failed')} ${err}`); break; }
         actual = stdout;
       }
@@ -332,9 +363,39 @@ export default function ChallengePlayPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Kotlin Loading Animation */}
+              {lang === "kotlin" && kotlinPhase !== "idle" && (
+                <motion.div
+                  className={playStyles.kotlinLoading}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className={playStyles.kotlinLoadingIcon}>
+                    <KotlinIcon className={playStyles.kotlinSpinIcon} />
+                  </div>
+                  <div className={playStyles.kotlinLoadingSteps}>
+                    <div className={`${playStyles.kotlinStep} ${kotlinPhase === "sending" ? playStyles.active : playStyles.done}`}>
+                      <span className={playStyles.stepDot} />
+                      <span className={playStyles.stepLabel}>{t('kotlin-sending') || 'Sending to server'}</span>
+                    </div>
+                    <div className={`${playStyles.kotlinStep} ${kotlinPhase === "compiling" ? playStyles.active : kotlinPhase === "running" ? playStyles.done : ""}`}>
+                      <span className={playStyles.stepDot} />
+                      <span className={playStyles.stepLabel}>{t('kotlin-compiling') || 'Compiling Kotlin'}</span>
+                    </div>
+                    <div className={`${playStyles.kotlinStep} ${kotlinPhase === "running" ? playStyles.active : ""}`}>
+                      <span className={playStyles.stepDot} />
+                      <span className={playStyles.stepLabel}>{t('kotlin-running') || 'Running program'}</span>
+                    </div>
+                  </div>
+                  <p className={playStyles.kotlinLoadingHint}>{t('kotlin-loading-hint') || 'Kotlin runs on a remote server, this may take a moment...'}</p>
+                </motion.div>
+              )}
+
               {error && <div className={playStyles.errorLine}>❌ {error}</div>}
               <div className={playStyles.logList}>
-                {logs.length === 0 && !error && !submitResult && <p className={playStyles.emptyLog}>{t('challenge-empty-output')}</p>}
+                {logs.length === 0 && !error && !submitResult && kotlinPhase === "idle" && <p className={playStyles.emptyLog}>{t('challenge-empty-output')}</p>}
                 {logs.map((l, i) => <div key={i} className={playStyles.logLine}>{l}</div>)}
               </div>
             </div>

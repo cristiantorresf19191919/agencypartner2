@@ -293,7 +293,7 @@ export default function React19LessonPage() {
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ES2020,
       module: monaco.languages.typescript.ModuleKind.ESNext,
-      jsx: monaco.languages.typescript.JsxEmit.React,
+      jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
       noEmit: true,
       esModuleInterop: true,
       allowSyntheticDefaultImports: true,

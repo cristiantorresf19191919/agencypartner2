@@ -23,7 +23,7 @@ export default function AndroidKotlinLandingPage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <SchoolIcon fontSize="small" />
-          <span>Modern Android Developer Playbook</span>
+          <span>{t("android-pill")}</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -31,7 +31,7 @@ export default function AndroidKotlinLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Zero-to-Hero Android Development
+          {t("android-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -39,8 +39,7 @@ export default function AndroidKotlinLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Learn modern Android development with Jetpack Compose, Kotlin Coroutines, and Clean Architecture.
-          Interactive lessons with code editors and real-world examples.
+          {t("android-subtitle")}
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
@@ -51,14 +50,14 @@ export default function AndroidKotlinLandingPage() {
             <CodeIcon fontSize="small" />
             Kotlin
           </span>
-          <span className={styles.badge}>{ANDROID_LESSONS.length} Levels</span>
+          <span className={styles.badge}>{ANDROID_LESSONS.length} {t("android-level-count")}</span>
         </div>
       </section>
 
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>All Levels</span>
-          <span className={styles.count}>{ANDROID_LESSONS.length} levels</span>
+          <span className={styles.filterLabel}>{t("android-levels-label")}</span>
+          <span className={styles.count}>{ANDROID_LESSONS.length} {t("android-level-count")}</span>
         </div>
         <ul className={styles.grid}>
           {ANDROID_LESSONS.map((lesson, i) => (
@@ -74,7 +73,7 @@ export default function AndroidKotlinLandingPage() {
               >
                 <div className={styles.cardTop}>
                   <span className={styles.difficulty} style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}>
-                    Level {lesson.level}
+                    {t("android-level")} {lesson.level}
                   </span>
                 </div>
                 <h3 className={styles.cardTitle}>{lesson.title}</h3>
@@ -85,7 +84,7 @@ export default function AndroidKotlinLandingPage() {
                   {lesson.description.substring(0, 120)}...
                 </p>
                 <div className={styles.cardCta}>
-                  <span>Start Level</span>
+                  <span>{t("android-start-level")}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </Link>
@@ -97,13 +96,13 @@ export default function AndroidKotlinLandingPage() {
       <div className={styles.footerActions}>
         <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/challenges")}>
-            Algorithm Challenges
+            {t("algorithm-challenges-link")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/react-challenges")}>
-            React Challenges
+            {t("react-challenges-link")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </a>
         </div>
       </div>

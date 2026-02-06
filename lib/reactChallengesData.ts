@@ -3443,6 +3443,1965 @@ const Component = () => {
       },
     ],
   },
+  {
+    id: "useimperativehandle-pattern",
+    title: "useImperativeHandle Pattern",
+    difficulty: "Hard",
+    description: `Create a custom input component that exposes \`focus()\` and \`clear()\` methods to parent components via a ref.
+
+**The Challenge:** Parent components need to imperatively control child components (like focusing an input or clearing its value).
+
+**The Task:**
+1. Use \`forwardRef\` to forward the ref to the component.
+2. Use \`useImperativeHandle\` to customize the exposed ref value.
+3. Expose \`focus()\` and \`clear()\` methods on the ref.
+4. Keep the internal input ref private.`,
+    problemCode: `import React, { useRef } from "react";
+
+// This input component doesn't expose any methods to parents
+const CustomInput = ({ placeholder }) => {
+  const inputRef = useRef(null);
+
+  return (
+    <input
+      ref={inputRef}
+      placeholder={placeholder}
+    />
+  );
+};
+
+// Parent can't focus or clear the input!
+export default function App() {
+  const inputRef = useRef(null);
+
+  return (
+    <div>
+      <CustomInput ref={inputRef} placeholder="Type here..." />
+      <button onClick={() => inputRef.current?.focus()}>Focus</button>
+      <button onClick={() => inputRef.current?.clear()}>Clear</button>
+    </div>
+  );
+}`,
+    explanation: `\`useImperativeHandle\` lets you customize the instance value that is exposed to parent components when using \`ref\`. Combined with \`forwardRef\`, you can expose specific methods while keeping internal implementation details private.`,
+    solution: `import React, { useRef, forwardRef, useImperativeHandle } from "react";
+
+// ✅ Use forwardRef to receive the ref from parent
+const CustomInput = forwardRef(({ placeholder }, ref) => {
+  const inputRef = useRef(null);
+
+  // ✅ Customize what the ref exposes
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    },
+    clear: () => {
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+    },
+    // Can expose getValue, setValue, select, etc.
+  }));
+
+  return (
+    <input
+      ref={inputRef}
+      placeholder={placeholder}
+    />
+  );
+});
+
+export default function App() {
+  const inputRef = useRef(null);
+
+  return (
+    <div>
+      <CustomInput ref={inputRef} placeholder="Type here..." />
+      <button onClick={() => inputRef.current?.focus()}>Focus</button>
+      <button onClick={() => inputRef.current?.clear()}>Clear</button>
+    </div>
+  );
+}`,
+    hints: [
+      "forwardRef allows a component to receive a ref from its parent.",
+      "useImperativeHandle customizes what the ref exposes.",
+      "Keep internal refs private and only expose necessary methods.",
+      "The second argument to useImperativeHandle is a function returning the exposed object.",
+    ],
+    testCases: [
+      {
+        description: "Uses forwardRef",
+        validate: (code: string) => /forwardRef/.test(code),
+      },
+      {
+        description: "Uses useImperativeHandle",
+        validate: (code: string) => /useImperativeHandle/.test(code),
+      },
+      {
+        description: "Exposes focus method",
+        validate: (code: string) => /focus\s*:\s*\(\)\s*=>/.test(code) || /focus\s*\(\)\s*\{/.test(code),
+      },
+      {
+        description: "Exposes clear method",
+        validate: (code: string) => /clear\s*:\s*\(\)\s*=>/.test(code) || /clear\s*\(\)\s*\{/.test(code),
+      },
+    ],
+  },
+  {
+    id: "abort-controller-fetch",
+    title: "Race Condition Prevention with AbortController",
+    difficulty: "Medium",
+    description: `This component has a race condition: if the user types quickly, older fetch results may arrive after newer ones and override the correct state.
+
+**The Challenge:** Prevent race conditions in async effects when dependencies change rapidly.
+
+**The Task:**
+1. Use AbortController to cancel pending fetch requests.
+2. Pass the abort signal to fetch.
+3. Clean up by aborting in the useEffect cleanup function.
+4. Ignore aborted fetch errors gracefully.`,
+    problemCode: `import React, { useState, useEffect } from "react";
+
+export default function UserSearch() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!query) {
+      setResults([]);
+      return;
+    }
+
+    setLoading(true);
+
+    // 🚩 RACE CONDITION: If user types "abc" quickly,
+    // request for "a" might complete after "abc"
+    fetch(\`/api/search?q=\${query}\`)
+      .then(res => res.json())
+      .then(data => {
+        setResults(data);
+        setLoading(false);
+      });
+  }, [query]);
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search users..."
+      />
+      {loading && <p>Loading...</p>}
+      <ul>
+        {results.map(user => <li key={user.id}>{user.name}</li>)}
+      </ul>
+    </div>
+  );
+}`,
+    explanation: `Race conditions occur when multiple async operations complete in a different order than they were started. AbortController lets you cancel pending fetch requests. When the effect re-runs or the component unmounts, cancel the previous request so stale data never updates state.`,
+    solution: `import React, { useState, useEffect } from "react";
+
+export default function UserSearch() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!query) {
+      setResults([]);
+      return;
+    }
+
+    // ✅ Create AbortController for this effect
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    setLoading(true);
+
+    fetch(\`/api/search?q=\${query}\`, { signal })
+      .then(res => res.json())
+      .then(data => {
+        // Only update if not aborted
+        setResults(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        // ✅ Ignore AbortError - it's expected
+        if (err.name !== 'AbortError') {
+          console.error(err);
+          setLoading(false);
+        }
+      });
+
+    // ✅ Cleanup: abort when query changes or component unmounts
+    return () => {
+      controller.abort();
+    };
+  }, [query]);
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search users..."
+      />
+      {loading && <p>Loading...</p>}
+      <ul>
+        {results.map(user => <li key={user.id}>{user.name}</li>)}
+      </ul>
+    </div>
+  );
+}`,
+    hints: [
+      "AbortController can cancel fetch requests.",
+      "Pass controller.signal to fetch options.",
+      "Call controller.abort() in the useEffect cleanup.",
+      "Check for AbortError in catch to ignore cancelled requests.",
+    ],
+    testCases: [
+      {
+        description: "Creates AbortController in effect",
+        validate: (code: string) => /AbortController/.test(code),
+      },
+      {
+        description: "Passes signal to fetch",
+        validate: (code: string) => /signal/.test(code) && /fetch/.test(code),
+      },
+      {
+        description: "Aborts in cleanup function",
+        validate: (code: string) => /return\s*\(\)\s*=>\s*\{[\s\S]*abort/.test(code) || /return\s*\(\)\s*=>\s*[^{]*abort/.test(code),
+      },
+      {
+        description: "Handles AbortError gracefully",
+        validate: (code: string) => /AbortError/.test(code),
+      },
+    ],
+  },
+  {
+    id: "suspense-lazy-loading",
+    title: "Code Splitting with React.lazy and Suspense",
+    difficulty: "Medium",
+    description: `The app bundles all components together, making the initial load slow. Implement code splitting to load heavy components only when needed.
+
+**The Challenge:** Large components slow down initial page load.
+
+**The Task:**
+1. Use \`React.lazy()\` to dynamically import heavy components.
+2. Wrap lazy components with \`Suspense\` and provide a fallback.
+3. Implement error boundaries for failed lazy loads.
+4. Show loading states while components are being fetched.`,
+    problemCode: `import React, { useState } from "react";
+// 🚩 These heavy components are all bundled together
+import HeavyChart from "./HeavyChart";
+import HeavyDataGrid from "./HeavyDataGrid";
+import HeavyEditor from "./HeavyEditor";
+
+export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState("chart");
+
+  return (
+    <div>
+      <nav>
+        <button onClick={() => setActiveTab("chart")}>Chart</button>
+        <button onClick={() => setActiveTab("grid")}>Data Grid</button>
+        <button onClick={() => setActiveTab("editor")}>Editor</button>
+      </nav>
+
+      {/* 🚩 All components are loaded even if never viewed */}
+      {activeTab === "chart" && <HeavyChart />}
+      {activeTab === "grid" && <HeavyDataGrid />}
+      {activeTab === "editor" && <HeavyEditor />}
+    </div>
+  );
+}`,
+    explanation: `\`React.lazy()\` enables dynamic imports, splitting code into separate chunks. \`Suspense\` shows a fallback while the component loads. This reduces initial bundle size and speeds up first load. Each lazy component is fetched only when rendered.`,
+    solution: `import React, { useState, Suspense, lazy } from "react";
+
+// ✅ Dynamically import heavy components
+const HeavyChart = lazy(() => import("./HeavyChart"));
+const HeavyDataGrid = lazy(() => import("./HeavyDataGrid"));
+const HeavyEditor = lazy(() => import("./HeavyEditor"));
+
+// Loading fallback component
+const Loading = () => (
+  <div className="loading-spinner">
+    Loading component...
+  </div>
+);
+
+export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState("chart");
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "chart": return <HeavyChart />;
+      case "grid": return <HeavyDataGrid />;
+      case "editor": return <HeavyEditor />;
+      default: return null;
+    }
+  };
+
+  return (
+    <div>
+      <nav>
+        <button onClick={() => setActiveTab("chart")}>Chart</button>
+        <button onClick={() => setActiveTab("grid")}>Data Grid</button>
+        <button onClick={() => setActiveTab("editor")}>Editor</button>
+      </nav>
+
+      {/* ✅ Suspense provides fallback while loading */}
+      <Suspense fallback={<Loading />}>
+        {renderContent()}
+      </Suspense>
+    </div>
+  );
+}`,
+    hints: [
+      "React.lazy() takes a function that calls dynamic import().",
+      "Suspense must wrap lazy components and provide a fallback.",
+      "Each lazy component creates a separate bundle chunk.",
+      "Consider wrapping Suspense with ErrorBoundary for load failures.",
+    ],
+    testCases: [
+      {
+        description: "Uses React.lazy for dynamic imports",
+        validate: (code: string) => /lazy\s*\(\s*\(\)\s*=>/.test(code),
+      },
+      {
+        description: "Uses Suspense with fallback",
+        validate: (code: string) => /Suspense/.test(code) && /fallback/.test(code),
+      },
+      {
+        description: "Uses dynamic import",
+        validate: (code: string) => /import\s*\(/.test(code),
+      },
+    ],
+  },
+  {
+    id: "optimistic-updates",
+    title: "Optimistic UI Updates",
+    difficulty: "Hard",
+    description: `The todo app feels slow because it waits for the server before updating the UI. Implement optimistic updates to make it feel instant.
+
+**The Challenge:** Network latency makes CRUD operations feel sluggish.
+
+**The Task:**
+1. Update the UI immediately before the API call completes.
+2. Rollback to previous state if the API call fails.
+3. Handle error states gracefully.
+4. Use useReducer for complex state management.`,
+    problemCode: `import React, { useState } from "react";
+
+export default function TodoApp() {
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const addTodo = async (text) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // 🚩 UI doesn't update until this completes (slow!)
+      const response = await fetch("/api/todos", {
+        method: "POST",
+        body: JSON.stringify({ text }),
+      });
+      const newTodo = await response.json();
+      setTodos([...todos, newTodo]);
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  const deleteTodo = async (id) => {
+    setLoading(true);
+    try {
+      // 🚩 Same problem - waits for server
+      await fetch(\`/api/todos/\${id}\`, { method: "DELETE" });
+      setTodos(todos.filter(t => t.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* UI implementation */}
+    </div>
+  );
+}`,
+    explanation: `Optimistic updates update the UI immediately, assuming the server call will succeed. If it fails, rollback to the previous state. This makes apps feel instant. Use try/catch with state restoration, or useReducer for more complex rollback logic.`,
+    solution: `import React, { useState, useCallback } from "react";
+
+export default function TodoApp() {
+  const [todos, setTodos] = useState([]);
+  const [error, setError] = useState(null);
+
+  const addTodo = useCallback(async (text) => {
+    setError(null);
+
+    // ✅ Create optimistic todo with temporary ID
+    const optimisticTodo = {
+      id: "temp-" + Date.now(),
+      text,
+      pending: true,
+    };
+
+    // ✅ Update UI immediately (optimistic)
+    setTodos(prev => [...prev, optimisticTodo]);
+
+    try {
+      const response = await fetch("/api/todos", {
+        method: "POST",
+        body: JSON.stringify({ text }),
+      });
+      const newTodo = await response.json();
+
+      // ✅ Replace optimistic todo with real one
+      setTodos(prev =>
+        prev.map(t => t.id === optimisticTodo.id ? newTodo : t)
+      );
+    } catch (err) {
+      // ✅ Rollback on failure
+      setTodos(prev => prev.filter(t => t.id !== optimisticTodo.id));
+      setError("Failed to add todo. Please try again.");
+    }
+  }, []);
+
+  const deleteTodo = useCallback(async (id) => {
+    setError(null);
+
+    // ✅ Save todo for potential rollback
+    const todoToDelete = todos.find(t => t.id === id);
+
+    // ✅ Optimistically remove from UI
+    setTodos(prev => prev.filter(t => t.id !== id));
+
+    try {
+      await fetch(\`/api/todos/\${id}\`, { method: "DELETE" });
+    } catch (err) {
+      // ✅ Rollback: restore the deleted todo
+      setTodos(prev => [...prev, todoToDelete]);
+      setError("Failed to delete. Please try again.");
+    }
+  }, [todos]);
+
+  return (
+    <div>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <ul>
+        {todos.map(todo => (
+          <li key={todo.id} style={{ opacity: todo.pending ? 0.5 : 1 }}>
+            {todo.text}
+            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}`,
+    hints: [
+      "Update state BEFORE the API call, not after.",
+      "Save the previous state for potential rollback.",
+      "Use temporary IDs for optimistic items.",
+      "Restore previous state in catch block on failure.",
+    ],
+    testCases: [
+      {
+        description: "Updates state before API call",
+        validate: (code: string) => /setTodos[\s\S]*fetch/.test(code),
+      },
+      {
+        description: "Implements rollback on error",
+        validate: (code: string) => /catch[\s\S]*setTodos/.test(code),
+      },
+      {
+        description: "Saves state for rollback",
+        validate: (code: string) => /todoToDelete|previousTodos|savedTodo|optimistic/.test(code),
+      },
+    ],
+  },
+  {
+    id: "portal-modal",
+    title: "Portal for Modal Overlay",
+    difficulty: "Medium",
+    description: `The modal renders inside a deeply nested component, causing z-index and overflow issues. The modal gets clipped by parent containers with overflow: hidden.
+
+**The Challenge:** Modals rendered inside nested containers have z-index and clipping issues.
+
+**The Task:**
+1. Use \`createPortal\` to render the modal outside the DOM hierarchy.
+2. Portal to document.body or a dedicated modal root.
+3. Handle accessibility (focus trap, escape key).
+4. Clean up portal on unmount.`,
+    problemCode: `import React, { useState } from "react";
+
+// 🚩 Modal is rendered inside the Card, causing z-index issues
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <button onClick={onClose}>Close</button>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const Card = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <div style={{ overflow: "hidden", position: "relative" }}>
+      <h2>Card Title</h2>
+      <button onClick={() => setShowModal(true)}>Open Modal</button>
+      {/* 🚩 Modal gets clipped by overflow: hidden */}
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <p>Modal content here</p>
+      </Modal>
+    </div>
+  );
+};`,
+    explanation: `\`createPortal\` renders children into a different part of the DOM tree, outside the parent component's hierarchy. This solves z-index and overflow clipping issues. The modal still behaves like a child component (events bubble up, context works) but renders at the body level.`,
+    solution: `import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+
+// ✅ Modal uses portal to render at document body
+const Modal = ({ isOpen, onClose, children }) => {
+  const modalRef = useRef(null);
+
+  // Handle Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    // Focus trap: focus the modal
+    modalRef.current?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  // ✅ Portal renders at document.body, not inside parent
+  return createPortal(
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "rgba(0,0,0,0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+      }}
+    >
+      <div
+        ref={modalRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        tabIndex={-1}
+        style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "8px",
+        }}
+      >
+        <button onClick={onClose}>Close</button>
+        {children}
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+const Card = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <div style={{ overflow: "hidden", position: "relative" }}>
+      <h2>Card Title</h2>
+      <button onClick={() => setShowModal(true)}>Open Modal</button>
+      {/* ✅ Modal renders at body, not affected by overflow */}
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <p>Modal content here</p>
+      </Modal>
+    </div>
+  );
+};`,
+    hints: [
+      "createPortal takes (children, container) as arguments.",
+      "document.body is a common portal target for modals.",
+      "Events still bubble through React's virtual DOM tree.",
+      "Add keyboard handling for accessibility (Escape to close).",
+    ],
+    testCases: [
+      {
+        description: "Uses createPortal from react-dom",
+        validate: (code: string) => /createPortal/.test(code),
+      },
+      {
+        description: "Portals to document.body",
+        validate: (code: string) => /document\.body/.test(code),
+      },
+      {
+        description: "Handles Escape key",
+        validate: (code: string) => /Escape/.test(code) || /keydown/.test(code),
+      },
+    ],
+  },
+  {
+    id: "reducer-action-types",
+    title: "Type-Safe Reducer with Action Types",
+    difficulty: "Medium",
+    description: `The reducer has action type strings scattered everywhere, making it error-prone. Implement a type-safe reducer pattern with TypeScript.
+
+**The Challenge:** String action types are error-prone and lack autocomplete.
+
+**The Task:**
+1. Define action types as constants or enums.
+2. Create typed action creator functions.
+3. Use discriminated unions for action types.
+4. Ensure exhaustive action handling in reducer.`,
+    problemCode: `import React, { useReducer } from "react";
+
+// 🚩 Stringly-typed actions are error-prone
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "INCREMENT": // Easy to typo!
+      return { count: state.count + 1 };
+    case "DECREMENT":
+      return { count: state.count - 1 };
+    case "SET":
+      return { count: action.payload }; // payload could be anything
+    case "RESET":
+      return { count: 0 };
+    default:
+      return state;
+  }
+};
+
+export default function Counter() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      {/* 🚩 Easy to dispatch wrong action type */}
+      <button onClick={() => dispatch({ type: "INCRMENT" })}>+</button>
+      <button onClick={() => dispatch({ type: "SET", payload: "not a number" })}>Set</button>
+    </div>
+  );
+}`,
+    explanation: `Use TypeScript discriminated unions to create type-safe reducers. Define action types as a union of specific action objects. Action creators provide type safety and autocomplete. The compiler catches typos and wrong payloads.`,
+    solution: `import React, { useReducer } from "react";
+
+// ✅ Define state type
+interface State {
+  count: number;
+}
+
+// ✅ Define action types as discriminated union
+type Action =
+  | { type: "INCREMENT" }
+  | { type: "DECREMENT" }
+  | { type: "SET"; payload: number }
+  | { type: "RESET" };
+
+// ✅ Type-safe action creators
+const actions = {
+  increment: (): Action => ({ type: "INCREMENT" }),
+  decrement: (): Action => ({ type: "DECREMENT" }),
+  set: (value: number): Action => ({ type: "SET", payload: value }),
+  reset: (): Action => ({ type: "RESET" }),
+};
+
+// ✅ Type-safe reducer with exhaustive check
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "INCREMENT":
+      return { count: state.count + 1 };
+    case "DECREMENT":
+      return { count: state.count - 1 };
+    case "SET":
+      return { count: action.payload }; // payload is typed as number
+    case "RESET":
+      return { count: 0 };
+    default:
+      // ✅ Exhaustive check - TypeScript errors if case is missing
+      const _exhaustive: never = action;
+      return state;
+  }
+};
+
+export default function Counter() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      {/* ✅ Type-safe dispatching */}
+      <button onClick={() => dispatch(actions.increment())}>+</button>
+      <button onClick={() => dispatch(actions.decrement())}>-</button>
+      <button onClick={() => dispatch(actions.set(10))}>Set to 10</button>
+      <button onClick={() => dispatch(actions.reset())}>Reset</button>
+    </div>
+  );
+}`,
+    hints: [
+      "Use discriminated unions for action types.",
+      "Action creators provide type safety and encapsulation.",
+      "The 'never' type in default ensures exhaustive handling.",
+      "TypeScript will catch typos in action types.",
+    ],
+    testCases: [
+      {
+        description: "Defines typed Action union",
+        validate: (code: string) => /type\s+Action\s*=/.test(code) || /interface\s+.*Action/.test(code),
+      },
+      {
+        description: "Uses action creators or typed dispatch",
+        validate: (code: string) => /actions\.|dispatch\s*\(/.test(code),
+      },
+      {
+        description: "Implements exhaustive check",
+        validate: (code: string) => /never/.test(code) || /default.*exhaustive/i.test(code),
+      },
+    ],
+  },
+  {
+    id: "form-controlled-validation",
+    title: "Controlled Form with Real-time Validation",
+    difficulty: "Medium",
+    description: `Build a registration form with real-time validation that shows errors as the user types, but only after they've interacted with each field.
+
+**The Challenge:** Show validation errors at the right time - not on initial render, not while actively typing, but after the field is touched.
+
+**The Task:**
+1. Track touched state for each field.
+2. Validate on blur and on submit.
+3. Show errors only for touched fields with errors.
+4. Disable submit when form is invalid.`,
+    problemCode: `import React, { useState } from "react";
+
+export default function RegistrationForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // 🚩 No validation!
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Submitted:", { email, password });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        {/* 🚩 No error display */}
+      </div>
+      <div>
+        <label>Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <button type="submit">Register</button>
+    </form>
+  );
+}`,
+    explanation: `Track 'touched' state for each field to know when to show errors. Validate on blur (when leaving a field) and on submit. Show errors only for fields that are both touched and invalid. Use useMemo to compute validation state efficiently.`,
+    solution: `import React, { useState, useMemo } from "react";
+
+// ✅ Validation rules
+const validateEmail = (email) => {
+  if (!email) return "Email is required";
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return "Invalid email format";
+  return null;
+};
+
+const validatePassword = (password) => {
+  if (!password) return "Password is required";
+  if (password.length < 8) return "Password must be at least 8 characters";
+  if (!/[A-Z]/.test(password)) return "Password must contain uppercase letter";
+  if (!/[0-9]/.test(password)) return "Password must contain a number";
+  return null;
+};
+
+export default function RegistrationForm() {
+  const [values, setValues] = useState({ email: "", password: "" });
+  const [touched, setTouched] = useState({ email: false, password: false });
+
+  // ✅ Compute errors using useMemo
+  const errors = useMemo(() => ({
+    email: validateEmail(values.email),
+    password: validatePassword(values.password),
+  }), [values]);
+
+  const isValid = !errors.email && !errors.password;
+
+  const handleChange = (field) => (e) => {
+    setValues(prev => ({ ...prev, [field]: e.target.value }));
+  };
+
+  // ✅ Mark field as touched on blur
+  const handleBlur = (field) => () => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // ✅ Touch all fields on submit to show all errors
+    setTouched({ email: true, password: true });
+
+    if (isValid) {
+      console.log("Submitted:", values);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>Email</label>
+        <input
+          type="email"
+          value={values.email}
+          onChange={handleChange("email")}
+          onBlur={handleBlur("email")}
+          className={touched.email && errors.email ? "error" : ""}
+        />
+        {/* ✅ Show error only if touched and has error */}
+        {touched.email && errors.email && (
+          <span style={{ color: "red" }}>{errors.email}</span>
+        )}
+      </div>
+      <div>
+        <label>Password</label>
+        <input
+          type="password"
+          value={values.password}
+          onChange={handleChange("password")}
+          onBlur={handleBlur("password")}
+          className={touched.password && errors.password ? "error" : ""}
+        />
+        {touched.password && errors.password && (
+          <span style={{ color: "red" }}>{errors.password}</span>
+        )}
+      </div>
+      <button type="submit" disabled={!isValid}>Register</button>
+    </form>
+  );
+}`,
+    hints: [
+      "Track 'touched' state separately from values.",
+      "Use onBlur to mark fields as touched.",
+      "Only show errors for touched fields with errors.",
+      "Touch all fields on submit to reveal all errors.",
+    ],
+    testCases: [
+      {
+        description: "Tracks touched state for fields",
+        validate: (code: string) => /touched/.test(code) && /setTouched/.test(code),
+      },
+      {
+        description: "Validates email and password",
+        validate: (code: string) => /validateEmail|errors\.email/.test(code),
+      },
+      {
+        description: "Uses onBlur for touch tracking",
+        validate: (code: string) => /onBlur/.test(code),
+      },
+      {
+        description: "Shows errors conditionally",
+        validate: (code: string) => /touched.*&&.*errors|touched\[.*\].*&&.*errors/.test(code),
+      },
+    ],
+  },
+  {
+    id: "context-split-optimization",
+    title: "Context Splitting for Performance",
+    difficulty: "Hard",
+    description: `The app re-renders everything when any context value changes. The user object changes rarely, but the theme toggle causes all consumers to re-render.
+
+**The Challenge:** Single context with multiple values causes unnecessary re-renders.
+
+**The Task:**
+1. Split context into multiple smaller contexts.
+2. Group values by update frequency.
+3. Use separate providers for each context.
+4. Only components using changed context re-render.`,
+    problemCode: `import React, { createContext, useContext, useState } from "react";
+
+// 🚩 Single context with everything
+const AppContext = createContext(null);
+
+export const AppProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState("light");
+  const [notifications, setNotifications] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // 🚩 Any change to ANY value re-renders ALL consumers
+  const value = {
+    user, setUser,
+    theme, setTheme,
+    notifications, setNotifications,
+    sidebarOpen, setSidebarOpen,
+  };
+
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+// 🚩 This component re-renders when theme changes,
+// even though it only uses user
+const UserAvatar = () => {
+  const { user } = useContext(AppContext);
+  console.log("UserAvatar rendered");
+  return <div>{user?.name}</div>;
+};`,
+    explanation: `Split context by update frequency. User data rarely changes. Theme might change occasionally. Notifications change frequently. Each context provider wraps children, and consumers only re-render when their specific context changes.`,
+    solution: `import React, { createContext, useContext, useState, useMemo } from "react";
+
+// ✅ Split contexts by update frequency
+const UserContext = createContext(null);
+const ThemeContext = createContext(null);
+const NotificationContext = createContext(null);
+const UIContext = createContext(null);
+
+// ✅ Separate providers
+export const UserProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const value = useMemo(() => ({ user, setUser }), [user]);
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+};
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState("light");
+  const value = useMemo(() => ({ theme, setTheme }), [theme]);
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+};
+
+export const NotificationProvider = ({ children }) => {
+  const [notifications, setNotifications] = useState([]);
+  const value = useMemo(() => ({ notifications, setNotifications }), [notifications]);
+  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
+};
+
+export const UIProvider = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const value = useMemo(() => ({ sidebarOpen, setSidebarOpen }), [sidebarOpen]);
+  return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
+};
+
+// ✅ Combined provider for convenience
+export const AppProvider = ({ children }) => (
+  <UserProvider>
+    <ThemeProvider>
+      <NotificationProvider>
+        <UIProvider>
+          {children}
+        </UIProvider>
+      </NotificationProvider>
+    </ThemeProvider>
+  </UserProvider>
+);
+
+// ✅ Custom hooks for each context
+export const useUser = () => useContext(UserContext);
+export const useTheme = () => useContext(ThemeContext);
+export const useNotifications = () => useContext(NotificationContext);
+export const useUI = () => useContext(UIContext);
+
+// ✅ Now this only re-renders when user changes
+const UserAvatar = () => {
+  const { user } = useUser();
+  console.log("UserAvatar rendered");
+  return <div>{user?.name}</div>;
+};
+
+// ✅ Theme toggle doesn't affect UserAvatar
+const ThemeToggle = () => {
+  const { theme, setTheme } = useTheme();
+  return (
+    <button onClick={() => setTheme(t => t === "light" ? "dark" : "light")}>
+      Current: {theme}
+    </button>
+  );
+};`,
+    hints: [
+      "Split context by how often each value changes.",
+      "Frequently changing values should have their own context.",
+      "Use useMemo to memoize context values.",
+      "Create custom hooks for each context for cleaner API.",
+    ],
+    testCases: [
+      {
+        description: "Creates multiple separate contexts",
+        validate: (code: string) => {
+          const contextCount = (code.match(/createContext/g) || []).length;
+          return contextCount >= 2;
+        },
+      },
+      {
+        description: "Creates separate providers",
+        validate: (code: string) => /UserProvider|ThemeProvider/.test(code),
+      },
+      {
+        description: "Uses useMemo for context values",
+        validate: (code: string) => /useMemo[\s\S]*Provider/.test(code),
+      },
+      {
+        description: "Creates custom hooks for contexts",
+        validate: (code: string) => /useUser|useTheme/.test(code),
+      },
+    ],
+  },
+  {
+    id: "custom-hook-composition",
+    title: "Composable Custom Hooks",
+    difficulty: "Medium",
+    description: `Create a set of composable custom hooks that can be combined for complex async operations with loading, error, and retry functionality.
+
+**The Challenge:** Build reusable hooks that handle common async patterns.
+
+**The Task:**
+1. Create a \`useAsync\` hook for async operations.
+2. Add automatic retry capability.
+3. Handle loading and error states.
+4. Make hooks composable for complex use cases.`,
+    problemCode: `import React, { useState, useEffect } from "react";
+
+// 🚩 This pattern is repeated everywhere
+export default function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    fetch(\`/api/users/\${userId}\`)
+      .then(res => res.json())
+      .then(data => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [userId]);
+
+  // 🚩 No retry functionality
+  // 🚩 No way to refetch manually
+  // 🚩 Same pattern copy-pasted everywhere
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  return <div>{user?.name}</div>;
+}`,
+    explanation: `Custom hooks encapsulate reusable stateful logic. Create a base \`useAsync\` hook that handles loading, error, and data states. Add features like retry, manual trigger, and caching. Compose hooks together for complex use cases.`,
+    solution: `import React, { useState, useCallback, useEffect, useRef } from "react";
+
+// ✅ Base async hook
+function useAsync(asyncFunction, immediate = true) {
+  const [state, setState] = useState({
+    data: null,
+    loading: immediate,
+    error: null,
+  });
+
+  const execute = useCallback(async (...args) => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    try {
+      const data = await asyncFunction(...args);
+      setState({ data, loading: false, error: null });
+      return data;
+    } catch (error) {
+      setState(prev => ({ ...prev, loading: false, error: error.message }));
+      throw error;
+    }
+  }, [asyncFunction]);
+
+  return { ...state, execute };
+}
+
+// ✅ Hook with retry capability
+function useAsyncWithRetry(asyncFunction, maxRetries = 3) {
+  const { data, loading, error, execute } = useAsync(asyncFunction, false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const executeWithRetry = useCallback(async (...args) => {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        setRetryCount(attempt);
+        return await execute(...args);
+      } catch (err) {
+        if (attempt === maxRetries) throw err;
+        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+      }
+    }
+  }, [execute, maxRetries]);
+
+  const retry = useCallback(() => {
+    setRetryCount(0);
+    executeWithRetry();
+  }, [executeWithRetry]);
+
+  return { data, loading, error, execute: executeWithRetry, retry, retryCount };
+}
+
+// ✅ Fetch hook built on useAsync
+function useFetch(url, options = {}) {
+  const fetchFn = useCallback(async () => {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error(\`HTTP \${response.status}\`);
+    return response.json();
+  }, [url]);
+
+  const { data, loading, error, execute } = useAsyncWithRetry(fetchFn, 3);
+
+  useEffect(() => {
+    execute();
+  }, [execute]);
+
+  return { data, loading, error, refetch: execute };
+}
+
+// ✅ Usage is now clean and reusable
+export default function UserProfile({ userId }) {
+  const { data: user, loading, error, refetch } = useFetch(\`/api/users/\${userId}\`);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return (
+    <div>
+      Error: {error}
+      <button onClick={refetch}>Retry</button>
+    </div>
+  );
+  return <div>{user?.name}</div>;
+}`,
+    hints: [
+      "Start with a base useAsync hook for all async operations.",
+      "Return execute function for manual triggering.",
+      "Add retry logic with exponential backoff.",
+      "Build specific hooks (useFetch, useMutation) on top of base hooks.",
+    ],
+    testCases: [
+      {
+        description: "Creates useAsync custom hook",
+        validate: (code: string) => /function\s+useAsync|const\s+useAsync/.test(code),
+      },
+      {
+        description: "Handles loading state",
+        validate: (code: string) => /loading:\s*true|setLoading\(true\)/.test(code),
+      },
+      {
+        description: "Implements retry functionality",
+        validate: (code: string) => /retry|maxRetries|attempt/.test(code),
+      },
+      {
+        description: "Returns execute/refetch function",
+        validate: (code: string) => /execute|refetch/.test(code),
+      },
+    ],
+  },
+  {
+    id: "memo-children-optimization",
+    title: "Children Props Optimization",
+    difficulty: "Hard",
+    description: `Even with React.memo, the child component re-renders because the children prop changes reference every render.
+
+**The Challenge:** React.memo doesn't work when children prop is used naively.
+
+**The Task:**
+1. Understand why children breaks memoization.
+2. Use render props or composition patterns.
+3. Move children to a stable reference.
+4. Choose the right pattern for different use cases.`,
+    problemCode: `import React, { useState, memo } from "react";
+
+// ✅ Memoized component
+const ExpensiveList = memo(({ items, children }) => {
+  console.log("ExpensiveList rendered");
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>
+          {/* 🚩 children changes every render! */}
+          {children(item)}
+        </li>
+      ))}
+    </ul>
+  );
+});
+
+export default function App() {
+  const [count, setCount] = useState(0);
+  const [items] = useState([{ id: 1, name: "Item 1" }, { id: 2, name: "Item 2" }]);
+
+  return (
+    <div>
+      <button onClick={() => setCount(c => c + 1)}>Count: {count}</button>
+
+      {/* 🚩 This inline function creates new reference every render */}
+      <ExpensiveList items={items}>
+        {(item) => <span>{item.name}</span>}
+      </ExpensiveList>
+    </div>
+  );
+}`,
+    explanation: `When using children as a render prop, the inline function creates a new reference every render, breaking memoization. Solutions: 1) Use useCallback for the render prop, 2) Extract children to a component, 3) Use composition instead of render props.`,
+    solution: `import React, { useState, memo, useCallback, useMemo } from "react";
+
+// ✅ Memoized expensive list
+const ExpensiveList = memo(({ items, renderItem }) => {
+  console.log("ExpensiveList rendered");
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{renderItem(item)}</li>
+      ))}
+    </ul>
+  );
+});
+
+// ✅ Solution 1: Use useCallback for render prop
+function AppWithCallback() {
+  const [count, setCount] = useState(0);
+  const [items] = useState([{ id: 1, name: "Item 1" }, { id: 2, name: "Item 2" }]);
+
+  // ✅ Stable reference with useCallback
+  const renderItem = useCallback((item) => (
+    <span>{item.name}</span>
+  ), []);
+
+  return (
+    <div>
+      <button onClick={() => setCount(c => c + 1)}>Count: {count}</button>
+      <ExpensiveList items={items} renderItem={renderItem} />
+    </div>
+  );
+}
+
+// ✅ Solution 2: Extract to separate component
+const ItemRenderer = memo(({ item }) => (
+  <span>{item.name}</span>
+));
+
+function AppWithComponent() {
+  const [count, setCount] = useState(0);
+  const [items] = useState([{ id: 1, name: "Item 1" }, { id: 2, name: "Item 2" }]);
+
+  return (
+    <div>
+      <button onClick={() => setCount(c => c + 1)}>Count: {count}</button>
+      <ExpensiveList
+        items={items}
+        renderItem={(item) => <ItemRenderer item={item} />}
+      />
+    </div>
+  );
+}
+
+// ✅ Solution 3: Use composition pattern
+const ListItem = memo(({ children }) => {
+  console.log("ListItem rendered");
+  return <li>{children}</li>;
+});
+
+const List = memo(({ children }) => {
+  console.log("List rendered");
+  return <ul>{children}</ul>;
+});
+
+export default function AppWithComposition() {
+  const [count, setCount] = useState(0);
+  const [items] = useState([{ id: 1, name: "Item 1" }, { id: 2, name: "Item 2" }]);
+
+  // ✅ Memoize the entire children
+  const listContent = useMemo(() => (
+    items.map(item => (
+      <ListItem key={item.id}>
+        <span>{item.name}</span>
+      </ListItem>
+    ))
+  ), [items]);
+
+  return (
+    <div>
+      <button onClick={() => setCount(c => c + 1)}>Count: {count}</button>
+      <List>{listContent}</List>
+    </div>
+  );
+}`,
+    hints: [
+      "Inline functions create new references every render.",
+      "useCallback stabilizes render prop references.",
+      "Extract repeated elements to memoized components.",
+      "useMemo can memoize entire children structures.",
+    ],
+    testCases: [
+      {
+        description: "Uses useCallback for render functions",
+        validate: (code: string) => /useCallback/.test(code),
+      },
+      {
+        description: "Uses memo for child components",
+        validate: (code: string) => /memo\s*\(/.test(code),
+      },
+      {
+        description: "Avoids inline function in JSX or memoizes it",
+        validate: (code: string) => /renderItem|useMemo.*items\.map/.test(code),
+      },
+    ],
+  },
+  {
+    id: "use-id-accessibility",
+    title: "Accessible Forms with useId",
+    difficulty: "Easy",
+    description: `Form labels aren't properly associated with inputs, breaking screen reader accessibility. Generate unique, stable IDs for form elements.
+
+**The Challenge:** Hardcoded IDs can clash in SSR or when components are reused.
+
+**The Task:**
+1. Use \`useId\` hook to generate unique IDs.
+2. Associate labels with inputs using htmlFor/id.
+3. Use IDs for aria-describedby on error messages.
+4. Ensure IDs are stable across server/client.`,
+    problemCode: `import React, { useState } from "react";
+
+// 🚩 Hardcoded IDs can clash when component is reused
+const FormField = ({ label, error }) => {
+  const [value, setValue] = useState("");
+
+  return (
+    <div>
+      {/* 🚩 If two FormFields exist, IDs clash! */}
+      <label htmlFor="input">
+        {label}
+      </label>
+      <input
+        id="input"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      {error && <span id="error">{error}</span>}
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <form>
+      {/* 🚩 Both have id="input" - accessibility broken! */}
+      <FormField label="Email" error="Invalid email" />
+      <FormField label="Password" />
+    </form>
+  );
+}`,
+    explanation: `\`useId\` generates unique IDs that are stable between server and client renders. Use these IDs for htmlFor/id pairs to associate labels with inputs, and for aria-describedby to link error messages. Each component instance gets its own unique ID.`,
+    solution: `import React, { useState, useId } from "react";
+
+// ✅ useId generates unique, stable IDs
+const FormField = ({ label, error, type = "text" }) => {
+  const [value, setValue] = useState("");
+
+  // ✅ useId creates unique ID for this component instance
+  const id = useId();
+  const inputId = \`\${id}-input\`;
+  const errorId = \`\${id}-error\`;
+
+  return (
+    <div>
+      {/* ✅ Label properly associated with input */}
+      <label htmlFor={inputId}>
+        {label}
+      </label>
+      <input
+        id={inputId}
+        type={type}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        // ✅ aria-describedby links to error message
+        aria-describedby={error ? errorId : undefined}
+        aria-invalid={error ? "true" : undefined}
+      />
+      {error && (
+        <span id={errorId} role="alert" style={{ color: "red" }}>
+          {error}
+        </span>
+      )}
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <form>
+      {/* ✅ Each FormField has unique IDs */}
+      <FormField label="Email" type="email" error="Invalid email" />
+      <FormField label="Password" type="password" />
+      <FormField label="Confirm Password" type="password" />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}`,
+    hints: [
+      "useId generates unique IDs per component instance.",
+      "Use the same base ID with suffixes for related elements.",
+      "htmlFor on label must match id on input.",
+      "aria-describedby links inputs to their error messages.",
+    ],
+    testCases: [
+      {
+        description: "Uses useId hook",
+        validate: (code: string) => /useId/.test(code),
+      },
+      {
+        description: "Associates label with input via htmlFor",
+        validate: (code: string) => /htmlFor/.test(code),
+      },
+      {
+        description: "Uses aria-describedby for error messages",
+        validate: (code: string) => /aria-describedby/.test(code),
+      },
+    ],
+  },
+  {
+    id: "debounce-search-input",
+    title: "Debounced Search Input",
+    difficulty: "Easy",
+    description: `The search input fires an API request on every keystroke, causing performance issues and rate limiting.
+
+**The Challenge:** Too many API calls when user types quickly.
+
+**The Task:**
+1. Implement debouncing to delay the API call.
+2. Only call API after user stops typing for 300ms.
+3. Cancel pending calls when component unmounts.
+4. Show loading state while waiting.`,
+    problemCode: `import React, { useState, useEffect } from "react";
+
+export default function SearchInput() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    // 🚩 API called on EVERY keystroke!
+    if (query) {
+      fetch(\`/api/search?q=\${query}\`)
+        .then(res => res.json())
+        .then(setResults);
+    }
+  }, [query]);
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search..."
+      />
+      <ul>
+        {results.map(r => <li key={r.id}>{r.name}</li>)}
+      </ul>
+    </div>
+  );
+}`,
+    explanation: `Debouncing delays execution until after a pause in events. Use setTimeout to wait, and clear the timeout if the value changes before it fires. This prevents excessive API calls when users type quickly.`,
+    solution: `import React, { useState, useEffect } from "react";
+
+export default function SearchInput() {
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ Debounce the query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+
+    // ✅ Clear timeout if query changes before 300ms
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // ✅ Fetch only when debounced query changes
+  useEffect(() => {
+    if (!debouncedQuery) {
+      setResults([]);
+      return;
+    }
+
+    setLoading(true);
+    fetch(\`/api/search?q=\${debouncedQuery}\`)
+      .then(res => res.json())
+      .then(data => {
+        setResults(data);
+        setLoading(false);
+      });
+  }, [debouncedQuery]);
+
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search..."
+      />
+      {loading && <p>Searching...</p>}
+      <ul>
+        {results.map(r => <li key={r.id}>{r.name}</li>)}
+      </ul>
+    </div>
+  );
+}`,
+    hints: [
+      "Use setTimeout to delay the API call.",
+      "Clear the timeout in useEffect cleanup.",
+      "Use two state values: immediate input and debounced value.",
+      "Only fetch when the debounced value changes.",
+    ],
+    testCases: [
+      {
+        description: "Uses setTimeout for debouncing",
+        validate: (code: string) => /setTimeout/.test(code),
+      },
+      {
+        description: "Clears timeout in cleanup",
+        validate: (code: string) => /clearTimeout/.test(code),
+      },
+      {
+        description: "Has separate debounced state",
+        validate: (code: string) => /debouncedQuery|debouncedValue|debouncedSearch/.test(code),
+      },
+    ],
+  },
+  {
+    id: "infinite-scroll-list",
+    title: "Infinite Scroll with IntersectionObserver",
+    difficulty: "Medium",
+    description: `The list loads all items at once, causing slow initial load and poor performance with large datasets.
+
+**The Challenge:** Implement efficient infinite scrolling that loads more items as the user scrolls.
+
+**The Task:**
+1. Use IntersectionObserver to detect when user scrolls near the bottom.
+2. Load more items when the sentinel element is visible.
+3. Handle loading states and prevent duplicate fetches.
+4. Clean up observer on unmount.`,
+    problemCode: `import React, { useState, useEffect } from "react";
+
+export default function ItemList() {
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    // 🚩 Loads ALL pages at once!
+    for (let p = 1; p <= 10; p++) {
+      fetch(\`/api/items?page=\${p}\`)
+        .then(res => res.json())
+        .then(data => setItems(prev => [...prev, ...data]));
+    }
+  }, []);
+
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{item.name}</li>
+      ))}
+    </ul>
+  );
+}`,
+    explanation: `IntersectionObserver detects when an element enters the viewport. Place a "sentinel" element at the bottom of the list and observe it. When visible, load more items. Disconnect the observer on cleanup to prevent memory leaks.`,
+    solution: `import React, { useState, useEffect, useRef, useCallback } from "react";
+
+export default function ItemList() {
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef(null);
+
+  // ✅ Fetch items for current page
+  const loadItems = useCallback(async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    const res = await fetch(\`/api/items?page=\${page}\`);
+    const data = await res.json();
+
+    if (data.length === 0) {
+      setHasMore(false);
+    } else {
+      setItems(prev => [...prev, ...data]);
+      setPage(prev => prev + 1);
+    }
+    setLoading(false);
+  }, [page, loading, hasMore]);
+
+  // ✅ Set up IntersectionObserver for sentinel
+  const lastItemRef = useCallback((node) => {
+    if (loading) return;
+
+    // Disconnect previous observer
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    // Create new observer
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        loadItems();
+      }
+    });
+
+    if (node) {
+      observerRef.current.observe(node);
+    }
+  }, [loading, hasMore, loadItems]);
+
+  // ✅ Load first page on mount
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {items.map((item, index) => (
+          <li
+            key={item.id}
+            ref={index === items.length - 1 ? lastItemRef : null}
+          >
+            {item.name}
+          </li>
+        ))}
+      </ul>
+      {loading && <p>Loading more...</p>}
+      {!hasMore && <p>No more items</p>}
+    </div>
+  );
+}`,
+    hints: [
+      "IntersectionObserver detects element visibility.",
+      "Use a ref callback to observe the last item.",
+      "Disconnect previous observers before creating new ones.",
+      "Track loading and hasMore states to prevent issues.",
+    ],
+    testCases: [
+      {
+        description: "Uses IntersectionObserver",
+        validate: (code: string) => /IntersectionObserver/.test(code),
+      },
+      {
+        description: "Tracks loading state",
+        validate: (code: string) => /loading/.test(code) && /setLoading/.test(code),
+      },
+      {
+        description: "Handles pagination",
+        validate: (code: string) => /page/.test(code) && /setPage/.test(code),
+      },
+      {
+        description: "Disconnects observer",
+        validate: (code: string) => /disconnect/.test(code),
+      },
+    ],
+  },
+  {
+    id: "drag-and-drop-list",
+    title: "Drag and Drop Reorderable List",
+    difficulty: "Hard",
+    description: `Create a list where items can be reordered by dragging. Use the native HTML5 Drag and Drop API.
+
+**The Challenge:** Implement drag-and-drop reordering without external libraries.
+
+**The Task:**
+1. Make list items draggable.
+2. Handle dragstart, dragover, and drop events.
+3. Show visual feedback during drag.
+4. Update state when items are reordered.`,
+    problemCode: `import React, { useState } from "react";
+
+export default function ReorderableList() {
+  const [items, setItems] = useState([
+    { id: 1, text: "Item 1" },
+    { id: 2, text: "Item 2" },
+    { id: 3, text: "Item 3" },
+  ]);
+
+  // 🚩 No drag and drop functionality!
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{item.text}</li>
+      ))}
+    </ul>
+  );
+}`,
+    explanation: `HTML5 Drag and Drop uses draggable attribute and event handlers. Store the dragged item's index in dataTransfer. On drop, calculate the new order and update state. Use dragover to enable dropping and show visual feedback.`,
+    solution: `import React, { useState, useRef } from "react";
+
+export default function ReorderableList() {
+  const [items, setItems] = useState([
+    { id: 1, text: "Item 1" },
+    { id: 2, text: "Item 2" },
+    { id: 3, text: "Item 3" },
+  ]);
+  const [draggedIdx, setDraggedIdx] = useState(null);
+  const [dragOverIdx, setDragOverIdx] = useState(null);
+
+  const handleDragStart = (e, index) => {
+    setDraggedIdx(index);
+    e.dataTransfer.effectAllowed = "move";
+    // ✅ Store dragged index
+    e.dataTransfer.setData("text/plain", index);
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault(); // ✅ Required to enable drop
+    e.dataTransfer.dropEffect = "move";
+    setDragOverIdx(index);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIdx(null);
+  };
+
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault();
+    const dragIndex = parseInt(e.dataTransfer.getData("text/plain"));
+
+    if (dragIndex === dropIndex) return;
+
+    // ✅ Reorder items
+    const newItems = [...items];
+    const [draggedItem] = newItems.splice(dragIndex, 1);
+    newItems.splice(dropIndex, 0, draggedItem);
+
+    setItems(newItems);
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+  };
+
+  return (
+    <ul style={{ listStyle: "none", padding: 0 }}>
+      {items.map((item, index) => (
+        <li
+          key={item.id}
+          draggable
+          onDragStart={(e) => handleDragStart(e, index)}
+          onDragOver={(e) => handleDragOver(e, index)}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, index)}
+          onDragEnd={handleDragEnd}
+          style={{
+            padding: "12px",
+            margin: "4px 0",
+            background: dragOverIdx === index ? "#e3f2fd" : "#f5f5f5",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+            cursor: "grab",
+            opacity: draggedIdx === index ? 0.5 : 1,
+            transform: dragOverIdx === index ? "scale(1.02)" : "none",
+            transition: "all 0.2s",
+          }}
+        >
+          {item.text}
+        </li>
+      ))}
+    </ul>
+  );
+}`,
+    hints: [
+      "Set draggable={true} on list items.",
+      "preventDefault() on dragover enables dropping.",
+      "Use dataTransfer to pass data between drag events.",
+      "Splice and insert to reorder the array.",
+    ],
+    testCases: [
+      {
+        description: "Uses draggable attribute",
+        validate: (code: string) => /draggable/.test(code),
+      },
+      {
+        description: "Handles dragStart event",
+        validate: (code: string) => /onDragStart|handleDragStart/.test(code),
+      },
+      {
+        description: "Handles drop event",
+        validate: (code: string) => /onDrop|handleDrop/.test(code),
+      },
+      {
+        description: "Reorders items in state",
+        validate: (code: string) => /splice/.test(code),
+      },
+    ],
+  },
+  {
+    id: "virtual-list-performance",
+    title: "Virtualized List for Large Data",
+    difficulty: "Hard",
+    description: `The list renders 10,000 items causing the browser to freeze. Implement virtualization to only render visible items.
+
+**The Challenge:** Rendering thousands of DOM nodes kills performance.
+
+**The Task:**
+1. Calculate which items are visible in the viewport.
+2. Only render visible items plus a small buffer.
+3. Use absolute positioning to maintain scroll behavior.
+4. Handle scroll events efficiently.`,
+    problemCode: `import React from "react";
+
+// 🚩 Renders ALL 10,000 items - causes browser freeze!
+export default function HugeList() {
+  const items = Array.from({ length: 10000 }, (_, i) => ({
+    id: i,
+    text: \`Item \${i + 1}\`,
+  }));
+
+  return (
+    <div style={{ height: "400px", overflow: "auto" }}>
+      <ul>
+        {items.map(item => (
+          <li key={item.id} style={{ height: "40px" }}>
+            {item.text}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}`,
+    explanation: `Virtualization renders only visible items. Calculate visible range from scrollTop and container height. Use absolute positioning with transform to position items. Add buffer items above/below for smooth scrolling.`,
+    solution: `import React, { useState, useRef, useCallback, useMemo } from "react";
+
+const ITEM_HEIGHT = 40;
+const BUFFER_SIZE = 5;
+
+export default function VirtualizedList() {
+  const items = useMemo(() =>
+    Array.from({ length: 10000 }, (_, i) => ({
+      id: i,
+      text: \`Item \${i + 1}\`,
+    })), []);
+
+  const containerRef = useRef(null);
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const containerHeight = 400;
+  const totalHeight = items.length * ITEM_HEIGHT;
+
+  // ✅ Calculate visible range
+  const startIndex = Math.max(0, Math.floor(scrollTop / ITEM_HEIGHT) - BUFFER_SIZE);
+  const endIndex = Math.min(
+    items.length,
+    Math.ceil((scrollTop + containerHeight) / ITEM_HEIGHT) + BUFFER_SIZE
+  );
+
+  const visibleItems = items.slice(startIndex, endIndex);
+
+  const handleScroll = useCallback((e) => {
+    setScrollTop(e.target.scrollTop);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      onScroll={handleScroll}
+      style={{
+        height: containerHeight,
+        overflow: "auto",
+        position: "relative",
+      }}
+    >
+      {/* ✅ Spacer to maintain scroll height */}
+      <div style={{ height: totalHeight, position: "relative" }}>
+        {/* ✅ Only render visible items */}
+        {visibleItems.map((item, idx) => (
+          <div
+            key={item.id}
+            style={{
+              position: "absolute",
+              top: (startIndex + idx) * ITEM_HEIGHT,
+              left: 0,
+              right: 0,
+              height: ITEM_HEIGHT,
+              display: "flex",
+              alignItems: "center",
+              padding: "0 16px",
+              borderBottom: "1px solid #eee",
+            }}
+          >
+            {item.text}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}`,
+    hints: [
+      "Calculate startIndex from scrollTop / itemHeight.",
+      "Use a spacer div with total height to enable native scrolling.",
+      "Position visible items absolutely based on their index.",
+      "Add buffer items above and below visible area.",
+    ],
+    testCases: [
+      {
+        description: "Calculates visible range from scroll",
+        validate: (code: string) => /startIndex|visibleItems/.test(code),
+      },
+      {
+        description: "Uses absolute positioning",
+        validate: (code: string) => /position.*absolute/.test(code),
+      },
+      {
+        description: "Handles scroll events",
+        validate: (code: string) => /onScroll|handleScroll/.test(code),
+      },
+      {
+        description: "Slices items array for visible items",
+        validate: (code: string) => /slice/.test(code),
+      },
+    ],
+  },
 ];
 
 /** Get a React challenge by id. */

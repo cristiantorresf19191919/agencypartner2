@@ -179,6 +179,38 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'Terraform',
     },
   },
+  'kubernetes-zero-to-hero': {
+    es: {
+      title: 'Kubernetes: De Cero a Héroe',
+      subtitle: 'Guía completa de Kubernetes desde fundamentos hasta producción. Aprende arquitectura, kubectl, k9s, pods, deployments, services, ConfigMaps, Secrets, Helm, RBAC, monitoreo y más. Con ejemplos prácticos y comandos reales para dominar la orquestación de contenedores.',
+      breadcrumbLabel: 'Kubernetes',
+      introParagraph: 'Esta guía cubre todo lo que necesitas saber para trabajar con Kubernetes profesionalmente. Desde conceptos básicos hasta despliegues de producción, cada sección incluye ejemplos de código listos para usar.',
+      categoriesDescription: 'Contenido: 1. Introducción • 2. Arquitectura • 3. Instalación • 4. kubectl • 5. Pods • 6. Deployments • 7. Services • 8. ConfigMaps & Secrets • 9. Volúmenes • 10. Networking • 11. K9s • 12. Helm • 13. RBAC • 14. Monitoreo • 15. Mejores Prácticas • 16. Ejemplos Reales',
+    },
+    en: {
+      title: 'Kubernetes: Zero to Hero',
+      subtitle: 'Complete Kubernetes guide from fundamentals to production. Learn architecture, kubectl, k9s, pods, deployments, services, ConfigMaps, Secrets, Helm, RBAC, monitoring and more. With practical examples and real commands to master container orchestration.',
+      breadcrumbLabel: 'Kubernetes',
+      introParagraph: 'This guide covers everything you need to know to work with Kubernetes professionally. From basic concepts to production deployments, each section includes ready-to-use code examples.',
+      categoriesDescription: 'Contents: 1. Introduction • 2. Architecture • 3. Installation • 4. kubectl • 5. Pods • 6. Deployments • 7. Services • 8. ConfigMaps & Secrets • 9. Volumes • 10. Networking • 11. K9s • 12. Helm • 13. RBAC • 14. Monitoring • 15. Best Practices • 16. Real-World Examples',
+    },
+  },
+  'dsa-complete-guide': {
+    es: {
+      title: 'Estructuras de Datos y Algoritmos: Guía Completa',
+      subtitle: 'Domina estructuras de datos y algoritmos fundamentales con ejemplos de código ejecutables en TypeScript y Kotlin. Desde complejidad Big O hasta programación dinámica, cada concepto incluye visualizaciones, implementaciones prácticas y desafíos interactivos. El editor soporta maximización y ajuste de tamaño de fuente.',
+      breadcrumbLabel: 'DSA',
+      introParagraph: 'Esta guía cubre las estructuras de datos y algoritmos más importantes para entrevistas técnicas y desarrollo profesional. Cada sección incluye teoría, visualizaciones, código ejecutable en ambos lenguajes y desafíos prácticos. Usa el editor para experimentar con el código.',
+      categoriesDescription: 'Contenido: 1. Complejidad y Big O • 2. Arrays y Strings • 3. Listas Enlazadas • 4. Pilas y Colas • 5. Tablas Hash • 6. Árboles y BST • 7. Heaps • 8. Grafos • 9. Ordenamiento • 10. Búsqueda • 11. Programación Dinámica • 12. Algoritmos Greedy',
+    },
+    en: {
+      title: 'Data Structures & Algorithms: Complete Guide',
+      subtitle: 'Master fundamental data structures and algorithms with executable code examples in TypeScript and Kotlin. From Big O complexity to dynamic programming, each concept includes visualizations, practical implementations, and interactive challenges. The editor supports maximize and font size adjustment.',
+      breadcrumbLabel: 'DSA',
+      introParagraph: 'This guide covers the most important data structures and algorithms for technical interviews and professional development. Each section includes theory, visualizations, executable code in both languages, and practical challenges. Use the editor to experiment with the code.',
+      categoriesDescription: 'Contents: 1. Complexity & Big O • 2. Arrays & Strings • 3. Linked Lists • 4. Stacks & Queues • 5. Hash Tables • 6. Trees & BST • 7. Heaps • 8. Graphs • 9. Sorting • 10. Searching • 11. Dynamic Programming • 12. Greedy Algorithms',
+    },
+  },
 };
 
 /**
@@ -203,3 +235,87 @@ export function useBlogPostContent(postId: BlogPostId, locale: 'es' | 'en') {
   return getBlogPostContent(postId, locale);
 }
 
+/** Spanish translations for blog category title and description (slug -> { title, description }) */
+const CATEGORY_ES: Record<string, { title: string; description: string }> = {
+  'react-development': {
+    title: 'Desarrollo React',
+    description: 'Domina patrones React, hooks, componentes y conceptos avanzados. Aprende desarrollo React listo para producción desde fundamentos hasta nivel senior.',
+  },
+  'performance-optimization': {
+    title: 'Rendimiento y optimización',
+    description: 'Optimiza aplicaciones React en velocidad y eficiencia. Code splitting, lazy loading, monitoreo de rendimiento y Core Web Vitals.',
+  },
+  'nextjs-framework': {
+    title: 'Framework Next.js',
+    description: 'Domina Next.js: App Router, Server Components, obtención de datos, optimización y patrones listos para producción.',
+  },
+  'cloud-infrastructure': {
+    title: 'Nube e infraestructura',
+    description: 'Construye infraestructura en la nube con AWS, edge computing y arquitecturas serverless.',
+  },
+  'build-tools': {
+    title: 'Herramientas de build',
+    description: 'Domina la automatización con Gradle. Wrapper, tareas, plugins, dependencias, multi-módulo y version catalogs.',
+  },
+  'testing-quality': {
+    title: 'Testing y calidad',
+    description: 'Estrategias de testing, buenas prácticas de code review y aseguramiento de calidad.',
+  },
+  'security-authentication': {
+    title: 'Seguridad y autenticación',
+    description: 'Seguridad en aplicaciones: autenticación, autorización y patrones de seguridad.',
+  },
+  'state-management': {
+    title: 'Gestión de estado',
+    description: 'Patrones modernos de estado con React Query, Zustand, Immer y estado en la URL.',
+  },
+  'design-patterns-architecture': {
+    title: 'Patrones de diseño y arquitectura',
+    description: 'Patrones de diseño, principios SOLID y arquitectura para aplicaciones escalables.',
+  },
+  'ai-llms': {
+    title: 'IA y LLMs',
+    description: 'Explora inteligencia artificial y modelos de lenguaje. Arquitectura Transformer, atención, entrenamiento y generación de texto.',
+  },
+  'typescript': {
+    title: 'TypeScript y tipos',
+    description: 'Domina TypeScript con React. Componentes genéricos, utility types y patrones avanzados de tipos.',
+  },
+  'career-soft-skills': {
+    title: 'Carrera y habilidades blandas',
+    description: 'Habilidades blandas que definen a los desarrolladores senior: comunicación, liderazgo, crecimiento y preparación para entrevistas.',
+  },
+  'mobile-development': {
+    title: 'Desarrollo móvil',
+    description: 'Apps multiplataforma con React Native, Flutter y Kotlin Multiplatform.',
+  },
+  'accessibility-ux': {
+    title: 'Accesibilidad y UX',
+    description: 'Aplicaciones accesibles y usables. Patrones de accesibilidad, internacionalización, animaciones y UX.',
+  },
+  'forms-data': {
+    title: 'Formularios y datos',
+    description: 'Formularios robustos y manejo de datos. Gestión de formularios, validación y patrones de capa de datos.',
+  },
+  'design-systems': {
+    title: 'Sistemas de diseño',
+    description: 'Sistemas de diseño listos para producción. Storybook, documentación de componentes y sistemas de tokens.',
+  },
+  'data-structures-algorithms': {
+    title: 'Estructuras de datos y algoritmos',
+    description: 'Domina estructuras de datos y algoritmos fundamentales con ejemplos ejecutables. Arrays, listas enlazadas, árboles, grafos, ordenamiento, búsqueda y programación dinámica en TypeScript y Kotlin.',
+  },
+};
+
+/**
+ * Get category title and description for locale. For 'en' use original from blogCategories; for 'es' use CATEGORY_ES when available.
+ */
+export function getCategoryForLocale(
+  slug: string,
+  locale: 'es' | 'en',
+  fallback: { title: string; description: string }
+): { title: string; description: string } {
+  if (locale === 'en') return fallback;
+  const es = CATEGORY_ES[slug];
+  return es ? { title: es.title, description: es.description } : fallback;
+}

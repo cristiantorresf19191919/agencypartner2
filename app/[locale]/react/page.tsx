@@ -4,104 +4,136 @@ import { Card, Stack, Heading, Text, ButtonLink, CodeEditor } from "@/components
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
+import { CommandPaletteProvider } from "@/contexts/CommandPaletteContext";
+import CommandPalette from "@/components/Search/CommandPalette";
 
 type Lesson = {
   id: string;
   badge: string;
+  tag: "concept" | "practice";
   title: string;
   description: string;
+  topicBadges: string[];
   code: string;
 };
 
 const LESSONS: Lesson[] = [
   {
     id: "1",
-    badge: "Lesson 1",
-    title: "¡Tu primer componente React! 🐱",
+    badge: "Step 1",
+    tag: "concept",
+    title: "Your first React component",
     description:
-      "Un componente es como un gatito adorable que puedes usar una y otra vez. En React, creamos componentes con funciones que devuelven JSX (parecido a HTML pero con superpoderes). Edita el código y presiona Run para ver el resultado.",
-    code: `function Gatito() {
-  return <h1>¡Miau! Soy un gatito feliz 🐱</h1>;
+      "A component is a function that returns JSX — HTML with the power of JavaScript. Create an AppHeader component that returns an <h1> with \"Dashboard\", then use it in App with <AppHeader />.",
+    topicBadges: ["Component", "JSX"],
+    code: `function AppHeader() {
+  return <h1>Dashboard</h1>;
 }
 
-export default function App() {
-  return <Gatito />;
-}`,
+function App() {
+  return <AppHeader />;
+}
+
+export default App;`,
   },
   {
     id: "2",
-    badge: "Lesson 2",
-    title: "Componentes con props 🐶",
+    badge: "Step 2",
+    tag: "practice",
+    title: "Props: passing data into components",
     description:
-      "Los componentes pueden recibir props (propiedades), como cuando le das un nombre a tu perrito. Las props son como regalitos que le pasas a tu componente para que sepa qué hacer. Cambia el nombre en las props y ejecuta.",
-    code: `function Perrito({ nombre }) {
-  return <h2>¡Guau! Soy {nombre} 🐶</h2>;
+      "Props are inputs you pass to a component. Use destructuring: function UserGreeting({ name }) { ... }. Create UserGreeting that shows \"Hello, {name}!\" and use it in App with <UserGreeting name=\"Alex\" />.",
+    topicBadges: ["Props", "Destructuring"],
+    code: `function UserGreeting({ name }) {
+  return <h2>Hello, {name}!</h2>;
 }
 
-export default function App() {
-  return <Perrito nombre="Max" />;
-}`,
+function App() {
+  return <UserGreeting name="Alex" />;
+}
+
+export default App;`,
   },
   {
     id: "3",
-    badge: "Lesson 3",
-    title: "JSX y etiquetas 🐰",
+    badge: "Step 3",
+    tag: "concept",
+    title: "JSX and nesting",
     description:
-      "En React, podemos usar JSX para crear HTML de forma mágica. JSX es como HTML pero dentro de JavaScript. ¡La conejita puede saltar entre etiquetas! Edita el párrafo o añade más elementos.",
-    code: `function Conejita() {
+      "JSX looks like HTML but lives in JavaScript. Wrap multiple elements in a single parent (e.g. <div>) or a React Fragment. Create a Card component that returns a div with a heading and a paragraph inside.",
+    topicBadges: ["JSX", "Nesting"],
+    code: `function Card() {
   return (
     <div>
-      <p>¡Hop! ¡Hop! Soy una conejita saltarina 🐰</p>
+      <h3>Card title</h3>
+      <p>Content here.</p>
     </div>
   );
 }
 
-export default function App() {
-  return <Conejita />;
-}`,
+function App() {
+  return <Card />;
+}
+
+export default App;`,
   },
   {
     id: "4",
-    badge: "Lesson 4",
-    title: "Múltiples props 🐦",
+    badge: "Step 4",
+    tag: "practice",
+    title: "Multiple props",
     description:
-      "Los componentes pueden tener múltiples props. Es como darle al pajarito un nombre Y una canción favorita. ¡Puedes pasarle todas las propiedades que quieras! Prueba cambiar nombre o cancion.",
-    code: `function Pajarito({ nombre, cancion }) {
-  return <p>{nombre} canta: {cancion} 🐦</p>;
+      "Destructure several props at once: function ProductRow({ name, price }) { ... }. Create ProductRow that displays \"{name} — {price}\" and use it in App with <ProductRow name=\"Widget\" price=\"$9.99\" />.",
+    topicBadges: ["Props", "Destructuring"],
+    code: `function ProductRow({ name, price }) {
+  return <p>{name} — {price}</p>;
 }
 
-export default function App() {
-  return <Pajarito nombre="Pío" cancion="Twist and Shout" />;
-}`,
+function App() {
+  return <ProductRow name="Widget" price="$9.99" />;
+}
+
+export default App;`,
   },
   {
     id: "5",
-    badge: "Lesson 5",
-    title: "className para estilos 🐻",
+    badge: "Step 5",
+    tag: "concept",
+    title: "className in JSX",
     description:
-      "Podemos usar className en JSX (en lugar de 'class') para darle estilos a nuestros componentes. El osito quiere un abrazo con estilo. Cambia el className o el texto.",
-    code: `function Osito() {
-  return <div className="abrazador">¡Abrazo de osito! 🐻</div>;
+      "In JSX you use className instead of HTML's class. Create a Highlight component that returns a div with className=\"highlight\" and the text \"Important message\".",
+    topicBadges: ["className", "JSX"],
+    code: `function Highlight() {
+  return <div className="highlight">Important message</div>;
 }
 
-export default function App() {
-  return <Osito />;
-}`,
+function App() {
+  return <Highlight />;
+}
+
+export default App;`,
   },
   {
     id: "6",
-    badge: "Lesson 6",
-    title: "Estilos inline 🦋",
+    badge: "Step 6",
+    tag: "practice",
+    title: "Inline styles",
     description:
-      "Los componentes pueden tener estilos inline usando objetos JavaScript. La mariposa quiere volar con colores hermosos. Modifica los valores de color o fontSize.",
-    code: `function Mariposa() {
-  const estilos = { color: "#e91e63", fontSize: "1.5rem" };
-  return <p style={estilos}>¡Vuelo con colores! 🦋</p>;
+      "Pass a JavaScript object to the style prop. Use camelCase: fontSize, not font-size. Create StatusBadge with style={{ color: '#22c55e', fontWeight: 'bold' }} and the text \"Active\".",
+    topicBadges: ["style", "JSX"],
+    code: `function StatusBadge() {
+  return (
+    <span style={{ color: '#22c55e', fontWeight: 'bold' }}>
+      Active
+    </span>
+  );
 }
 
-export default function App() {
-  return <Mariposa />;
-}`,
+function App() {
+  return <StatusBadge />;
+}
+
+export default App;`,
   },
 ];
 
@@ -109,8 +141,10 @@ export default function ReactLessonsPage() {
   const { createLocalizedPath } = useLocale();
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0b0f1a] via-[#0f172a] to-[#0b0f1a] text-white">
-      <DeveloperHeader />
+    <CommandPaletteProvider>
+      <main className="min-h-screen bg-gradient-to-b from-[#0b0f1a] via-[#0f172a] to-[#0b0f1a] text-white">
+        <DeveloperHeader />
+        <CommandPalette />
 
       <section className="pt-16 pb-8 px-4 max-w-4xl mx-auto">
         <div className="text-center mb-12">
@@ -166,7 +200,8 @@ export default function ReactLessonsPage() {
         </Stack>
       </section>
 
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </CommandPaletteProvider>
   );
 }

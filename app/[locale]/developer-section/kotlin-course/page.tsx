@@ -1,6 +1,8 @@
 "use client";
 
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getKotlinLessonForLocale } from "@/lib/courseTranslations";
 import { KOTLIN_COURSE_LESSONS } from "@/lib/kotlinCourseData";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
@@ -15,7 +17,8 @@ import Link from "next/link";
 import styles from "../challenges/ChallengesPage.module.css";
 
 export default function KotlinCourseLandingPage() {
-  const { createLocalizedPath } = useLocale();
+  const { locale, createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
 
   return (
     <main className={styles.page}>
@@ -26,7 +29,7 @@ export default function KotlinCourseLandingPage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <SchoolIcon fontSize="small" />
-          <span>Kotlin from Scratch</span>
+          <span>{t("kotlin-course-pill")}</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -34,7 +37,7 @@ export default function KotlinCourseLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Learn Kotlin from the Ground Up
+          {t("kotlin-course-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -42,8 +45,7 @@ export default function KotlinCourseLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Official Kotlin tour content with an interactive multi-file editor.
-          Practice challenges with run and submit validation—learn by doing.
+          {t("kotlin-course-subtitle")}
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
@@ -54,14 +56,14 @@ export default function KotlinCourseLandingPage() {
             <CodeIcon fontSize="small" />
             Multi-file Editor
           </span>
-          <span className={styles.badge}>{KOTLIN_COURSE_LESSONS.length} Steps</span>
+          <span className={styles.badge}>{KOTLIN_COURSE_LESSONS.length} {t("course-step")}</span>
         </div>
       </section>
 
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>Course Steps</span>
-          <span className={styles.count}>{KOTLIN_COURSE_LESSONS.length} lessons</span>
+          <span className={styles.filterLabel}>{t("kotlin-course-steps-label")}</span>
+          <span className={styles.count}>{KOTLIN_COURSE_LESSONS.length} {t("kotlin-course-lessons-count")}</span>
         </div>
         <ul className={styles.grid}>
           {KOTLIN_COURSE_LESSONS.map((lesson, i) => (
@@ -80,18 +82,26 @@ export default function KotlinCourseLandingPage() {
                     className={styles.difficulty}
                     style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}
                   >
-                    Step {lesson.step}
+                    {t("course-step")} {lesson.step}
                   </span>
                 </div>
-                <h3 className={styles.cardTitle}>{lesson.title}</h3>
-                <p
-                  className={styles.cardCategory}
-                  style={{ fontSize: "13px", color: "#9fc4ff", marginTop: "8px" }}
-                >
-                  {lesson.content[0]?.substring(0, 100)}...
-                </p>
+                {(() => {
+                  const translated = getKotlinLessonForLocale(locale as "en" | "es", lesson.id);
+                  const firstText = translated?.content?.find((c): c is string => typeof c === "string");
+                  return (
+                    <>
+                      <h3 className={styles.cardTitle}>{translated?.title ?? lesson.title}</h3>
+                      <p
+                        className={styles.cardCategory}
+                        style={{ fontSize: "13px", color: "#9fc4ff", marginTop: "8px" }}
+                      >
+                        {firstText ? `${firstText.substring(0, 100)}...` : ""}
+                      </p>
+                    </>
+                  );
+                })()}
                 <div className={styles.cardCta}>
-                  <span>Start Lesson</span>
+                  <span>{t("course-start-lesson")}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </Link>
@@ -106,19 +116,19 @@ export default function KotlinCourseLandingPage() {
             className={styles.secondaryLink}
             href={createLocalizedPath("/developer-section/kotlin-playground")}
           >
-            Kotlin Playground
+            {t("kotlin-playground-link")}
           </a>
           <a
             className={styles.secondaryLink}
             href={createLocalizedPath("/developer-section/kotlin-java-interop")}
           >
-            Kotlin Java InterOp
+            {t("kotlin-java-interop-link")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/challenges")}>
-            Algorithm Challenges
+            {t("algorithm-challenges-link")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </a>
         </div>
       </div>

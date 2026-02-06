@@ -2,10 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useDeveloperSectionFont } from '@/contexts/DeveloperSectionFontContext';
+import { useCommandPalette } from '@/contexts/CommandPaletteContext';
 import { useLocale } from '@/lib/useLocale';
+import { removeLocaleFromPathname, addLocaleToPathname, type Locale } from '@/lib/i18n';
 import styles from './Header.module.css';
 
 export interface DeveloperHeaderProps {
@@ -20,17 +24,26 @@ export interface DeveloperHeaderProps {
 const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: DeveloperHeaderProps) => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const { contentFontSize, setContentFontSize } = useDeveloperSectionFont();
+  const { open: openCommandPalette } = useCommandPalette();
   const { createLocalizedPath } = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [overflowOpen, setOverflowOpen] = useState<boolean>(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState<boolean>(false);
   const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
+  const [modifierKey, setModifierKey] = useState<string>('Ctrl'); // Default matches SSR
   const overflowRef = useRef<HTMLDivElement>(null);
   const mobileMoreRef = useRef<HTMLDivElement>(null);
   const mobileNavRef = useRef<HTMLDivElement>(null);
 
   const toggleLanguage = () => {
-    setLanguage(language === 'es' ? 'en' : 'es');
+    const nextLocale: Locale = language === 'es' ? 'en' : 'es';
+    setLanguage(nextLocale);
+    const pathWithoutLocale = removeLocaleFromPathname(pathname);
+    const newPath = addLocaleToPathname(pathWithoutLocale, nextLocale);
+    router.push(newPath);
   };
 
   useEffect(() => {
@@ -58,8 +71,69 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Detect Mac platform after hydration to avoid SSR mismatch
+  useEffect(() => {
+    if (navigator?.platform?.includes('Mac')) {
+      setModifierKey('\u2318'); // ⌘
+    }
+  }, []);
+
+  const fontSizeControls = (
+    <div className={styles.developerFontSizeControls}>
+      <span className={styles.developerFontSizeLabel}>{t('header-text-size')}</span>
+      <button
+        type="button"
+        className={styles.developerFontSizeBtn}
+        onClick={() => setContentFontSize((s) => Math.max(12, s - 2))}
+        aria-label={t('header-decrease-size')}
+        title={t('header-decrease-size')}
+      >
+        A−
+      </button>
+      <button
+        type="button"
+        className={styles.developerFontSizeBtn}
+        onClick={() => setContentFontSize((s) => Math.min(24, s + 2))}
+        aria-label={t('header-increase-size')}
+        title={t('header-increase-size')}
+      >
+        A+
+      </button>
+    </div>
+  );
+
   const mobileMoreContent = (
     <>
+      <button
+        type="button"
+        onClick={() => {
+          openCommandPalette();
+          setMobileMoreOpen(false);
+        }}
+        className={styles.developerOverflowAction}
+      >
+        <i className="fas fa-search" /> {t('header-search') || 'Search'}
+      </button>
+      <div className={styles.developerOverflowDivider} />
+      <div className={styles.developerFontSizeControls} style={{ padding: '8px 12px', marginBottom: 4 }}>
+        <span className={styles.developerFontSizeLabel}>{t('header-text-size-mobile')}</span>
+        <button
+          type="button"
+          className={styles.developerFontSizeBtn}
+          onClick={() => { setContentFontSize((s) => Math.max(12, s - 2)); setMobileMoreOpen(false); }}
+          aria-label={t('header-decrease')}
+        >
+          A−
+        </button>
+        <button
+          type="button"
+          className={styles.developerFontSizeBtn}
+          onClick={() => { setContentFontSize((s) => Math.min(24, s + 2)); setMobileMoreOpen(false); }}
+          aria-label={t('header-increase')}
+        >
+          A+
+        </button>
+      </div>
       <button
         type="button"
         onClick={() => {
@@ -69,9 +143,9 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
         className={styles.developerOverflowAction}
       >
         {theme === 'dark' ? (
-          <><i className="fas fa-sun" /> {language === 'es' ? 'Tema claro' : 'Light theme'}</>
+          <><i className="fas fa-sun" /> {t('header-light-theme')}</>
         ) : (
-          <><i className="fas fa-moon" /> {language === 'es' ? 'Tema oscuro' : 'Dark theme'}</>
+          <><i className="fas fa-moon" /> {t('header-dark-theme')}</>
         )}
       </button>
       <button
@@ -82,7 +156,7 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
         }}
         className={styles.developerOverflowAction}
       >
-        <i className="fas fa-language" /> {language === 'es' ? 'English' : 'Español'}
+        <i className="fas fa-language" /> {language === 'es' ? t('header-switch-english') : t('header-switch-spanish')}
       </button>
     </>
   );
@@ -111,7 +185,7 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
               type="button"
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
               className={`${styles.developerDrawerToggle} ${mobileNavOpen ? styles.active : ''}`}
-              aria-label="Menu"
+              aria-label={t('header-menu')}
               aria-expanded={mobileNavOpen}
             >
               <span className={styles.hamburgerLine} />
@@ -204,6 +278,20 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
         <div className={styles.headerActions}>
           <button
             type="button"
+            onClick={openCommandPalette}
+            className={styles.searchButton}
+            aria-label={t('header-search') || 'Search'}
+            title={`${t('header-search') || 'Search'} (${modifierKey}+K)`}
+          >
+            <i className="fas fa-search" />
+            <span className={styles.searchShortcut}>
+              <kbd>{modifierKey}</kbd>
+              <kbd>K</kbd>
+            </span>
+          </button>
+          {fontSizeControls}
+          <button
+            type="button"
             onClick={toggleTheme}
             className={styles.themeToggle}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
@@ -227,7 +315,7 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
             type="button"
             className={styles.languageSwitcher}
             onClick={toggleLanguage}
-            aria-label={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
+            aria-label={language === 'es' ? t('header-switch-english') : t('header-switch-spanish')}
           >
             <motion.span
               key={language}
@@ -247,7 +335,7 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
             type="button"
             onClick={() => setOverflowOpen(!overflowOpen)}
             className={styles.developerOverflowButton}
-            aria-label="Menú"
+            aria-label={t('header-menu')}
             aria-expanded={overflowOpen}
           >
             <i className="fas fa-ellipsis-v" aria-hidden />
@@ -292,9 +380,9 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
                   className={styles.developerOverflowAction}
                 >
                   {theme === 'dark' ? (
-                    <><i className="fas fa-sun" /> {language === 'es' ? 'Tema claro' : 'Light theme'}</>
+                    <><i className="fas fa-sun" /> {t('header-light-theme')}</>
                   ) : (
-                    <><i className="fas fa-moon" /> {language === 'es' ? 'Tema oscuro' : 'Dark theme'}</>
+                    <><i className="fas fa-moon" /> {t('header-dark-theme')}</>
                   )}
                 </button>
                 <button
@@ -305,7 +393,7 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
                   }}
                   className={styles.developerOverflowAction}
                 >
-                  <i className="fas fa-language" /> {language === 'es' ? 'English' : 'Español'}
+                  <i className="fas fa-language" /> {language === 'es' ? t('header-switch-english') : t('header-switch-spanish')}
                 </button>
               </motion.div>
             )}
@@ -319,7 +407,7 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
               type="button"
               onClick={() => setMobileMoreOpen(!mobileMoreOpen)}
               className={styles.developerMobileMoreButton}
-              aria-label="More options"
+              aria-label={t('header-more-options')}
               aria-expanded={mobileMoreOpen}
             >
               <i className="fas fa-ellipsis-v" aria-hidden />

@@ -11,6 +11,15 @@ interface PageTransitionProps {
 export default function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
 
+  // Skip page transitions for developer-section routes
+  // These pages have their own framer-motion animations which conflict
+  // with the wrapper animation, causing black screen on client-side navigation
+  const isDeveloperSection = pathname?.includes('/developer-section');
+
+  if (isDeveloperSection) {
+    return <>{children}</>;
+  }
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div

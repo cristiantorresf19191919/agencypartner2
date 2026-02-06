@@ -13,13 +13,17 @@ export interface KotlinPracticeChallenge {
   solution?: string;
 }
 
+export type KotlinLessonContentItem =
+  | string
+  | { type: "image"; src: string; alt: string };
+
 export interface KotlinLesson {
   id: string;
   step: number;
   title: string;
   nextStep?: string;
   prevStep?: string;
-  content: string[];
+  content: KotlinLessonContentItem[];
   codeExamples: { code: string; comment?: string }[];
   practice?: KotlinPracticeChallenge[];
   defaultCode: string;
@@ -2126,7 +2130,7 @@ fun main() {
     id: "properties",
     step: 10,
     title: "Properties",
-    nextStep: "null-safety",
+    nextStep: "null-safety-patterns",
     prevStep: "open-and-special-classes",
     content: [
       "Properties have default get() and set() (getters and setters) that use a backing field to store the value. A backing field exists when you use the default accessors or reference the property with the field keyword in custom accessors.",
@@ -2357,7 +2361,7 @@ fun main() {
     ],
   },
   {
-    id: "null-safety",
+    id: "null-safety-patterns",
     step: 11,
     title: "Null safety",
     nextStep: "libraries-and-apis",
@@ -2612,7 +2616,8 @@ fun main() {
     id: "libraries-and-apis",
     step: 12,
     title: "Libraries and APIs",
-    prevStep: "null-safety",
+    nextStep: "coroutines-basics",
+    prevStep: "null-safety-patterns",
     content: [
       "Use existing libraries and APIs so you can spend more time coding and less time reinventing the wheel. Libraries distribute reusable code; they expose APIs (functions, classes, properties) you can use in your code.",
       "The Kotlin standard library provides essential types, functions, collections, and utilities. Much of it (the kotlin package) is available without explicit imports. Other parts require import: e.g. import kotlin.time.* or import kotlin.math.pow.",
@@ -2762,6 +2767,1201 @@ fun main() {
 }`,
       },
     ],
+  },
+  {
+    id: "coroutines-basics",
+    step: 13,
+    title: "Coroutines basics",
+    nextStep: "coroutines-and-channels",
+    prevStep: "libraries-and-apis",
+    content: [
+      "Kotlin provides only minimal low-level APIs in its standard library to enable other libraries to utilize coroutines. Unlike many other languages with similar capabilities, async and await are not keywords in Kotlin and are not even part of its standard library. Moreover, Kotlin's concept of suspending function provides a safer and less error-prone abstraction for asynchronous operations than futures and promises.",
+      "kotlinx.coroutines is a rich library for coroutines developed by JetBrains. It contains a number of high-level coroutine-enabled primitives that this guide covers, including launch, async, and others. This is a guide about the core features of kotlinx.coroutines with a series of examples.",
+      "In order to use coroutines as well as follow the examples in this guide, you need to add a dependency on the kotlinx-coroutines-core module (e.g. in build.gradle.kts: implementation(\"org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2\")).",
+      "Coroutines basics — To create applications that perform multiple tasks at once, a concept known as concurrency, Kotlin uses coroutines. A coroutine is a suspendable computation that lets you write concurrent code in a clear, sequential style. Coroutines can run concurrently with other coroutines and potentially in parallel.",
+      "On the JVM and in Kotlin/Native, all concurrent code, such as coroutines, runs on threads, managed by the operating system. Coroutines can suspend their execution instead of blocking a thread. This allows one coroutine to suspend while waiting for some data to arrive and another coroutine to run on the same thread, ensuring effective resource utilization.",
+      "Comparing parallel and concurrent threads — For more information about the differences between coroutines and threads, see Comparing coroutines and JVM threads.",
+      { type: "image", src: "/images/portfolio/couroutinesBasic/parallelism-and-concurrency.svg", alt: "Diagram: Parallel (multiple threads, one task each), Concurrent (one thread, multiple tasks interleaved), Parallel and Concurrent (multiple threads with interleaved tasks)." },
+      "Suspending functions — The most basic building block of coroutines is the suspending function. It allows a running operation to pause and resume later without affecting the structure of your code. To declare a suspending function, use the suspend keyword. You can only call a suspending function from another suspending function. To call suspending functions at the entry point of a Kotlin application, mark the main() function with the suspend keyword.",
+      "While the suspend keyword is part of the core Kotlin language, most coroutine features are available through the kotlinx.coroutines library.",
+      "Create your first coroutines — To create a coroutine in Kotlin, you need: (1) A suspending function. (2) A coroutine scope in which it can run, for example inside the withContext() function. (3) A coroutine builder like CoroutineScope.launch() to start it. (4) A dispatcher to control which threads it uses.",
+      "While you can mark the main() function as suspend in some projects, it may not be possible when integrating with existing code or using a framework. In that case, check the framework's documentation to see if it supports calling suspending functions. If not, use runBlocking() to call them by blocking the current thread.",
+      "Add the delay() function to simulate a suspending task, such as fetching data or writing to a database. Use withContext(Dispatchers.Default) to define an entry point for multithreaded concurrent code that runs on a shared thread pool. Use a coroutine builder function like CoroutineScope.launch() to start the coroutine.",
+      "Coroutine scope and structured concurrency — When you run many coroutines in an application, you need a way to manage them as groups. Kotlin coroutines rely on a principle called structured concurrency. According to this principle, coroutines form a tree hierarchy of parent and child tasks with linked lifecycles. A parent coroutine waits for its children to complete before it finishes. If the parent coroutine fails or gets canceled, all its child coroutines are recursively canceled too.",
+      "To maintain structured concurrency, new coroutines can only be launched in a CoroutineScope that defines and manages their lifecycle. To create a new coroutine scope with the current coroutine context, use the coroutineScope() function. To extract coroutine builders into another function, that function must declare a CoroutineScope receiver.",
+      "Coroutine builder functions — A coroutine builder function is a function that accepts a suspend lambda that defines a coroutine to run. Examples: CoroutineScope.launch(), CoroutineScope.async(), runBlocking(), withContext(), coroutineScope(). CoroutineScope.launch() starts a new coroutine without blocking the rest of the scope. CoroutineScope.async() starts a concurrent computation and returns a Deferred handle; use .await() to get the result. Use runBlocking() only when there is no other option to call suspending code from non-suspending code.",
+      "Coroutine dispatchers — A coroutine dispatcher controls which thread or thread pool coroutines use for their execution. Coroutines aren't always tied to a single thread; they can pause on one thread and resume on another. You don't have to specify a dispatcher for every coroutine: by default, coroutines inherit the dispatcher from their parent scope. You can specify a dispatcher to run a coroutine in a different context. If the coroutine context doesn't include a dispatcher, coroutine builders use Dispatchers.Default. Dispatchers.Default runs coroutines on a shared pool of threads, ideal for CPU-intensive operations.",
+      "Comparing coroutines and JVM threads — While coroutines are suspendable computations that run code concurrently like threads on the JVM, they work differently. A thread is managed by the OS; creating many threads is resource-intensive. A coroutine isn't bound to a specific thread; many coroutines can share the same thread pool. When a coroutine suspends, the thread isn't blocked. This makes coroutines much lighter — you can run millions of them in one process.",
+      { type: "image", src: "/images/portfolio/couroutinesBasic/coroutines-and-threads.svg", alt: "Comparing coroutines and JVM threads: threads vs coroutines on shared thread pool." },
+      "What's next — Discover more about combining suspending functions in Composing suspending functions. Learn how to cancel coroutines and handle timeouts in Cancellation and timeouts. Dive deeper into execution in Coroutine context and dispatchers. Learn how to return multiple asynchronously computed values in Asynchronous flows.",
+    ],
+    codeExamples: [
+      {
+        code: `suspend fun main() {
+    showUserInfo()
+}
+
+suspend fun showUserInfo() {
+    println("Loading user...")
+    greet()
+    println("User: John Smith")
+}
+
+suspend fun greet() {
+    println("Hello world from a suspending function")
+}`,
+        comment: "suspend keyword; suspend fun main() as entry point.",
+      },
+      {
+        code: `// build.gradle.kts
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+}`,
+        comment: "Add kotlinx-coroutines-core dependency.",
+      },
+      {
+        code: `import kotlinx.coroutines.*
+
+suspend fun greet() {
+    println("The greet() on the thread: \${Thread.currentThread().name}")
+    delay(1000L)
+}
+
+suspend fun main() {
+    withContext(Dispatchers.Default) {
+        this.launch { greet() }
+        println("The withContext() on the thread: \${Thread.currentThread().name}")
+    }
+}`,
+        comment: "withContext(Dispatchers.Default) + launch { greet() }.",
+      },
+      {
+        code: `import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.seconds
+
+suspend fun greet() {
+    println("The greet() on the thread: \${Thread.currentThread().name}")
+    delay(1.seconds)
+}
+
+suspend fun main() {
+    withContext(Dispatchers.Default) {
+        this.launch() { greet() }
+        this.launch() {
+            println("The CoroutineScope.launch() on the thread: \${Thread.currentThread().name}")
+            delay(1.seconds)
+        }
+        println("The withContext() on the thread: \${Thread.currentThread().name}")
+    }
+}`,
+        comment: "Multiple coroutines on a shared thread pool; output order may vary.",
+      },
+      {
+        code: `import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.seconds
+
+suspend fun main() {
+    coroutineScope {
+        this.launch {
+            this.launch {
+                delay(2.seconds)
+                println("Child of the enclosing coroutine completed")
+            }
+            println("Child coroutine 1 completed")
+        }
+        this.launch {
+            delay(1.seconds)
+            println("Child coroutine 2 completed")
+        }
+    }
+    println("Coroutine scope completed")
+}`,
+        comment: "coroutineScope() creates a root scope; children complete before scope completes.",
+      },
+      {
+        code: `suspend fun main() {
+    coroutineScope {
+        this.launch { println("1") }
+        this.launch { println("2") }
+    }
+}
+
+fun CoroutineScope.launchAll() {
+    this.launch { println("1") }
+    this.launch { println("2") }
+}`,
+        comment: "Extract builders into a function with CoroutineScope receiver.",
+      },
+      {
+        code: `import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.milliseconds
+
+suspend fun performBackgroundWork() = coroutineScope {
+    this.launch {
+        delay(100.milliseconds)
+        println("Sending notification in background")
+    }
+    println("Scope continues")
+}`,
+        comment: "CoroutineScope.launch() runs without blocking the scope.",
+      },
+      {
+        code: `import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.milliseconds
+
+suspend fun main() = withContext(Dispatchers.Default) {
+    val firstPage = this.async {
+        delay(50.milliseconds)
+        "First page"
+    }
+    val secondPage = this.async {
+        delay(100.milliseconds)
+        "Second page"
+    }
+    val pagesAreEqual = firstPage.await() == secondPage.await()
+    println("Pages are equal: $pagesAreEqual")
+}`,
+        comment: "CoroutineScope.async() returns Deferred; use .await() for the result.",
+      },
+      {
+        code: `import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.*
+
+interface Repository { fun readItem(): Int }
+
+object MyRepository : Repository {
+    override fun readItem(): Int {
+        return runBlocking { myReadItem() }
+    }
+}
+
+suspend fun myReadItem(): Int {
+    delay(100.milliseconds)
+    return 4
+}`,
+        comment: "runBlocking() bridges non-suspending code to suspending; use only when necessary.",
+      },
+      {
+        code: `suspend fun runWithDispatcher() = coroutineScope {
+    this.launch(Dispatchers.Default) {
+        println("Running on \${Thread.currentThread().name}")
+    }
+}`,
+        comment: "Pass Dispatchers.Default to launch() to specify the dispatcher.",
+      },
+      {
+        code: `import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.seconds
+
+suspend fun printPeriods() = coroutineScope {
+    repeat(50_000) {
+        this.launch {
+            delay(5.seconds)
+            print(".")
+        }
+    }
+}`,
+        comment: "50,000 coroutines each wait 5 seconds; lightweight compared to threads.",
+      },
+      {
+        code: `import kotlin.concurrent.thread
+
+fun main() {
+    repeat(50_000) {
+        thread {
+            Thread.sleep(5000L)
+            print(".")
+        }
+    }
+}`,
+        comment: "50,000 threads use much more memory than the same number of coroutines.",
+      },
+    ],
+    defaultCode: `import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.seconds
+
+suspend fun greet() {
+    println("The greet() on the thread: \${Thread.currentThread().name}")
+    delay(1.seconds)
+}
+
+suspend fun main() {
+    withContext(Dispatchers.Default) {
+        this.launch() { greet() }
+        this.launch() {
+            println("CoroutineScope.launch() on thread: \${Thread.currentThread().name}")
+            delay(1.seconds)
+        }
+        println("withContext() on thread: \${Thread.currentThread().name}")
+    }
+}`,
+  },
+  {
+    id: "coroutines-and-channels",
+    step: 14,
+    title: "Coroutines and channels − tutorial",
+    nextStep: "cancellation-and-timeouts",
+    prevStep: "coroutines-basics",
+    content: [
+      "In this tutorial you'll learn how to use coroutines in IntelliJ IDEA to perform network requests without blocking the underlying thread or callbacks. No prior knowledge of coroutines is required, but you're expected to be familiar with basic Kotlin syntax. You'll learn: why and how to use suspending functions to perform network requests; how to send requests concurrently using coroutines; and how to share information between different coroutines using channels. For network requests you'll need Retrofit, but the approach works similarly for any library that supports coroutines. You can find solutions for all tasks on the solutions branch of the project's repository.",
+      "Before you start: Download and install the latest IntelliJ IDEA, then clone the project template (intro-coroutines). Generate a GitHub token to use the GitHub API: specify a name (e.g. coroutines-tutorial), do not select any scopes, click Generate token, and copy it.",
+      { type: "image", src: "/images/portfolio/channels/github-token-settings.png", alt: "Generate a new GitHub token" },
+      "Run the code: The program loads contributors for all repositories under the given organization (e.g. kotlin). Open src/contributors/main.kt and run main(). Provide your GitHub username and token, select BLOCKING in the Variant dropdown, then click Load contributors. The UI freezes until loading finishes. Open the program output to see the list of contributors. You'll compare blocking requests, callbacks, coroutines, and channels.",
+      { type: "image", src: "/images/portfolio/channels/initial-window.png", alt: "First window" },
+      "Blocking requests — You use Retrofit to perform HTTP requests to GitHub: get org repos and get repo contributors. loadContributorsBlocking() fetches repos, then for each repo requests contributors and merges them. getOrgReposCall() and getRepoContributorsCall() return Call; no request is sent until .execute() is invoked. execute() is synchronous and blocks the thread. When you get the response, log it with logRepos()/logUsers(); then get the body or use an empty list on error. An extension bodyList() returns body() ?: emptyList().",
+      "All results are logged from the main thread. With BLOCKING selected the window freezes until loading finishes because the main UI thread is blocked.",
+      { type: "image", src: "/images/portfolio/channels/blocking.png", alt: "The blocked main thread" },
+      "Task 1 — Implement aggregate(): combine users so each contributor appears once; User.contributions should be the total across all projects; sort the list by contributions descending. Use groupBy { it.login }, then for each group create User(login, group.sumOf { it.contributions }), then sortedByDescending { it.contributions }. Alternatively use groupingBy().",
+      { type: "image", src: "/images/portfolio/channels/aggregate.png", alt: "The list for the kotlin organization" },
+      "Callbacks — To avoid blocking the thread, use callbacks. Move the whole computation to a background thread with thread { loadContributorsBlocking(...) }. The main thread stays free. Change the function signature to take an updateResults callback and call it when loading completes. Use SwingUtilities.invokeLater { updateResults(users, startTime) } so the UI update runs on the main thread. Task 2: Fix loadContributorsBackground() so the resulting list is shown in the UI — call updateResults(loadContributorsBlocking(service, req)) inside the thread block.",
+      { type: "image", src: "/images/portfolio/channels/freed-main-thread.png", alt: "The freed main thread" },
+      "Use the Retrofit callback API — Start each repo's request with Call.enqueue(callback) so requests run concurrently. The callback handles each response. However, updateResults() must not be called until all callbacks have run. A naive fix (calling updateResults when index == lastIndex) fails because the last repo's response might not be the last to arrive. Fix by tracking how many repos have been processed (e.g. AtomicInteger) or using CountDownLatch(repos.size), countDown() in each callback, await(), then updateResults().",
+      { type: "image", src: "/images/portfolio/channels/callbacks.png", alt: "Using callback API" },
+      "Suspending functions — Define the API as suspend functions that return Response directly (e.g. suspend fun getOrgRepos(org): Response<List<Repo>>). The thread isn't blocked; the coroutine suspends. Copy loadContributorsBlocking into loadContributorsSuspend and replace .getOrgReposCall(req.org).execute() with .getOrgRepos(req.org) (and similarly for contributors). Use .also { logRepos(req, it) }.bodyList(). Task 4: Implement loadContributorsSuspend() using the new suspend API; the UI stays responsive.",
+      "Coroutines — loadContributorsSuspend() is called inside launch { }. launch starts a new coroutine: a suspendable computation. When performing network requests the coroutine suspends and releases the thread; when the response arrives it resumes. So block → suspend, thread → coroutine.",
+      { type: "image", src: "/images/portfolio/channels/suspension-process.gif", alt: "Suspending coroutines" },
+      { type: "image", src: "/images/portfolio/channels/suspend-requests.png", alt: "Suspending request" },
+      "Concurrency — Use async to start concurrent work. async returns Deferred; use .await() to get the result. Unlike launch, async is used when you need a result. Wrap each contributors request in async; then deferreds.awaitAll().flatten().aggregate(). Total time is similar to the callbacks version but without callbacks. Specify async(Dispatchers.Default) { } to run on a shared thread pool. Task 5: Implement loadContributorsConcurrent() using loadContributorsSuspend() and async per repo.",
+      { type: "image", src: "/images/portfolio/channels/concurrency.png", alt: "Concurrent coroutines" },
+      "Structured concurrency — CoroutineScope defines structure; new coroutines are started inside a scope. launch, async, and runBlocking create a scope; the lambda receiver is CoroutineScope. Nested coroutines are children of the outer one. With structured concurrency, canceling the parent cancels all children; the scope waits for all children. Use coroutineScope { } inside a suspend function to start structured child coroutines. Avoid GlobalScope; use the caller's scope so cancellation and context (e.g. Dispatchers.Default) are inherited.",
+      "Showing progress — To show intermediate results as each repo is loaded, pass a callback updateResults(users, completed). Implement loadContributorsProgress() by iterating repos sequentially, loading contributors for each, aggregating into allUsers, and calling updateResults(allUsers, index == repos.lastIndex). Task 6: Implement this without concurrency first. To add concurrency and still show progress, use channels.",
+      { type: "image", src: "/images/portfolio/channels/progress.png", alt: "Progress on requests" },
+      { type: "image", src: "/images/portfolio/channels/progress-and-concurrency.png", alt: "Concurrent requests with progress" },
+      "Channels — Coroutines can share information by communication: one sends to a channel, another receives. A producer sends; a consumer receives. Multiple producers/consumers can use the same channel; each element is received by one consumer. Channel can suspend send() and receive() when full or empty. Interfaces: SendChannel (send, close), ReceiveChannel (receive), Channel extends both. Types: unlimited (queue-like; send never suspends); buffered (fixed size; send suspends when full); rendezvous (buffer 0; send/receive meet); conflated (latest only; send never suspends). Create with Channel<String>(), Channel<String>(10), Channel<String>(CONFLATED), Channel<String>(UNLIMITED).",
+      { type: "image", src: "/images/portfolio/channels/using-channel.png", alt: "Using channels" },
+      { type: "image", src: "/images/portfolio/channels/using-channel-many-coroutines.png", alt: "Using channels with many coroutines" },
+      { type: "image", src: "/images/portfolio/channels/unlimited-channel.png", alt: "Unlimited channel" },
+      { type: "image", src: "/images/portfolio/channels/buffered-channel.png", alt: "Buffered channel" },
+      { type: "image", src: "/images/portfolio/channels/rendezvous-channel.png", alt: "Rendezvous channel" },
+      "Task 7 — Implement loadContributorsChannels(): create a Channel<List<User>>(), for each repo launch { load contributors then channel.send(users) }, then repeat(repos.size) { val users = channel.receive(); allUsers = (allUsers + users).aggregate(); updateResults(allUsers, it == repos.lastIndex) }. Results appear as soon as each repo is ready. Testing: Use virtual time with TestDispatcher (runTest, currentTime) so tests run fast and you can assert timing; refactor tests to use runTest and currentTime instead of runBlocking and System.currentTimeMillis().",
+    ],
+    codeExamples: [
+      {
+        code: `fun loadContributorsBlocking(service: GitHubService, req: RequestData): List<User> {
+    val repos = service.getOrgReposCall(req.org).execute().also { logRepos(req, it) }.bodyList()
+    return repos.flatMap { repo ->
+        service.getRepoContributorsCall(req.org, repo.name).execute().also { logUsers(repo, it) }.bodyList()
+    }.aggregate()
+}`,
+        comment: "Blocking: execute() blocks the thread; all on main thread.",
+      },
+      {
+        code: `fun List<User>.aggregate(): List<User> =
+    groupBy { it.login }
+        .map { (login, group) -> User(login, group.sumOf { it.contributions }) }
+        .sortedByDescending { it.contributions }`,
+        comment: "Task 1: aggregate users by login, sum contributions, sort descending.",
+      },
+      {
+        code: `thread {
+    updateResults(loadContributorsBlocking(service, req))
+}
+// Caller: loadContributorsBackground(service, req) { users -> SwingUtilities.invokeLater { updateResults(users, startTime) } }`,
+        comment: "Background thread + callback; updateResults on main thread with invokeLater.",
+      },
+      {
+        code: `interface GitHubService {
+    @GET("orgs/{org}/repos?per_page=100")
+    suspend fun getOrgRepos(@Path("org") org: String): Response<List<Repo>>
+    @GET("repos/{owner}/{repo}/contributors?per_page=100")
+    suspend fun getRepoContributors(@Path("owner") owner: String, @Path("repo") repo: String): Response<List<User>>
+}`,
+        comment: "Suspend API: returns Response directly; thread not blocked.",
+      },
+      {
+        code: `suspend fun loadContributorsSuspend(service: GitHubService, req: RequestData): List<User> {
+    val repos = service.getOrgRepos(req.org).also { logRepos(req, it) }.bodyList()
+    return repos.flatMap { repo ->
+        service.getRepoContributors(req.org, repo.name).also { logUsers(repo, it) }.bodyList()
+    }.aggregate()
+}`,
+        comment: "Suspend version: same structure as blocking, but suspends instead of blocking.",
+      },
+      {
+        code: `launch {
+    val users = loadContributorsSuspend(service, req)
+    updateResults(users, startTime)
+}`,
+        comment: "launch starts a coroutine; loadContributorsSuspend runs inside it.",
+      },
+      {
+        code: `fun main() = runBlocking {
+    val deferred: Deferred<Int> = async { loadData() }
+    println("waiting...")
+    println(deferred.await())
+}
+suspend fun loadData(): Int { delay(1000L); return 42 }`,
+        comment: "async returns Deferred; await() suspends until result is ready.",
+      },
+      {
+        code: `suspend fun loadContributorsConcurrent(service: GitHubService, req: RequestData): List<User> = coroutineScope {
+    val repos = service.getOrgRepos(req.org).also { logRepos(req, it) }.bodyList()
+    val deferreds: List<Deferred<List<User>>> = repos.map { repo ->
+        async { service.getRepoContributors(req.org, repo.name).also { logUsers(repo, it) }.bodyList() }
+    }
+    deferreds.awaitAll().flatten().aggregate()
+}`,
+        comment: "Concurrent: one async per repo; awaitAll() then flatten and aggregate.",
+      },
+      {
+        code: `suspend fun loadContributorsProgress(
+    service: GitHubService, req: RequestData,
+    updateResults: suspend (List<User>, Boolean) -> Unit
+) {
+    val repos = service.getOrgRepos(req.org).also { logRepos(req, it) }.bodyList()
+    var allUsers = emptyList<User>()
+    for ((index, repo) in repos.withIndex()) {
+        val users = service.getRepoContributors(req.org, repo.name).also { logUsers(repo, it) }.bodyList()
+        allUsers = (allUsers + users).aggregate()
+        updateResults(allUsers, index == repos.lastIndex)
+    }
+}`,
+        comment: "Progress: update UI after each repo; completed true on last.",
+      },
+      {
+        code: `val channel = Channel<String>()
+launch { channel.send("A1"); channel.send("A2") }
+launch { channel.send("B1") }
+launch { repeat(3) { println(channel.receive()) } }`,
+        comment: "Rendezvous channel: send/receive suspend until the other is called.",
+      },
+      {
+        code: `suspend fun loadContributorsChannels(
+    service: GitHubService, req: RequestData,
+    updateResults: suspend (List<User>, Boolean) -> Unit
+) = coroutineScope {
+    val repos = service.getOrgRepos(req.org).also { logRepos(req, it) }.bodyList()
+    val channel = Channel<List<User>>()
+    for (repo in repos) {
+        launch {
+            val users = service.getRepoContributors(req.org, repo.name).also { logUsers(repo, it) }.bodyList()
+            channel.send(users)
+        }
+    }
+    var allUsers = emptyList<User>()
+    repeat(repos.size) {
+        val users = channel.receive()
+        allUsers = (allUsers + users).aggregate()
+        updateResults(allUsers, it == repos.lastIndex)
+    }
+}`,
+        comment: "Channels: producers send per-repo lists; consumer receives and aggregates.",
+      },
+    ],
+    defaultCode: `import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+
+fun main() = runBlocking {
+    val channel = Channel<String>()
+    launch {
+        channel.send("A1")
+        channel.send("A2")
+        println("A done")
+    }
+    launch {
+        channel.send("B1")
+        println("B done")
+    }
+    launch {
+        repeat(3) { println(channel.receive()) }
+    }
+}`,
+  },
+  {
+    id: "cancellation-and-timeouts",
+    step: 15,
+    title: "Cancellation and timeouts",
+    nextStep: "composing-suspending-functions",
+    prevStep: "coroutines-and-channels",
+    content: [
+      "Cancellation lets you stop a coroutine before it completes. It stops work that's no longer needed, such as when a user closes a window or navigates away in a user interface while a coroutine is still running. You can also use it to release resources early and to stop a coroutine from accessing objects past their disposal.",
+      "You can use cancellation to stop long-running coroutines that keep producing values even after other coroutines no longer need them, for example, in pipelines.",
+      "Cancellation works through the Job handle, which represents the lifecycle of a coroutine and its parent-child relationships. Job allows you to check whether the coroutine is active and allows you to cancel it, along with its children, as defined by structured concurrency.",
+      "Cancel coroutines: A coroutine is canceled when the cancel() function is invoked on its Job handle. Coroutine builder functions such as .launch() return a Job. The .async() function returns a Deferred, which implements Job and supports the same cancellation behavior. You can call cancel() manually, or it can be invoked automatically through cancellation propagation when a parent coroutine is canceled. When a coroutine is canceled, it throws a CancellationException the next time it checks for cancellation. You can use awaitCancellation() to suspend a coroutine until it's canceled.",
+      "Catching CancellationException can break the cancellation propagation. If you must catch it, rethrow it to let the cancellation propagate correctly through the coroutine hierarchy.",
+      "Cancellation propagation: Structured concurrency ensures that canceling a coroutine also cancels all of its children. This prevents child coroutines from working after the parent has already stopped.",
+      "Make coroutines react to cancellation: In Kotlin, coroutine cancellation is cooperative. Coroutines only react to cancellation when they cooperate by suspending or checking for cancellation explicitly.",
+      "Suspension points and cancellation: When a coroutine is canceled, it continues running until it reaches a suspension point. If the coroutine suspends there, the suspending function checks whether it has been canceled. If it has, the coroutine stops and throws CancellationException. A call to a suspend function is a suspension point, but it doesn't always suspend. All suspending functions in the kotlinx.coroutines library cooperate with cancellation because they use suspendCancellableCoroutine() internally. Custom suspending functions that use suspendCoroutine() don't react to cancellation.",
+      "Check for cancellation explicitly: If a coroutine doesn't suspend for a long time, it doesn't stop when canceled unless it explicitly checks. Use isActive (false when canceled), ensureActive() (throws CancellationException if canceled), or yield() (suspends and checks for cancellation).",
+      "Interrupt blocking code: On the JVM, blocking functions like Thread.sleep() or BlockingQueue.take() can be interrupted. Use runInterruptible() so that canceling a coroutine interrupts the thread.",
+      "Handle values safely when canceling: When a suspended coroutine is canceled, it resumes with a CancellationException instead of returning values (prompt cancellation). Keep cleanup logic in a place that's guaranteed to run even when the coroutine is canceled (e.g. finally block for closing resources).",
+      "Run non-cancelable blocks: Use withContext(NonCancellable) to prevent cancellation from affecting certain parts of a coroutine (e.g. closing resources with a suspending close()). Avoid using NonCancellable with .launch() or .async() as it breaks structured concurrency.",
+      "Timeout: Use withTimeoutOrNull(Duration) to automatically cancel a coroutine after a specified duration. If the timeout is exceeded, withTimeoutOrNull() returns null.",
+    ],
+    codeExamples: [
+      {
+        code: `suspend fun main() {
+    withContext(Dispatchers.Default) {
+        val job1Started = CompletableDeferred<Unit>()
+        val job1: Job = launch {
+            println("The coroutine has started")
+            job1Started.complete(Unit)
+            try {
+                delay(Duration.INFINITE)
+            } catch (e: CancellationException) {
+                println("The coroutine was canceled: $e")
+                throw e
+            }
+        }
+        job1Started.await()
+        job1.cancel()
+        val job2 = async {
+            println("The second coroutine has started")
+            try {
+                awaitCancellation()
+            } catch (e: CancellationException) {
+                println("The second coroutine was canceled")
+                throw e
+            }
+        }
+        job2.cancel()
+    }
+    println("All coroutines have completed")
+}`,
+        comment: "Manual cancellation: job1.cancel() and job2.cancel(). Always rethrow CancellationException.",
+      },
+      {
+        code: `suspend fun main() {
+    withContext(Dispatchers.Default) {
+        val childrenLaunched = CompletableDeferred<Unit>()
+        val parentJob = launch {
+            launch {
+                println("Child coroutine 1 has started running")
+                try { awaitCancellation() } finally { println("Child coroutine 1 has been canceled") }
+            }
+            launch {
+                println("Child coroutine 2 has started running")
+                try { awaitCancellation() } finally { println("Child coroutine 2 has been canceled") }
+            }
+            childrenLaunched.complete(Unit)
+        }
+        childrenLaunched.await()
+        parentJob.cancel()
+    }
+}`,
+        comment: "Canceling the parent cancels all children (structured concurrency).",
+      },
+      {
+        code: `// isActive: check in long-running computation
+val listSortingJob = launch {
+    var i = 0
+    while (isActive) {
+        unsortedList.sort()
+        ++i
+    }
+    println("Stopped sorting after $i iterations")
+}
+delay(100.milliseconds)
+listSortingJob.cancel()
+listSortingJob.join()`,
+        comment: "Use isActive to exit loops when canceled; join() to wait for completion.",
+      },
+      {
+        code: `// ensureActive(): throws CancellationException if canceled
+while (true) {
+    ++start
+    var n = start
+    while (n != 1) {
+        ensureActive()
+        n = if (n % 2 == 0) n / 2 else 3 * n + 1
+    }
+}`,
+        comment: "ensureActive() stops the computation immediately when the coroutine is canceled.",
+      },
+      {
+        code: `// runInterruptible: cancel triggers thread interruption
+runInterruptible {
+    Thread.sleep(Long.MAX_VALUE)
+} // catch InterruptedException and rethrow; cancellation triggers interruption`,
+        comment: "Use runInterruptible { } so cancel() interrupts blocking calls like Thread.sleep().",
+      },
+      {
+        code: `try {
+    awaitCancellation()
+} finally {
+    withContext(NonCancellable) {
+        shutdownServiceAndWait()
+    }
+}`,
+        comment: "NonCancellable ensures cleanup (e.g. shutdown) runs even when the coroutine is canceled.",
+      },
+      {
+        code: `val slow = withTimeoutOrNull(100.milliseconds) { slowOperation() }
+val fast = withTimeoutOrNull(100.milliseconds) { fastOperation() }
+// If timeout exceeded, withTimeoutOrNull() returns null.`,
+        comment: "withTimeoutOrNull(Duration) cancels the block after the duration; returns null on timeout.",
+      },
+    ],
+    defaultCode: `import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.milliseconds
+
+suspend fun main() {
+    withContext(Dispatchers.Default) {
+        val job = launch {
+            println("Started")
+            try {
+                delay(500.milliseconds)
+                println("Done")
+            } catch (e: CancellationException) {
+                println("Canceled")
+                throw e
+            }
+        }
+        delay(100.milliseconds)
+        job.cancel()
+        job.join()
+        println("All done")
+    }
+}`,
+  },
+  {
+    id: "composing-suspending-functions",
+    step: 16,
+    title: "Composing suspending functions",
+    nextStep: "coroutine-context-and-dispatchers",
+    prevStep: "cancellation-and-timeouts",
+    content: [
+      "This section covers various approaches to composition of suspending functions.",
+      "Sequential by default: If you need two suspending functions to run one after the other (e.g. using the result of the first to decide whether or how to call the second), use normal sequential invocation. Code in a coroutine is sequential by default. Use measureTimeMillis { } to see that both calls add up (e.g. ~2017 ms for two 1-second delays).",
+      "Concurrent using async: When there are no dependencies between the two calls and you want the answer faster, use async. Like launch, async starts a separate coroutine that runs concurrently. The difference: launch returns a Job with no result; async returns a Deferred — a non-blocking future. Use .await() on the Deferred to get the result. Deferred is also a Job, so you can cancel it. With two async calls, total time is about the duration of one delay (~1017 ms). Concurrency with coroutines is always explicit.",
+      "Lazily started async: Set the start parameter to CoroutineStart.LAZY so the coroutine only starts when its result is needed by await() or when Job.start() is called. Use this when you want to control when each coroutine starts. If you only call await() without start(), the coroutines run sequentially (await starts execution and waits). The use-case for async(start = CoroutineStart.LAZY) is replacing the standard lazy function when the computation involves suspending functions.",
+      "Async-style functions: Defining xxxAsync() functions that use GlobalScope.async and return Deferred is a style used in other languages but is strongly discouraged in Kotlin. Such functions are not suspending and can be called from anywhere, but they opt out of structured concurrency. If the caller throws before awaiting, the background work keeps running with no way to cancel it. You must opt in with @OptIn(DelicateCoroutinesApi::class) for GlobalScope.",
+      "Structured concurrency with async: Refactor concurrent work into a suspending function that uses coroutineScope { }. Inside it, use async for each part and await the results. If the function throws, all coroutines launched in that scope are cancelled. This keeps cancellation and failure propagation correct.",
+      "Cancellation is always propagated through the coroutine hierarchy: If one child async throws (e.g. ArithmeticException), the other child is cancelled and the exception is reported to the caller. You'll see the first child's finally block run (e.g. \"First child was cancelled\") and then the exception message.",
+    ],
+    codeExamples: [
+      {
+        code: `suspend fun doSomethingUsefulOne(): Int {
+    delay(1000L)
+    return 13
+}
+suspend fun doSomethingUsefulTwo(): Int {
+    delay(1000L)
+    return 29
+}
+// Sequential: first one, then two
+val time = measureTimeMillis {
+    val one = doSomethingUsefulOne()
+    val two = doSomethingUsefulTwo()
+    println("The answer is \${one + two}")
+}
+println("Completed in $time ms")`,
+        comment: "Sequential by default: ~2017 ms. Use when the second call depends on the first.",
+      },
+      {
+        code: `val time = measureTimeMillis {
+    val one = async { doSomethingUsefulOne() }
+    val two = async { doSomethingUsefulTwo() }
+    println("The answer is \${one.await() + two.await()}")
+}
+println("Completed in $time ms")`,
+        comment: "Concurrent with async: ~1017 ms. async returns Deferred; await() gets the result.",
+      },
+      {
+        code: `val time = measureTimeMillis {
+    val one = async(start = CoroutineStart.LAZY) { doSomethingUsefulOne() }
+    val two = async(start = CoroutineStart.LAZY) { doSomethingUsefulTwo() }
+    one.start()
+    two.start()
+    println("The answer is \${one.await() + two.await()}")
+}
+println("Completed in $time ms")`,
+        comment: "Lazily started: start() begins execution; use when you need to control when each starts.",
+      },
+      {
+        code: `suspend fun concurrentSum(): Int = coroutineScope {
+    val one = async { doSomethingUsefulOne() }
+    val two = async { doSomethingUsefulTwo() }
+    one.await() + two.await()
+}
+val time = measureTimeMillis {
+    println("The answer is \${concurrentSum()}")
+}
+println("Completed in $time ms")`,
+        comment: "Structured concurrency: coroutineScope ensures all children are cancelled if the function throws.",
+      },
+      {
+        code: `suspend fun failedConcurrentSum(): Int = coroutineScope {
+    val one = async<Int> {
+        try {
+            delay(Long.MAX_VALUE)
+            42
+        } finally { println("First child was cancelled") }
+    }
+    val two = async<Int> {
+        println("Second child throws an exception")
+        throw ArithmeticException()
+    }
+    one.await() + two.await()
+}
+// try { failedConcurrentSum() } catch(e: ArithmeticException) { println("Computation failed") }`,
+        comment: "When one child throws, the other is cancelled; cancellation propagates through the hierarchy.",
+      },
+    ],
+    defaultCode: `import kotlinx.coroutines.*
+import kotlin.system.measureTimeMillis
+
+suspend fun doSomethingUsefulOne(): Int {
+    delay(1000L)
+    return 13
+}
+suspend fun doSomethingUsefulTwo(): Int {
+    delay(1000L)
+    return 29
+}
+
+fun main() = runBlocking {
+    val time = measureTimeMillis {
+        val one = async { doSomethingUsefulOne() }
+        val two = async { doSomethingUsefulTwo() }
+        println("The answer is \${one.await() + two.await()}")
+    }
+    println("Completed in $time ms")
+}`,
+  },
+  {
+    id: "coroutine-context-and-dispatchers",
+    step: 17,
+    title: "Coroutine context and dispatchers",
+    nextStep: "asynchronous-flow",
+    prevStep: "composing-suspending-functions",
+    content: [
+      "Coroutines always execute in some context represented by a value of type CoroutineContext. The main elements are the Job of the coroutine and its dispatcher.",
+      "Dispatchers and threads: The coroutine context includes a CoroutineDispatcher that determines which thread(s) the coroutine uses. The dispatcher can confine execution to a specific thread, dispatch to a thread pool, or let it run unconfined. Builders like launch and async accept an optional CoroutineContext parameter to specify the dispatcher. When launch { } is used without parameters, it inherits the context (and dispatcher) from the CoroutineScope. Dispatchers.Unconfined runs in the caller thread until the first suspension, then resumes in the thread chosen by the suspending function. Dispatchers.Default uses a shared background thread pool. newSingleThreadContext creates a dedicated thread — an expensive resource; release it with close() or reuse it.",
+      "Unconfined vs confined: Dispatchers.Unconfined starts in the caller thread but only until the first suspension point; after suspension it resumes in the thread determined by the suspending function. It is appropriate for coroutines that neither consume CPU nor update shared data (e.g. UI) confined to a thread. The default dispatcher inherited from the scope (e.g. runBlocking) confines execution to one thread with predictable scheduling.",
+      "Debugging: Coroutines can suspend on one thread and resume on another. The Coroutine Debugger in the Kotlin plugin (IDEA) shows running and suspended coroutines in the Coroutines tab. Without it, use logging: run with -Dkotlinx.coroutines.debug so that log() prints the thread name and coroutine id (e.g. [main @coroutine#2]). Debug mode is also on with -ea.",
+      "Jumping between threads: Use runBlocking(context) to run with a specific context. Use withContext(context) to suspend and run a block in a different context (e.g. different dispatcher); when the block finishes, execution returns to the original dispatcher. Use newSingleThreadContext(\"Name\").use { } to release the thread when done.",
+      "Job in the context: The coroutine's Job is in its context; use coroutineContext[Job] to retrieve it. isActive on CoroutineScope is a shortcut for coroutineContext[Job]?.isActive == true.",
+      "Children of a coroutine: When you launch a coroutine in another's scope, it inherits the context and its Job becomes a child of the parent's Job. Cancelling the parent cancels all children. You can override this: GlobalScope.launch does not inherit a Job from the parent; passing launch(Job()) gives the new coroutine its own Job so it is not tied to the parent and is not cancelled when the parent is.",
+      "Parental responsibilities: A parent coroutine always waits for all its children to complete. The parent does not need to track children or call Job.join explicitly.",
+      "Naming coroutines: Use CoroutineName(\"name\") so that in debug mode the thread name includes the coroutine name (e.g. [main @v1coroutine#2]). Useful when a coroutine is tied to a specific request or task.",
+      "Combining context elements: Use the + operator to add multiple context elements, e.g. launch(Dispatchers.Default + CoroutineName(\"test\")) { }.",
+      "Coroutine scope: For objects with a lifecycle (e.g. an Android Activity) that are not coroutines, create a CoroutineScope (CoroutineScope() or MainScope()) and cancel it when the object is destroyed (e.g. mainScope.cancel() in Activity.destroy()) so all launched coroutines are cancelled and you avoid leaks. Android has first-party support for scope in lifecycle-aware components.",
+      "Thread-local data: Use threadLocal.asContextElement(value = \"launch\") to pass a thread-local value into a coroutine; the value is restored whenever the coroutine switches context. Without this, the thread-local may have an unexpected value when the coroutine runs on a different thread. Prefer ensurePresent to fail-fast on improper use. Mutations to the ThreadLocal inside the coroutine are not propagated to the caller; use withContext to update. See ThreadContextElement for advanced usage (e.g. logging MDC).",
+    ],
+    codeExamples: [
+      {
+        code: `launch { println("main runBlocking: \${Thread.currentThread().name}") }
+launch(Dispatchers.Unconfined) { println("Unconfined: \${Thread.currentThread().name}") }
+launch(Dispatchers.Default) { println("Default: \${Thread.currentThread().name}") }
+launch(newSingleThreadContext("MyOwnThread")) { println("newSingleThreadContext: \${Thread.currentThread().name}") }`,
+        comment: "Dispatchers: inherit from scope, Unconfined, Default, or a dedicated thread. Release newSingleThreadContext with close() or reuse.",
+      },
+      {
+        code: `launch(Dispatchers.Unconfined) {
+    println("Unconfined: \${Thread.currentThread().name}")
+    delay(500)
+    println("Unconfined after delay: \${Thread.currentThread().name}")
+}
+launch {
+    println("main: \${Thread.currentThread().name}")
+    delay(1000)
+    println("main after delay: \${Thread.currentThread().name}")
+}`,
+        comment: "Unconfined runs in caller thread until first suspension; after delay() it resumes on DefaultExecutor. Confined stays on main.",
+      },
+      {
+        code: `// Run with -Dkotlinx.coroutines.debug
+val a = async { log("computing a"); 6 }
+val b = async { log("computing b"); 7 }
+log("The answer is \${a.await() * b.await()}")`,
+        comment: "log() prints [thread @coroutine#id]. Coroutine id is assigned when debug mode is on.",
+      },
+      {
+        code: `newSingleThreadContext("Ctx1").use { ctx1 ->
+    newSingleThreadContext("Ctx2").use { ctx2 ->
+        runBlocking(ctx1) {
+            log("Started in ctx1")
+            withContext(ctx2) { log("Working in ctx2") }
+            log("Back to ctx1")
+        }
+    }
+}`,
+        comment: "runBlocking(ctx) uses that context; withContext(ctx2) switches to ctx2 for the block then returns to the original.",
+      },
+      {
+        code: `println("My job is \${coroutineContext[Job]}")`,
+        comment: "Job is part of the context; isActive is a shortcut for coroutineContext[Job]?.isActive == true.",
+      },
+      {
+        code: `val request = launch {
+    launch(Job()) {
+        delay(1000)
+        println("job1: I run independently; not affected by request cancel")
+    }
+    launch {
+        delay(100)
+        println("job2: I am a child of request")
+        delay(1000)
+        println("job2: will not run if request is cancelled")
+    }
+}
+delay(500)
+request.cancel()
+println("Who survived?")`,
+        comment: "launch(Job()) overrides parent Job so this coroutine is not cancelled when request is cancelled.",
+      },
+      {
+        code: `val request = launch {
+    repeat(3) { i ->
+        launch {
+            delay((i + 1) * 200L)
+            println("Coroutine $i is done")
+        }
+    }
+    println("request: I'm done, not joining children")
+}
+request.join()
+println("Now request is complete")`,
+        comment: "Parent always waits for all children; no need to join each child explicitly.",
+      },
+      {
+        code: `val v1 = async(CoroutineName("v1coroutine")) { delay(500); log("Computing v1"); 6 }
+val v2 = async(CoroutineName("v2coroutine")) { delay(1000); log("Computing v2"); 7 }
+log("The answer is \${v1.await() * v2.await()}")`,
+        comment: "CoroutineName(\"name\") shows up in debug output (e.g. [main @v1coroutine#2]).",
+      },
+      {
+        code: `launch(Dispatchers.Default + CoroutineName("test")) {
+    println("Thread: \${Thread.currentThread().name}")
+}`,
+        comment: "Combine context elements with + (e.g. dispatcher and name).",
+      },
+      {
+        code: `class Activity {
+    private val mainScope = MainScope()
+    fun destroy() { mainScope.cancel() }
+    fun doSomething() {
+        repeat(10) { i ->
+            mainScope.launch {
+                delay((i + 1) * 200L)
+                println("Coroutine $i is done")
+            }
+        }
+    }
+}
+val activity = Activity()
+activity.doSomething()
+delay(500)
+activity.destroy() // cancels all coroutines`,
+        comment: "MainScope() ties coroutines to the Activity; cancel() in destroy() cancels all and avoids leaks.",
+      },
+      {
+        code: `threadLocal.set("main")
+val job = launch(Dispatchers.Default + threadLocal.asContextElement(value = "launch")) {
+    println("Start: \${threadLocal.get()}")
+    yield()
+    println("After yield: \${threadLocal.get()}")
+}
+job.join()`,
+        comment: "asContextElement(value = \"launch\") ensures the coroutine sees the given value even when it switches threads.",
+      },
+    ],
+    defaultCode: `import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    launch {
+        println("main: \${Thread.currentThread().name}")
+    }
+    launch(Dispatchers.Unconfined) {
+        println("Unconfined: \${Thread.currentThread().name}")
+        delay(100)
+        println("Unconfined after delay: \${Thread.currentThread().name}")
+    }
+    launch(Dispatchers.Default) {
+        println("Default: \${Thread.currentThread().name}")
+    }
+    delay(500)
+}`,
+  },
+  {
+    id: "asynchronous-flow",
+    step: 17,
+    title: "Asynchronous Flow",
+    nextStep: "channels",
+    prevStep: "coroutine-context-and-dispatchers",
+    content: [
+      "A suspending function returns a single value asynchronously. To return multiple asynchronously computed values, use Kotlin Flow.",
+      "Representing multiple values: Use collections (e.g. List) for a fixed set, or Sequence with yield() for synchronous streams (blocks the thread). A suspend function can return a List after a delay but returns all values at once.",
+      "Flows: Use Flow<Int> and the flow { } builder to represent a stream of values computed asynchronously. Inside flow { } you can call suspend functions (e.g. delay). Use emit(value) to emit and collect { } to consume. The function that returns a Flow is not marked suspend — the flow runs only when collected.",
+      "Flows are cold: The code inside a flow builder does not run until the flow is collected. Each collect() runs the flow from the start.",
+      "Flow cancellation: Flows follow cooperative cancellation. Use withTimeoutOrNull(duration) { flow.collect { } } to cancel collection after a timeout. Size-limiting operators like take() cancel the flow when the limit is reached.",
+      "Flow builders: flow { } is the basic builder. Use flowOf(...) for fixed values and .asFlow() to convert collections or ranges to Flow.",
+      "Intermediate operators: map, filter, transform, etc. apply to an upstream flow and return a downstream flow. They are cold and non-suspending; the blocks inside them can call suspend functions. transform can emit multiple values per input.",
+      "Terminal operators: collect is the basic one. Others include toList, toSet, first(), single(), reduce, fold. They are suspending and start collection.",
+      "Flows are sequential: Unless you use operators that introduce concurrency, each emitted value is processed by all intermediate and terminal operators in the same coroutine, one by one.",
+      "Flow context: Collection always runs in the context of the caller. Code in flow { } runs in the context of the collector (context preservation). Do not use withContext inside flow { } to change dispatcher — use flowOn(Dispatchers.Default) instead. flowOn creates a coroutine for the upstream and can change the default sequential nature.",
+      "Buffering: Use .buffer() so emission runs concurrently with collection, reducing total time when both emitter and collector are slow.",
+      "Conflation: Use .conflate() to skip intermediate values and process only the most recent when the collector is slow.",
+      "Processing the latest: collectLatest { } cancels and restarts the block on each new value; only the last value may complete. Similar xxxLatest operators exist for other cases.",
+      "Composing flows: zip() combines two flows pair-wise. combine() recomputes when any upstream emits, using the latest value from each.",
+      "Flattening: map { requestFlow(it) } gives Flow<Flow<String>>. Use flatMapConcat (sequential), flatMapMerge (concurrent), or flatMapLatest (cancel previous on new value) to flatten.",
+      "Flow exceptions: Use try/catch around collect to handle exceptions. For transparent handling use .catch { e -> emit(...) }. catch only handles upstream exceptions; exceptions in collect escape. Use onEach { }.catch { }.collect() to handle all exceptions declaratively.",
+      "Flow completion: Use try/finally around collect or .onCompletion { }. onCompletion receives a nullable Throwable (null on success) and does not handle the exception — use catch for that.",
+      "Launching flow: Use .onEach { }.launchIn(scope) to run collection in a separate coroutine so code after it continues immediately. launchIn returns a Job. Cancelling the scope cancels the flow (like removeEventListener).",
+      "Flow cancellation checks: The flow builder checks ensureActive on each emit. Other operators (e.g. asFlow()) may not. Use .cancellable() to add cancellation checks to busy flows.",
+      "Flow and Reactive Streams: Flow is inspired by Reactive Streams; you can convert to/from Publisher (kotlinx-coroutines-reactive) and integrate with Reactor/RxJava.",
+    ],
+    codeExamples: [
+      {
+        code: `fun simple(): Flow<Int> = flow {
+    for (i in 1..3) {
+        delay(100)
+        emit(i)
+    }
+}
+fun main() = runBlocking {
+    launch { repeat(3) { k -> delay(100); println("Not blocked $k") } }
+    simple().collect { value -> println(value) }
+}`,
+        comment: "flow { } builder, emit(), collect(). Code in flow can suspend; main thread is not blocked.",
+      },
+      {
+        code: `fun simple(): Flow<Int> = flow {
+    println("Flow started")
+    for (i in 1..3) { delay(100); emit(i) }
+}
+fun main() = runBlocking {
+    val f = simple()
+    println("Calling collect...")
+    f.collect { println(it) }
+    println("Calling collect again...")
+    f.collect { println(it) }
+}`,
+        comment: "Flows are cold: \"Flow started\" prints on each collect, not when simple() is called.",
+      },
+      {
+        code: "(1..3).asFlow().collect { println(it) }\n// or: flowOf(1, 2, 3).collect { println(it) }",
+        comment: "Flow builders: asFlow() and flowOf() for fixed values.",
+      },
+      {
+        code: "(1..3).asFlow()\n    .map { performRequest(it) }  // suspend inside map\n    .collect { println(it) }",
+        comment: "Intermediate operators (map, filter) can call suspend functions.",
+      },
+      {
+        code: "(1..3).asFlow()\n    .transform { request ->\n        emit(\"Making request $request\")\n        emit(performRequest(request))\n    }\n    .collect { println(it) }",
+        comment: "transform can emit multiple values per input.",
+      },
+      {
+        code: "numbers().take(2).collect { println(it) }\n// Emits 1, 2; flow body is cancelled, finally block runs.",
+        comment: "take(n) cancels the flow when limit is reached; cancellation uses exceptions so finally runs.",
+      },
+      {
+        code: "val sum = (1..5).asFlow().map { it * it }.reduce { a, b -> a + b }\nprintln(sum) // 55",
+        comment: "Terminal operators: reduce, fold, toList, first, etc.",
+      },
+      {
+        code: "fun simple(): Flow<Int> = flow {\n    for (i in 1..3) {\n        Thread.sleep(100)\n        emit(i)\n    }\n}.flowOn(Dispatchers.Default)\n// RIGHT: flowOn changes emission context. Do not use withContext inside flow { }.",
+        comment: "Use flowOn(dispatcher) to run emission on another context; withContext inside flow { } violates context preservation.",
+      },
+      {
+        code: "simple()\n    .buffer()\n    .collect { value -> delay(300); println(value) }\n// Faster: emission and collection run concurrently.",
+        comment: "buffer() lets emitter run ahead of collector, reducing total time.",
+      },
+      {
+        code: "simple().conflate().collect { value -> delay(300); println(value) }\n// Skips intermediate values; only latest may be processed.",
+        comment: "conflate() drops intermediate values when collector is slow.",
+      },
+      {
+        code: "simple().collectLatest { value ->\n    println(\"Collecting $value\")\n    delay(300)\n    println(\"Done $value\")\n}\n// Restarts on each new value; only last may print Done.",
+        comment: "collectLatest cancels and restarts on each emission.",
+      },
+      {
+        code: "(1..3).asFlow().zip(flowOf(\"one\",\"two\",\"three\")) { a, b -> \"$a -> $b\" }\n    .collect { println(it) }",
+        comment: "zip() pairs values from two flows.",
+      },
+      {
+        code: "nums.combine(strs) { a, b -> \"$a -> $b\" }.collect { println(it) }\n// Recomputes when either flow emits; uses latest from each.",
+        comment: "combine() emits when any upstream emits, with latest values from all.",
+      },
+      {
+        code: "(1..3).asFlow().flatMapConcat { requestFlow(it) }.collect { println(it) }\n// flatMapMerge: concurrent collection. flatMapLatest: cancel previous on new value.",
+        comment: "Flattening: flatMapConcat (sequential), flatMapMerge (concurrent), flatMapLatest.",
+      },
+      {
+        code: "simple()\n    .catch { e -> emit(\"Caught $e\") }\n    .collect { println(it) }",
+        comment: "catch handles upstream exceptions; can emit replacement values. Does not catch downstream (collect) exceptions.",
+      },
+      {
+        code: "simple()\n    .onCompletion { cause -> if (cause != null) println(\"Completed exceptionally\") }\n    .catch { println(\"Caught: $it\") }\n    .collect { println(it) }",
+        comment: "onCompletion runs when flow finishes; cause is null on success. It does not handle the exception.",
+      },
+      {
+        code: "events()\n    .onEach { println(\"Event: $it\") }\n    .launchIn(this)\nprintln(\"Done\")\n// Collection runs in a separate coroutine; execution continues immediately.",
+        comment: "launchIn(scope) collects in a new coroutine; returns Job. Cancelling scope cancels the flow.",
+      },
+      {
+        code: "(1..5).asFlow().cancellable().collect { value ->\n    if (value == 3) cancel()\n    println(value)\n}\n// cancellable() adds cancellation checks; without it, asFlow() may not check until the end.",
+        comment: "Use .cancellable() so busy flows (e.g. asFlow()) respect cancellation.",
+      },
+    ],
+    defaultCode: "import kotlinx.coroutines.*\nimport kotlinx.coroutines.flow.*\n\nfun simple(): Flow<Int> = flow {\n    for (i in 1..3) {\n        delay(100)\n        emit(i)\n    }\n}\n\nfun main() = runBlocking {\n    simple().collect { value -> println(value) }\n}",
+  },
+  {
+    id: "channels",
+    step: 19,
+    title: "Channels",
+    nextStep: "coroutine-exception-handling",
+    prevStep: "asynchronous-flow",
+    content: [
+      "Deferred transfers a single value between coroutines. Channels transfer a stream of values.",
+      "Channel basics: A Channel is similar to BlockingQueue but uses suspending send instead of blocking put and suspending receive instead of blocking take. Create with Channel<Int>(); one coroutine sends, another receives.",
+      "Closing and iteration: A channel can be closed to signal no more elements. Call channel.close() when done sending. On the receiver side use for (y in channel) to receive until closed; all elements sent before close are received.",
+      "Building channel producers: Use the produce { } coroutine builder to create a ReceiveChannel; the producer sends with send(). On the consumer side use consumeEach { } or for (x in channel). This fits the producer-consumer pattern.",
+      "Pipelines: One coroutine produces a stream (possibly infinite), others consume and transform it. Define produceNumbers() that sends in a loop and square(numbers: ReceiveChannel<Int>) that produce { for (x in numbers) send(x * x) }. Connect them and receive; use coroutineContext.cancelChildren() to cancel all when done.",
+      "Prime numbers with pipeline: numbersFrom(start) produces integers from start; filter(numbers, prime) produces numbers not divisible by prime. Chain: numbersFrom(2) -> filter(2) -> filter(3) -> ...; each prime received adds a new filter stage. Run in a scope and cancelChildren() when done. Pipelines can use multiple cores (e.g. Dispatchers.Default) and other suspend calls, unlike sequence/iterator.",
+      "Fan-out: Multiple coroutines receive from the same channel; work is distributed. Use for (msg in channel) in each processor. Cancelling the producer closes the channel and stops iteration in all processors. Prefer for loop over consumeEach when multiple coroutines consume — consumeEach consumes (cancels) the channel on completion.",
+      "Fan-in: Multiple coroutines send to the same channel. Launch several coroutines that each call channel.send(...) in a loop; one receiver receives from the channel.",
+      "Buffered channels: Channel() and produce take an optional capacity. Unbuffered (default) is rendezvous: send suspends until receive and vice versa. With capacity, senders can send up to capacity elements before suspending.",
+      "Channels are fair: Send and receive are served in FIFO order; the first coroutine to call receive gets the element.",
+      "Ticker channels: ticker(delayMillis, initialDelayMillis) produces Unit every time the given delay passes since last consumption. Useful for time-based pipelines and select. Use ReceiveChannel.cancel() when no more elements are needed. Ticker adjusts for consumer pauses by default; use TickerMode.FIXED_DELAY for fixed delay between elements.",
+    ],
+    codeExamples: [
+      {
+        code: "val channel = Channel<Int>()\nlaunch {\n    for (x in 1..5) channel.send(x * x)\n}\nrepeat(5) { println(channel.receive()) }\nprintln(\"Done!\")",
+        comment: "Channel: suspending send and receive. One coroutine sends, another receives.",
+      },
+      {
+        code: "val channel = Channel<Int>()\nlaunch {\n    for (x in 1..5) channel.send(x * x)\n    channel.close()\n}\nfor (y in channel) println(y)\nprintln(\"Done!\")",
+        comment: "close() signals no more elements; for (y in channel) receives until closed.",
+      },
+      {
+        code: "fun CoroutineScope.produceSquares(): ReceiveChannel<Int> = produce {\n    for (x in 1..5) send(x * x)\n}\nfun main() = runBlocking {\n    val squares = produceSquares()\n    squares.consumeEach { println(it) }\n    println(\"Done!\")\n}",
+        comment: "produce { } builds a channel producer; consumeEach { } consumes on the receiver side.",
+      },
+      {
+        code: "fun CoroutineScope.produceNumbers() = produce<Int> {\n    var x = 1\n    while (true) send(x++)\n}\nfun CoroutineScope.square(numbers: ReceiveChannel<Int>) = produce<Int> {\n    for (x in numbers) send(x * x)\n}\nval numbers = produceNumbers()\nval squares = square(numbers)\nrepeat(5) { println(squares.receive()) }\ncoroutineContext.cancelChildren()",
+        comment: "Pipeline: produceNumbers() -> square(numbers) -> receive. cancelChildren() cancels all.",
+      },
+      {
+        code: "fun CoroutineScope.numbersFrom(start: Int) = produce<Int> {\n    var x = start\n    while (true) send(x++)\n}\nfun CoroutineScope.filter(numbers: ReceiveChannel<Int>, prime: Int) = produce<Int> {\n    for (x in numbers) if (x % prime != 0) send(x)\n}\nvar cur = numbersFrom(2)\nrepeat(10) {\n    val prime = cur.receive()\n    println(prime)\n    cur = filter(cur, prime)\n}\ncoroutineContext.cancelChildren()",
+        comment: "Prime pipeline: numbersFrom(2) -> filter(2) -> filter(3) -> ... Each prime adds a filter stage.",
+      },
+      {
+        code: "fun CoroutineScope.produceNumbers() = produce<Int> {\n    var x = 1\n    while (true) { send(x++); delay(100) }\n}\nfun CoroutineScope.launchProcessor(id: Int, channel: ReceiveChannel<Int>) = launch {\n    for (msg in channel) println(\"Processor #$id received $msg\")\n}\nval producer = produceNumbers()\nrepeat(5) { launchProcessor(it, producer) }\ndelay(950)\nproducer.cancel()",
+        comment: "Fan-out: multiple processors receive from the same channel; work is distributed.",
+      },
+      {
+        code: "val channel = Channel<String>()\nlaunch { sendString(channel, \"foo\", 200L) }\nlaunch { sendString(channel, \"BAR!\", 500L) }\nrepeat(6) { println(channel.receive()) }\ncoroutineContext.cancelChildren()",
+        comment: "Fan-in: multiple coroutines send to the same channel.",
+      },
+      {
+        code: "val channel = Channel<Int>(4)\nval sender = launch {\n    repeat(10) {\n        println(\"Sending $it\")\n        channel.send(it)\n    }\n}\ndelay(1000)\nsender.cancel()",
+        comment: "Buffered channel: capacity 4; sender suspends when buffer is full (after 5th send).",
+      },
+      {
+        code: "val table = Channel<Ball>()\nlaunch { player(\"ping\", table) }\nlaunch { player(\"pong\", table) }\ntable.send(Ball(0))\ndelay(1000)\ncoroutineContext.cancelChildren()\nsuspend fun player(name: String, table: Channel<Ball>) {\n    for (ball in table) {\n        ball.hits++\n        println(\"$name $ball\")\n        delay(300)\n        table.send(ball)\n    }\n}",
+        comment: "Channels are fair: send/receive served in FIFO order.",
+      },
+      {
+        code: "val tickerChannel = ticker(delayMillis = 200, initialDelayMillis = 0)\nvar next = withTimeoutOrNull(1) { tickerChannel.receive() }\nprintln(\"Initial: $next\")\nnext = withTimeoutOrNull(100) { tickerChannel.receive() }\nprintln(\"Not ready in 100ms: $next\")\nnext = withTimeoutOrNull(120) { tickerChannel.receive() }\nprintln(\"Ready in 200ms: $next\")\ntickerChannel.cancel()",
+        comment: "ticker() produces Unit every delayMillis since last consumption. cancel() when done.",
+      },
+    ],
+    defaultCode: "import kotlinx.coroutines.*\nimport kotlinx.coroutines.channels.*\n\nfun main() = runBlocking {\n    val channel = Channel<Int>()\n    launch {\n        for (x in 1..5) channel.send(x * x)\n        channel.close()\n    }\n    for (y in channel) println(y)\n    println(\"Done!\")\n}",
+  },
+  {
+    id: "coroutine-exception-handling",
+    step: 20,
+    title: "Coroutine exception handling",
+    nextStep: "shared-mutable-state-and-concurrency",
+    prevStep: "channels",
+    content: [
+      "This section covers exception handling and cancellation on exceptions. A cancelled coroutine throws CancellationException at suspension points; it is ignored by the machinery. Here we look at exceptions during cancellation and when multiple children throw.",
+      "Exception propagation: Coroutine builders either propagate exceptions (launch) or expose them to the user (async, produce). For root coroutines: launch treats exceptions as uncaught (like Thread.uncaughtExceptionHandler); async and produce rely on the user to consume the exception via await or receive. So launch + uncaught exception is printed by the default handler; async exception is only seen when you call await() and catch it.",
+      "CoroutineExceptionHandler: Install it on a root coroutine to customize handling of uncaught exceptions (log, show error, terminate). You cannot recover — the coroutine has already completed when the handler runs. Children delegate exception handling to their parent, so a handler on a child is never used; only the root's handler runs. async always catches and represents exceptions in the Deferred, so CoroutineExceptionHandler has no effect for async. Use @OptIn(DelicateCoroutinesApi::class) for GlobalScope.",
+      "Cancellation and exceptions: Cancellation uses CancellationException; it is ignored by all handlers. Cancelling a child does not cancel the parent. If a coroutine throws an exception other than CancellationException, it cancels its parent with that exception; this cannot be overridden (structured concurrency). The parent's CoroutineExceptionHandler is invoked only after all children have terminated.",
+      "Exceptions aggregation: When multiple children fail, the first exception wins; others are attached as suppressed (exception.suppressed). CancellationException is unwrapped so the original cause reaches the handler.",
+      "Supervision: For one-way cancellation (e.g. UI: child failure should not kill the component; component destroy should cancel children), use SupervisorJob or supervisorScope.",
+      "SupervisorJob: Like Job but cancellation propagates only downwards. A child's failure does not cancel siblings or the supervisor. Cancelling the supervisor cancels all children.",
+      "supervisorScope: Like coroutineScope but propagates cancellation one way only; cancels all children only if the scope itself fails. Waits for all children before completing.",
+      "Exceptions in supervised coroutines: With supervision, a child's failure does not propagate to the parent. Each child must handle its own exceptions. CoroutineExceptionHandler installed on a child launched inside supervisorScope is used (unlike in a normal scope where children delegate to parent).",
+    ],
+    codeExamples: [
+      {
+        code: "@OptIn(DelicateCoroutinesApi::class)\nfun main() = runBlocking {\n    val job = GlobalScope.launch {\n        println(\"Throwing from launch\")\n        throw IndexOutOfBoundsException()\n    }\n    job.join()\n    println(\"Joined failed job\")\n    val deferred = GlobalScope.async {\n        println(\"Throwing from async\")\n        throw ArithmeticException()\n    }\n    try {\n        deferred.await()\n    } catch (e: ArithmeticException) {\n        println(\"Caught ArithmeticException\")\n    }\n}",
+        comment: "launch: exception is uncaught (printed by handler). async: exception only when await().",
+      },
+      {
+        code: "val handler = CoroutineExceptionHandler { _, exception ->\n    println(\"CoroutineExceptionHandler got $exception\")\n}\nval job = GlobalScope.launch(handler) {\n    throw AssertionError()\n}\njob.join()\n// async(handler) { throw ... } — handler not used; use try { await() } catch.",
+        comment: "CoroutineExceptionHandler on root handles uncaught exceptions. Not used for async or children.",
+      },
+      {
+        code: "val job = launch {\n    val child = launch {\n        try { delay(Long.MAX_VALUE) } finally { println(\"Child is cancelled\") }\n    }\n    yield()\n    child.cancel()\n    child.join()\n    println(\"Parent is not cancelled\")\n}\njob.join()",
+        comment: "Cancelling child does not cancel parent. CancellationException is ignored by handlers.",
+      },
+      {
+        code: "val handler = CoroutineExceptionHandler { _, e -> println(\"Handler got $e\") }\nval job = GlobalScope.launch(handler) {\n    launch { delay(Long.MAX_VALUE); finally { ... } }\n    launch { delay(10); throw ArithmeticException() }\n}\njob.join()\n// Handler runs only after all children terminate.",
+        comment: "Parent handles exception only when all children have terminated.",
+      },
+      {
+        code: "val handler = CoroutineExceptionHandler { _, exception ->\n    println(\"Got $exception with suppressed \" + exception.suppressed.contentToString())\n}\nGlobalScope.launch(handler) {\n    launch { try { delay(Long.MAX_VALUE) } finally { throw ArithmeticException() } }\n    launch { delay(100); throw IOException() }\n}\n// First exception (IOException) wins; ArithmeticException in suppressed.",
+        comment: "Multiple children fail: first exception wins; others attached as suppressed.",
+      },
+      {
+        code: "val supervisor = SupervisorJob()\nwith(CoroutineScope(coroutineContext + supervisor)) {\n    val first = launch(CoroutineExceptionHandler { _, _ -> }) {\n        throw AssertionError(\"First child fails\")\n    }\n    val second = launch {\n        first.join()\n        println(\"First cancelled: \" + first.isCancelled + \", second still active\")\n        delay(Long.MAX_VALUE)\n    }\n    first.join()\n    supervisor.cancel()\n    second.join()\n}\n// First fails; second is not cancelled. Cancelling supervisor cancels second.",
+        comment: "SupervisorJob: cancellation only downwards; child failure does not cancel siblings.",
+      },
+      {
+        code: "try {\n    supervisorScope {\n        val child = launch {\n            try { delay(Long.MAX_VALUE) } finally { println(\"Child cancelled\") }\n        }\n        yield()\n        throw AssertionError()\n    }\n} catch (e: AssertionError) {\n    println(\"Caught assertion error\")\n}\n// Scope fails -> child cancelled. supervisorScope waits for children.",
+        comment: "supervisorScope: exception in scope cancels all children; scope waits for them.",
+      },
+      {
+        code: "val handler = CoroutineExceptionHandler { _, e -> println(\"Handler got $e\") }\nsupervisorScope {\n    val child = launch(handler) {\n        throw AssertionError()\n    }\n    println(\"Scope is completing\")\n}\nprintln(\"Scope is completed\")\n// In supervisorScope, child's handler is used (unlike normal scope).",
+        comment: "In supervisorScope, CoroutineExceptionHandler on child is used; each child handles its own.",
+      },
+    ],
+    defaultCode: "import kotlinx.coroutines.*\n\n@OptIn(DelicateCoroutinesApi::class)\nfun main() = runBlocking {\n    val handler = CoroutineExceptionHandler { _, e -> println(\"Caught: $e\") }\n    val job = GlobalScope.launch(handler) {\n        throw RuntimeException(\"Test exception\")\n    }\n    job.join()\n    println(\"Done\")\n}",
+  },
+  {
+    id: "shared-mutable-state-and-concurrency",
+    step: 21,
+    title: "Shared mutable state and concurrency",
+    nextStep: "select-expression",
+    prevStep: "coroutine-exception-handling",
+    content: [
+      "Coroutines running in parallel (e.g. Dispatchers.Default) face the same concurrency issues as multi-threaded code. The main issue is synchronizing access to shared mutable state.",
+      "The problem: Many coroutines incrementing a shared variable (e.g. counter++) without synchronization leads to lost updates. The final value is almost never the expected total (e.g. 100 * 1000 = 100000) because increments are not atomic.",
+      "Volatiles are of no help: @Volatile in Kotlin only guarantees linearizable (atomic) reads and writes of the variable itself. It does not make compound operations like counter++ atomic (read-modify-write). So the counter can still be wrong and may run slower.",
+      "Thread-safe data structures: Use atomic or thread-safe types for shared state. For a counter use AtomicInteger and incrementAndGet(). This is fast and correct for simple counters and similar cases. It does not scale well to complex state or operations without ready-made thread-safe types.",
+      "Thread confinement fine-grained: Confine all access to shared state to a single thread. Use a single-threaded context (e.g. newSingleThreadContext) and withContext(thatContext) { counter++ } around each update. Correct but slow because every increment switches context.",
+      "Thread confinement coarse-grained: Confine large chunks of logic to one thread. Run the whole workload in the single-threaded context, e.g. withContext(counterContext) { massiveRun { counter++ } }. Correct and much faster.",
+      "Mutual exclusion: Protect all modifications with a critical section that never runs concurrently. Use Mutex: mutex.withLock { counter++ }. Mutex.lock() is suspending (does not block the thread). Good when there is no natural thread to confine state to but you must update shared state periodically.",
+    ],
+    codeExamples: [
+      {
+        code: "suspend fun massiveRun(action: suspend () -> Unit) {\n    val n = 100\n    val k = 1000\n    val time = measureTimeMillis {\n        coroutineScope {\n            repeat(n) { launch { repeat(k) { action() } } }\n        }\n    }\n    println(\"Completed \" + (n * k) + \" actions in \" + time + \" ms\")\n}\nvar counter = 0\nfun main() = runBlocking {\n    withContext(Dispatchers.Default) {\n        massiveRun { counter++ }\n    }\n    println(\"Counter = $counter\")\n}\n// Unlikely to print 100000 — no synchronization.",
+        comment: "Shared mutable counter without synchronization: wrong result.",
+      },
+      {
+        code: "@Volatile\nvar counter = 0\nfun main() = runBlocking {\n    withContext(Dispatchers.Default) {\n        massiveRun { counter++ }\n    }\n    println(\"Counter = $counter\")\n}\n// Still wrong: volatile = atomic read/write only, not atomic increment.",
+        comment: "Volatile does not fix compound operations like increment.",
+      },
+      {
+        code: "val counter = AtomicInteger()\nfun main() = runBlocking {\n    withContext(Dispatchers.Default) {\n        massiveRun { counter.incrementAndGet() }\n    }\n    println(\"Counter = $counter\")\n}\n// Correct and fast. Use for counters and simple shared state.",
+        comment: "AtomicInteger.incrementAndGet() is atomic and fast.",
+      },
+      {
+        code: "val counterContext = newSingleThreadContext(\"CounterContext\")\nvar counter = 0\nfun main() = runBlocking {\n    withContext(Dispatchers.Default) {\n        massiveRun {\n            withContext(counterContext) { counter++ }\n        }\n    }\n    println(\"Counter = $counter\")\n}\n// Correct but slow: every increment switches to single thread.",
+        comment: "Fine-grained thread confinement: withContext per update.",
+      },
+      {
+        code: "val counterContext = newSingleThreadContext(\"CounterContext\")\nvar counter = 0\nfun main() = runBlocking {\n    withContext(counterContext) {\n        massiveRun { counter++ }\n    }\n    println(\"Counter = $counter\")\n}\n// Correct and fast: whole run in single-threaded context.",
+        comment: "Coarse-grained: confine the whole workload to one thread.",
+      },
+      {
+        code: "val mutex = Mutex()\nvar counter = 0\nfun main() = runBlocking {\n    withContext(Dispatchers.Default) {\n        massiveRun {\n            mutex.withLock { counter++ }\n        }\n    }\n    println(\"Counter = $counter\")\n}\n// Correct. Mutex.lock() suspends; does not block thread.",
+        comment: "Mutex.withLock { } protects critical section; good when no natural thread.",
+      },
+    ],
+    defaultCode: "import kotlinx.coroutines.*\nimport kotlinx.coroutines.sync.*\nimport java.util.concurrent.atomic.AtomicInteger\n\nsuspend fun massiveRun(action: suspend () -> Unit) {\n    val n = 100\n    val k = 1000\n    val time = kotlin.system.measureTimeMillis {\n        coroutineScope {\n            repeat(n) { launch { repeat(k) { action() } } }\n        }\n    }\n    println(\"Completed \" + (n * k) + \" actions in \" + time + \" ms\")\n}\n\nfun main() = runBlocking {\n    val counter = AtomicInteger()\n    withContext(Dispatchers.Default) {\n        massiveRun { counter.incrementAndGet() }\n    }\n    println(\"Counter = $counter\")\n}",
+  },
+  {
+    id: "select-expression",
+    step: 22,
+    title: "Select expression (experimental)",
+    nextStep: "debug-coroutines-intellij",
+    prevStep: "shared-mutable-state-and-concurrency",
+    content: [
+      "Select expression lets you await multiple suspending functions at once and use the first result that becomes available. It is experimental; the API may change.",
+      "Selecting from channels: Use select<Unit> { } with onReceive clauses to receive from several channels at once. The first clause that can receive (or send) is chosen. Example: fizz.onReceive { } and buzz.onReceive { } in the same select; run in a loop and cancelChildren() when done.",
+      "Selecting on close: onReceive throws when the channel is closed. Use onReceiveCatching { it -> it.getOrNull() } to handle closed channels and return a value (e.g. \"Channel 'a' is closed\"). select can return a result: select<String> { ... }. Select is biased: when several clauses are ready, the first one wins. onReceiveCatching is selected immediately when the channel is already closed.",
+      "Selecting to send: Use onSend(value) { } to send to the first channel that can accept. Example: producer sends to primary channel or side channel via select { onSend(num) {}; side.onSend(num) {} }, so slow consumers get values on the side channel.",
+      "Selecting deferred values: Use onAwait on Deferred in select to wait for the first completed deferred. select<String> { list.forEach { deferred -> deferred.onAwait { answer -> \"...\" } } }. Select is a DSL so you can build clauses in a loop.",
+      "Switch over a channel of deferred values: Combine onReceiveCatching and onAwait in one select: wait for either the next Deferred from the channel or for the current Deferred to complete; if a new Deferred arrives, switch to it (e.g. switchMapDeferreds). Useful to replace in-flight work when new input arrives.",
+    ],
+    codeExamples: [
+      {
+        code: "fun CoroutineScope.fizz() = produce<String> {\n    while (true) { delay(500); send(\"Fizz\") }\n}\nfun CoroutineScope.buzz() = produce<String> {\n    while (true) { delay(1000); send(\"Buzz!\") }\n}\nsuspend fun selectFizzBuzz(fizz: ReceiveChannel<String>, buzz: ReceiveChannel<String>) {\n    select<Unit> {\n        fizz.onReceive { println(\"fizz -> '$it'\") }\n        buzz.onReceive { println(\"buzz -> '$it'\") }\n    }\n}\nval fizz = fizz()\nval buzz = buzz()\nrepeat(7) { selectFizzBuzz(fizz, buzz) }\ncoroutineContext.cancelChildren()",
+        comment: "select<Unit> with onReceive: receive from first channel that has a value.",
+      },
+      {
+        code: "suspend fun selectAorB(a: ReceiveChannel<String>, b: ReceiveChannel<String>): String =\n    select<String> {\n        a.onReceiveCatching { it ->\n            it.getOrNull()?.let { \"a -> '\" + it + \"'\" } ?: \"Channel 'a' is closed\"\n        }\n        b.onReceiveCatching { it ->\n            it.getOrNull()?.let { \"b -> '\" + it + \"'\" } ?: \"Channel 'b' is closed\"\n        }\n    }\n// onReceiveCatching handles closed channel; select returns result. Biased to first clause.",
+        comment: "onReceiveCatching for close; select returns String. First ready clause wins.",
+      },
+      {
+        code: "fun CoroutineScope.produceNumbers(side: SendChannel<Int>) = produce<Int> {\n    for (num in 1..10) {\n        delay(100)\n        select<Unit> {\n            onSend(num) {}\n            side.onSend(num) {}\n        }\n    }\n}\nval side = Channel<Int>()\nlaunch { side.consumeEach { println(\"Side channel has $it\") } }\nproduceNumbers(side).consumeEach { println(\"Consuming $it\"); delay(250) }\ncoroutineContext.cancelChildren()",
+        comment: "onSend: send to primary or side channel; first that can accept wins.",
+      },
+      {
+        code: "fun CoroutineScope.asyncString(time: Int) = async {\n    delay(time.toLong())\n    \"Waited for $time ms\"\n}\nval list = List(12) { asyncString(Random(3).nextInt(1000)) }\nval result = select<String> {\n    list.withIndex().forEach { (index, deferred) ->\n        deferred.onAwait { \"Deferred \" + index + \" produced '\" + it + \"'\" }\n    }\n}\nprintln(result)\nprintln(list.count { it.isActive }.toString() + \" coroutines still active\")",
+        comment: "onAwait: select over Deferred values; first to complete wins.",
+      },
+      {
+        code: "fun CoroutineScope.switchMapDeferreds(input: ReceiveChannel<Deferred<String>>) = produce<String> {\n    var current = input.receive()\n    while (isActive) {\n        val next = select<Deferred<String>?> {\n            input.onReceiveCatching { it.getOrNull() }\n            current.onAwait { value ->\n                send(value)\n                input.receiveCatching().getOrNull()\n            }\n        }\n        if (next == null) break else current = next\n    }\n}\n// Waits for current deferred or next from channel; replaces current when new one arrives.",
+        comment: "onReceiveCatching + onAwait: switch to new deferred when it arrives.",
+      },
+    ],
+    defaultCode: "import kotlinx.coroutines.*\nimport kotlinx.coroutines.channels.*\n\nfun CoroutineScope.fizz() = produce<String> {\n    while (true) { delay(500); send(\"Fizz\") }\n}\nfun CoroutineScope.buzz() = produce<String> {\n    while (true) { delay(1000); send(\"Buzz!\") }\n}\n\nfun main() = runBlocking {\n    val fizz = fizz()\n    val buzz = buzz()\n    repeat(5) {\n        select<Unit> {\n            fizz.onReceive { println(\"fizz -> $it\") }\n            buzz.onReceive { println(\"buzz -> $it\") }\n        }\n    }\n    coroutineContext.cancelChildren()\n    println(\"Done\")\n}",
+  },
+  {
+    id: "debug-coroutines-intellij",
+    step: 22,
+    title: "Debug coroutines using IntelliJ IDEA",
+    nextStep: "debug-kotlin-flow-intellij",
+    prevStep: "select-expression",
+    content: [
+      "This tutorial shows how to create Kotlin coroutines and debug them in IntelliJ IDEA. You should already know the basics of coroutines.",
+      "Create coroutines: Open a Kotlin project in IntelliJ. For a Gradle project, add kotlinx-coroutines-core to build.gradle(.kts): implementation(\"org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2\"). Open Main.kt in src/main/kotlin and use runBlocking, async, and await as in the code example below. Build the project (Build → Build Project).",
+      "Debug coroutines: Set breakpoints on the lines with println(). Run the application in debug mode (Debug next to the run configuration).",
+      { type: "image", src: "/images/portfolio/debugcoroutines/coroutine-breakpoint.png", alt: "Set breakpoints and build the project in IntelliJ IDEA." },
+      "The Debug tool window shows the Frames tab (call stack), Variables tab, and Coroutines tab. The Coroutines tab lists running or suspended coroutines — for example, one RUNNING and two CREATED.",
+      { type: "image", src: "/images/portfolio/debugcoroutines/coroutine-debug-1.png", alt: "Debug tool window with Frames, Variables, and Coroutines tab; three coroutines, first RUNNING." },
+      "Click Resume Program. The first coroutine becomes SUSPENDED (waiting for a.await() * b.await()), the second is RUNNING (computing a), and the third is still CREATED.",
+      { type: "image", src: "/images/portfolio/debugcoroutines/coroutine-debug-2.png", alt: "After first resume: first coroutine SUSPENDED, second RUNNING, third CREATED." },
+      "Resume again. The first stays SUSPENDED, the second has finished and disappeared, and the third is RUNNING (computing b). You can inspect each coroutine in the Coroutines tab to debug your code.",
+      { type: "image", src: "/images/portfolio/debugcoroutines/coroutine-debug-3.png", alt: "After second resume: first SUSPENDED, second done, third RUNNING." },
+      "Optimized-out variables: When using suspend functions, the debugger may show \"was optimized out\" next to a variable. That means the variable's lifetime was shortened and it no longer exists at that point, so you cannot see its value. To disable this, use the -Xdebug compiler option. Do not use -Xdebug in production — it can cause memory leaks.",
+      { type: "image", src: "/images/portfolio/debugcoroutines/variable-optimised-out.png", alt: "Variable \"a\" was optimized out in the debugger." },
+    ],
+    codeExamples: [
+      {
+        code: "import kotlinx.coroutines.*\n\nfun main() = runBlocking<Unit> {\n    val a = async {\n        println(\"I'm computing part of the answer\")\n        6\n    }\n    val b = async {\n        println(\"I'm computing another part of the answer\")\n        7\n    }\n    println(\"The answer is \" + (a.await() * b.await()))\n}",
+        comment: "Set breakpoints on println() lines, then run in debug mode and use the Coroutines tab.",
+      },
+    ],
+    defaultCode: "import kotlinx.coroutines.*\n\nfun main() = runBlocking<Unit> {\n    val a = async {\n        println(\"I'm computing part of the answer\")\n        6\n    }\n    val b = async {\n        println(\"I'm computing another part of the answer\")\n        7\n    }\n    println(\"The answer is \" + (a.await() * b.await()))\n}",
+  },
+  {
+    id: "debug-kotlin-flow-intellij",
+    step: 23,
+    title: "Debug Kotlin Flow using IntelliJ IDEA",
+    prevStep: "debug-coroutines-intellij",
+    content: [
+      "This tutorial shows how to create Kotlin Flow and debug it in IntelliJ IDEA. You should already know coroutines and Kotlin Flow.",
+      "Create a Kotlin flow: Open a Kotlin project in IntelliJ. For Gradle, add kotlinx-coroutines-core to build.gradle(.kts). Open Main.kt in src/main/kotlin. Create simple() that returns a Flow<Int>: use delay(100) to imitate work, and in a for (i in 1..3) loop use emit(i). In main() use runBlocking, then simple().collect { value -> delay(300); println(value) }. Build the project (Build → Build Project).",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/flow-build-project.png", alt: "Build the Kotlin Flow project in IntelliJ IDEA." },
+      "Debug the coroutine: Set a breakpoint at the line where emit() is called. Run the code in debug mode (Debug next to the run configuration).",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/flow-breakpoint.png", alt: "Set breakpoint at emit() and run in debug mode." },
+      "The Debug tool window appears: Frames tab (call stack), Variables tab (e.g. flow emitting the first value), and Coroutines tab (running or suspended coroutines).",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/flow-debug-1.png", alt: "Debug tool window; Variables show flow emitting the first value." },
+      "Click Resume Program. The program stops at the same breakpoint again — now the flow is emitting the second value.",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/flow-debug-2.png", alt: "After resume: flow emitting the second value." },
+      "Resume again to see the third value. You can inspect variables and the Coroutines tab at each step.",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/flow-resume-debug.png", alt: "Resume debugger to step through flow emission." },
+      "Optimized-out variables: The debugger may show \"was optimized out\" next to a variable when using suspend functions — the variable's lifetime was shortened and it no longer exists there. To disable this, use the -Xdebug compiler option. Do not use -Xdebug in production; it can cause memory leaks.",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/variable-optimised-out.png", alt: "Variable was optimized out in the debugger." },
+      "Add a concurrently running coroutine: Add .buffer() before .collect() so the emitter and collector run concurrently. buffer() stores emitted values and runs the collector in a separate coroutine.",
+      "Debug a Kotlin flow with two coroutines: Set a breakpoint at println(value). Run in debug mode. In the Coroutines tab you see two coroutines: the emitter (RUNNING) and the collector (SUSPENDED), because buffer() runs them in separate coroutines.",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/flow-debug-3.png", alt: "Two coroutines: emitter RUNNING, collector SUSPENDED." },
+      "Click Resume Program. Now the collector coroutine has RUNNING status and the emitter has SUSPENDED status. You can dig deeper into each coroutine to debug your code.",
+      { type: "image", src: "/images/portfolio/debugkotlinflow/flow-debug-4.png", alt: "After resume: collector RUNNING, emitter SUSPENDED." },
+    ],
+    codeExamples: [
+      {
+        code: "import kotlinx.coroutines.*\nimport kotlinx.coroutines.flow.*\n\nfun simple(): Flow<Int> = flow {\n    for (i in 1..3) {\n        delay(100)\n        emit(i)\n    }\n}\n\nfun main() = runBlocking {\n    simple()\n        .collect { value ->\n            delay(300)\n            println(value)\n        }\n}",
+        comment: "Set breakpoint at emit(). Run in debug and use Variables/Coroutines tabs.",
+      },
+      {
+        code: "fun main() = runBlocking<Unit> {\n    simple()\n        .buffer()\n        .collect { value ->\n            delay(300)\n            println(value)\n        }\n}\n// buffer() runs emitter and collector in separate coroutines. Set breakpoint at println(value).",
+        comment: "With buffer(): two coroutines in Coroutines tab. Set breakpoint at println(value).",
+      },
+    ],
+    defaultCode: "import kotlinx.coroutines.*\nimport kotlinx.coroutines.flow.*\n\nfun simple(): Flow<Int> = flow {\n    for (i in 1..3) {\n        delay(100)\n        emit(i)\n    }\n}\n\nfun main() = runBlocking {\n    simple()\n        .collect { value ->\n            delay(300)\n            println(value)\n        }\n}",
   },
 ];
 

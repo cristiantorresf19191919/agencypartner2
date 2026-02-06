@@ -1412,6 +1412,1229 @@ repeat(t) {
       { input: "1\n4 2", output: "3 4 1 2" },
     ],
   },
+  {
+    id: "valid-parentheses",
+    title: "Valid Parentheses",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 20,
+    successRate: "85.50%",
+    description: "Given a string containing only '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nA string is valid if:\n1. Open brackets must be closed by the same type of brackets.\n2. Open brackets must be closed in the correct order.\n3. Every close bracket has a corresponding open bracket of the same type.\n\nExample: '([{}])' → valid, '([)]' → invalid, '((()' → invalid",
+    inputFormat: "A single line containing the bracket string.",
+    outputFormat: "'true' if valid, 'false' otherwise.",
+    constraints: "0 ≤ string.length ≤ 10⁴",
+    starterCode: {
+      typescript: `const s = readline();
+const stack: string[] = [];
+const pairs: { [key: string]: string } = { ')': '(', '}': '{', ']': '[' };
+
+for (const char of s) {
+  if (char === '(' || char === '{' || char === '[') {
+    stack.push(char);
+  } else {
+    if (stack.length === 0 || stack.pop() !== pairs[char]) {
+      console.log('false');
+      process.exit(0);
+    }
+  }
+}
+console.log(stack.length === 0 ? 'true' : 'false');
+`,
+      kotlin: `val s = readln()
+val stack = ArrayDeque<Char>()
+val pairs = mapOf(')' to '(', '}' to '{', ']' to '[')
+
+for (char in s) {
+    if (char in "({[") {
+        stack.addLast(char)
+    } else {
+        if (stack.isEmpty() || stack.removeLast() != pairs[char]) {
+            println("false")
+            return
+        }
+    }
+}
+println(if (stack.isEmpty()) "true" else "false")
+`,
+    },
+    sampleInput: "([{}])",
+    sampleOutput: "true",
+    testCases: [
+      { input: "([{}])", output: "true" },
+      { input: "([)]", output: "false" },
+      { input: "(()", output: "false" },
+      { input: "", output: "true" },
+      { input: "{[]}", output: "true" },
+    ],
+  },
+  {
+    id: "two-sum",
+    title: "Two Sum",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "88.20%",
+    description: "Given an array of integers and a target sum, find two numbers that add up to the target. Return the indices (0-based) of the two numbers.\n\nAssume exactly one solution exists and you may not use the same element twice.\n\nExample: nums=[2,7,11,15], target=9 → nums[0]+nums[1]=2+7=9 → Output: '0 1'",
+    inputFormat: "Line 1: n (array size). Line 2: n space-separated integers. Line 3: target.",
+    outputFormat: "Two space-separated indices (0-based, smaller first).",
+    constraints: "2 ≤ n ≤ 10⁴, -10⁹ ≤ nums[i] ≤ 10⁹",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+const target = parseInt(readline(), 10);
+
+const seen: Map<number, number> = new Map();
+for (let i = 0; i < n; i++) {
+  const complement = target - nums[i];
+  if (seen.has(complement)) {
+    console.log(seen.get(complement), i);
+    break;
+  }
+  seen.set(nums[i], i);
+}
+`,
+      kotlin: `val n = readln().toInt()
+val nums = readln().split(" ").map { it.toInt() }
+val target = readln().toInt()
+
+val seen = mutableMapOf<Int, Int>()
+for (i in 0 until n) {
+    val complement = target - nums[i]
+    if (complement in seen) {
+        println("\${seen[complement]} $i")
+        break
+    }
+    seen[nums[i]] = i
+}
+`,
+    },
+    sampleInput: "4\n2 7 11 15\n9",
+    sampleOutput: "0 1",
+    testCases: [
+      { input: "4\n2 7 11 15\n9", output: "0 1" },
+      { input: "3\n3 2 4\n6", output: "1 2" },
+      { input: "2\n3 3\n6", output: "0 1" },
+    ],
+  },
+  {
+    id: "palindrome-number",
+    title: "Palindrome Number",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 10,
+    successRate: "92.30%",
+    description: "Determine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward.\n\nNote: Negative numbers are NOT palindromes.\n\nExample: 121 → true (reads same backward), -121 → false (negative), 10 → false (01 ≠ 10)",
+    inputFormat: "A single integer.",
+    outputFormat: "'true' if palindrome, 'false' otherwise.",
+    constraints: "-2³¹ ≤ x ≤ 2³¹ - 1",
+    starterCode: {
+      typescript: `const x = parseInt(readline(), 10);
+
+if (x < 0) {
+  console.log('false');
+} else {
+  let reversed = 0;
+  let original = x;
+  while (original > 0) {
+    reversed = reversed * 10 + original % 10;
+    original = Math.floor(original / 10);
+  }
+  console.log(reversed === x ? 'true' : 'false');
+}
+`,
+      kotlin: `val x = readln().toInt()
+
+if (x < 0) {
+    println("false")
+} else {
+    var reversed = 0
+    var original = x
+    while (original > 0) {
+        reversed = reversed * 10 + original % 10
+        original /= 10
+    }
+    println(if (reversed == x) "true" else "false")
+}
+`,
+    },
+    sampleInput: "121",
+    sampleOutput: "true",
+    testCases: [
+      { input: "121", output: "true" },
+      { input: "-121", output: "false" },
+      { input: "10", output: "false" },
+      { input: "12321", output: "true" },
+      { input: "0", output: "true" },
+    ],
+  },
+  {
+    id: "maximum-subarray",
+    title: "Maximum Subarray (Kadane's Algorithm)",
+    difficulty: "Medium",
+    category: "Problem Solving (Intermediate)",
+    maxScore: 30,
+    successRate: "78.50%",
+    description: "Find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.\n\nUse Kadane's Algorithm: Track current sum and max sum. If current sum becomes negative, reset it.\n\nExample: [-2,1,-3,4,-1,2,1,-5,4] → Subarray [4,-1,2,1] has largest sum = 6",
+    inputFormat: "Line 1: n. Line 2: n space-separated integers.",
+    outputFormat: "The maximum subarray sum.",
+    constraints: "1 ≤ n ≤ 10⁵, -10⁴ ≤ nums[i] ≤ 10⁴",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+
+let maxSum = nums[0];
+let currentSum = nums[0];
+
+for (let i = 1; i < n; i++) {
+  currentSum = Math.max(nums[i], currentSum + nums[i]);
+  maxSum = Math.max(maxSum, currentSum);
+}
+
+console.log(maxSum);
+`,
+      kotlin: `val n = readln().toInt()
+val nums = readln().split(" ").map { it.toInt() }
+
+var maxSum = nums[0]
+var currentSum = nums[0]
+
+for (i in 1 until n) {
+    currentSum = maxOf(nums[i], currentSum + nums[i])
+    maxSum = maxOf(maxSum, currentSum)
+}
+
+println(maxSum)
+`,
+    },
+    sampleInput: "9\n-2 1 -3 4 -1 2 1 -5 4",
+    sampleOutput: "6",
+    testCases: [
+      { input: "9\n-2 1 -3 4 -1 2 1 -5 4", output: "6" },
+      { input: "1\n1", output: "1" },
+      { input: "5\n5 4 -1 7 8", output: "23" },
+      { input: "3\n-1 -2 -3", output: "-1" },
+    ],
+  },
+  {
+    id: "merge-intervals",
+    title: "Merge Intervals",
+    difficulty: "Medium",
+    category: "Problem Solving (Intermediate)",
+    maxScore: 35,
+    successRate: "72.40%",
+    description: "Given an array of intervals where intervals[i] = [start, end], merge all overlapping intervals and return non-overlapping intervals.\n\nAlgorithm: Sort by start time, then iterate and merge if current start ≤ previous end.\n\nExample: [[1,3],[2,6],[8,10],[15,18]] → [[1,6],[8,10],[15,18]] (intervals [1,3] and [2,6] overlap)",
+    inputFormat: "Line 1: n (number of intervals). Next n lines: start end (space-separated).",
+    outputFormat: "Merged intervals, one per line as 'start end'.",
+    constraints: "1 ≤ n ≤ 10⁴, 0 ≤ start ≤ end ≤ 10⁴",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const intervals: number[][] = [];
+for (let i = 0; i < n; i++) {
+  intervals.push(readline().split(" ").map(Number));
+}
+
+intervals.sort((a, b) => a[0] - b[0]);
+const merged: number[][] = [intervals[0]];
+
+for (let i = 1; i < intervals.length; i++) {
+  const last = merged[merged.length - 1];
+  const curr = intervals[i];
+
+  if (curr[0] <= last[1]) {
+    last[1] = Math.max(last[1], curr[1]);
+  } else {
+    merged.push(curr);
+  }
+}
+
+for (const interval of merged) {
+  console.log(interval[0], interval[1]);
+}
+`,
+      kotlin: `val n = readln().toInt()
+val intervals = (1..n).map { readln().split(" ").map { it.toInt() } }.sortedBy { it[0] }.toMutableList()
+
+val merged = mutableListOf(intervals[0].toMutableList())
+
+for (i in 1 until intervals.size) {
+    val last = merged.last()
+    val curr = intervals[i]
+
+    if (curr[0] <= last[1]) {
+        last[1] = maxOf(last[1], curr[1])
+    } else {
+        merged.add(curr.toMutableList())
+    }
+}
+
+merged.forEach { println("\${it[0]} \${it[1]}") }
+`,
+    },
+    sampleInput: "4\n1 3\n2 6\n8 10\n15 18",
+    sampleOutput: "1 6\n8 10\n15 18",
+    testCases: [
+      { input: "4\n1 3\n2 6\n8 10\n15 18", output: "1 6\n8 10\n15 18" },
+      { input: "2\n1 4\n4 5", output: "1 5" },
+      { input: "1\n1 1", output: "1 1" },
+    ],
+  },
+  {
+    id: "group-anagrams",
+    title: "Group Anagrams",
+    difficulty: "Medium",
+    category: "Problem Solving (Intermediate)",
+    maxScore: 30,
+    successRate: "75.80%",
+    description: "Given an array of strings, group the anagrams together. Anagrams are words with the same characters in different order.\n\nAlgorithm: Sort each word's characters and use as key in a hash map.\n\nExample: ['eat','tea','tan','ate','nat','bat'] → Groups: ['eat','tea','ate'], ['tan','nat'], ['bat']",
+    inputFormat: "Line 1: n (number of words). Line 2: n space-separated words.",
+    outputFormat: "Each group on a line, words space-separated, groups sorted alphabetically by first word, words within groups sorted.",
+    constraints: "1 ≤ n ≤ 10⁴, 0 ≤ word.length ≤ 100, words are lowercase letters",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const words = readline().split(" ");
+
+const groups: Map<string, string[]> = new Map();
+
+for (const word of words) {
+  const sorted = word.split("").sort().join("");
+  if (!groups.has(sorted)) {
+    groups.set(sorted, []);
+  }
+  groups.get(sorted)!.push(word);
+}
+
+const result = Array.from(groups.values())
+  .map(group => group.sort())
+  .sort((a, b) => a[0].localeCompare(b[0]));
+
+for (const group of result) {
+  console.log(group.join(" "));
+}
+`,
+      kotlin: `val n = readln().toInt()
+val words = readln().split(" ")
+
+val groups = mutableMapOf<String, MutableList<String>>()
+
+for (word in words) {
+    val sorted = word.toCharArray().sorted().joinToString("")
+    groups.getOrPut(sorted) { mutableListOf() }.add(word)
+}
+
+val result = groups.values
+    .map { it.sorted() }
+    .sortedBy { it[0] }
+
+result.forEach { println(it.joinToString(" ")) }
+`,
+    },
+    sampleInput: "6\neat tea tan ate nat bat",
+    sampleOutput: "ate eat tea\nbat\nnat tan",
+    testCases: [
+      { input: "6\neat tea tan ate nat bat", output: "ate eat tea\nbat\nnat tan" },
+      { input: "1\na", output: "a" },
+      { input: "3\nabc bca cab", output: "abc bca cab" },
+    ],
+  },
+  {
+    id: "rotate-array",
+    title: "Rotate Array",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "82.60%",
+    description: "Given an array, rotate it to the right by k steps.\n\nExample: [1,2,3,4,5,6,7], k=3 → Rotate right 3 times → [5,6,7,1,2,3,4]\n\nOptimized approach: Use the reversal algorithm - reverse entire array, reverse first k, reverse rest.",
+    inputFormat: "Line 1: n k (array size and rotation count). Line 2: n space-separated integers.",
+    outputFormat: "The rotated array as space-separated integers.",
+    constraints: "1 ≤ n ≤ 10⁵, 0 ≤ k ≤ 10⁵",
+    starterCode: {
+      typescript: `const [n, k] = readline().split(" ").map(Number);
+const nums = readline().split(" ").map(Number);
+
+const rotations = k % n;
+if (rotations === 0) {
+  console.log(nums.join(" "));
+} else {
+  const rotated = [...nums.slice(n - rotations), ...nums.slice(0, n - rotations)];
+  console.log(rotated.join(" "));
+}
+`,
+      kotlin: `val (n, k) = readln().split(" ").map { it.toInt() }
+val nums = readln().split(" ").map { it.toInt() }
+
+val rotations = k % n
+if (rotations == 0) {
+    println(nums.joinToString(" "))
+} else {
+    val rotated = nums.takeLast(rotations) + nums.dropLast(rotations)
+    println(rotated.joinToString(" "))
+}
+`,
+    },
+    sampleInput: "7 3\n1 2 3 4 5 6 7",
+    sampleOutput: "5 6 7 1 2 3 4",
+    testCases: [
+      { input: "7 3\n1 2 3 4 5 6 7", output: "5 6 7 1 2 3 4" },
+      { input: "3 4\n-1 -100 3", output: "3 -1 -100" },
+      { input: "2 0\n1 2", output: "1 2" },
+    ],
+  },
+  {
+    id: "longest-common-prefix",
+    title: "Longest Common Prefix",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "86.40%",
+    description: "Find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string ''.\n\nExample: ['flower','flow','flight'] → 'fl'\nExample: ['dog','racecar','car'] → '' (no common prefix)",
+    inputFormat: "Line 1: n (number of strings). Line 2: n space-separated strings.",
+    outputFormat: "The longest common prefix (empty string if none).",
+    constraints: "1 ≤ n ≤ 200, 0 ≤ string.length ≤ 200",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const strs = readline().split(" ");
+
+if (n === 0) {
+  console.log("");
+} else {
+  let prefix = strs[0];
+  for (let i = 1; i < n; i++) {
+    while (strs[i].indexOf(prefix) !== 0) {
+      prefix = prefix.slice(0, -1);
+      if (prefix === "") break;
+    }
+  }
+  console.log(prefix);
+}
+`,
+      kotlin: `val n = readln().toInt()
+val strs = readln().split(" ")
+
+if (n == 0) {
+    println("")
+} else {
+    var prefix = strs[0]
+    for (i in 1 until n) {
+        while (!strs[i].startsWith(prefix)) {
+            prefix = prefix.dropLast(1)
+            if (prefix.isEmpty()) break
+        }
+    }
+    println(prefix)
+}
+`,
+    },
+    sampleInput: "3\nflower flow flight",
+    sampleOutput: "fl",
+    testCases: [
+      { input: "3\nflower flow flight", output: "fl" },
+      { input: "3\ndog racecar car", output: "" },
+      { input: "1\nalone", output: "alone" },
+      { input: "2\nab a", output: "a" },
+    ],
+  },
+  {
+    id: "fibonacci-memo",
+    title: "Fibonacci with Memoization",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 20,
+    successRate: "90.10%",
+    description: "Calculate the nth Fibonacci number using memoization for efficiency.\n\nFibonacci sequence: F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2)\n\nNaive recursion is O(2^n). With memoization, it's O(n).\n\nExample: n=10 → F(10)=55",
+    inputFormat: "A single integer n.",
+    outputFormat: "The nth Fibonacci number.",
+    constraints: "0 ≤ n ≤ 50",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+
+const memo: Map<number, bigint> = new Map();
+memo.set(0, BigInt(0));
+memo.set(1, BigInt(1));
+
+function fib(k: number): bigint {
+  if (memo.has(k)) return memo.get(k)!;
+  const result = fib(k - 1) + fib(k - 2);
+  memo.set(k, result);
+  return result;
+}
+
+console.log(fib(n).toString());
+`,
+      kotlin: `val n = readln().toInt()
+
+val memo = mutableMapOf(0 to 0L, 1 to 1L)
+
+fun fib(k: Int): Long {
+    if (k in memo) return memo[k]!!
+    val result = fib(k - 1) + fib(k - 2)
+    memo[k] = result
+    return result
+}
+
+println(fib(n))
+`,
+    },
+    sampleInput: "10",
+    sampleOutput: "55",
+    testCases: [
+      { input: "10", output: "55" },
+      { input: "0", output: "0" },
+      { input: "1", output: "1" },
+      { input: "20", output: "6765" },
+      { input: "30", output: "832040" },
+    ],
+  },
+  {
+    id: "binary-search",
+    title: "Binary Search",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "89.50%",
+    description: "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return -1.\n\nBinary search works by repeatedly dividing the search interval in half.\n\nExample: nums=[−1,0,3,5,9,12], target=9 → index 4",
+    inputFormat: "Line 1: n (array size). Line 2: n space-separated sorted integers. Line 3: target.",
+    outputFormat: "The index of target (0-based), or -1 if not found.",
+    constraints: "1 ≤ n ≤ 10⁴, -10⁴ ≤ nums[i], target ≤ 10⁴",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+const target = parseInt(readline(), 10);
+
+let left = 0;
+let right = n - 1;
+let result = -1;
+
+while (left <= right) {
+  const mid = Math.floor((left + right) / 2);
+  if (nums[mid] === target) {
+    result = mid;
+    break;
+  } else if (nums[mid] < target) {
+    left = mid + 1;
+  } else {
+    right = mid - 1;
+  }
+}
+
+console.log(result);
+`,
+      kotlin: `val n = readln().toInt()
+val nums = readln().split(" ").map { it.toInt() }
+val target = readln().toInt()
+
+var left = 0
+var right = n - 1
+var result = -1
+
+while (left <= right) {
+    val mid = (left + right) / 2
+    when {
+        nums[mid] == target -> { result = mid; break }
+        nums[mid] < target -> left = mid + 1
+        else -> right = mid - 1
+    }
+}
+
+println(result)
+`,
+    },
+    sampleInput: "6\n-1 0 3 5 9 12\n9",
+    sampleOutput: "4",
+    testCases: [
+      { input: "6\n-1 0 3 5 9 12\n9", output: "4" },
+      { input: "6\n-1 0 3 5 9 12\n2", output: "-1" },
+      { input: "1\n5\n5", output: "0" },
+    ],
+  },
+  {
+    id: "count-islands",
+    title: "Count Islands",
+    difficulty: "Medium",
+    category: "Problem Solving (Intermediate)",
+    maxScore: 40,
+    successRate: "68.90%",
+    description: "Given a 2D grid of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.\n\nUse BFS or DFS to explore and mark visited cells.\n\nExample:\n11110\n11010\n11000\n00000\n→ 1 island",
+    inputFormat: "Line 1: m n (rows and columns). Next m lines: strings of 0s and 1s.",
+    outputFormat: "The number of islands.",
+    constraints: "1 ≤ m, n ≤ 300",
+    starterCode: {
+      typescript: `const [m, n] = readline().split(" ").map(Number);
+const grid: string[][] = [];
+for (let i = 0; i < m; i++) {
+  grid.push(readline().split(""));
+}
+
+function dfs(i: number, j: number) {
+  if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] !== '1') return;
+  grid[i][j] = '0';
+  dfs(i + 1, j);
+  dfs(i - 1, j);
+  dfs(i, j + 1);
+  dfs(i, j - 1);
+}
+
+let islands = 0;
+for (let i = 0; i < m; i++) {
+  for (let j = 0; j < n; j++) {
+    if (grid[i][j] === '1') {
+      islands++;
+      dfs(i, j);
+    }
+  }
+}
+
+console.log(islands);
+`,
+      kotlin: `val (m, n) = readln().split(" ").map { it.toInt() }
+val grid = (1..m).map { readln().toCharArray() }.toTypedArray()
+
+fun dfs(i: Int, j: Int) {
+    if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] != '1') return
+    grid[i][j] = '0'
+    dfs(i + 1, j)
+    dfs(i - 1, j)
+    dfs(i, j + 1)
+    dfs(i, j - 1)
+}
+
+var islands = 0
+for (i in 0 until m) {
+    for (j in 0 until n) {
+        if (grid[i][j] == '1') {
+            islands++
+            dfs(i, j)
+        }
+    }
+}
+
+println(islands)
+`,
+    },
+    sampleInput: "4 5\n11110\n11010\n11000\n00000",
+    sampleOutput: "1",
+    testCases: [
+      { input: "4 5\n11110\n11010\n11000\n00000", output: "1" },
+      { input: "4 5\n11000\n11000\n00100\n00011", output: "3" },
+      { input: "1 1\n1", output: "1" },
+    ],
+  },
+  {
+    id: "climbing-stairs",
+    title: "Climbing Stairs",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 20,
+    successRate: "87.30%",
+    description: "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?\n\nThis is essentially Fibonacci: ways(n) = ways(n-1) + ways(n-2)\n\nExample: n=3 → 3 ways: 1+1+1, 1+2, 2+1",
+    inputFormat: "A single integer n.",
+    outputFormat: "The number of distinct ways to climb.",
+    constraints: "1 ≤ n ≤ 45",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+
+if (n <= 2) {
+  console.log(n);
+} else {
+  let prev2 = 1;
+  let prev1 = 2;
+  for (let i = 3; i <= n; i++) {
+    const curr = prev1 + prev2;
+    prev2 = prev1;
+    prev1 = curr;
+  }
+  console.log(prev1);
+}
+`,
+      kotlin: `val n = readln().toInt()
+
+if (n <= 2) {
+    println(n)
+} else {
+    var prev2 = 1
+    var prev1 = 2
+    for (i in 3..n) {
+        val curr = prev1 + prev2
+        prev2 = prev1
+        prev1 = curr
+    }
+    println(prev1)
+}
+`,
+    },
+    sampleInput: "3",
+    sampleOutput: "3",
+    testCases: [
+      { input: "3", output: "3" },
+      { input: "2", output: "2" },
+      { input: "5", output: "8" },
+      { input: "10", output: "89" },
+    ],
+  },
+  {
+    id: "product-except-self",
+    title: "Product of Array Except Self",
+    difficulty: "Medium",
+    category: "Problem Solving (Intermediate)",
+    maxScore: 35,
+    successRate: "70.20%",
+    description: "Given an integer array nums, return an array answer such that answer[i] is the product of all elements except nums[i].\n\nSolve in O(n) without using division.\n\nAlgorithm: Two passes - left products then right products.\n\nExample: [1,2,3,4] → [24,12,8,6] (24=2*3*4, 12=1*3*4, 8=1*2*4, 6=1*2*3)",
+    inputFormat: "Line 1: n. Line 2: n space-separated integers.",
+    outputFormat: "n space-separated integers (products except self).",
+    constraints: "2 ≤ n ≤ 10⁵, -30 ≤ nums[i] ≤ 30",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+
+const result: number[] = new Array(n).fill(1);
+
+// Left products
+let leftProduct = 1;
+for (let i = 0; i < n; i++) {
+  result[i] = leftProduct;
+  leftProduct *= nums[i];
+}
+
+// Right products
+let rightProduct = 1;
+for (let i = n - 1; i >= 0; i--) {
+  result[i] *= rightProduct;
+  rightProduct *= nums[i];
+}
+
+console.log(result.join(" "));
+`,
+      kotlin: `val n = readln().toInt()
+val nums = readln().split(" ").map { it.toInt() }
+
+val result = IntArray(n) { 1 }
+
+// Left products
+var leftProduct = 1
+for (i in 0 until n) {
+    result[i] = leftProduct
+    leftProduct *= nums[i]
+}
+
+// Right products
+var rightProduct = 1
+for (i in n - 1 downTo 0) {
+    result[i] *= rightProduct
+    rightProduct *= nums[i]
+}
+
+println(result.joinToString(" "))
+`,
+    },
+    sampleInput: "4\n1 2 3 4",
+    sampleOutput: "24 12 8 6",
+    testCases: [
+      { input: "4\n1 2 3 4", output: "24 12 8 6" },
+      { input: "5\n-1 1 0 -3 3", output: "0 0 9 0 0" },
+      { input: "2\n2 3", output: "3 2" },
+    ],
+  },
+  {
+    id: "reverse-linked-list",
+    title: "Reverse a Sequence",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "91.40%",
+    description: "Given a sequence of n integers, reverse it in place and print the result.\n\nThis simulates reversing a linked list - use two pointers or stack approach.\n\nExample: [1,2,3,4,5] → [5,4,3,2,1]",
+    inputFormat: "Line 1: n. Line 2: n space-separated integers.",
+    outputFormat: "The reversed sequence as space-separated integers.",
+    constraints: "0 ≤ n ≤ 5000",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+if (n === 0) {
+  console.log("");
+} else {
+  const nums = readline().split(" ").map(Number);
+  let left = 0;
+  let right = n - 1;
+  while (left < right) {
+    [nums[left], nums[right]] = [nums[right], nums[left]];
+    left++;
+    right--;
+  }
+  console.log(nums.join(" "));
+}
+`,
+      kotlin: `val n = readln().toInt()
+if (n == 0) {
+    println("")
+} else {
+    val nums = readln().split(" ").map { it.toInt() }.toMutableList()
+    var left = 0
+    var right = n - 1
+    while (left < right) {
+        val temp = nums[left]
+        nums[left] = nums[right]
+        nums[right] = temp
+        left++
+        right--
+    }
+    println(nums.joinToString(" "))
+}
+`,
+    },
+    sampleInput: "5\n1 2 3 4 5",
+    sampleOutput: "5 4 3 2 1",
+    testCases: [
+      { input: "5\n1 2 3 4 5", output: "5 4 3 2 1" },
+      { input: "2\n1 2", output: "2 1" },
+      { input: "1\n1", output: "1" },
+    ],
+  },
+  {
+    id: "container-with-most-water",
+    title: "Container With Most Water",
+    difficulty: "Medium",
+    category: "Problem Solving (Intermediate)",
+    maxScore: 35,
+    successRate: "65.80%",
+    description: "Given n non-negative integers representing heights of vertical lines at positions 0 to n-1, find two lines that together with the x-axis form a container that holds the most water.\n\nUse two pointers from both ends, moving the shorter one inward.\n\nArea = min(height[left], height[right]) * (right - left)\n\nExample: [1,8,6,2,5,4,8,3,7] → Max area = 49 (between positions 1 and 8)",
+    inputFormat: "Line 1: n. Line 2: n space-separated integers (heights).",
+    outputFormat: "The maximum area.",
+    constraints: "2 ≤ n ≤ 10⁵, 0 ≤ height[i] ≤ 10⁴",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const height = readline().split(" ").map(Number);
+
+let left = 0;
+let right = n - 1;
+let maxArea = 0;
+
+while (left < right) {
+  const area = Math.min(height[left], height[right]) * (right - left);
+  maxArea = Math.max(maxArea, area);
+
+  if (height[left] < height[right]) {
+    left++;
+  } else {
+    right--;
+  }
+}
+
+console.log(maxArea);
+`,
+      kotlin: `val n = readln().toInt()
+val height = readln().split(" ").map { it.toInt() }
+
+var left = 0
+var right = n - 1
+var maxArea = 0
+
+while (left < right) {
+    val area = minOf(height[left], height[right]) * (right - left)
+    maxArea = maxOf(maxArea, area)
+
+    if (height[left] < height[right]) {
+        left++
+    } else {
+        right--
+    }
+}
+
+println(maxArea)
+`,
+    },
+    sampleInput: "9\n1 8 6 2 5 4 8 3 7",
+    sampleOutput: "49",
+    testCases: [
+      { input: "9\n1 8 6 2 5 4 8 3 7", output: "49" },
+      { input: "2\n1 1", output: "1" },
+      { input: "4\n1 2 1 2", output: "4" },
+    ],
+  },
+  {
+    id: "missing-number",
+    title: "Find Missing Number",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "93.20%",
+    description: "Given an array containing n distinct numbers taken from 0, 1, 2, ..., n, find the one number that is missing from the array.\n\nUse the sum formula: sum(0 to n) = n*(n+1)/2\n\nExample: [3,0,1] → Missing is 2 (expected: 0,1,2,3)",
+    inputFormat: "Line 1: n. Line 2: n space-separated integers.",
+    outputFormat: "The missing number.",
+    constraints: "1 ≤ n ≤ 10⁴",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+
+const expectedSum = (n * (n + 1)) / 2;
+const actualSum = nums.reduce((a, b) => a + b, 0);
+
+console.log(expectedSum - actualSum);
+`,
+      kotlin: `val n = readln().toInt()
+val nums = readln().split(" ").map { it.toInt() }
+
+val expectedSum = n * (n + 1) / 2
+val actualSum = nums.sum()
+
+println(expectedSum - actualSum)
+`,
+    },
+    sampleInput: "3\n3 0 1",
+    sampleOutput: "2",
+    testCases: [
+      { input: "3\n3 0 1", output: "2" },
+      { input: "2\n0 1", output: "2" },
+      { input: "9\n9 6 4 2 3 5 7 0 1", output: "8" },
+    ],
+  },
+  {
+    id: "single-number",
+    title: "Single Number (XOR)",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "91.80%",
+    description: "Given a non-empty array where every element appears twice except for one, find that single element.\n\nUse XOR: a ^ a = 0, a ^ 0 = a. XOR all numbers together.\n\nExample: [4,1,2,1,2] → 4 (1^1=0, 2^2=0, 4^0=4)",
+    inputFormat: "Line 1: n. Line 2: n space-separated integers.",
+    outputFormat: "The single number.",
+    constraints: "1 ≤ n ≤ 3×10⁴, n is odd",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+
+let result = 0;
+for (const num of nums) {
+  result ^= num;
+}
+
+console.log(result);
+`,
+      kotlin: `val n = readln().toInt()
+val nums = readln().split(" ").map { it.toInt() }
+
+var result = 0
+for (num in nums) {
+    result = result xor num
+}
+
+println(result)
+`,
+    },
+    sampleInput: "5\n4 1 2 1 2",
+    sampleOutput: "4",
+    testCases: [
+      { input: "5\n4 1 2 1 2", output: "4" },
+      { input: "3\n2 2 1", output: "1" },
+      { input: "1\n1", output: "1" },
+    ],
+  },
+  {
+    id: "move-zeroes",
+    title: "Move Zeroes to End",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "90.50%",
+    description: "Given an array of integers, move all zeroes to the end while maintaining the relative order of non-zero elements.\n\nUse two pointers: one for the position to insert non-zero, one to scan.\n\nExample: [0,1,0,3,12] → [1,3,12,0,0]",
+    inputFormat: "Line 1: n. Line 2: n space-separated integers.",
+    outputFormat: "The array with zeroes moved to end, space-separated.",
+    constraints: "1 ≤ n ≤ 10⁴",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+
+let insertPos = 0;
+for (let i = 0; i < n; i++) {
+  if (nums[i] !== 0) {
+    [nums[insertPos], nums[i]] = [nums[i], nums[insertPos]];
+    insertPos++;
+  }
+}
+
+console.log(nums.join(" "));
+`,
+      kotlin: `val n = readln().toInt()
+val nums = readln().split(" ").map { it.toInt() }.toMutableList()
+
+var insertPos = 0
+for (i in 0 until n) {
+    if (nums[i] != 0) {
+        val temp = nums[insertPos]
+        nums[insertPos] = nums[i]
+        nums[i] = temp
+        insertPos++
+    }
+}
+
+println(nums.joinToString(" "))
+`,
+    },
+    sampleInput: "5\n0 1 0 3 12",
+    sampleOutput: "1 3 12 0 0",
+    testCases: [
+      { input: "5\n0 1 0 3 12", output: "1 3 12 0 0" },
+      { input: "1\n0", output: "0" },
+      { input: "4\n1 2 3 4", output: "1 2 3 4" },
+    ],
+  },
+  {
+    id: "string-reverse",
+    title: "Reverse String In-Place",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 10,
+    successRate: "95.30%",
+    description: "Reverse a string in-place using two pointers.\n\nSwap characters from both ends moving towards the center.\n\nExample: 'hello' → 'olleh'",
+    inputFormat: "A single line containing a string.",
+    outputFormat: "The reversed string.",
+    constraints: "1 ≤ length ≤ 10⁵",
+    starterCode: {
+      typescript: `const s = readline();
+const chars = s.split("");
+
+let left = 0;
+let right = chars.length - 1;
+
+while (left < right) {
+  [chars[left], chars[right]] = [chars[right], chars[left]];
+  left++;
+  right--;
+}
+
+console.log(chars.join(""));
+`,
+      kotlin: `val s = readln()
+val chars = s.toCharArray()
+
+var left = 0
+var right = chars.size - 1
+
+while (left < right) {
+    val temp = chars[left]
+    chars[left] = chars[right]
+    chars[right] = temp
+    left++
+    right--
+}
+
+println(chars.concatToString())
+`,
+    },
+    sampleInput: "hello",
+    sampleOutput: "olleh",
+    testCases: [
+      { input: "hello", output: "olleh" },
+      { input: "a", output: "a" },
+      { input: "ab", output: "ba" },
+      { input: "Hannah", output: "hannaH" },
+    ],
+  },
+  {
+    id: "power-of-two",
+    title: "Power of Two",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 10,
+    successRate: "88.90%",
+    description: "Given an integer n, return true if it is a power of two.\n\nA number is power of 2 if: n > 0 && (n & (n-1)) == 0\n\nBit manipulation: powers of 2 have exactly one bit set.\n\nExample: 16 → true (2⁴), 3 → false",
+    inputFormat: "A single integer n.",
+    outputFormat: "'true' if power of two, 'false' otherwise.",
+    constraints: "-2³¹ ≤ n ≤ 2³¹ - 1",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+
+const isPowerOfTwo = n > 0 && (n & (n - 1)) === 0;
+
+console.log(isPowerOfTwo ? "true" : "false");
+`,
+      kotlin: `val n = readln().toInt()
+
+val isPowerOfTwo = n > 0 && (n and (n - 1)) == 0
+
+println(if (isPowerOfTwo) "true" else "false")
+`,
+    },
+    sampleInput: "16",
+    sampleOutput: "true",
+    testCases: [
+      { input: "16", output: "true" },
+      { input: "3", output: "false" },
+      { input: "1", output: "true" },
+      { input: "0", output: "false" },
+    ],
+  },
+  {
+    id: "remove-duplicates-sorted",
+    title: "Remove Duplicates from Sorted Array",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 20,
+    successRate: "87.60%",
+    description: "Given a sorted array, remove duplicates in-place so each element appears only once. Return the new length and the modified array.\n\nUse two pointers: one for unique elements, one to scan.\n\nExample: [1,1,2] → length=2, array=[1,2,...]",
+    inputFormat: "Line 1: n. Line 2: n space-separated sorted integers.",
+    outputFormat: "Line 1: new length. Line 2: unique elements space-separated.",
+    constraints: "1 ≤ n ≤ 3×10⁴",
+    starterCode: {
+      typescript: `const n = parseInt(readline(), 10);
+const nums = readline().split(" ").map(Number);
+
+if (n === 0) {
+  console.log(0);
+  console.log("");
+} else {
+  let uniqueIdx = 0;
+  for (let i = 1; i < n; i++) {
+    if (nums[i] !== nums[uniqueIdx]) {
+      uniqueIdx++;
+      nums[uniqueIdx] = nums[i];
+    }
+  }
+  const newLength = uniqueIdx + 1;
+  console.log(newLength);
+  console.log(nums.slice(0, newLength).join(" "));
+}
+`,
+      kotlin: `val n = readln().toInt()
+
+if (n == 0) {
+    println(0)
+    println("")
+} else {
+    val nums = readln().split(" ").map { it.toInt() }.toMutableList()
+    var uniqueIdx = 0
+    for (i in 1 until n) {
+        if (nums[i] != nums[uniqueIdx]) {
+            uniqueIdx++
+            nums[uniqueIdx] = nums[i]
+        }
+    }
+    val newLength = uniqueIdx + 1
+    println(newLength)
+    println(nums.take(newLength).joinToString(" "))
+}
+`,
+    },
+    sampleInput: "3\n1 1 2",
+    sampleOutput: "2\n1 2",
+    testCases: [
+      { input: "3\n1 1 2", output: "2\n1 2" },
+      { input: "10\n0 0 1 1 1 2 2 3 3 4", output: "5\n0 1 2 3 4" },
+      { input: "1\n1", output: "1\n1" },
+    ],
+  },
+  {
+    id: "roman-to-integer",
+    title: "Roman to Integer",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 20,
+    successRate: "86.40%",
+    description: "Convert a Roman numeral string to an integer.\n\nI=1, V=5, X=10, L=50, C=100, D=500, M=1000\n\nIf smaller value before larger, subtract (IV=4). Otherwise add.\n\nExample: 'MCMXCIV' → 1994 (M=1000 + CM=900 + XC=90 + IV=4)",
+    inputFormat: "A single line containing a Roman numeral string.",
+    outputFormat: "The integer value.",
+    constraints: "1 ≤ s.length ≤ 15, valid Roman numeral in range [1, 3999]",
+    starterCode: {
+      typescript: `const s = readline();
+
+const values: { [key: string]: number } = {
+  'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000
+};
+
+let result = 0;
+for (let i = 0; i < s.length; i++) {
+  const curr = values[s[i]];
+  const next = values[s[i + 1]] || 0;
+  if (curr < next) {
+    result -= curr;
+  } else {
+    result += curr;
+  }
+}
+
+console.log(result);
+`,
+      kotlin: `val s = readln()
+
+val values = mapOf(
+    'I' to 1, 'V' to 5, 'X' to 10, 'L' to 50,
+    'C' to 100, 'D' to 500, 'M' to 1000
+)
+
+var result = 0
+for (i in s.indices) {
+    val curr = values[s[i]] ?: 0
+    val next = if (i + 1 < s.length) values[s[i + 1]] ?: 0 else 0
+    if (curr < next) {
+        result -= curr
+    } else {
+        result += curr
+    }
+}
+
+println(result)
+`,
+    },
+    sampleInput: "MCMXCIV",
+    sampleOutput: "1994",
+    testCases: [
+      { input: "MCMXCIV", output: "1994" },
+      { input: "III", output: "3" },
+      { input: "LVIII", output: "58" },
+      { input: "IX", output: "9" },
+    ],
+  },
+  {
+    id: "first-unique-char",
+    title: "First Unique Character",
+    difficulty: "Easy",
+    category: "Problem Solving (Basic)",
+    maxScore: 15,
+    successRate: "89.70%",
+    description: "Given a string s, find the first non-repeating character and return its index. Return -1 if none exists.\n\nCount character frequencies, then find first with count 1.\n\nExample: 'leetcode' → 0 (l appears once, is first)",
+    inputFormat: "A single line containing a string.",
+    outputFormat: "The index (0-based) or -1.",
+    constraints: "1 ≤ s.length ≤ 10⁵, lowercase English letters only",
+    starterCode: {
+      typescript: `const s = readline();
+
+const count: Map<string, number> = new Map();
+for (const c of s) {
+  count.set(c, (count.get(c) || 0) + 1);
+}
+
+let result = -1;
+for (let i = 0; i < s.length; i++) {
+  if (count.get(s[i]) === 1) {
+    result = i;
+    break;
+  }
+}
+
+console.log(result);
+`,
+      kotlin: `val s = readln()
+
+val count = mutableMapOf<Char, Int>()
+for (c in s) {
+    count[c] = (count[c] ?: 0) + 1
+}
+
+var result = -1
+for (i in s.indices) {
+    if (count[s[i]] == 1) {
+        result = i
+        break
+    }
+}
+
+println(result)
+`,
+    },
+    sampleInput: "leetcode",
+    sampleOutput: "0",
+    testCases: [
+      { input: "leetcode", output: "0" },
+      { input: "loveleetcode", output: "2" },
+      { input: "aabb", output: "-1" },
+    ],
+  },
 ];
 
 /** Get a challenge by id. */

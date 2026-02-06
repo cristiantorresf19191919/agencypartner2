@@ -136,7 +136,7 @@ export function CodeEditor({
   const [error, setError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
-  const [fontSize, setFontSize] = useState(14);
+  const [fontSize, setFontSize] = useState(17);
   const [files, setFiles] = useState<CodeFile[]>([{ name: "App.tsx", content: initialCode, language }]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
   const [mobileEditorOpen, setMobileEditorOpen] = useState(false);
@@ -301,11 +301,14 @@ export function CodeEditor({
   useEffect(() => {
     if (isFullscreen) {
       document.body.style.overflow = "hidden";
+      document.body.setAttribute("data-code-editor-fullscreen", "true");
     } else {
       document.body.style.overflow = "";
+      document.body.removeAttribute("data-code-editor-fullscreen");
     }
     return () => {
       document.body.style.overflow = "";
+      document.body.removeAttribute("data-code-editor-fullscreen");
     };
   }, [isFullscreen]);
 
@@ -350,7 +353,7 @@ export function CodeEditor({
   const editorOptions = useMemo(
     () => ({
       minimap: { enabled: false },
-      fontSize: isMobile ? 13 : fontSize,
+      fontSize: isMobile ? 14 : fontSize,
       fontLigatures: true,
       smoothScrolling: true,
       scrollBeyondLastLine: false,
@@ -368,6 +371,13 @@ export function CodeEditor({
       glyphMargin: !isMobile,
       lineNumbers: (isMobile ? "off" : "on") as "on" | "off",
       folding: !isMobile,
+      // Enhanced editor experience
+      lineHeight: isMobile ? 22 : 26,
+      padding: { top: 16, bottom: 16 },
+      cursorBlinking: "smooth" as const,
+      cursorSmoothCaretAnimation: "on" as const,
+      fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace",
+      bracketPairColorization: { enabled: true },
     }),
     [fontSize, readOnly, isMobile]
   );
@@ -750,7 +760,7 @@ export function solution() {
         allowJs: true,
         module: monaco.languages.typescript.ModuleKind.ESNext,
         moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-        jsx: monaco.languages.typescript.JsxEmit.React,
+        jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
         lib: ["ES2020", "DOM", "DOM.Iterable"],
         types: ["react", "react-dom"],
       });

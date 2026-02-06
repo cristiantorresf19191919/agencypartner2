@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { KOTLIN_JAVA_INTEROP_LESSONS } from "@/lib/kotlinJavaInteropData";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
@@ -16,6 +17,7 @@ import styles from "../challenges/ChallengesPage.module.css";
 
 export default function KotlinJavaInteropCoursePage() {
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
 
   return (
     <main className={styles.page}>
@@ -26,7 +28,7 @@ export default function KotlinJavaInteropCoursePage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <SchoolIcon fontSize="small" />
-          <span>Kotlin & Java</span>
+          <span>{t("kotlin-java-interop-pill")}</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -34,7 +36,7 @@ export default function KotlinJavaInteropCoursePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Kotlin Java Interop
+          {t("kotlin-java-interop-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -42,8 +44,7 @@ export default function KotlinJavaInteropCoursePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Call Java from Kotlin and understand how Kotlin compares to Java.
-          Platform types, nullability, SAM conversions, and more.
+          {t("kotlin-java-interop-subtitle")}
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
@@ -54,14 +55,14 @@ export default function KotlinJavaInteropCoursePage() {
             <CodeIcon fontSize="small" />
             Kotlin + Java
           </span>
-          <span className={styles.badge}>{KOTLIN_JAVA_INTEROP_LESSONS.length} lessons</span>
+          <span className={styles.badge}>{KOTLIN_JAVA_INTEROP_LESSONS.length} {t("course-lessons-count")}</span>
         </div>
       </section>
 
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>Course</span>
-          <span className={styles.count}>{KOTLIN_JAVA_INTEROP_LESSONS.length} lessons</span>
+          <span className={styles.filterLabel}>{t("course-steps-label")}</span>
+          <span className={styles.count}>{KOTLIN_JAVA_INTEROP_LESSONS.length} {t("course-lessons-count")}</span>
         </div>
         <ul className={styles.grid}>
           {KOTLIN_JAVA_INTEROP_LESSONS.map((lesson, i) => (
@@ -80,7 +81,7 @@ export default function KotlinJavaInteropCoursePage() {
                     className={styles.difficulty}
                     style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}
                   >
-                    Step {lesson.step}
+                    {t("course-step")} {lesson.step}
                   </span>
                 </div>
                 <h3 className={styles.cardTitle}>{lesson.title}</h3>
@@ -91,7 +92,7 @@ export default function KotlinJavaInteropCoursePage() {
                   {lesson.content[0]?.substring(0, 100)}...
                 </p>
                 <div className={styles.cardCta}>
-                  <span>Start Lesson</span>
+                  <span>{t("course-start-lesson")}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </Link>
@@ -106,16 +107,16 @@ export default function KotlinJavaInteropCoursePage() {
             className={styles.secondaryLink}
             href={createLocalizedPath("/developer-section/kotlin-course")}
           >
-            Kotlin from Scratch
+            {t("kotlin-course-pill")}
           </Link>
           <Link
             className={styles.secondaryLink}
             href={createLocalizedPath("/developer-section/kotlin-playground")}
           >
-            Kotlin Playground
+            {t("kotlin-playground-link")}
           </Link>
           <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </Link>
         </div>
       </div>

@@ -3,6 +3,18 @@
  * Lessons use Monaco editor with run/preview and validation.
  */
 
+/** Tag for lesson sections: concept, exercise, tip, key-point */
+export type LessonSectionTag = "concept" | "exercise" | "tip" | "key-point";
+
+/** A single section in a lesson (tagged block with optional code and badges) */
+export interface LessonSection {
+  tag: LessonSectionTag;
+  title?: string;
+  body: string;
+  code?: string;
+  badges?: string[];
+}
+
 export interface WebCourseLesson {
   id: string;
   step: number;
@@ -10,6 +22,8 @@ export interface WebCourseLesson {
   nextStep?: string;
   prevStep?: string;
   content: string[];
+  /** When set, the lesson UI renders these sections instead of raw content (tags, code blocks, badges). */
+  sections?: LessonSection[];
   codeExamples?: { code: string; comment?: string }[];
   defaultCode: string;
   /** CSS only: HTML structure for the preview (user edits CSS in defaultCode). */

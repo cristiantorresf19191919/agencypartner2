@@ -4,15 +4,151 @@ import { Stack, Heading, Text } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import { motion } from "framer-motion";
-import { AutoAwesome as Sparkles, Code as Code2, ArrowForward as ArrowRight, Support as SupportIcon, Terminal as TerminalIcon, IntegrationInstructions as KotlinIcon, EmojiEvents as ChallengesIcon, Psychology as ReactIcon, PhoneAndroid as AndroidIcon, School as SchoolIcon, CallMerge as InteropIcon, Palette as CssIcon, DataObject as TsIcon } from "@mui/icons-material";
+import {
+  AutoAwesome as Sparkles,
+  Code as Code2,
+  ArrowForward as ArrowRight,
+  Support as SupportIcon,
+  Terminal as TerminalIcon,
+  IntegrationInstructions as KotlinIcon,
+  EmojiEvents as ChallengesIcon,
+  Psychology as ReactIcon,
+  PhoneAndroid as AndroidIcon,
+  School as SchoolIcon,
+  CallMerge as InteropIcon,
+  Palette as CssIcon,
+  DataObject as TsIcon,
+  RecordVoiceOver as SoftSkillsIcon,
+  QuestionAnswer as InterviewIcon,
+} from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
 
+// Card data for cleaner rendering
+const cards = [
+  {
+    id: "blog",
+    category: "blog",
+    href: "/developer-section/blog",
+    icon: Code2,
+    titleKey: "nav-blog",
+    descKey: "nav-blog-desc",
+    ctaKey: "explore-blog",
+  },
+  {
+    id: "playground",
+    category: "playground",
+    href: "/developer-section/playground",
+    icon: TerminalIcon,
+    titleKey: "live-code-lab-title",
+    descKey: "live-code-lab-desc",
+    ctaKey: "open-playground",
+  },
+  {
+    id: "kotlin-playground",
+    category: "playground",
+    href: "/developer-section/kotlin-playground",
+    icon: KotlinIcon,
+    titleKey: "kotlin-playground-title",
+    descKey: "kotlin-playground-desc",
+    ctaKey: "open-kotlin",
+  },
+  {
+    id: "kotlin-course",
+    category: "course",
+    href: "/developer-section/kotlin-course",
+    icon: SchoolIcon,
+    titleKey: "kotlin-course-card-title",
+    descKey: "kotlin-course-card-desc",
+    ctaKey: "start-course",
+  },
+  {
+    id: "kotlin-java-interop",
+    category: "course",
+    href: "/developer-section/kotlin-java-interop",
+    icon: InteropIcon,
+    titleKey: "kotlin-java-interop-card-title",
+    descKey: "kotlin-java-interop-card-desc",
+    ctaKey: "start-course",
+  },
+  {
+    id: "react-course",
+    category: "course",
+    href: "/developer-section/react-course",
+    icon: ReactIcon,
+    titleKey: "react-course-card-title",
+    descKey: "react-course-card-desc",
+    ctaKey: "start-course",
+  },
+  {
+    id: "typescript-course",
+    category: "course",
+    href: "/developer-section/typescript-course",
+    icon: TsIcon,
+    titleKey: "typescript-course-card-title",
+    descKey: "typescript-course-card-desc",
+    ctaKey: "start-course",
+  },
+  {
+    id: "css-course",
+    category: "course",
+    href: "/developer-section/css-course",
+    icon: CssIcon,
+    titleKey: "css-course-card-title",
+    descKey: "css-course-card-desc",
+    ctaKey: "start-course",
+  },
+  {
+    id: "challenges",
+    category: "challenge",
+    href: "/developer-section/challenges",
+    icon: ChallengesIcon,
+    titleKey: "coding-challenges-card-title",
+    descKey: "coding-challenges-card-desc",
+    ctaKey: "start-challenges",
+  },
+  {
+    id: "react-challenges",
+    category: "challenge",
+    href: "/developer-section/react-challenges",
+    icon: ReactIcon,
+    titleKey: "react-challenges-card-title",
+    descKey: "react-challenges-card-desc",
+    ctaKey: "solve-react-challenges",
+  },
+  {
+    id: "react-interview",
+    category: "interview",
+    href: "/developer-section/react-interview",
+    icon: InterviewIcon,
+    titleKey: "react-interview-card-title",
+    descKey: "react-interview-card-desc",
+    ctaKey: "practice-interviews",
+  },
+  {
+    id: "soft-skills-interview",
+    category: "interview",
+    href: "/developer-section/soft-skills-interview",
+    icon: SoftSkillsIcon,
+    titleKey: "soft-skills-interview-card-title",
+    descKey: "soft-skills-interview-card-desc",
+    ctaKey: "practice-soft-skills",
+  },
+  {
+    id: "android-kotlin",
+    category: "course",
+    href: "/developer-section/android-kotlin",
+    icon: AndroidIcon,
+    titleKey: "android-playbook-card-title",
+    descKey: "android-playbook-card-desc",
+    ctaKey: "start-learning",
+  },
+];
+
 export default function DeveloperSectionPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
-
 
   return (
     <main>
@@ -27,351 +163,71 @@ export default function DeveloperSectionPage() {
 
         <div className={styles.content}>
           {/* Header */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className={styles.headerSection}
           >
             <div className={styles.pill}>
               <Sparkles className={styles.pillIcon} />
-              <span>Developer Hub</span>
+              <span>{t("dev-hub-pill")}</span>
             </div>
-            
+
             <Heading className={styles.title}>
               {t("developer-section-title")}
             </Heading>
-            
+
             <Text className={styles.subtitle}>
               {t("developer-section-subtitle")}
             </Text>
           </motion.div>
 
-          {/* Centered Navigation */}
+          {/* Card Grid */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
             className={styles.blogNavigation}
           >
             <div className={styles.navGrid}>
-              <motion.a
-                href={createLocalizedPath("/developer-section/blog")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <Code2 className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    {t("nav-blog")}
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    {t("nav-blog-desc")}
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Explore Blog</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
+              {cards.map((card, index) => {
+                const Icon = card.icon;
+                return (
+                  <motion.a
+                    key={card.id}
+                    href={createLocalizedPath(card.href)}
+                    className={styles.blogCard}
+                    data-category={card.category}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + index * 0.03, duration: 0.4 }}
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className={styles.glowEffect} />
 
-              <motion.a
-                href={createLocalizedPath("/developer-section/playground")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <TerminalIcon className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    Live Code Lab
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    Monaco-powered editor with VS Code autocompletion. Write, run, and maximize for distraction-free coding.
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Open Playground</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
+                    <div className={styles.cardContent}>
+                      <div className={styles.iconContainer}>
+                        <Icon className={styles.icon} />
+                      </div>
 
-              <motion.a
-                href={createLocalizedPath("/developer-section/kotlin-playground")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <KotlinIcon className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    Kotlin Playground
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    Run Kotlin in the browser. Multi-file, syntax highlighting, autocomplete, and console output via Piston.
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Open Kotlin</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
+                      <Heading level={2} className={styles.cardTitle}>
+                        {t(card.titleKey)}
+                      </Heading>
 
-              <motion.a
-                href={createLocalizedPath("/developer-section/kotlin-course")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <SchoolIcon className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    Kotlin Course
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    Learn Kotlin from scratch. Official tour content with multi-file editor, run code, and practice challenges with validation.
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Start Course</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
+                      <Text className={styles.cardDescription}>
+                        {t(card.descKey)}
+                      </Text>
 
-              <motion.a
-                href={createLocalizedPath("/developer-section/kotlin-java-interop")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <InteropIcon className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    Kotlin Java InterOp
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    Call Java from Kotlin. Platform types, nullability, SAM conversions, getters/setters, and mapped types.
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Start Course</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                href={createLocalizedPath("/developer-section/react-course")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <ReactIcon className={styles.icon} />
-                  </div>
-                  <Heading level={2} className={styles.cardTitle}>
-                    React Course
-                  </Heading>
-                  <Text className={styles.cardDescription}>
-                    Learn React from scratch. Components, props, hooks. Monaco editor with TypeScript/React autocomplete and live preview.
-                  </Text>
-                  <div className={styles.ctaLink}>
-                    <span>Start Course</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                href={createLocalizedPath("/developer-section/typescript-course")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <TsIcon className={styles.icon} />
-                  </div>
-                  <Heading level={2} className={styles.cardTitle}>
-                    TypeScript Course
-                  </Heading>
-                  <Text className={styles.cardDescription}>
-                    Learn TypeScript. Types, interfaces, unions. Monaco editor with autocomplete, run in-browser, and verify.
-                  </Text>
-                  <div className={styles.ctaLink}>
-                    <span>Start Course</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                href={createLocalizedPath("/developer-section/css-course")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <CssIcon className={styles.icon} />
-                  </div>
-                  <Heading level={2} className={styles.cardTitle}>
-                    CSS Course
-                  </Heading>
-                  <Text className={styles.cardDescription}>
-                    Learn CSS Flexbox. Monaco editor with live HTML+CSS preview and verify—learn by doing.
-                  </Text>
-                  <div className={styles.ctaLink}>
-                    <span>Start Course</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                href={createLocalizedPath("/developer-section/challenges")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <ChallengesIcon className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    Coding Challenges
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    HackerRank-style problems. Solve in TypeScript or Kotlin, run in-browser, and get a confetti celebration when you pass all tests.
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Start Challenges</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                href={createLocalizedPath("/developer-section/react-challenges")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <ReactIcon className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    React Challenges
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    Master React hooks, rendering behavior, TypeScript patterns, and performance. Solutions unlock after 10 attempts.
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Solve React Challenges</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                href={createLocalizedPath("/developer-section/android-kotlin")}
-                className={styles.blogCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className={styles.glowEffect} />
-                <div className={styles.gradientBlob1} />
-                <div className={styles.gradientBlob2} />
-                
-                <div className={styles.cardContent}>
-                  <div className={styles.iconContainer}>
-                    <AndroidIcon className={styles.icon} />
-                  </div>
-                  
-                  <Heading level={2} className={styles.cardTitle}>
-                    Android Kotlin Playbook
-                  </Heading>
-                  
-                  <Text className={styles.cardDescription}>
-                    Zero-to-Hero Android development with Jetpack Compose, Kotlin Coroutines, and Clean Architecture. Interactive lessons with code editors.
-                  </Text>
-                  
-                  <div className={styles.ctaLink}>
-                    <span>Start Learning</span>
-                    <ArrowRight className={styles.ctaArrow} />
-                  </div>
-                </div>
-              </motion.a>
+                      <div className={styles.ctaLink}>
+                        <span>{t(card.ctaKey)}</span>
+                        <ArrowRight className={styles.ctaArrow} />
+                      </div>
+                    </div>
+                  </motion.a>
+                );
+              })}
             </div>
           </motion.div>
 
@@ -379,13 +235,13 @@ export default function DeveloperSectionPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
             className={styles.helpSection}
           >
             <motion.a
               href={createLocalizedPath("/asesorias")}
               className={styles.helpCard}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ y: -4 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className={styles.helpGlowEffect} />
@@ -393,15 +249,15 @@ export default function DeveloperSectionPage() {
                 <div className={styles.helpIconContainer}>
                   <SupportIcon className={styles.helpIcon} />
                 </div>
-                
+
                 <Heading level={2} className={styles.helpTitle}>
                   {t("developer-section-need-help-title")}
                 </Heading>
-                
+
                 <Text className={styles.helpDescription}>
                   {t("developer-section-need-help-desc")}
                 </Text>
-                
+
                 <div className={styles.helpCtaLink}>
                   <span>{t("developer-section-need-help-cta")}</span>
                   <ArrowRight className={styles.helpCtaArrow} />
@@ -415,4 +271,3 @@ export default function DeveloperSectionPage() {
     </main>
   );
 }
-

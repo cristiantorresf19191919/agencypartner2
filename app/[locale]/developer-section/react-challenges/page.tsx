@@ -23,7 +23,7 @@ export default function ReactChallengesListPage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <BrainIcon fontSize="small" />
-          <span>React Challenges</span>
+          <span>{t("react-challenges-landing-pill")}</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -31,7 +31,7 @@ export default function ReactChallengesListPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          React & TypeScript Challenges
+          {t("react-challenges-landing-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -39,23 +39,22 @@ export default function ReactChallengesListPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Master React hooks, rendering behavior, TypeScript patterns, and performance optimization.
-          Solution unlocks after 10 attempts.
+          {t("react-challenges-landing-subtitle")}
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
             <CodeIcon fontSize="small" />
             React + TypeScript
           </span>
-          <span className={styles.badge}>Interactive Editor</span>
-          <span className={styles.badge}>{REACT_CHALLENGES.length} Challenges</span>
+          <span className={styles.badge}>{t("react-challenges-badge-editor")}</span>
+          <span className={styles.badge}>{REACT_CHALLENGES.length} {t("react-challenges-count-label")}</span>
         </div>
       </section>
 
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>All Challenges</span>
-          <span className={styles.count}>{REACT_CHALLENGES.length} challenges</span>
+          <span className={styles.filterLabel}>{t("react-challenges-all-label")}</span>
+          <span className={styles.count}>{REACT_CHALLENGES.length} {t("react-challenges-count-label")}</span>
         </div>
         <ul className={styles.grid}>
           {REACT_CHALLENGES.map((c, i) => (
@@ -79,7 +78,7 @@ export default function ReactChallengesListPage() {
                   {c.description.split("\n")[0].substring(0, 100)}...
                 </p>
                 <div className={styles.cardCta}>
-                  <span>Solve Challenge</span>
+                  <span>{t("react-challenges-start")}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </Link>
@@ -91,10 +90,10 @@ export default function ReactChallengesListPage() {
       <div className={styles.footerActions}>
         <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/challenges")}>
-            Algorithm Challenges
+            {t("algorithm-challenges-link")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </a>
         </div>
       </div>

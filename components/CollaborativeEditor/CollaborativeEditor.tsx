@@ -34,86 +34,96 @@ export default function CollaborativeEditor({
   const ydocRef = useRef<Y.Doc | null>(null);
   const providerRef = useRef<FirebaseProvider | null>(null);
   const bindingRef = useRef<MonacoBinding | null>(null);
-  const [connected, setConnected] = useState(false);
+  const [synced, setSynced] = useState(false);
   const [users, setUsers] = useState<Array<{ name: string; color: string; id: string }>>([]);
   const [error, setError] = useState<string | null>(null);
-  const isReadyRef = useRef(false);
+  const initialCodeAppliedRef = useRef(false);
   const userIdRef = useRef<string>(`user-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`);
   const userColorRef = useRef<string>(`hsl(${Math.random() * 360}, 70%, 50%)`);
 
   useEffect(() => {
     let mounted = true;
 
-    try {
-      // Initialize Yjs document
-      const ydoc = new Y.Doc();
-      ydocRef.current = ydoc;
+    const initializeCollaboration = async () => {
+      try {
+        // Initialize Yjs document
+        const ydoc = new Y.Doc();
+        ydocRef.current = ydoc;
 
-      // Connect to Firebase
-      const provider = new FirebaseProvider(roomId, ydoc);
-      providerRef.current = provider;
+        // Connect to Firebase
+        const provider = new FirebaseProvider(roomId, ydoc);
+        providerRef.current = provider;
 
-      // Mark as connected after a brief delay to ensure setup is complete
-      setTimeout(() => {
-        if (mounted) {
-          setConnected(true);
-          isReadyRef.current = true;
-        }
-      }, 300);
+        // Wait for initial sync to complete
+        await provider.whenSynced();
 
-      // Track user presence in Firestore
-      const userPresenceRef = doc(db, 'collaborative-rooms', roomId, 'users', userIdRef.current);
-      setDoc(userPresenceRef, {
-        name: userName,
-        color: userColorRef.current,
-        lastSeen: serverTimestamp(),
-      }).catch((e) => {
-        console.error('Error setting user presence:', e);
-        if (mounted) setError('Failed to connect to collaboration server');
-      });
+        if (!mounted) return;
 
-      // Update lastSeen periodically
-      const presenceInterval = setInterval(() => {
+        setSynced(true);
+
+        // Track user presence in Firestore
+        const userPresenceRef = doc(db, 'collaborative-rooms', roomId, 'users', userIdRef.current);
         setDoc(userPresenceRef, {
           name: userName,
           color: userColorRef.current,
           lastSeen: serverTimestamp(),
-        }, { merge: true });
-      }, 30000); // Update every 30 seconds
+        }).catch((e) => {
+          console.error('Error setting user presence:', e);
+          if (mounted) setError('Failed to connect to collaboration server');
+        });
 
-      // Listen for other users
-      const usersQuery = query(
-        collection(db, 'collaborative-rooms', roomId, 'users')
-      );
+        // Update lastSeen periodically
+        const presenceInterval = setInterval(() => {
+          setDoc(userPresenceRef, {
+            name: userName,
+            color: userColorRef.current,
+            lastSeen: serverTimestamp(),
+          }, { merge: true });
+        }, 30000); // Update every 30 seconds
 
-      const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
-        const now = Date.now();
-        type UserDoc = { id: string; name?: string; color?: string; lastSeen?: Timestamp };
-        const userList = snapshot.docs
-          .map((d) => ({ id: d.id, ...d.data() } as UserDoc))
-          .filter((user) => {
-            const lastSeen = user.lastSeen?.toMillis?.() ?? 0;
-            return user.id !== userIdRef.current && (now - lastSeen) < 120000;
-          })
-          .map((u) => ({ id: u.id, name: u.name ?? "Anonymous", color: u.color ?? "#888" }));
-        setUsers(userList);
-      });
+        // Listen for other users
+        const usersQuery = query(
+          collection(db, 'collaborative-rooms', roomId, 'users')
+        );
 
-      // Cleanup
-      return () => {
-        mounted = false;
-        clearInterval(presenceInterval);
-        unsubscribeUsers();
-        // Remove user presence on disconnect
-        deleteDoc(userPresenceRef).catch(console.error);
-        bindingRef.current?.destroy();
-        provider.destroy();
-        ydoc.destroy();
-      };
-    } catch (e) {
-      console.error('Error initializing collaborative editor:', e);
-      setError('Failed to initialize editor');
-    }
+        const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
+          const now = Date.now();
+          type UserDoc = { id: string; name?: string; color?: string; lastSeen?: Timestamp };
+          const userList = snapshot.docs
+            .map((d) => ({ id: d.id, ...d.data() } as UserDoc))
+            .filter((user) => {
+              const lastSeen = user.lastSeen?.toMillis?.() ?? 0;
+              return user.id !== userIdRef.current && (now - lastSeen) < 120000;
+            })
+            .map((u) => ({ id: u.id, name: u.name ?? "Anonymous", color: u.color ?? "#888" }));
+          setUsers(userList);
+        });
+
+        // Store cleanup references
+        return () => {
+          mounted = false;
+          clearInterval(presenceInterval);
+          unsubscribeUsers();
+          deleteDoc(userPresenceRef).catch(console.error);
+          bindingRef.current?.destroy();
+          provider.destroy();
+          ydoc.destroy();
+        };
+      } catch (e) {
+        console.error('Error initializing collaborative editor:', e);
+        if (mounted) setError('Failed to initialize editor');
+      }
+    };
+
+    let cleanup: (() => void) | undefined;
+    initializeCollaboration().then((cleanupFn) => {
+      cleanup = cleanupFn;
+    });
+
+    return () => {
+      mounted = false;
+      cleanup?.();
+    };
   }, [roomId, userName]);
 
   const handleBeforeMount = (monaco: any) => {
@@ -124,29 +134,36 @@ export default function CollaborativeEditor({
     editorRef.current = editor;
     monacoRef.current = monaco;
 
-    // Wait for provider to be ready
-    const setupBinding = () => {
-      if (!ydocRef.current || !providerRef.current || !editorRef.current || !isReadyRef.current) {
+    // Wait for provider to be synced before setting up binding
+    const setupBinding = async () => {
+      const provider = providerRef.current;
+      const ydoc = ydocRef.current;
+
+      if (!ydoc || !provider || !editorRef.current) {
         // Retry after a short delay if not ready
         setTimeout(setupBinding, 100);
         return;
       }
 
+      // Wait for provider to be synced
+      if (!provider.synced) {
+        await provider.whenSynced();
+      }
+
       try {
         // Get or create Yjs text type
-        const ytext = ydocRef.current.getText("monaco");
+        const ytext = ydoc.getText("monaco");
 
         // Set initial content if provided and document is empty
-        // Use a delay to ensure Firestore has loaded any existing content
-        setTimeout(() => {
-          if (initialCode && ytext.length === 0 && editorRef.current) {
-            try {
-              ytext.insert(0, initialCode);
-            } catch (e) {
-              console.error('Error inserting initial code:', e);
-            }
+        // Only do this once and only if no content exists
+        if (initialCode && ytext.length === 0 && !initialCodeAppliedRef.current) {
+          initialCodeAppliedRef.current = true;
+          try {
+            ytext.insert(0, initialCode);
+          } catch (e) {
+            console.error('Error inserting initial code:', e);
           }
-        }, 800);
+        }
 
         // Bind Monaco to Yjs
         const binding = new MonacoBinding(
@@ -201,12 +218,12 @@ export default function CollaborativeEditor({
             width: 8,
             height: 8,
             borderRadius: "50%",
-            background: connected ? "#4ade80" : "#ef4444",
-            animation: connected ? "none" : "pulse 2s infinite",
+            background: synced ? "#4ade80" : "#ef4444",
+            animation: synced ? "none" : "pulse 2s infinite",
           }}
         />
         <span style={{ fontSize: 12, color: "#fff" }}>
-          {error ? "Error" : connected ? "Synced" : "Connecting..."}
+          {error ? "Error" : synced ? "Synced" : "Connecting..."}
         </span>
         {error && (
           <span style={{ fontSize: 11, color: "#ef4444", marginLeft: 8 }}>

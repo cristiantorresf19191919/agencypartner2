@@ -1,4 +1,8 @@
 import { blogCategories } from "./blogCategories";
+import { REACT_COURSE_LESSONS } from "./reactCourseData";
+import { KOTLIN_COURSE_LESSONS } from "./kotlinCourseData";
+import { CSS_COURSE_LESSONS } from "./cssCourseData";
+import { TYPESCRIPT_COURSE_LESSONS } from "./typescriptCourseData";
 
 export interface SearchItem {
   id: string;
@@ -404,7 +408,67 @@ export function getSearchIndex(t: (key: string) => string): SearchItem[] {
     return [categoryItem, ...postItems];
   });
 
-  return [...navigationItems, ...blogItems];
+  // Add React Course lessons
+  const reactCourseItems: SearchItem[] = REACT_COURSE_LESSONS.map((lesson) => ({
+    id: `react-course-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/react-course/${lesson.id}`,
+    section: "React Course",
+    sectionKey: "react-course",
+    color: "#61DAFB",
+    keywords: [
+      "react",
+      "component",
+      "jsx",
+      ...(lesson.sections?.flatMap((s) => s.badges || []) || []),
+    ],
+  }));
+
+  // Add Kotlin Course lessons
+  const kotlinCourseItems: SearchItem[] = KOTLIN_COURSE_LESSONS.map((lesson) => ({
+    id: `kotlin-course-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/kotlin-course/${lesson.id}`,
+    section: "Kotlin Course",
+    sectionKey: "kotlin-course",
+    color: "#A97BFF",
+    keywords: ["kotlin", "android", "jvm"],
+  }));
+
+  // Add CSS Course lessons
+  const cssCourseItems: SearchItem[] = CSS_COURSE_LESSONS.map((lesson) => ({
+    id: `css-course-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/css-course/${lesson.id}`,
+    section: "CSS Course",
+    sectionKey: "css-course",
+    color: "#38BDF8",
+    keywords: ["css", "flexbox", "layout", "styling"],
+  }));
+
+  // Add TypeScript Course lessons
+  const typescriptCourseItems: SearchItem[] = TYPESCRIPT_COURSE_LESSONS.map((lesson) => ({
+    id: `typescript-course-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/typescript-course/${lesson.id}`,
+    section: "TypeScript Course",
+    sectionKey: "typescript-course",
+    color: "#3178C6",
+    keywords: ["typescript", "types", "javascript"],
+  }));
+
+  return [
+    ...navigationItems,
+    ...blogItems,
+    ...reactCourseItems,
+    ...kotlinCourseItems,
+    ...cssCourseItems,
+    ...typescriptCourseItems,
+  ];
 }
 
 export function searchItems(

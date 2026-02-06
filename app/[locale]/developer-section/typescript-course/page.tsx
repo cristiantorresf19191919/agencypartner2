@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { TYPESCRIPT_COURSE_LESSONS } from "@/lib/typescriptCourseData";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
@@ -16,6 +17,7 @@ import styles from "../challenges/ChallengesPage.module.css";
 
 export default function TypeScriptCourseLandingPage() {
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
 
   return (
     <main className={styles.page}>
@@ -26,7 +28,7 @@ export default function TypeScriptCourseLandingPage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <SchoolIcon fontSize="small" />
-          <span>TypeScript from Scratch</span>
+          <span>{t("typescript-course-pill")}</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -34,7 +36,7 @@ export default function TypeScriptCourseLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Learn TypeScript with the Enriched Editor
+          {t("typescript-course-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -42,7 +44,7 @@ export default function TypeScriptCourseLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Types, interfaces, unions, and functions. Monaco-powered editor with TypeScript autocomplete, run in-browser, and verify—learn by doing.
+          {t("typescript-course-subtitle-long")}
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
@@ -53,14 +55,14 @@ export default function TypeScriptCourseLandingPage() {
             <CodeIcon fontSize="small" />
             Monaco + Autocomplete
           </span>
-          <span className={styles.badge}>{TYPESCRIPT_COURSE_LESSONS.length} Steps</span>
+          <span className={styles.badge}>{TYPESCRIPT_COURSE_LESSONS.length} {t("course-step")}</span>
         </div>
       </section>
 
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>Course Steps</span>
-          <span className={styles.count}>{TYPESCRIPT_COURSE_LESSONS.length} lessons</span>
+          <span className={styles.filterLabel}>{t("course-steps-label")}</span>
+          <span className={styles.count}>{TYPESCRIPT_COURSE_LESSONS.length} {t("course-lessons-count")}</span>
         </div>
         <ul className={styles.grid}>
           {TYPESCRIPT_COURSE_LESSONS.map((lesson, i) => (
@@ -79,7 +81,7 @@ export default function TypeScriptCourseLandingPage() {
                     className={styles.difficulty}
                     style={{ background: "rgba(49, 120, 198, 0.2)", color: "#3178c6" }}
                   >
-                    Step {lesson.step}
+                    {t("course-step")} {lesson.step}
                   </span>
                 </div>
                 <h3 className={styles.cardTitle}>{lesson.title}</h3>
@@ -90,7 +92,7 @@ export default function TypeScriptCourseLandingPage() {
                   {lesson.content[0]?.substring(0, 100)}...
                 </p>
                 <div className={styles.cardCta}>
-                  <span>Start Lesson</span>
+                  <span>{t("course-start-lesson")}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </Link>
@@ -102,10 +104,10 @@ export default function TypeScriptCourseLandingPage() {
       <div className={styles.footerActions}>
         <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
           <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section/blog/typescript-advanced")}>
-            TypeScript Blog
+            {t("typescript-blog-link")}
           </Link>
           <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </Link>
         </div>
       </div>

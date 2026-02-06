@@ -66,20 +66,20 @@ export default function ChallengesLandingPage() {
               <div className={styles.cardGlow} />
               <div className={styles.cardGradient1} />
               <div className={styles.cardGradient2} />
-              
+
               <div className={styles.cardContent}>
                 <div className={styles.iconContainer}>
                   <CodeIcon className={styles.icon} />
                 </div>
-                
+
                 <h2 className={styles.cardTitle}>
                   {t('challenges-card-typescript-kotlin-title')}
                 </h2>
-                
+
                 <p className={styles.cardDescription}>
                   {t('challenges-card-typescript-kotlin-desc')}
                 </p>
-                
+
                 <div className={styles.cardStats}>
                   <span className={styles.stat}>
                     {challengesCount} {t('challenges-count')}
@@ -88,7 +88,7 @@ export default function ChallengesLandingPage() {
                     {t('challenges-badge-typescript-kotlin')}
                   </span>
                 </div>
-                
+
                 <div className={styles.cardCta}>
                   <span>{t('challenges-card-start')}</span>
                   <ArrowRight className={styles.ctaArrow} />
@@ -111,29 +111,29 @@ export default function ChallengesLandingPage() {
               <div className={styles.cardGlow} />
               <div className={styles.cardGradient1} />
               <div className={styles.cardGradient2} />
-              
+
               <div className={styles.cardContent}>
                 <div className={styles.iconContainer}>
                   <ReactIcon className={styles.icon} />
                 </div>
-                
+
                 <h2 className={styles.cardTitle}>
                   {t('challenges-card-react-title')}
                 </h2>
-                
+
                 <p className={styles.cardDescription}>
                   {t('challenges-card-react-desc')}
                 </p>
-                
+
                 <div className={styles.cardStats}>
                   <span className={styles.stat}>
                     {reactChallengesCount} {t('challenges-count')}
                   </span>
                   <span className={styles.stat}>
-                    React + TypeScript
+                    {t('challenges-badge-react-typescript')}
                   </span>
                 </div>
-                
+
                 <div className={styles.cardCta}>
                   <span>{t('challenges-card-start')}</span>
                   <ArrowRight className={styles.ctaArrow} />
@@ -156,31 +156,31 @@ export default function ChallengesLandingPage() {
               <div className={styles.cardGlow} />
               <div className={styles.cardGradient1} />
               <div className={styles.cardGradient2} />
-              
+
               <div className={styles.cardContent}>
                 <div className={styles.iconContainer}>
                   <SchoolIcon className={styles.icon} />
                 </div>
-                
+
                 <h2 className={styles.cardTitle}>
-                  React 19 Interview Prep
+                  {t('challenges-react-19-title')}
                 </h2>
-                
+
                 <p className={styles.cardDescription}>
-                  Master React 19's revolutionary features through interactive lessons with live code editors and previews. Perfect for interview preparation.
+                  {t('challenges-react-19-desc')}
                 </p>
-                
+
                 <div className={styles.cardStats}>
                   <span className={styles.stat}>
-                    {react19LessonsCount} Lessons
+                    {react19LessonsCount} {t('challenges-react-19-lessons')}
                   </span>
                   <span className={styles.stat}>
-                    React 19 Features
+                    {t('challenges-react-19-features')}
                   </span>
                 </div>
-                
+
                 <div className={styles.cardCta}>
-                  <span>Start Learning</span>
+                  <span>{t('start-learning')}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </div>

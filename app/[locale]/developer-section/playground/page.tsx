@@ -16,17 +16,23 @@ import {
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "./PlaygroundPage.module.css";
 import type { OnMount } from "@monaco-editor/react";
 
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
-  ssr: false,
-  loading: () => (
+function PlaygroundEditorLoading() {
+  const { t } = useLanguage();
+  return (
     <div className={styles.editorLoading}>
       <div className={styles.loadingSpinner} />
-      <p>Spinning up the editor…</p>
+      <p>{t("loading-editor")}</p>
     </div>
-  ),
+  );
+}
+
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+  loading: () => <PlaygroundEditorLoading />,
 });
 
 type PlaygroundFile = { name: string; code: string; uri?: string };
@@ -145,10 +151,10 @@ export default function PlaygroundPage() {
     setLogs([]);
 
     try {
-      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as typeof Function;
+      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor as typeof Function;
 
       let modulesRegistration = "";
-      
+
       // We will perform a "bundle" step:
       // 1. Compile all files to CommonJS
       // 2. Wrap them in a registration function
@@ -206,7 +212,7 @@ export default function PlaygroundPage() {
         // Use JSON.stringify to safely escape the entire code string
         // This handles all special characters including template literals, quotes, backslashes, etc.
         const codeJson = JSON.stringify(jsCode);
-        
+
         // Build module registration: store code as JSON string, then eval it safely
         // This avoids all escaping issues with template literals, quotes, etc.
         modulesRegistration +=
@@ -274,7 +280,7 @@ export default function PlaygroundPage() {
 
       // Construct the function body using string concatenation to avoid template literal issues
       const functionBody = '"use strict";\n' + loaderCode;
-      
+
       const runner = new AsyncFunction(
         "console",
         "setTimeout",

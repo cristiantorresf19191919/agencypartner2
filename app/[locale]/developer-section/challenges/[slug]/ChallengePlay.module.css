@@ -1,9 +1,307 @@
+/* Kotlin course lesson layout: collapsible sidebar + main content */
+.lessonLayoutWithSidebar {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - 64px);
+  margin-top: 0;
+}
+
+.courseSidebar {
+  width: 280px;
+  min-width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(12, 16, 36, 0.97), rgba(7, 10, 24, 0.98));
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+  transition: width 0.25s ease, min-width 0.25s ease;
+  overflow: hidden;
+}
+
+.courseSidebarCollapsed {
+  width: 56px;
+  min-width: 56px;
+}
+
+/* React course: accent with React blue (#61DAFB) */
+.courseSidebarReact .courseSidebarIcon {
+  color: #61dafb;
+}
+
+.courseSidebarReact .courseNavItemActive {
+  background: linear-gradient(120deg, rgba(97, 218, 251, 0.18), rgba(97, 218, 251, 0.1));
+  border-color: rgba(97, 218, 251, 0.4);
+  box-shadow: 0 2px 12px rgba(97, 218, 251, 0.2);
+}
+
+.courseSidebarReact .courseNavItemActive .courseNavStep {
+  color: #61dafb;
+}
+
+.courseSidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.courseSidebarToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: #9fc4ff;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.courseSidebarToggle:hover {
+  background: rgba(124, 244, 255, 0.12);
+  color: #7cf4ff;
+  border-color: rgba(124, 244, 255, 0.3);
+}
+
+.courseSidebarTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e6f0ff;
+  letter-spacing: -0.02em;
+}
+
+.courseSidebarIcon {
+  color: #7cf4ff;
+  font-size: 22px !important;
+}
+
+.courseNav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 8px 24px;
+}
+
+.courseNavList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.courseNavItemWrap {
+  margin: 0;
+  padding: 0;
+}
+
+.courseNavItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #b8ccf0;
+  border: 1px solid transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.courseNavItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e6f0ff;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.courseNavItemActive {
+  background: linear-gradient(120deg, rgba(93, 95, 255, 0.15), rgba(124, 244, 255, 0.12));
+  border-color: rgba(124, 244, 255, 0.35);
+  color: #e6f0ff;
+  box-shadow: 0 2px 12px rgba(124, 244, 255, 0.15);
+}
+
+.courseNavStep {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7cf4ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.courseNavItemActive .courseNavStep {
+  color: #a5f5ff;
+}
+
+.courseNavLabel {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.courseMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.courseMainBackdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .courseMain.courseSidebarOpen .courseMainBackdrop {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 64px;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 999;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 900px) {
+  .lessonLayoutWithSidebar {
+    padding-left: 0;
+  }
+
+  .courseSidebar {
+    position: fixed;
+    left: 0;
+    top: 64px;
+    bottom: 0;
+    z-index: 1000;
+    width: 280px;
+    min-width: 280px;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .courseSidebarCollapsed {
+    width: 52px;
+    min-width: 52px;
+  }
+
+  .courseSidebarCollapsed .courseSidebarHeader {
+    padding: 16px 8px;
+    justify-content: center;
+  }
+
+  .courseSidebarCollapsed .courseSidebarToggle {
+    margin: 0 auto;
+  }
+
+  .courseMain {
+    margin-left: 52px;
+    min-width: 0;
+  }
+}
+
 .playSection {
   position: relative;
   z-index: 1;
   max-width: 1400px;
   margin: 0 auto;
   padding: 100px 24px 40px;
+}
+
+/* When used with sidebar (React course): fill main area, no centering or max-width */
+.playSectionFullWidth {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 24px 28px 40px;
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 1200px) {
+  .playSectionFullWidth {
+    padding: 28px 36px 48px;
+  }
+}
+
+/* Stacked layout: content full width on top, editor section below with fixed height so code is visible */
+.playSectionStacked {
+  display: flex;
+  flex-direction: column;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 100px 24px 40px;
+  width: 100%;
+}
+
+@media (min-width: 1400px) {
+  .playSectionStacked {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+.layoutStacked {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.layoutStacked .description {
+  position: static;
+  max-width: 100%;
+  padding: 0;
+}
+
+.editorSectionBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Fixed height so Monaco receives a valid height and code is visible; no flex stretch */
+.editorSectionBottom .editorColumnWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editorSectionBottom .editorWrap {
+  height: 420px;
+  min-height: 420px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Monaco container: take remaining space and enforce min height so code is always visible */
+.editorSectionBottom .editorWrap .monacoContainer {
+  flex: 1;
+  min-height: 280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editorSectionBottom .editorWrap .monacoContainer>div {
+  flex: 1;
+  min-height: 0;
 }
 
 .layout {
@@ -13,8 +311,30 @@
   align-items: start;
 }
 
+/* Flexible columns when content should fill space (e.g. React course with sidebar) */
+.layoutFill {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  gap: 28px;
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+.layoutFill .description {
+  min-width: 0;
+}
+
+.layoutFill .editorColumn {
+  min-width: 0;
+}
+
 @media (max-width: 1100px) {
   .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .layoutFill {
     grid-template-columns: 1fr;
   }
 }
@@ -38,6 +358,74 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.contentFontSizeControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.contentFontSizeLabel {
+  font-size: 12px;
+  color: #9fc4ff;
+  font-weight: 600;
+}
+
+/* Wrapper for scalable lesson text; font sizes in em relative to wrapper fontSize */
+.contentFontWrap {
+  line-height: 1.6;
+}
+
+.contentFontWrap .descTitle {
+  font-size: 1.5em;
+}
+
+.contentFontWrap .descSub {
+  font-size: 0.8125em;
+}
+
+.contentFontWrap .descBody {
+  font-size: 0.875em;
+}
+
+.contentFontWrap .conceptTitle {
+  font-size: 1.125em;
+}
+
+.contentFontWrap .conceptBody {
+  font-size: 0.875em;
+}
+
+.contentFontWrap .calloutText {
+  font-size: 0.875em;
+}
+
+.contentFontWrap .inlineCode {
+  font-size: 0.8125em;
+}
+
+.contentFontWrap .runnableSnippetTitle {
+  font-size: 0.75em;
+}
+
+.contentFontWrap .practiceCardTitle {
+  font-size: 0.9375em;
+}
+
+.contentFontWrap .practiceCardDesc {
+  font-size: 0.875em;
+}
+
+.contentFontWrap .sample,
+.contentFontWrap .sample code {
+  font-size: 0.8125em;
+}
+
+.contentFontWrap .snippetOutput {
+  font-size: 0.8125em;
 }
 
 .pts {
@@ -83,6 +471,39 @@
   word-break: break-all;
 }
 
+/* Kotlin syntax highlighting in example code blocks */
+.codeBlock {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  color: #ddecff;
+}
+
+.ktKw {
+  color: #c586c0;
+  font-weight: 600;
+}
+
+.ktType {
+  color: #4ec9b0;
+}
+
+.ktStr {
+  color: #ce9178;
+}
+
+.ktCom {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.ktNum {
+  color: #b5cea8;
+}
+
+.ktIdent {
+  color: #d4d4d4;
+}
+
 .editorColumn {
   display: flex;
   flex-direction: column;
@@ -124,20 +545,21 @@
 }
 
 .editorWrap {
-  height: 380px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(180deg, rgba(12, 16, 36, 0.9), rgba(7, 10, 24, 0.95));
-  border-radius: 12px;
+  height: 480px;
+  border: 1px solid rgba(97, 218, 251, 0.15);
+  background: linear-gradient(180deg, rgba(8, 12, 28, 0.98), rgba(5, 8, 20, 0.99));
+  border-radius: 16px;
   overflow: hidden;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
   position: relative;
   max-width: 100%;
   min-width: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(97, 218, 251, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 @media (min-width: 768px) {
   .editorWrap {
-    height: 500px;
+    height: 580px;
   }
 }
 
@@ -214,27 +636,31 @@
 }
 
 .runBtn {
-  background: linear-gradient(120deg, #5b7eff, #6ce0ff);
+  background: linear-gradient(135deg, #61dafb, #4fc3dc);
   color: #041021;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 6px 24px rgba(124, 244, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 6px 24px rgba(97, 218, 251, 0.35), 0 2px 8px rgba(97, 218, 251, 0.2);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .runBtn:hover:not(.disabled) {
-  background: linear-gradient(120deg, #6a8eff, #7ae8ff);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #7ae5ff, #5ed4f0);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(97, 218, 251, 0.45), 0 4px 12px rgba(97, 218, 251, 0.25);
 }
 
 .submitBtn {
-  background: linear-gradient(120deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.4), 0 2px 8px rgba(34, 197, 94, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .submitBtn:hover:not(.disabled) {
-  background: linear-gradient(120deg, #2dd36f, #22c55e);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #34d869, #22c55e);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(34, 197, 94, 0.5), 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 
 .disabled {
@@ -244,11 +670,12 @@
 }
 
 .outputPanel {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(180deg, rgba(12, 18, 36, 0.92), rgba(8, 12, 26, 0.95));
-  border-radius: 12px;
+  border: 1px solid rgba(97, 218, 251, 0.12);
+  background: linear-gradient(180deg, rgba(8, 14, 32, 0.96), rgba(6, 10, 22, 0.98));
+  border-radius: 16px;
   overflow: hidden;
-  min-height: 180px;
+  min-height: 220px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .outputHead {
@@ -278,16 +705,16 @@
 .successBanner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 14px 16px;
-  padding: 14px 18px;
-  background: linear-gradient(120deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.25));
-  border: 1px solid rgba(34, 197, 94, 0.5);
-  border-radius: 12px;
+  gap: 12px;
+  margin: 16px 18px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(22, 163, 74, 0.3));
+  border: 2px solid rgba(34, 197, 94, 0.6);
+  border-radius: 14px;
   color: #6ee7b7;
   font-weight: 700;
-  font-size: 15px;
-  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+  font-size: 16px;
+  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3), 0 0 0 4px rgba(34, 197, 94, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .successIcon {
@@ -353,4 +780,1159 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+/* Fullscreen editor (Kotlin course lesson, etc.) */
+.editorColumnWrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.editorColumnWrap.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 100100;
+  padding: 16px;
+  background: #05070f;
+  overflow: auto;
+}
+
+.editorColumnWrap.fullscreen .editorColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.editorColumnWrap.fullscreen .editorWrap {
+  flex: 1;
+  min-height: 200px;
+}
+
+.fileTabsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px 10px 0 0;
+}
+
+.fileTab {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #9fc4ff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fileTab:hover {
+  color: #c6d5ff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.fileTab.active {
+  border-color: rgba(124, 244, 255, 0.4);
+  background: rgba(124, 244, 255, 0.1);
+  color: #e6f0ff;
+}
+
+.newFileBtn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #7cf4ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.newFileBtn:hover {
+  border-color: rgba(124, 244, 255, 0.5);
+  background: rgba(124, 244, 255, 0.08);
+  color: #a5f5ff;
+}
+
+.fontSizeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: #d0e0ff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fontSizeBtn:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* React course: step pill (STEP 1, STEP 2, …) */
+.stepPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(97, 218, 251, 0.18);
+  color: #61dafb;
+  border: 1px solid rgba(97, 218, 251, 0.4);
+  box-shadow: 0 2px 8px rgba(97, 218, 251, 0.12);
+}
+
+/* React/TS course: section tags and badges */
+.sectionTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.sectionTagWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionIconConcept {
+  background: rgba(97, 218, 251, 0.25);
+  color: #61dafb;
+}
+
+.sectionIconExercise {
+  background: rgba(34, 197, 94, 0.25);
+  color: #4ade80;
+}
+
+.sectionIconTip {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
+}
+
+.sectionIconKeyPoint {
+  background: rgba(139, 92, 246, 0.25);
+  color: #a78bfa;
+}
+
+.conceptSectionCard {
+  margin-top: 24px;
+  margin-bottom: 20px;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  border-left: 3px solid rgba(97, 218, 251, 0.5);
+}
+
+.conceptSectionCard[data-tag="exercise"] {
+  border-left-color: rgba(34, 197, 94, 0.5);
+}
+
+.conceptSectionCard[data-tag="tip"] {
+  border-left-color: rgba(245, 158, 11, 0.5);
+}
+
+.conceptSectionCard[data-tag="key-point"] {
+  border-left-color: rgba(139, 92, 246, 0.5);
+}
+
+.conceptSectionCard:first-of-type {
+  margin-top: 20px;
+}
+
+.sectionTagConcept {
+  background: rgba(97, 218, 251, 0.2);
+  color: #61dafb;
+  border: 1px solid rgba(97, 218, 251, 0.35);
+}
+
+.sectionTagExercise {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.sectionTagTip {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.sectionTagKeyPoint {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+.sectionBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+.sectionBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #9fc4ff;
+  background: rgba(159, 196, 255, 0.12);
+  border: 1px solid rgba(159, 196, 255, 0.2);
+}
+
+.sectionCodeBlock {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  color: #ddecff;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.sectionCodeBlock code {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Kotlin lesson: concept sections & digestible content */
+.conceptSection {
+  margin-top: 28px;
+  margin-bottom: 16px;
+}
+
+.conceptSection:first-of-type {
+  margin-top: 16px;
+}
+
+.conceptTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e6f0ff;
+  margin: 0 0 10px 0;
+  letter-spacing: 0.02em;
+}
+
+.conceptBody {
+  font-size: 14px;
+  color: #c6d5ff;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.conceptBody+.conceptBody {
+  margin-top: 10px;
+}
+
+.inlineCode {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  color: #7cf4ff;
+}
+
+.callout {
+  margin: 16px 0;
+  padding: 14px 18px;
+  border-radius: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.calloutIcon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.3);
+  color: #6ee7b7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.calloutText {
+  font-size: 14px;
+  color: #b8e0d0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.runnableSnippet {
+  margin: 16px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.runnableSnippetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.runnableSnippetTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9fc4ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.snippetRunBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(120deg, #5b7eff, #6ce0ff);
+  color: #041021;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.snippetRunBtn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.snippetRunBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.snippetOutput {
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  color: #9fc4ff;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 36px;
+}
+
+.snippetOutputError {
+  color: #fca5a5;
+}
+
+.openInPlayground {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #7cf4ff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.openInPlayground:hover {
+  color: #a5f5ff;
+  text-decoration: underline;
+}
+
+.practiceCard {
+  margin-bottom: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.practiceCardTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffc107;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.practiceCardDesc {
+  font-size: 14px;
+  color: #c6d5ff;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+/* ========== Coroutines basics doc layout (Kotlin docs style) ========== */
+.docLayoutWrap {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.docLayoutGrid {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 48px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .docLayoutGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .docToc {
+    display: none;
+  }
+}
+
+.docContent {
+  min-width: 0;
+  max-width: 720px;
+}
+
+.docH1 {
+  margin: 0 0 24px;
+  font-size: 1.875em;
+  font-weight: 700;
+  color: #f1f6ff;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.docH2 {
+  margin: 32px 0 16px;
+  padding-top: 8px;
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #f1f6ff;
+  line-height: 1.3;
+  scroll-margin-top: 100px;
+}
+
+.docH2:first-of-type {
+  margin-top: 24px;
+}
+
+.docH2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.docH3 {
+  margin: 24px 0 12px;
+  font-size: 1.125em;
+  font-weight: 600;
+  color: #e6f0ff;
+  line-height: 1.4;
+  scroll-margin-top: 100px;
+}
+
+.docParagraph {
+  margin: 0 0 14px;
+  font-size: 0.9375em;
+  color: #c6d5ff;
+  line-height: 1.65;
+}
+
+.docInfoBox {
+  margin: 20px 0;
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.docInfoBoxIcon {
+  flex-shrink: 0;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.35);
+  color: #6ee7b7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875em;
+  font-weight: 700;
+}
+
+.docInfoBoxText {
+  font-size: 0.875em;
+  color: #b8e0d0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.docInfoBoxCode {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(34, 197, 94, 0.2);
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.8125em;
+  color: #86efac;
+}
+
+.docStepTitle {
+  margin: 20px 0 8px;
+  font-size: 1em;
+  font-weight: 600;
+  color: #e6f0ff;
+  line-height: 1.4;
+}
+
+.docStepTitle:first-of-type {
+  margin-top: 16px;
+}
+
+.docNoteBox {
+  margin: 20px 0;
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(148, 163, 184, 0.1);
+}
+
+.docNoteBoxIcon {
+  flex-shrink: 0;
+  font-size: 1.125em;
+  line-height: 1;
+}
+
+.docNoteBoxText {
+  font-size: 0.875em;
+  color: #c6d5ff;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.docNoteBoxCode {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.8125em;
+  color: #94a3b8;
+}
+
+/* Solution block (collapsible) */
+.docSolutionDetails {
+  margin: 20px 0;
+  border: 1px solid rgba(124, 244, 255, 0.25);
+  border-radius: 12px;
+  background: rgba(124, 244, 255, 0.06);
+  overflow: hidden;
+}
+
+.docSolutionSummary {
+  padding: 14px 18px;
+  font-weight: 600;
+  font-size: 1em;
+  color: #7cf4ff;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.docSolutionSummary::-webkit-details-marker {
+  display: none;
+}
+
+.docSolutionSummary::before {
+  content: "►";
+  font-size: 0.75em;
+  transition: transform 0.2s;
+}
+
+.docSolutionDetails[open] .docSolutionSummary::before {
+  transform: rotate(90deg);
+}
+
+.docSolutionContent {
+  padding: 0 18px 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.docSolutionContent .docParagraph {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+.docSolutionContent .docParagraph:first-child {
+  margin-top: 16px;
+}
+
+.docSolutionContent .runnableSnippet {
+  margin-top: 14px;
+}
+
+.docCodeActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.docSnippetMaximize {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #9fc4ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.docSnippetMaximize:hover {
+  background: rgba(124, 244, 255, 0.12);
+  color: #7cf4ff;
+  border-color: rgba(124, 244, 255, 0.3);
+}
+
+.docCodeMeta {
+  padding: 8px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.75em;
+  color: #8b9dc4;
+}
+
+.docImageFigure {
+  margin: 24px 0;
+}
+
+.docImageWrap {
+  position: relative;
+  display: inline-block;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.docImage {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.docImageMaximize {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #e6f0ff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.docImageMaximize:hover {
+  background: rgba(124, 244, 255, 0.25);
+  color: #7cf4ff;
+}
+
+.docImageCaption {
+  margin-top: 10px;
+  font-size: 0.8125em;
+  color: #9fc4ff;
+  line-height: 1.4;
+}
+
+.docList {
+  margin: 12px 0 20px;
+  padding-left: 24px;
+  color: #c6d5ff;
+  font-size: 0.9375em;
+  line-height: 1.65;
+}
+
+.docList li {
+  margin-bottom: 6px;
+}
+
+/* Right mini navigation (TOC) */
+.docToc {
+  position: sticky;
+  top: 90px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 12px 0;
+}
+
+.docTocNav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docTocGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docTocLink {
+  display: block;
+  padding: 6px 12px 6px 14px;
+  font-size: 0.8125em;
+  color: #b8ccf0;
+  text-decoration: none;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.docTocLink:hover {
+  color: #e6f0ff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.docTocLinkActive {
+  color: #e6f0ff;
+  font-weight: 600;
+  border-left-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.1);
+}
+
+.docTocLinkChild {
+  padding-left: 24px;
+  font-size: 0.75em;
+  color: #9fc4ff;
+}
+
+.docTocLinkChild.docTocLinkActive {
+  border-left-color: #7c3aed;
+}
+
+.docTocChildren {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 4px 0;
+}
+
+.docTocChildren li {
+  margin: 0;
+}
+
+/* Image lightbox */
+.docLightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: pointer;
+}
+
+.docLightboxContent {
+  position: relative;
+  max-width: 95vw;
+  max-height: 95vh;
+  cursor: default;
+}
+
+.docLightboxImage {
+  max-width: 95vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.docLightboxClose {
+  position: absolute;
+  top: -44px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.docLightboxClose:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Code example fullscreen lightbox */
+.docCodeLightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: pointer;
+}
+
+.docCodeLightboxContent {
+  position: relative;
+  width: 95vw;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(12, 16, 36, 0.98), rgba(7, 10, 24, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  cursor: default;
+}
+
+.docCodeLightboxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.docCodeLightboxTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #9fc4ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.docCodeLightboxToolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.docCodeLightboxClose {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e6f0ff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  margin-left: 4px;
+}
+
+.docCodeLightboxClose:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.docCodeLightboxPre {
+  flex: 1;
+  margin: 0;
+  padding: 20px 24px;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  border-radius: 0;
+  font-family: "SF Mono", Consolas, monospace;
+  line-height: 1.5;
+  min-height: 200px;
+  max-height: 60vh;
+}
+
+.docCodeLightboxPre .codeBlock {
+  font-size: inherit;
+}
+
+.docCodeLightboxOutput {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0;
+  max-height: 120px;
+  overflow: auto;
+}
+
+/* ========== Kotlin Loading Animation ========== */
+.kotlinLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 40px 24px;
+  min-height: 180px;
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.05), rgba(167, 139, 250, 0.03));
+  border-radius: 12px;
+  margin: 16px;
+}
+
+.kotlinLoadingIcon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kotlinLoadingIcon::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(124, 58, 237, 0.4) 60deg,
+    rgba(167, 139, 250, 0.6) 120deg,
+    rgba(124, 58, 237, 0.4) 180deg,
+    transparent 240deg
+  );
+  animation: kotlinOrbit 1.8s linear infinite;
+  filter: blur(3px);
+}
+
+.kotlinLoadingIcon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.15);
+  animation: kotlinPulse 2s ease-in-out infinite;
+}
+
+.kotlinSpinIcon {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  color: #a78bfa;
+  filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.5));
+}
+
+@keyframes kotlinOrbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes kotlinPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.9;
+  }
+}
+
+.kotlinLoadingSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 260px;
+}
+
+.kotlinStep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.kotlinStep.active {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(167, 139, 250, 0.12));
+  border-color: rgba(167, 139, 250, 0.4);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2), 0 0 0 1px rgba(167, 139, 250, 0.1);
+}
+
+.kotlinStep.done {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(22, 163, 74, 0.1));
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.stepDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.kotlinStep.active .stepDot {
+  background: #a78bfa;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+  animation: dotPulse 1s ease-in-out infinite;
+}
+
+.kotlinStep.done .stepDot {
+  background: #6ee7b7;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 18px rgba(167, 139, 250, 0.8);
+  }
+}
+
+.stepLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b9dc4;
+  transition: color 0.3s ease;
+}
+
+.kotlinStep.active .stepLabel {
+  color: #e6f0ff;
+}
+
+.kotlinStep.done .stepLabel {
+  color: #a5f5cf;
+}
+
+/* Checkmark icon for completed steps */
+.kotlinStep.done .stepDot::after {
+  content: '✓';
+  display: block;
+  font-size: 7px;
+  color: #052e16;
+  text-align: center;
+  line-height: 10px;
+  font-weight: 900;
+}
+
+.kotlinLoadingTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #c6d5ff;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.kotlinLoadingSubtitle {
+  font-size: 12px;
+  color: #8b9dc4;
+  text-align: center;
+}
+
+.kotlinLoadingHint {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #8b9dc4;
+  text-align: center;
+  line-height: 1.5;
+  background: rgba(124, 58, 237, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(167, 139, 250, 0.15);
+  max-width: 280px;
 }

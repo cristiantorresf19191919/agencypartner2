@@ -13,6 +13,11 @@
   position: sticky;
 }
 
+/* Hide header when code editor is in fullscreen mode */
+:global(body[data-code-editor-fullscreen="true"]) .header {
+  display: none !important;
+}
+
 .scrolled {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
 }
@@ -636,6 +641,81 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Search button with Cmd+K shortcut */
+.searchButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(160, 106, 249, 0.25);
+  border-radius: 10px;
+  background: rgba(160, 106, 249, 0.08);
+  color: rgba(160, 106, 249, 0.9);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 14px;
+}
+
+.searchButton:hover {
+  background: rgba(160, 106, 249, 0.15);
+  border-color: rgba(160, 106, 249, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(160, 106, 249, 0.2);
+}
+
+.searchButton i {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.searchShortcut {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+}
+
+.searchShortcut kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: rgba(160, 106, 249, 0.15);
+  border: 1px solid rgba(160, 106, 249, 0.2);
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: inherit;
+  color: rgba(160, 106, 249, 0.9);
+}
+
+[data-theme="dark"] .searchButton {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] .searchButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .searchShortcut kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Hide shortcut on smaller screens */
+@media (max-width: 900px) {
+  .searchShortcut {
+    display: none;
+  }
+}
+
 .languageSwitcher {
   display: inline-flex;
   align-items: center;
@@ -666,6 +746,65 @@
   border-color: rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
   color: #e2e8f0;
+}
+
+/* Keep header at fixed size when developer section content font scaling is active */
+[data-developer-section-font-wrap] .developerHeader {
+  font-size: 16px;
+}
+
+/* Developer section: content font size controls (A− / A+) */
+.developerFontSizeControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.developerFontSizeLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+[data-theme="dark"] .developerFontSizeLabel {
+  color: #94a3b8;
+}
+
+.developerFontSizeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(160, 106, 249, 0.25);
+  border-radius: 8px;
+  background: rgba(160, 106, 249, 0.06);
+  color: var(--text-dark);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.developerFontSizeBtn:hover {
+  background: rgba(160, 106, 249, 0.12);
+  border-color: rgba(160, 106, 249, 0.4);
+  color: var(--purple-1);
+}
+
+[data-theme="dark"] .developerFontSizeBtn {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .developerFontSizeBtn:hover {
+  background: rgba(124, 244, 255, 0.12);
+  border-color: rgba(124, 244, 255, 0.3);
+  color: #7cf4ff;
 }
 
 [data-theme="dark"] .languageSwitcher:hover {

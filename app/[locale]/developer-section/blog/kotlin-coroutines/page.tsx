@@ -563,8 +563,8 @@ export default function KotlinCoroutinesPage() {
               On the JVM and in Kotlin/Native, all concurrent code runs on <strong>threads</strong>, managed by the OS. Coroutines can <strong>suspend</strong> their execution instead of blocking a thread. One coroutine can suspend while waiting for data while another runs on the same thread—effective resource utilization.
             </Text>
             <div className={styles.conceptImage} style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "0.5rem" }}>
-              <Image src="/images/portfolio/parallelism-and-concurrency.svg" alt="Parallelism and concurrency" width={350} height={220} style={{ maxWidth: "100%", height: "auto" }} />
-              <Image src="/images/portfolio/coroutines-and-threads.svg" alt="Coroutines and threads" width={350} height={188} style={{ maxWidth: "100%", height: "auto" }} />
+              <Image src="/images/portfolio/parallelism-and-concurrency.svg" alt="Parallelism and concurrency" width={350} height={220} style={{ maxWidth: "100%", width: "auto", height: "auto" }} />
+              <Image src="/images/portfolio/coroutines-and-threads.svg" alt="Coroutines and threads" width={350} height={188} style={{ maxWidth: "100%", width: "auto", height: "auto" }} />
             </div>
             <Text className={styles.sectionDescription}>
               Unlike many other languages, <strong>async</strong> and <strong>await</strong> are not keywords in Kotlin; the <strong>suspend</strong> abstraction is safer and less error-prone than futures and promises. Think of coroutines as lightweight threads: you can run many of them without the overhead of real threads—they suspend instead of block.
@@ -658,7 +658,7 @@ export default function KotlinCoroutinesPage() {
               <strong>Concepts:</strong> <code>runBlocking</code> vs <code>launch</code>, suspend functions (the &quot;pause&quot; button), and the difference between blocking and suspending. The thread is not blocked when you suspend—it can do other work.
             </Text>
             <div className={styles.conceptImage}>
-              <Image src="https://kotlinlang.org/docs/images/get-started-coroutines.svg" alt="Kotlin coroutines: get started" width={400} height={200} style={{ maxWidth: "100%", height: "auto" }} />
+              <Image src="https://kotlinlang.org/docs/images/get-started-coroutines.svg" alt="Kotlin coroutines: get started" width={400} height={200} style={{ maxWidth: "100%", width: "auto", height: "auto" }} />
             </div>
             <CodeEditor code={module1Code} language="kotlin" readOnly height={320} />
             <Heading level={3} className={styles.sectionTitle}>

@@ -89,7 +89,7 @@ function SearchResultsContent() {
               mb: 3,
             }}
           >
-            Search Documentation
+            {t("search-docs-title")}
           </Typography>
 
           <Box className={styles.searchBarContainer}>
@@ -108,8 +108,8 @@ function SearchResultsContent() {
               }}
             >
               {results.length > 0
-                ? `Found ${results.length} result${results.length !== 1 ? "s" : ""} for "${query}"`
-                : `No results found for "${query}"`}
+                ? t("search-found-results").replace("{count}", String(results.length)).replace("{query}", query)
+                : t("search-no-results-for").replace("{query}", query)}
             </Typography>
           )}
         </motion.div>
@@ -136,7 +136,7 @@ function SearchResultsContent() {
                 fontWeight: 500,
               }}
             >
-              Search for patterns, concepts, and more
+              {t("search-empty-prompt")}
             </Typography>
             <Typography
               variant="body2"
@@ -144,7 +144,7 @@ function SearchResultsContent() {
                 color: "rgba(255, 255, 255, 0.4)",
               }}
             >
-              Try searching for "hooks", "patterns", "SOLID", or any concept you're looking for
+              {t("search-empty-hint")}
             </Typography>
           </motion.div>
         )}
@@ -163,7 +163,7 @@ function SearchResultsContent() {
                 mb: 2,
               }}
             >
-              No results found
+              {t("search-no-results")}
             </Typography>
             <Typography
               variant="body2"
@@ -171,7 +171,7 @@ function SearchResultsContent() {
                 color: "rgba(255, 255, 255, 0.4)",
               }}
             >
-              Try different keywords or check your spelling
+              {t("search-try-different")}
             </Typography>
           </motion.div>
         )}

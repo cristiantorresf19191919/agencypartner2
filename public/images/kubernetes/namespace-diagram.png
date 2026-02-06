@@ -1,0 +1,25 @@
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <title>We can't find that page</title>
+    <meta name='description' content="Sorry we can't find that page! It might be an old link or maybe it moved." />
+    <meta name='author' content="LearnKube" />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <style>.link,.link:active,.link:focus,.link:hover,.link:link,.link:visited{transition:color .15s ease-in}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}h1{font-size:2em;margin:.67em 0}code,pre{font-size:1em}pre{font-family:monospace,monospace}a{background-color:transparent}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}a,body,code,div,h1,header,html,p,pre{box-sizing:border-box}.bg-light-gray{background-color:#eee}.bg-dark-red{background-color:#e7040f}.bg-yellow{background-color:gold}.bg-green{background-color:#19a974}.link{text-decoration:none}.link:focus{outline:currentColor dotted 1px}.br2{border-radius:.25rem}.br-100{border-radius:100%}.br--bottom{border-top-left-radius:0;border-top-right-radius:0}.br--top{border-bottom-left-radius:0;border-bottom-right-radius:0}.pre{overflow-x:auto;overflow-y:hidden;overflow:scroll;white-space:pre}.flex{display:flex}.h1{height:1rem}.center{margin-right:auto;margin-left:auto}.lh-copy{line-height:1.5}.mw7{max-width:48rem}.w1{width:1rem}.overflow-auto{overflow:auto}.relative{position:relative}.mv0{margin-top:0;margin-bottom:0}.pl1{padding-left:.25rem}.ml1{margin-left:.25rem}.pv2{padding-top:.5rem;padding-bottom:.5rem}.ph3{padding-left:1rem;padding-right:1rem}.mt3{margin-top:1rem}.mv4{margin-top:2rem;margin-bottom:2rem}.strike{text-decoration:line-through}.f4{font-size:1.25rem}.measure{max-width:30em}.sans-serif{font-family:-apple-system,BlinkMacSystemFont,'avenir next',avenir,'helvetica neue',helvetica,ubuntu,roboto,noto,'segoe ui',arial,sans-serif}.code,code{font-family:Consolas,monaco,monospace}.code-dark-theme{padding-top:2ch;padding-bottom:2ch;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none;color:#f8f8f2;background-color:#272822}.code-dark-theme .code{min-width:100%;float:left}.code-dark-theme .command,.code-dark-theme .output{padding-left:2ch;padding-right:2ch;display:block;min-width:100%;box-sizing:border-box}@keyframes blinking{from,to{color:transparent}50%{color:#fff}}@-moz-keyframes blinking{from,to{color:transparent}50%{color:#fff}}@-webkit-keyframes blinking{from,to{color:transparent}50%{color:#fff}}@-ms-keyframes blinking{from,to{color:transparent}50%{color:#fff}}@-o-keyframes blinking{from,to{color:transparent}50%{color:#fff}}.code-dark-theme .token.punctuation,.code-dark-theme .token.variable{color:#f8f8f2}.code-dark-theme .token.number{color:#ae81ff}.code-dark-theme .token.function{color:#e6db74}.code-dark-theme .token.keyword{color:#66d9ef}.code-dark-theme .code .prompt{text-indent:2ch;position:relative}.code-dark-theme .code .prompt:before{position:absolute;top:0;left:0;content:'$'}@media screen and (min-width:64em){.mv5-l{margin-top:4rem;margin-bottom:4rem}}</style>
+  </head>
+  <body class='sans-serif'><div class='mt3 mw7 center ph3'>
+  <div class="mv4 mv5-l">
+    <header class="bg-light-gray flex pv2 pl1 br--top br2 relative">
+      <div class="w1 h1 ml1 br-100 bg-dark-red"></div>
+      <div class="w1 h1 ml1 br-100 bg-green"></div>
+      <div class="w1 h1 ml1 br-100 bg-yellow"></div>
+    </header>
+    <pre class="code-dark-theme relative overflow-auto mv0 br2 br--bottom">
+<code class="code lh-copy"><span class="command prompt">kubectl get pages</span><span class="output">NAME                   READY   STATUS      AGE
+/                      <span class="token number">1</span>/1     Running     2d21h
+/blog                  <span class="token number">1</span>/1     Running     54m
+/login                 <span class="token number">1</span>/1     Running     3d15h</span></code></pre>
+  </div>
+  <p class='lh-copy measure f4'>Page not found! <span class="strike">Have you installed the CRD?</span></p>
+</div></body>
+</html>

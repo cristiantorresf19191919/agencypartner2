@@ -629,6 +629,38 @@ export const blogCategories: BlogCategory[] = [
       },
     ],
   },
+  {
+    id: "data-structures-algorithms",
+    title: "Data Structures & Algorithms",
+    description: "Master fundamental data structures and algorithms with executable code examples. Learn arrays, linked lists, trees, graphs, sorting, searching, and dynamic programming with practical implementations in TypeScript and Kotlin.",
+    icon: "📊",
+    color: "from-emerald-500 to-teal-500",
+    slug: "data-structures-algorithms",
+    posts: [
+      {
+        id: "dsa-complete-guide",
+        title: "Data Structures & Algorithms: Complete Guide",
+        description: "Comprehensive guide to data structures and algorithms with executable TypeScript and Kotlin code examples. Master arrays, linked lists, stacks, queues, trees, graphs, sorting, searching, and dynamic programming.",
+        icon: "📊",
+        color: "from-emerald-500 to-teal-500",
+        slug: "dsa-complete-guide",
+        topics: [
+          "Big O Notation & Complexity",
+          "Arrays & Strings",
+          "Linked Lists",
+          "Stacks & Queues",
+          "Hash Tables",
+          "Trees & Binary Search Trees",
+          "Heaps & Priority Queues",
+          "Graphs & Traversals",
+          "Sorting Algorithms",
+          "Searching Algorithms",
+          "Dynamic Programming",
+          "Greedy Algorithms",
+        ],
+      },
+    ],
+  },
 ];
 
 // Helper function to get category by slug
