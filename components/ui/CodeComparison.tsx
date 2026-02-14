@@ -52,9 +52,9 @@ export function CodeComparison({
 
   const sharedEditorProps = blogMode
     ? {
-      collapsePanelsByDefault: isMobile ? true : !isReact,
+      collapsePanelsByDefault: true,
       compactToolbar: true,
-      maxCodeHeight: 400,
+      maxCodeHeight: 800,
       height: "auto" as const,
       enableMultiFile: true,
     }

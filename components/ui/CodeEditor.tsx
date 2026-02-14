@@ -58,10 +58,22 @@ interface CodeEditorProps {
   exampleVariant?: "bad" | "good";
   /** Label for the badge when exampleVariant is set (e.g. "Ejemplo a evitar"). */
   exampleBadgeLabel?: string;
-  /** Max height (px) for the code area; internal scroll. Desktop default 400, mobile 280. */
+  /** Max height (px) for the code area; internal scroll. When unset, desktop uses content-based height (up to 920 for long code). */
   maxCodeHeight?: number;
   /** Use compact toolbar: primary Run, secondary Copy, tertiary (Reset, font, Maximize) in ⋯ menu. */
   compactToolbar?: boolean;
+}
+
+/** Default editor height when content has many lines (developer section). */
+const LARGE_CODE_HEIGHT = 920;
+const MEDIUM_CODE_HEIGHT = 560;
+const SMALL_CODE_HEIGHT = 420;
+
+function getContentBasedHeight(code: string): number {
+  const lines = (code || "").trim().split("\n").length;
+  if (lines > 25) return LARGE_CODE_HEIGHT;
+  if (lines > 15) return MEDIUM_CODE_HEIGHT;
+  return SMALL_CODE_HEIGHT;
 }
 
 const REACT_UMD = `
@@ -116,7 +128,7 @@ export function CodeEditor({
   language = "tsx",
   onChange,
   readOnly = false,
-  height = 420,
+  height,
   className = "",
   defaultFullscreen = false,
   disableLinting = true,
@@ -151,6 +163,14 @@ export function CodeEditor({
   const [fullscreenEditorHeight, setFullscreenEditorHeight] = useState(400);
   const uniqueId = useId();
   const isMobile = useIsMobile();
+
+  const contentBasedHeight = useMemo(() => getContentBasedHeight(initialCode), [initialCode]);
+  const effectiveHeight =
+    height !== undefined && height !== "auto"
+      ? typeof height === "number"
+        ? height
+        : Number(height) || contentBasedHeight
+      : contentBasedHeight;
 
   // Resizable layout: editor gets more space by default (70%), Preview/Console split 50/50
   const [editorPanelRatio, setEditorPanelRatio] = useState(0.7);
@@ -797,10 +817,10 @@ export function solution() {
 
   // Mobile: default to static read-only block; "Open editor" expands inline (contained, no fixed/sticky/portal)
   const showStaticBlock = isMobile && !mobileEditorOpen;
-  const editorHeightNum = typeof height === "number" ? height : height === "auto" ? 400 : 400;
+  const editorHeightNum = effectiveHeight;
   const mobileEditorHeight = 320;
 
-  const effectiveMaxCodeHeight = maxCodeHeight ?? (isMobile ? 280 : 400);
+  const effectiveMaxCodeHeight = maxCodeHeight ?? (isMobile ? 280 : Math.max(400, contentBasedHeight));
 
   const mobileStaticBlock = showStaticBlock && (
     <div className={isFullscreen ? styles.staticBlockFullscreen : styles.staticBlock}>
@@ -845,7 +865,7 @@ export function solution() {
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        minHeight: isFullscreen ? undefined : (isMobile ? 200 : (height === "auto" ? 400 : editorHeightNum)),
+        minHeight: isFullscreen ? undefined : (isMobile ? 200 : editorHeightNum),
         maxHeight: isMobile && !isFullscreen ? "none" : undefined,
       }}
     >
@@ -1108,7 +1128,7 @@ export function solution() {
           }}
         >
           <MonacoEditor
-            height={isFullscreen ? fullscreenEditorHeight : (isMobile ? mobileEditorHeight : (height === "auto" ? effectiveMaxCodeHeight : Math.min(Number(height) || 400, effectiveMaxCodeHeight)))}
+            height={isFullscreen ? fullscreenEditorHeight : (isMobile ? mobileEditorHeight : Math.min(editorHeightNum, effectiveMaxCodeHeight))}
             language={isReactLike ? "typescript" : (enableMultiFile && currentFile ? currentFile.language : normalizedLang)}
             path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : (enableMultiFile && currentFile ? currentFile.name : `App-${uniqueId.replace(/:/g, "")}.tsx`)}
             value={currentCode}
@@ -1210,8 +1230,8 @@ export function solution() {
       className={`${styles.resizableBottomPanel} ${bothPanelsCollapsed ? styles.resizableBottomPanelCollapsed : ""}`}
       style={{
         flex: bothPanelsCollapsed ? "0 0 auto" : `0 0 ${(1 - editorPanelRatio) * 100}%`,
-        minHeight: bothPanelsCollapsed ? 48 : 120,
-        height: bothPanelsCollapsed ? 48 : undefined,
+        minHeight: bothPanelsCollapsed ? 36 : 120,
+        height: bothPanelsCollapsed ? 36 : undefined,
         display: "flex",
         flexDirection: "row",
         overflow: "hidden",
@@ -1279,7 +1299,10 @@ export function solution() {
     </div>
   );
 
-  const shellHeight = collapsePanelsByDefault && previewCollapsed && consoleCollapsed ? 520 : 640;
+  const shellHeight =
+    collapsePanelsByDefault && previewCollapsed && consoleCollapsed
+      ? Math.max(920, editorHeightNum + 120)
+      : Math.max(640, editorHeightNum + 140);
   const rootClassName = [
     isFullscreen ? styles.rootFullscreen : styles.root,
     isMobile && compactToolbar ? styles.rootFullBleedMobile : "",
@@ -1291,7 +1314,7 @@ export function solution() {
       ref={resizableContainerRef}
       className={rootClassName}
       style={{
-        ...(isFullscreen ? { height: "100%", minHeight: 0 } : { height: shellHeight, minHeight: collapsePanelsByDefault ? 380 : 480 }),
+        ...(isFullscreen ? { height: "100%", minHeight: 0 } : { height: shellHeight, minHeight: Math.max(collapsePanelsByDefault ? 700 : 480, editorHeightNum + 100) }),
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -1300,7 +1323,7 @@ export function solution() {
       {mobileStaticBlock}
       <div
         style={{
-          flex: `0 0 ${editorPanelRatio * 100}%`,
+          flex: bothPanelsCollapsed ? "1 1 auto" : `0 0 ${editorPanelRatio * 100}%`,
           minHeight: 200,
           display: "flex",
           flexDirection: "column",
