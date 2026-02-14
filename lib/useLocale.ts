@@ -20,13 +20,7 @@ export function useLocale() {
     const pathWithoutLocale = removeLocaleFromPathname(path);
     
     // Add current locale to path
-    let result = addLocaleToPathname(pathWithoutLocale, locale);
-    // Temporary workaround for black screen on developer-section client navigation:
-    // force full page reload by appending dev_reload=1 (handled in developer-section layout)
-    if (pathWithoutLocale.includes('developer-section')) {
-      result += result.includes('?') ? '&dev_reload=1' : '?dev_reload=1';
-    }
-    return result;
+    return addLocaleToPathname(pathWithoutLocale, locale);
   };
 
   return {
