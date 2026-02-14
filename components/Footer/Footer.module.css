@@ -2,17 +2,17 @@
   position: relative;
   background: linear-gradient(135deg, #1a1b2e 0%, #2d1a4a 50%, #3a1e5d 100%);
   color: white;
-  padding-top: 180px;
-  padding-bottom: 3rem;
+  padding-top: 3rem;
+  padding-bottom: 2rem;
   overflow: hidden;
 }
 
 .footerWave {
   position: absolute;
-  top: -180px;
+  top: -120px;
   left: 0;
   width: 100%;
-  height: 180px;
+  height: 120px;
   overflow: hidden;
   line-height: 0;
   display: block;
@@ -21,7 +21,7 @@
 
 .footerWave svg {
   width: 100%;
-  height: 180px;
+  height: 120px;
   display: block;
   vertical-align: bottom;
 }
@@ -39,8 +39,70 @@
   z-index: 1;
 }
 
-.footerAbout {
-  text-align: center;
+/* Collapsible wrapper (mobile: animated max-height) */
+.footerCollapsible {
+  overflow: hidden;
+}
+
+.footerCollapsibleClosed {
+  max-height: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Back-to-top button (visible when footer is in view) */
+.backToTop {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #a06af9 0%, #c855f5 50%, #35E4B2 100%);
+  color: white;
+  box-shadow: 0 4px 20px rgba(160, 106, 249, 0.5), 0 0 0 0 rgba(160, 106, 249, 0.4);
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 0.3s ease;
+}
+
+.backToTop:hover {
+  box-shadow: 0 6px 28px rgba(160, 106, 249, 0.6), 0 0 0 8px rgba(160, 106, 249, 0.15);
+}
+
+.backToTop:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 3px;
+}
+
+.backToTopIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Multi-column main content */
+.footerMain {
+  display: grid;
+  grid-template-columns: 1fr minmax(200px, 280px);
+  gap: 3rem;
+  align-items: start;
+  margin-bottom: 2.5rem;
+}
+
+/* Left: brand column */
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .logo {
@@ -51,8 +113,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
   transition: transform 0.3s ease, filter 0.3s ease;
+  align-self: flex-start;
 }
 
 .logo:hover {
@@ -66,63 +128,426 @@
   filter: drop-shadow(0 0 8px rgba(160, 106, 249, 0.6));
 }
 
-.footerAbout p {
-  max-width: 650px;
-  margin: 0 auto 1.25rem auto;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.7;
-  font-size: 1.05rem;
+.tagline {
+  max-width: 480px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+  line-height: 1.75;
 }
 
-.footerLinks {
-  display: flex;
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  gap: 2.5rem;
-  margin-top: 2.5rem;
-  flex-wrap: wrap;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-self: flex-start;
 }
 
-.footerLinks a {
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(160, 106, 249, 0.4);
+}
+
+.contactEmail {
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  position: relative;
-  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
 }
 
-.footerLinks a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #a06af9, #35E4B2);
-  transition: width 0.3s ease;
+.contactEmail:hover {
+  color: #35E4B2;
 }
 
-.footerLinks a:hover {
+.socialRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.socialLabel {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.socialIcons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  transform: translateY(-2px);
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-.footerLinks a:hover::after {
-  width: 100%;
+.socialLink:hover {
+  background: rgba(160, 106, 249, 0.4);
+  color: white;
 }
 
-.gradientLink {
-  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Right: services column */
+.footerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
+.navHeading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.serviceLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.serviceLink {
+  color: #35E4B2;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.serviceLink:hover {
+  color: #5cefc6;
+  transform: translateX(4px);
+}
+
+/* Developer section */
+.developerInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.developerCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.developerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.developerImage {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.developerName {
+  margin: 0;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.developerRole {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+}
+
+/* Bottom: legal + copyright */
+.footerBottom {
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  text-align: center;
+}
+
+.legalLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legalLinks a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.8125rem;
+  transition: color 0.2s ease;
+}
+
+.legalLinks a:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.legalSeparator {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+}
+
+.copyright {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Mobile — collapsible footer, premium layout, FAB safe area */
 @media (max-width: 768px) {
-  .footerLinks {
+  .footer {
+    padding-top: 1rem;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom, 0px) + 5rem);
+  }
+
+  .footerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0;
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .footerHeader .logo {
+    margin: 0;
+  }
+
+  .footerToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .footerToggle:hover {
+    background: rgba(160, 106, 249, 0.35);
+  }
+
+  .footerToggle:active {
+    transform: scale(0.95);
+  }
+
+  .footerToggleIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footerToggleIcon i {
+    font-size: 1rem;
+  }
+
+  .footerCollapsible {
+    max-height: 2200px;
+    opacity: 1;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  }
+
+  .footerCollapsibleClosed {
+    max-height: 0 !important;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  }
+
+  .backToTop {
+    bottom: max(1.25rem, env(safe-area-inset-bottom, 0px) + 5rem);
+    right: 1.25rem;
+    width: 48px;
+    height: 48px;
+  }
+
+  .footerContainer {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .footerMain {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .footerBrand {
+    text-align: center;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .logo {
+    align-self: center;
+    font-size: 1.5rem;
+  }
+
+  .logo i {
+    font-size: 1.65rem;
+  }
+
+  .tagline {
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.65;
+    max-width: 100%;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .ctaButton {
+    align-self: stretch;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(160, 106, 249, 0.35);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ctaButton:active {
+    transform: scale(0.98);
+  }
+
+  .contactEmail {
+    font-size: 0.9375rem;
+    margin-top: -0.25rem;
+  }
+
+  .socialRow {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    margin-top: 0.25rem;
+  }
+
+  .socialLabel {
+    width: 100%;
+    text-align: center;
+    font-size: 0.8125rem;
+    margin-bottom: 0.125rem;
+  }
+
+  .socialIcons {
+    justify-content: center;
+    gap: 0.875rem;
+  }
+
+  .socialLink {
+    width: 44px;
+    height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .footerNav {
+    text-align: center;
+    align-items: center;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .navHeading {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.25rem;
+  }
+
+  .serviceLinks {
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .serviceLink {
+    font-size: 1rem;
+    padding: 0.375rem 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .serviceLink:hover {
+    transform: none;
+  }
+
+  /* Profile card: compact, pill-style on mobile */
+  .developerInfo {
     flex-direction: column;
-    gap: 1rem;
+    text-align: center;
+    margin-bottom: 1.75rem;
+    padding: 1.25rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .developerCard {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .developerImage {
+    width: 72px;
+    height: 72px;
+    border: 3px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .developerName {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* Legal row: never obscured by FAB */
+  .footerBottom {
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 0.625rem;
+  }
+
+  .legalLinks a {
+    font-size: 0.8125rem;
+  }
+
+  .copyright {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
+    padding: 0 0.5rem;
   }
 }
