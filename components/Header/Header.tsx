@@ -6,7 +6,10 @@ import { motion } from 'framer-motion';
 import styles from './Header.module.css';
 import MobileMenu from './MobileMenu';
 import { useProjectAdvisor } from '@/contexts/ProjectAdvisorContext';
+import { useNavigationLoader } from '@/contexts/NavigationLoaderContext';
 import { useLocale } from '@/lib/useLocale';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface NavLink {
   href: string;
@@ -19,7 +22,10 @@ const Header = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { openAdvisor } = useProjectAdvisor();
+  const { showLoader } = useNavigationLoader();
   const { createLocalizedPath } = useLocale();
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,8 +47,8 @@ const Header = () => {
   const navLinks: NavLink[] = [
     { href: '#faq', label: 'FAQ' },
     { href: '#contacto', label: 'Contacto' },
-    { href: '/asesorias', label: 'Asesorías', gradient: true },
-    { href: '/agentes', label: 'Agentes', gradient: true },
+    { href: '/asesorias', label: 'Asesorías' },
+    { href: '/agentes', label: 'Agentes' },
   ];
 
   const handleAdvisorClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -108,6 +114,7 @@ const Header = () => {
                 href={createLocalizedPath('/developer-section')}
                 className={styles.devLink}
                 title="Developer section — blog, challenges & tools"
+                onClick={() => showLoader('Loading Developer Hub...')}
               >
                 <span className={styles.devLinkIcon}>&lt;/&gt;</span>
                 <span>Dev</span>
@@ -124,6 +131,23 @@ const Header = () => {
               </button>
             </li>
           </ul>
+
+          <div className={styles.headerToggles}>
+            <button
+              className={`${styles.headerToggleBtn} ${styles.headerLangBtn}`}
+              onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
+              aria-label="Cambiar idioma"
+            >
+              {language === 'es' ? 'EN' : 'ES'}
+            </button>
+            <button
+              className={styles.headerToggleBtn}
+              onClick={toggleTheme}
+              aria-label="Cambiar tema"
+            >
+              <i className={theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'}></i>
+            </button>
+          </div>
         </nav>
 
         <div className={styles.headerWaveContainer}>

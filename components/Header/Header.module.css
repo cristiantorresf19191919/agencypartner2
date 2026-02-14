@@ -32,7 +32,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 1rem 3rem;
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
@@ -165,49 +165,41 @@
   display: none;
 }
 
-/* Dev link — developer section, code/terminal vibe */
+/* Dev link — developer section, styled as regular nav link */
 .devLink {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   text-decoration: none;
   color: var(--text-dark);
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 6px;
-  background: linear-gradient(135deg, rgba(160, 106, 249, 0.12) 0%, rgba(53, 228, 178, 0.1) 100%);
-  border: 1px solid rgba(160, 106, 249, 0.25);
-  transition: all 0.25s ease;
+  font-weight: 500;
+  font-size: inherit;
+  padding: 0;
+  padding-bottom: 0.25rem;
+  border: none;
+  background: none;
+  position: relative;
+  transition: color 0.25s ease;
 }
 
 .devLink:hover {
-  background: linear-gradient(135deg, rgba(160, 106, 249, 0.2) 0%, rgba(53, 228, 178, 0.15) 100%);
-  border-color: rgba(160, 106, 249, 0.45);
   color: var(--purple-1);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(160, 106, 249, 0.2);
 }
 
 .devLinkIcon {
   font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  opacity: 0.9;
+  opacity: 0.6;
   letter-spacing: -0.02em;
 }
 
 [data-theme="dark"] .devLink {
-  color: #e2e8f0;
-  background: linear-gradient(135deg, rgba(160, 106, 249, 0.2) 0%, rgba(53, 228, 178, 0.12) 100%);
-  border-color: rgba(160, 106, 249, 0.35);
+  color: #fff;
 }
 
 [data-theme="dark"] .devLink:hover {
-  background: linear-gradient(135deg, rgba(160, 106, 249, 0.28) 0%, rgba(53, 228, 178, 0.18) 100%);
-  border-color: rgba(160, 106, 249, 0.5);
   color: #c4b5fd;
-  box-shadow: 0 4px 16px rgba(160, 106, 249, 0.25);
 }
 
 .mobileMenuToggle {
@@ -288,9 +280,9 @@
 }
 
 .advisorButton {
-  background: linear-gradient(135deg, #a06af9 0%, #35E4B2 100%);
-  color: white;
-  border: none;
+  background: transparent;
+  color: #a06af9;
+  border: 1.5px solid #a06af9;
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   font-weight: 600;
@@ -300,38 +292,77 @@
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(160, 106, 249, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.advisorButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.advisorButton:hover::before {
-  left: 100%;
 }
 
 .advisorButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(160, 106, 249, 0.4);
+  background: rgba(160, 106, 249, 0.1);
+  transform: translateY(-1px);
 }
 
 .advisorButton:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(160, 106, 249, 0.3);
 }
 
 .advisorButton i {
   font-size: 1rem;
+}
+
+[data-theme="dark"] .advisorButton {
+  border-color: #b388ff;
+  color: #b388ff;
+}
+
+[data-theme="dark"] .advisorButton:hover {
+  background: rgba(179, 136, 255, 0.1);
+}
+
+/* Landing header inline toggles (language + theme) */
+.headerToggles {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.5rem;
+}
+
+.headerToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-dark);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.headerToggleBtn:hover {
+  background: rgba(160, 106, 249, 0.08);
+  border-color: rgba(160, 106, 249, 0.3);
+  color: #a06af9;
+}
+
+[data-theme="dark"] .headerToggleBtn {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .headerToggleBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.headerLangBtn {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  width: auto;
+  padding: 0 0.6rem;
 }
 
 /* DeveloperHeader: logo, actions, theme & language */
@@ -600,7 +631,7 @@
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .themeToggle {
@@ -641,54 +672,55 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Search button with Cmd+K shortcut */
+/* Search button with Cmd+K shortcut — spacious, clear affordance */
 .searchButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid rgba(160, 106, 249, 0.25);
-  border-radius: 10px;
+  gap: 10px;
+  min-width: 180px;
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(160, 106, 249, 0.28);
+  border-radius: 12px;
   background: rgba(160, 106, 249, 0.08);
-  color: rgba(160, 106, 249, 0.9);
+  color: rgba(160, 106, 249, 0.95);
   cursor: pointer;
   transition: all 0.25s ease;
   font-size: 14px;
 }
 
 .searchButton:hover {
-  background: rgba(160, 106, 249, 0.15);
-  border-color: rgba(160, 106, 249, 0.4);
+  background: rgba(160, 106, 249, 0.14);
+  border-color: rgba(160, 106, 249, 0.45);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(160, 106, 249, 0.2);
+  box-shadow: 0 4px 16px rgba(160, 106, 249, 0.22);
 }
 
 .searchButton i {
-  font-size: 14px;
-  opacity: 0.8;
+  font-size: 15px;
+  opacity: 0.9;
 }
 
 .searchShortcut {
   display: flex;
   align-items: center;
-  gap: 2px;
-  margin-left: 4px;
+  gap: 3px;
+  margin-left: 2px;
 }
 
 .searchShortcut kbd {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  background: rgba(160, 106, 249, 0.15);
-  border: 1px solid rgba(160, 106, 249, 0.2);
-  border-radius: 4px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  background: rgba(160, 106, 249, 0.12);
+  border: 1px solid rgba(160, 106, 249, 0.22);
+  border-radius: 6px;
   font-size: 11px;
   font-family: inherit;
-  color: rgba(160, 106, 249, 0.9);
+  color: rgba(160, 106, 249, 0.95);
 }
 
 [data-theme="dark"] .searchButton {
@@ -709,10 +741,15 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Hide shortcut on smaller screens */
+/* Smaller screens: hide shortcut and reduce min-width so header doesn’t feel squeezed */
 @media (max-width: 900px) {
   .searchShortcut {
     display: none;
+  }
+
+  .searchButton {
+    min-width: 120px;
+    padding: 0 14px;
   }
 }
 
@@ -828,6 +865,10 @@
   }
 
   .navLinks {
+    display: none;
+  }
+
+  .headerToggles {
     display: none;
   }
 

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useProjectAdvisor } from '@/contexts/ProjectAdvisorContext';
+import { useNavigationLoader } from '@/contexts/NavigationLoaderContext';
 import { useLocale } from '@/lib/useLocale';
 import styles from './MobileMenu.module.css';
 
@@ -22,6 +23,7 @@ interface NavItem {
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
   const { theme, toggleTheme } = useTheme();
   const { openAdvisor } = useProjectAdvisor();
+  const { showLoader } = useNavigationLoader();
   const { createLocalizedPath } = useLocale();
 
   const navItems: NavItem[] = [
@@ -182,7 +184,12 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                       <i className={`fas fa-chevron-right ${styles.arrow}`}></i>
                     </a>
                   ) : (
-                    <Link href={item.href} className={styles.navLink} onClick={onClose}>
+                    <Link href={item.href} className={styles.navLink} onClick={() => {
+                      if (item.href.includes('developer-section')) {
+                        showLoader('Loading Developer Hub...');
+                      }
+                      onClose();
+                    }}>
                       <div className={styles.navContent}>
                         <div className={styles.navIcon}>
                           <i className={item.icon}></i>
