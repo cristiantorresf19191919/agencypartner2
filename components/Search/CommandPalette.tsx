@@ -17,6 +17,7 @@ import {
 import { useCommandPalette } from "@/contexts/CommandPaletteContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
+import { useNavigationLoader } from "@/contexts/NavigationLoaderContext";
 import { getSearchIndex, searchItems, type SearchItem } from "@/lib/searchIndex";
 import styles from "./CommandPalette.module.css";
 
@@ -48,6 +49,7 @@ export default function CommandPalette() {
   const { isOpen, close, recentSearches, addRecentSearch, clearRecentSearches } = useCommandPalette();
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
+  const { showLoader } = useNavigationLoader();
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -102,10 +104,11 @@ export default function CommandPalette() {
     if (query.trim()) {
       addRecentSearch(query.trim());
     }
+    showLoader();
     const localizedPath = createLocalizedPath(href);
     window.location.href = localizedPath;
     close();
-  }, [query, addRecentSearch, createLocalizedPath, close]);
+  }, [query, addRecentSearch, createLocalizedPath, close, showLoader]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     const totalResults = flatResults.length;
@@ -155,17 +158,18 @@ export default function CommandPalette() {
             onClick={close}
           />
 
-          {/* Modal */}
-          <motion.div
-            className={styles.modal}
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            role="dialog"
-            aria-modal="true"
-            aria-label={t("command-palette-label") || "Search"}
-          >
+          {/* Modal — wrapped in centered container so it stays truly centered */}
+          <div className={styles.modalWrapper}>
+            <motion.div
+              className={styles.modal}
+              initial={{ opacity: 0, scale: 0.96, y: -12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: -12 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={t("command-palette-label") || "Search"}
+            >
             {/* Search Input */}
             <div className={styles.inputWrapper}>
               <SearchIcon className={styles.searchIcon} />
@@ -299,7 +303,8 @@ export default function CommandPalette() {
                 </span>
               </div>
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
