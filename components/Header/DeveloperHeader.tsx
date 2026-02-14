@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,9 +34,15 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
   const [overflowOpen, setOverflowOpen] = useState<boolean>(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState<boolean>(false);
   const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
-  const [modifierKey, setModifierKey] = useState<string>('Ctrl'); // Default matches SSR
+  const [modifierKey, setModifierKey] = useState<string>('Ctrl');
+  const [overflowMenuPosition, setOverflowMenuPosition] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
+  const [mobileMoreMenuPosition, setMobileMoreMenuPosition] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
   const overflowRef = useRef<HTMLDivElement>(null);
+  const overflowTriggerRef = useRef<HTMLButtonElement>(null);
+  const overflowMenuPortalRef = useRef<HTMLDivElement>(null);
   const mobileMoreRef = useRef<HTMLDivElement>(null);
+  const mobileMoreTriggerRef = useRef<HTMLButtonElement>(null);
+  const mobileMoreMenuPortalRef = useRef<HTMLDivElement>(null);
   const mobileNavRef = useRef<HTMLDivElement>(null);
 
   const toggleLanguage = () => {
@@ -57,18 +64,33 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (overflowRef.current && !overflowRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (overflowOpen && overflowTriggerRef.current && !overflowTriggerRef.current.contains(target) && overflowMenuPortalRef.current && !overflowMenuPortalRef.current.contains(target)) {
         setOverflowOpen(false);
       }
-      if (mobileMoreRef.current && !mobileMoreRef.current.contains(e.target as Node)) {
+      if (mobileMoreOpen && mobileMoreTriggerRef.current && !mobileMoreTriggerRef.current.contains(target) && mobileMoreMenuPortalRef.current && !mobileMoreMenuPortalRef.current.contains(target)) {
         setMobileMoreOpen(false);
       }
-      if (mobileNavRef.current && !mobileNavRef.current.contains(e.target as Node)) {
+      if (mobileNavRef.current && !mobileNavRef.current.contains(target)) {
         setMobileNavOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [overflowOpen, mobileMoreOpen]);
+
+  // Close portaled menus on scroll/resize so they don't stick in wrong place
+  useEffect(() => {
+    const closePortaledMenus = () => {
+      setOverflowOpen(false);
+      setMobileMoreOpen(false);
+    };
+    window.addEventListener('scroll', closePortaledMenus, true);
+    window.addEventListener('resize', closePortaledMenus);
+    return () => {
+      window.removeEventListener('scroll', closePortaledMenus, true);
+      window.removeEventListener('resize', closePortaledMenus);
+    };
   }, []);
 
   // Detect Mac platform after hydration to avoid SSR mismatch
@@ -332,100 +354,141 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
 
         <div className={styles.developerOverflow} ref={overflowRef}>
           <button
+            ref={overflowTriggerRef}
             type="button"
-            onClick={() => setOverflowOpen(!overflowOpen)}
+            onClick={() => {
+              if (!overflowOpen && overflowTriggerRef.current) {
+                const rect = overflowTriggerRef.current.getBoundingClientRect();
+                setOverflowMenuPosition({
+                  top: rect.bottom + 6,
+                  right: window.innerWidth - rect.right,
+                });
+              }
+              setOverflowOpen(!overflowOpen);
+            }}
             className={styles.developerOverflowButton}
             aria-label={t('header-menu')}
             aria-expanded={overflowOpen}
           >
             <i className="fas fa-ellipsis-v" aria-hidden />
           </button>
-          <AnimatePresence>
-            {overflowOpen && (
-              <motion.div
-                className={styles.developerOverflowMenu}
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.15 }}
-              >
-                <Link
-                  href={createLocalizedPath('/developer-section')}
-                  className={styles.developerOverflowLink}
-                  onClick={() => setOverflowOpen(false)}
-                >
-                  {t('nav-developer-section')}
-                </Link>
-                <Link
-                  href={createLocalizedPath('/developer-section/blog')}
-                  className={styles.developerOverflowLink}
-                  onClick={() => setOverflowOpen(false)}
-                >
-                  {t('nav-blog')}
-                </Link>
-                <Link
-                  href={createLocalizedPath('/developer-section/challenges')}
-                  className={styles.developerOverflowLink}
-                  onClick={() => setOverflowOpen(false)}
-                >
-                  {t('nav-challenges')}
-                </Link>
-                <div className={styles.developerOverflowDivider} />
-                <button
-                  type="button"
-                  onClick={() => {
-                    toggleTheme();
-                    setOverflowOpen(false);
-                  }}
-                  className={styles.developerOverflowAction}
-                >
-                  {theme === 'dark' ? (
-                    <><i className="fas fa-sun" /> {t('header-light-theme')}</>
-                  ) : (
-                    <><i className="fas fa-moon" /> {t('header-dark-theme')}</>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    toggleLanguage();
-                    setOverflowOpen(false);
-                  }}
-                  className={styles.developerOverflowAction}
-                >
-                  <i className="fas fa-language" /> {language === 'es' ? t('header-switch-english') : t('header-switch-spanish')}
-                </button>
-              </motion.div>
+          {typeof document !== 'undefined' &&
+            createPortal(
+              <AnimatePresence>
+                {overflowOpen && (
+                  <motion.div
+                    ref={overflowMenuPortalRef}
+                    className={styles.developerOverflowMenu}
+                    style={{
+                      position: 'fixed',
+                      top: overflowMenuPosition.top,
+                      right: overflowMenuPosition.right,
+                      zIndex: 10050,
+                    }}
+                    initial={{ opacity: 0, scale: 0.96, y: -6 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.96, y: -6 }}
+                    transition={{ duration: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
+                  >
+                    <Link
+                      href={createLocalizedPath('/developer-section')}
+                      className={styles.developerOverflowLink}
+                      onClick={() => setOverflowOpen(false)}
+                    >
+                      {t('nav-developer-section')}
+                    </Link>
+                    <Link
+                      href={createLocalizedPath('/developer-section/blog')}
+                      className={styles.developerOverflowLink}
+                      onClick={() => setOverflowOpen(false)}
+                    >
+                      {t('nav-blog')}
+                    </Link>
+                    <Link
+                      href={createLocalizedPath('/developer-section/challenges')}
+                      className={styles.developerOverflowLink}
+                      onClick={() => setOverflowOpen(false)}
+                    >
+                      {t('nav-challenges')}
+                    </Link>
+                    <div className={styles.developerOverflowDivider} />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleTheme();
+                        setOverflowOpen(false);
+                      }}
+                      className={styles.developerOverflowAction}
+                    >
+                      {theme === 'dark' ? (
+                        <><i className="fas fa-sun" /> {t('header-light-theme')}</>
+                      ) : (
+                        <><i className="fas fa-moon" /> {t('header-dark-theme')}</>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleLanguage();
+                        setOverflowOpen(false);
+                      }}
+                      className={styles.developerOverflowAction}
+                    >
+                      <i className="fas fa-language" /> {language === 'es' ? t('header-switch-english') : t('header-switch-spanish')}
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>,
+              document.body
             )}
-          </AnimatePresence>
         </div>
 
-        {/* Mobile: right — single "more" menu (theme + language) */}
+        {/* Mobile: right — single "more" menu (theme + language), portaled so it’s not clipped */}
         <div className={styles.navRight} ref={mobileMoreRef}>
           <div className={styles.developerMobileMore}>
             <button
+              ref={mobileMoreTriggerRef}
               type="button"
-              onClick={() => setMobileMoreOpen(!mobileMoreOpen)}
+              onClick={() => {
+                if (!mobileMoreOpen && mobileMoreTriggerRef.current) {
+                  const rect = mobileMoreTriggerRef.current.getBoundingClientRect();
+                  setMobileMoreMenuPosition({
+                    top: rect.bottom + 6,
+                    right: window.innerWidth - rect.right,
+                  });
+                }
+                setMobileMoreOpen(!mobileMoreOpen);
+              }}
               className={styles.developerMobileMoreButton}
               aria-label={t('header-more-options')}
               aria-expanded={mobileMoreOpen}
             >
               <i className="fas fa-ellipsis-v" aria-hidden />
             </button>
-            <AnimatePresence>
-              {mobileMoreOpen && (
-                <motion.div
-                  className={styles.developerOverflowMenu}
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.15 }}
-                  style={{ position: 'absolute', top: '100%', right: 0, marginTop: 6 }}
-                >
-                  {mobileMoreContent}
-                </motion.div>
+            {typeof document !== 'undefined' &&
+              createPortal(
+                <AnimatePresence>
+                  {mobileMoreOpen && (
+                    <motion.div
+                      ref={mobileMoreMenuPortalRef}
+                      className={styles.developerOverflowMenu}
+                      style={{
+                        position: 'fixed',
+                        top: mobileMoreMenuPosition.top,
+                        right: mobileMoreMenuPosition.right,
+                        zIndex: 10050,
+                      }}
+                      initial={{ opacity: 0, scale: 0.96, y: -6 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.96, y: -6 }}
+                      transition={{ duration: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
+                    >
+                      {mobileMoreContent}
+                    </motion.div>
+                  )}
+                </AnimatePresence>,
+                document.body
               )}
-            </AnimatePresence>
           </div>
         </div>
       </nav>
