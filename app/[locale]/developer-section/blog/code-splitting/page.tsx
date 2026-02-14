@@ -47,11 +47,21 @@ export default function CodeSplittingPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Route-based Code Splitting
+                {"🛤️"} 1. Route-based Code Splitting
               </Heading>
               <Text className={styles.sectionDescription}>
-                Split code by routes to load only what's needed for each page.
+                {"Why serve a buffet when your user only wants a snack? 🍕 Route-based splitting loads only what's needed per page — your users will thank you with faster load times and bigger smiles!"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"The #1 performance win for most apps — can cut initial bundle size by 50%+ instantly! ⚡"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> React.lazy {"•"} Suspense Boundaries {"•"} Next.js Auto-splitting {"•"} Dynamic Route Imports
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -120,11 +130,21 @@ function App() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Component-based Splitting
+                {"🧩"} 2. Component-based Splitting
               </Heading>
               <Text className={styles.sectionDescription}>
-                Lazy load heavy components that aren't immediately visible.
+                {"Got a chunky chart or a beefy editor hiding below the fold? 🏋️ Don't load it until your user actually needs it — lazy loading components is like meal-prepping for performance! 📦✨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Heavy components can bloat your bundle by hundreds of KBs — lazy load them and watch your TTI plummet! 📉"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Lazy Component Loading {"•"} Intersection Observer {"•"} Viewport-based Loading {"•"} Preload on Hover
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -222,11 +242,21 @@ function PreloadableLink({ to, children }: { to: string; children: React.ReactNo
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Module Federation
+                {"🔗"} 3. Module Federation
               </Heading>
               <Text className={styles.sectionDescription}>
-                Share code between micro-frontends using Webpack Module Federation.
+                {"Think of it as Netflix for your micro-frontends — each app shares its best components like a potluck dinner! 🎉 Module Federation lets independent teams deploy and share code seamlessly. 🤝"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> — {"Essential for large orgs with multiple teams — enables true micro-frontend architecture! 🏗️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Host Configuration {"•"} Remote Components {"•"} Shared Dependencies {"•"} Webpack Setup
+                </Text>
+              </div>
             </div>
 
             <CodeEditor

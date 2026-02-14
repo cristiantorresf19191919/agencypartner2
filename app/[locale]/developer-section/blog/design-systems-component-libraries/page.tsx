@@ -48,10 +48,22 @@ export default function DesignSystemsComponentLibrariesPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Building a Design System from Scratch
+                {"🏗️"} 1. Building a Design System from Scratch
               </Heading>
               <Text className={styles.sectionDescription}>
-                Create a scalable, maintainable design system with proper architecture, organization, and best practices.
+                {"Ready to build the LEGO set that powers your entire app? 🧱 A design system isn't just pretty colors — it's tokens, components, patterns, and docs all working together in perfect harmony. Think of it as your app's DNA — consistent, scalable, and beautiful! ✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"A well-built design system saves hundreds of hours across your team and ensures pixel-perfect consistency"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Design Tokens • Color System • Spacing & Typography • Button Component • Theme Provider
               </Text>
             </div>
 
@@ -310,10 +322,22 @@ export const useTheme = () => useContext(ThemeContext);`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Storybook Patterns
+                {"📖"} 2. Storybook Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Set up Storybook for component development, testing, and documentation with best practices.
+                {"Storybook is like a playground for your components! 🎢 Build, test, and document them in isolation before they ever touch your app. Variant stories, responsive previews, accessibility audits — all in one place. Your designers will love it and your devs will ship faster! 🚀"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Storybook accelerates component development and serves as living documentation for your entire team"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Configuration • Story Types • ArgTypes & Controls • Responsive Stories • A11y Addon • MDX Docs
               </Text>
             </div>
 
@@ -586,10 +610,22 @@ import { Button } from '@design-system/components';
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Component Documentation
+                {"📝"} 3. Component Documentation
               </Heading>
               <Text className={styles.sectionDescription}>
-                Create comprehensive component documentation with usage examples, API references, and best practices.
+                {"Good documentation is the difference between a design system people LOVE and one they ignore! 📚 JSDoc comments, usage examples, do's and don'ts, accessibility notes — give your team everything they need to use your components correctly. Future you will be SO grateful! 🙏"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — {"Great docs mean fewer Slack questions and faster onboarding — your team productivity will skyrocket"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> JSDoc Patterns • Usage Examples • Best Practices • Accessibility Docs • README Templates
               </Text>
             </div>
 
@@ -861,10 +897,22 @@ export const Button = ...`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Token System Architecture
+                {"🎨"} 4. Token System Architecture
               </Heading>
               <Text className={styles.sectionDescription}>
-                Design a scalable token system that works across platforms and tools.
+                {"Tokens are the atoms of your design system — the tiniest building blocks that define EVERYTHING! ⚛️ Colors, spacing, typography, shadows — all defined once and used everywhere. Change a token and watch the entire app update. It's like having a universal remote for your design! 🎛️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"A solid token architecture makes theming, dark mode, and brand updates trivially easy across your entire app"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Token Format • CSS/SCSS/JS Output • Semantic Tokens • Multi-Platform • Versioning • Theme Switching
               </Text>
             </div>
 
@@ -1095,10 +1143,22 @@ function applyTheme(theme: Theme) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Accessibility in Design Systems
+                {"♿"} 5. Accessibility in Design Systems
               </Heading>
               <Text className={styles.sectionDescription}>
-                Build accessible components that meet WCAG guidelines and work for all users.
+                {"Accessibility baked into your design system means every component is born accessible! 🌍 Color contrast, keyboard navigation, screen reader support, ARIA patterns — handle it once at the system level and every app built with it gets a11y for free. Build for everyone! 💜"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Accessible design systems ensure every product built on top of them is inclusive by default — no excuses!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Color Contrast • ARIA Patterns • Keyboard Navigation • Focus Management • Screen Readers • a11y Testing
               </Text>
             </div>
 
@@ -1387,10 +1447,22 @@ const accessibilityChecklist = {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                6. Versioning Component Libraries
+                {"🏷️"} 6. Versioning Component Libraries
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement semantic versioning, changelogs, and migration guides for component libraries.
+                {"Ship updates without breaking the world! 🌎 Semantic versioning, changelogs, and migration guides keep your consumers happy and your library trustworthy. Learn the art of deprecation, changesets, and release automation — because nobody wants a surprise breaking change on a Friday afternoon! 😅"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Proper versioning builds trust with consumers and prevents breaking changes from causing production fires"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> SemVer • Changelogs • Migration Guides • Changesets • Deprecation Strategy • Release Process
               </Text>
             </div>
 

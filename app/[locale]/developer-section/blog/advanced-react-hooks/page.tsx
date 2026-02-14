@@ -53,18 +53,28 @@ export default function AdvancedReactHooksPage() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  1. The "Non-Blocking" UI (`useTransition`)
+                  {"⚡ 1. The \"Non-Blocking\" UI (`useTransition`)"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Updating all state at once, causing the input to freeze while the list filters.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Split the "urgent" update (typing) from the "heavy" update (filtering).
+                  {"Your search input freezes while filtering 10,000 items? That's because React treats ALL state updates equally! 😤 useTransition lets you tell React: 'Hey, update the input NOW, but take your time with the list.' It's like a fast lane for urgent updates! 🏎️💨"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> {"— The difference between a UI that feels instant and one that feels sluggish. Your users will FEEL this improvement! ✨"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Urgent vs non-urgent updates {"•"} startTransition API {"•"} isPending state {"•"} Interruptible rendering
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> In production, users expect instant feedback when typing. By marking heavy updates as "transitions", React can interrupt them if the user continues typing, keeping the UI responsive.
+                  {"💡"} <strong>Why this matters:</strong> {"In production, users expect instant feedback when typing. By marking heavy updates as \"transitions\", React can interrupt them if the user continues typing, keeping the UI responsive. 🎯"}
                 </Text>
               </div>
 
@@ -160,18 +170,28 @@ export default SearchFeature;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  2. Preventing "Flicker" (`useLayoutEffect`)
+                  {"👁️ 2. Preventing \"Flicker\" (`useLayoutEffect`)"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Using `useEffect` to position a Tooltip. The user sees it render in the wrong spot, then "jump" to the right spot.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Use `useLayoutEffect` to calculate position *before* the browser paints the screen.
+                  {"Ever see a tooltip appear in the wrong spot then JUMP to the right place? 😖 That's the flicker! useLayoutEffect runs BEFORE the browser paints, so you can measure and position elements without the user ever seeing the awkward dance. It's like rehearsing before going on stage! 🎭"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> {"— Visual polish that separates amateur apps from professional ones. No more janky positioning! 💎"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> useEffect vs useLayoutEffect {"•"} DOM measurement timing {"•"} Tooltip positioning {"•"} Paint prevention
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> `useLayoutEffect` runs synchronously after DOM mutations but before the browser paints. This prevents visual "jumps" that hurt UX, especially for tooltips, modals, and positioned elements.
+                  {"💡"} <strong>Why this matters:</strong> {"`useLayoutEffect` runs synchronously after DOM mutations but before the browser paints. This prevents visual \"jumps\" that hurt UX, especially for tooltips, modals, and positioned elements. 🎯"}
                 </Text>
               </div>
 
@@ -271,18 +291,28 @@ export default App;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  3. The "Callback Ref" Pattern (Advanced DOM)
+                  {"🎯 3. The \"Callback Ref\" Pattern (Advanced DOM)"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Using `useEffect` with a `ref.current` dependency (which doesn't work reliably) to detect when an element appears.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Passing a function to `ref`. React calls this function precisely when the node mounts or unmounts.
+                  {"Did you know ref.current doesn't trigger re-renders? 😱 So putting it in useEffect deps is basically a lie! Callback refs are the real deal — React calls your function EXACTLY when the DOM node appears or disappears. It's like having a doorbell for your DOM elements! 🔔"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> {"— Essential for any DOM measurement, animation, or third-party library integration. This pattern just WORKS! 🔧"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Callback ref pattern {"•"} DOM measurement {"•"} Mount/unmount detection {"•"} useCallback + ref combo
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxGreen} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> Callback refs fire exactly when DOM nodes mount/unmount, making them perfect for measurements, animations, and third-party library integration. Unlike `useEffect` with refs, they're guaranteed to run at the right time.
+                  {"💡"} <strong>Why this matters:</strong> {"Callback refs fire exactly when DOM nodes mount/unmount, making them perfect for measurements, animations, and third-party library integration. Unlike `useEffect` with refs, they're guaranteed to run at the right time. ✅"}
                 </Text>
               </div>
 
@@ -370,18 +400,28 @@ export default DynamicMeasurer;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  4. Modern Architecture (Loaders vs. Waterfalls)
+                  {"🏗️ 4. Modern Architecture (Loaders vs. Waterfalls)"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Loading data inside `useEffect` in every component. (Component renders → Spinner → Fetch → Render).
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Lifting data fetching to the <strong>Router</strong> level (v6.4+). Fetching happens *before* rendering starts.
+                  {"Stop the spinner madness! 🔄 When every component fetches its own data in useEffect, you get a waterfall of loading states. Router-level data fetching is the future — data loads BEFORE your component even mounts. By the time the UI renders, the data is already there! 🎁 No more spinners, no more waterfalls!"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> {"— This architectural shift eliminates loading spinners entirely. Your app feels like a native desktop application! 🖥️"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Fetch waterfalls {"•"} Router-level loaders {"•"} Parallel data fetching {"•"} useLoaderData pattern
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxOrange} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> Router loaders fetch data in parallel with code bundle downloading. By the time the component mounts, data is often already there. This eliminates loading spinners, reduces waterfalls, and improves perceived performance dramatically.
+                  {"💡"} <strong>Why this matters:</strong> {"Router loaders fetch data in parallel with code bundle downloading. By the time the component mounts, data is often already there. This eliminates loading spinners, reduces waterfalls, and improves perceived performance dramatically. 🚀"}
                 </Text>
               </div>
 
@@ -448,18 +488,28 @@ export default App;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  5. React Portals: Escaping the CSS Trap
+                  {"🌀 5. React Portals: Escaping the CSS Trap"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Thinking Portals are just for Modals. Putting Tooltips or Dropdowns inside containers with `overflow: hidden` or weird `z-index`, causing them to get clipped.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Use Portals to render components at the `document.body` level, bypassing all parent CSS constraints while keeping component logic in the child.
+                  {"Portals aren't just for modals! 🚪 Got a tooltip clipped by overflow: hidden? A dropdown stuck behind a z-index wall? Portals teleport your component's DOM to document.body while keeping all the React logic in place. It's like a secret escape tunnel for your UI! 🕳️✨"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> {"— Every tooltip, dropdown, and popover library uses Portals under the hood. Understand this and you'll never fight CSS stacking again! 🛡️"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> createPortal API {"•"} Overflow escape {"•"} Z-index bypass {"•"} Tooltip/dropdown positioning
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> Portals let you write component logic inside the child, but render the DOM node at a different level. This breaks out of Stacking Contexts, overflow constraints, and z-index issues that would otherwise clip your UI elements.
+                  {"💡"} <strong>Why this matters:</strong> {"Portals let you write component logic inside the child, but render the DOM node at a different level. This breaks out of Stacking Contexts, overflow constraints, and z-index issues that would otherwise clip your UI elements. 🎯"}
                 </Text>
               </div>
 
@@ -568,18 +618,28 @@ export default App;
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  6. Error Boundaries: The "Blast Radius" Control
+                  {"💥 6. Error Boundaries: The \"Blast Radius\" Control"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Wrapping the whole `App` in one Error Boundary. If one widget crashes, the entire app goes down.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Use <strong>Granular Boundaries</strong>. Wrap specific high-risk widgets (Payment Form, Third-Party Graph) in their own boundaries. If the graph crashes, the rest of the dashboard remains usable.
+                  {"One crash shouldn't nuke your entire app! 💣 Wrapping everything in a single Error Boundary is like having one fuse for your whole house. Granular boundaries are like circuit breakers — if the graph widget crashes, the rest of the dashboard keeps working perfectly! 🏥"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> {"— In production, graceful degradation is everything. Users should never see a full white screen of death! ☠️➡️😊"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Granular error boundaries {"•"} Blast radius control {"•"} Fallback UI {"•"} Error logging per widget
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxRed} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> Error Boundaries are currently the only feature that still requires a Class Component (no Hook exists yet). They catch errors during rendering, in lifecycle methods, and in constructors. Granular boundaries limit the "blast radius" of failures, keeping the rest of your app functional.
+                  {"💡"} <strong>Why this matters:</strong> {"Error Boundaries are currently the only feature that still requires a Class Component (no Hook exists yet). They catch errors during rendering, in lifecycle methods, and in constructors. Granular boundaries limit the \"blast radius\" of failures! 🛡️"}
                 </Text>
               </div>
 
@@ -691,18 +751,28 @@ export default App;
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  7. Keys Explained: The Reset Button
+                  {"🔑 7. Keys Explained: The Reset Button"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Thinking keys are just for lists to silence warnings. Not understanding that keys are React's <strong>Identity System</strong>.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Use a Key to <strong>force-reset</strong> a component. When switching from User A to User B, changing the key forces React to destroy the old instance and build a fresh one from scratch.
+                  {"Keys aren't just for silencing list warnings! 🤫 They're React's IDENTITY SYSTEM — and they're secretly one of the most powerful tools in your arsenal. Change the key and React goes: 'New phone, who dis?' and rebuilds the component from scratch! 📱🔄 Perfect for form resets and user switches!"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> {"— The most elegant solution for stale state bugs. One prop change and your component gets a fresh start! 🌟"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> {"React's identity system"} {"•"} Force remount with keys {"•"} Form state reset {"•"} User switching pattern
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxGreen} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> Keys aren't just for lists. They're React's identity system. Changing a key tells React "this is a completely different component instance" - forcing a full remount. This is perfect for resetting form state, clearing animations, or handling user switches.
+                  {"💡"} <strong>Why this matters:</strong> {"Keys aren't just for lists. They're React's identity system. Changing a key tells React \"this is a completely different component instance\" — forcing a full remount. Perfect for resetting form state, clearing animations, or handling user switches! 🎯"}
                 </Text>
               </div>
 
@@ -801,18 +871,28 @@ export default App;
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  8. Event Listeners: Memory Leak Prevention
+                  {"👻 8. Event Listeners: Memory Leak Prevention"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Adding global event listeners (window resize, scroll) without removing them. The app gets slower every time the component re-mounts because you're stacking thousands of "ghost" listeners.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Always pair your `addEventListener` with a `removeEventListener` inside the `useEffect` cleanup return.
+                  {"Ghost listeners are haunting your app! 👻 Every time a component mounts without cleaning up its event listeners, you stack another one. After 100 re-mounts, you have 100 scroll handlers firing on EVERY scroll event. Your app becomes a zombie — slow, unresponsive, and terrifying! 🧟 Always clean up!"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> {"— Memory leaks are silent killers. Your app works fine for 5 minutes, then becomes unusable. Prevention is the only cure! 💊"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> addEventListener cleanup {"•"} Ghost listener prevention {"•"} useEffect return function {"•"} Stable handler references
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> React handles synthetic events (onClick), but fails at global events (window resize, scroll). If you don't clean up, every mount adds another listener. After 100 re-mounts, you have 100 listeners firing on every scroll, causing severe performance degradation.
+                  {"💡"} <strong>Why this matters:</strong> {"React handles synthetic events (onClick), but fails at global events (window resize, scroll). If you don't clean up, every mount adds another listener. After 100 re-mounts, you have 100 listeners firing on every scroll! 🐌"}
                 </Text>
               </div>
 
@@ -908,18 +988,28 @@ export default App;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  9. useId: The SSR Hydration Fix
+                  {"🆔 9. useId: The SSR Hydration Fix"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Using `Math.random()` for IDs in Server-Side Rendering (Next.js/Remix). Server generates "ID-1", client generates "ID-5" → <strong>Hydration Mismatch</strong> error.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Use `useId` which guarantees a stable, unique ID on both server and client. Perfect for accessibility ({'`aria-labelledby={id}`'}).
+                  {"Math.random() in SSR is a ticking time bomb! 💣 Server says ID-42, client says ID-7 — BOOM, hydration mismatch! 💥 useId generates stable, deterministic IDs that match perfectly between server and client. It's like giving each element a passport that works in both countries! 🛂✨"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> {"— Essential for SSR/Next.js apps. One hook solves hydration mismatches AND improves accessibility for free! ♿"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> SSR hydration mismatches {"•"} Stable ID generation {"•"} ARIA accessibility {"•"} Form label connections
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxOrange} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> In SSR, the server renders HTML with one ID, then React hydrates on the client. If IDs don't match, React throws a hydration error. `useId` generates stable IDs that match between server and client, making it perfect for form labels, ARIA attributes, and accessibility.
+                  {"💡"} <strong>Why this matters:</strong> {"In SSR, the server renders HTML with one ID, then React hydrates on the client. If IDs don't match, React throws a hydration error. `useId` generates stable IDs that match between server and client — perfect for form labels and ARIA attributes! ♿🎯"}
                 </Text>
               </div>
 
@@ -1013,18 +1103,28 @@ export default App;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  10. useDeferredValue: The UX "Shock Absorber"
+                  {"🧲 10. useDeferredValue: The UX \"Shock Absorber\""}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>The Junior Mistake:</strong> Debouncing search (waiting 500ms) feels sluggish. The user types, nothing happens, then results appear.
-                  <br /><br />
-                  <strong>The Senior Fix:</strong> Use `useDeferredValue` to update the UI immediately (input accepts typing) while deferring the heavy "result list" update until the CPU is free. It's like telling React: "Render the input *now*, and render the list *when you can*."
+                  {"Debouncing feels like talking to someone with a 500ms delay — awkward! 😬 useDeferredValue is the upgrade: the input updates INSTANTLY while the heavy list renders whenever React has a free moment. It's like having a personal assistant who takes notes immediately but processes them when they have time! 📝⚡"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> {"— The modern replacement for debouncing. Better UX, less code, and React handles the scheduling for you! 🎛️"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> useDeferredValue vs debounce {"•"} Stale state indicators {"•"} Interruptible updates {"•"} Instant input feedback
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> Unlike debouncing (which delays updates), `useDeferredValue` allows immediate UI updates while deferring expensive computations. The input feels instant, and the list updates when React has time. This creates a snappy, responsive feel without the lag of debouncing.
+                  {"💡"} <strong>Why this matters:</strong> {"Unlike debouncing (which delays updates), `useDeferredValue` allows immediate UI updates while deferring expensive computations. The input feels instant, and the list updates when React has time. Snappy UX with zero artificial delays! 🚀"}
                 </Text>
               </div>
 

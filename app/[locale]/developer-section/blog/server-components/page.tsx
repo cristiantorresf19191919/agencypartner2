@@ -47,10 +47,22 @@ export default function ServerComponentsPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Server vs Client Components
+                {"🖥️"} 1. Server vs Client Components
               </Heading>
               <Text className={styles.sectionDescription}>
-                Understand when to use Server Components (default) vs Client Components ('use client').
+                {"The million-dollar question: Server or Client? 🤔 Server Components run on the server (surprise!), ship zero JS to the browser, and can talk directly to your database. Client Components handle interactivity. Knowing when to use each is what separates the pros from the beginners!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Getting the Server vs Client split right can cut your bundle size by 50%+ and massively boost performance! 🏋️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Server Components (Default) • {"'use client' Directive"} • Hybrid Architecture • When to Use Which
               </Text>
             </div>
 
@@ -127,10 +139,22 @@ async function Dashboard() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Data Fetching Patterns
+                {"📡"} 2. Data Fetching Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Fetch data directly in Server Components without useEffect or useState.
+                {"Remember the useEffect + useState + loading + error dance? 💃 With Server Components, you just... await your data. That's it. No loading states to manage, no race conditions to worry about, no waterfall requests. It's so simple it almost feels like cheating!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Server-side data fetching eliminates entire categories of bugs and makes your code 10x simpler! 🧹"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Async Server Components • Direct DB Access • No useEffect Needed • Automatic Caching
               </Text>
             </div>
 
@@ -176,10 +200,22 @@ export default App;`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Server Actions
+                {"🎬"} 3. Server Actions
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use Server Actions for form submissions and mutations without API routes.
+                {"Server Actions are like magic wands for your forms! 🪄 Write a function, slap 'use server' on it, and boom — it runs on the server when your form submits. No API routes, no fetch calls, no boilerplate. Just pure, beautiful simplicity. This is the future of form handling!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Server Actions replace entire API layers for mutations — this is a paradigm shift in how we handle forms! 🔄"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Form Submissions • useTransition with Forms • Optimistic Updates • Progressive Enhancement
               </Text>
             </div>
 

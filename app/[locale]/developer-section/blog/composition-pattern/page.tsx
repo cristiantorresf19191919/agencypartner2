@@ -59,10 +59,22 @@ export default function CompositionPatternPage() {
                 Lesson 1
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                Composition vs Inheritance
+                {"🆚 Composition vs Inheritance"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                React has a powerful composition model, and we recommend using composition instead of inheritance to reuse code between components.
+                {"React's composition model is an absolute superpower! 💪 Forget class hierarchies and inheritance chains — composition lets you snap components together like building blocks. It's the reason React scales so beautifully! 🏗️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"— This is THE foundational concept of React. Get this right and everything else clicks into place! 🧠"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Containment pattern {"•"} Multiple slots {"•"} Specialization {"•"} Why Facebook chose composition
               </Text>
             </div>
 
@@ -275,11 +287,22 @@ export default App;`}
                 Lesson 2
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                Thinking in Components: Avoiding Conditional Rendering Hell
+                {"🧠 Thinking in Components: Avoiding Conditional Rendering Hell"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                The biggest advantage of React is the ability to compose components together into more components. 
-                It's easy to miss this advantage if you've always been used to it.
+                {"Ever seen JSX that looks like a nested if-else nightmare? 😱 That's conditional rendering hell! The real power of React is composing components together — and once you learn to think in components, you'll never write spaghetti JSX again! 🍝➡️✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"— Clean conditional rendering is what separates readable codebases from unmaintainable ones. Your PR reviewers will love you! 💖"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Conditional rendering problems {"•"} Early returns pattern {"•"} Layout extraction {"•"} TypeScript type narrowing
               </Text>
             </div>
 
@@ -434,10 +457,22 @@ export default App;`}
                 Lesson 3
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                The Future of React: Enhancing Components through Composition Pattern
+                {"🚀 The Future of React: Enhancing Components through Composition Pattern"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                The Composition Pattern is a game-changer, elevating reusability, readability, and maintainability of the code to new heights.
+                {"Say goodbye to prop hell! 👋 The Composition Pattern is a total game-changer that turns 20-prop monsters into elegant, composable pieces. It's like going from a Swiss Army knife to a modular toolkit — each piece does one thing perfectly! 🛠️✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"— This pattern is used by Material UI, Radix, and every major component library. Learn it and you're thinking like the pros! 🏆"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Prop hell anti-pattern {"•"} Breaking down components {"•"} Sub-component composition {"•"} Real-world CTA button example
               </Text>
             </div>
 
@@ -586,11 +621,22 @@ export default App;`}
                 Lesson 4
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                Understanding the Origins: Composition in Object-Oriented Programming
+                {"🏛️ Understanding the Origins: Composition in Object-Oriented Programming"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                To truly understand composition, it's valuable to see its origins in object-oriented programming. 
-                This lesson explores composition vs inheritance in Kotlin, helping us understand the fundamental principles.
+                {"Time for a history lesson that actually matters! 📚 Composition over inheritance isn't just a React thing — it's a battle-tested OOP principle. Let's explore it through Kotlin to understand WHY it works so well, and why the Gang of Four said 'favor composition' back in 1994! 🎓"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"— Understanding the roots of composition makes you a better architect in any language, not just React! 🌳"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> OOP composition basics {"•"} Kotlin delegation {"•"} Encapsulation problems {"•"} Multiple functionality reuse
               </Text>
             </div>
 
@@ -763,7 +809,7 @@ class CounterSet<T>(
         <Card variant="elevated" className="p-8 !bg-gradient-to-br !from-purple-500/20 !to-blue-500/20 !border-purple-500/30">
           <Stack direction="col" gap="md">
             <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-              Key Takeaways
+              {"🎯 Key Takeaways"}
             </Heading>
             <div className="grid md:grid-cols-2 gap-6">
               <div>

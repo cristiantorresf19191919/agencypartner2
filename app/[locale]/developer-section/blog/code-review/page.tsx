@@ -47,11 +47,21 @@ export default function CodeReviewPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Effective PR Reviews
+                {"🔍"} 1. Effective PR Reviews
               </Heading>
               <Text className={styles.sectionDescription}>
-                Conduct thorough, efficient, and valuable code reviews that improve code quality and team knowledge.
+                {"Time to level up your PR game! 🎮 Great code reviews aren't just about catching bugs — they're about sharing knowledge, building trust, and making your whole team stronger. Let's turn you into a review rockstar! 🌟"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Good PR reviews catch 60-90% of bugs before they hit production — your users will never know! 🐛🚫"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Review Checklist {"•"} Structured Process {"•"} Timing Guidelines {"•"} PR Size Best Practices
+                </Text>
+              </div>
             </div>
 
             <div className={styles.subsection}>
@@ -298,11 +308,21 @@ const REVIEW_TOOLS = {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Providing Constructive Feedback
+                {"💬"} 2. Providing Constructive Feedback
               </Heading>
               <Text className={styles.sectionDescription}>
-                Give feedback that helps developers grow, improves code quality, and maintains a positive team culture.
+                {"Words matter! 🎯 The difference between \"this is wrong\" and \"have you considered X?\" is the difference between a demoralized dev and an empowered one. Let's master the art of feedback that actually helps people grow! 🌱💪"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Great feedback culture reduces turnover by 30% and makes code reviews something people actually look forward to! 🤗"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Feedback Principles {"•"} Feedback Templates {"•"} Priority Levels {"•"} Handling Disagreements
+                </Text>
+              </div>
             </div>
 
             <div className={styles.subsection}>
@@ -593,11 +613,21 @@ What do you think?\`;
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Reviewing Architecture Decisions
+                {"🏛️"} 3. Reviewing Architecture Decisions
               </Heading>
               <Text className={styles.sectionDescription}>
-                Evaluate architectural choices, design patterns, and system design decisions in code reviews.
+                {"Think of yourself as a code architect inspector! 🏗️ Spotting shaky foundations early saves your team from earthquake-level refactors later. Let's learn to evaluate the big-picture decisions that make or break your codebase! 🧱🔎"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Bad architecture decisions compound over time — catching them in review saves weeks of future refactoring! ⏳"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Architecture Checklist {"•"} Common Issues {"•"} Design Pattern Review {"•"} Performance & Scalability {"•"} API Design
+                </Text>
+              </div>
             </div>
 
             <div className={styles.subsection}>
@@ -1063,11 +1093,21 @@ GET /api/users?skip=0&take=20`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Security Review Checklist
+                {"🔐"} 4. Security Review Checklist
               </Heading>
               <Text className={styles.sectionDescription}>
-                Comprehensive security checklist for code reviews. Catch vulnerabilities before they reach production.
+                {"Be the security superhero your team deserves! 🦸 Every line of code is a potential attack surface — this comprehensive checklist ensures no vulnerability sneaks past your watchful eyes into production! 🛡️🔒"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"One missed vulnerability can cost millions in breaches — security review is non-negotiable! 💰🚨"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Input Validation {"•"} Auth & Authorization {"•"} Secrets Management {"•"} XSS/Injection {"•"} CORS & CSRF {"•"} Rate Limiting
+                </Text>
+              </div>
             </div>
 
             <div className={styles.subsection}>
@@ -1826,11 +1866,21 @@ function performSecurityReview(code: Code): SecurityIssues[] {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Code Review Best Practices Summary
+                {"🏆"} 5. Code Review Best Practices Summary
               </Heading>
               <Text className={styles.sectionDescription}>
-                Key takeaways for effective code reviews.
+                {"Let's wrap it all up with a bow! 🎁 These golden rules and process flows will turn your code reviews from a chore into a superpower. Bookmark this section — future you will be grateful! 📌✨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟢"} <strong>Impact: LOW</strong> — {"A quick reference cheat sheet to keep your review skills sharp every single day! 🧠"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Golden Rules {"•"} Review Process Flow {"•"} Common Pitfalls to Avoid
+                </Text>
+              </div>
             </div>
 
             <div className={styles.subsection}>

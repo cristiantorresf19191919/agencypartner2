@@ -47,10 +47,22 @@ export default function ConcurrentFeaturesPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Suspense & Error Boundaries
+                {"⏳"} 1. Suspense & Error Boundaries
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use Suspense to declaratively handle loading states and combine with Error Boundaries for robust async data loading.
+                {"Loading spinners everywhere? Not anymore! 🎉 Suspense lets you declaratively handle loading states like a boss, and when you pair it with Error Boundaries, your async data loading becomes bulletproof. It's like having a safety net for your entire component tree!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Suspense is THE way React wants you to handle async operations — this is non-negotiable knowledge! 💯"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Suspense Boundaries • Error Fallbacks • Async Data Loading • Skeleton UIs
               </Text>
             </div>
 
@@ -111,10 +123,22 @@ export default App;`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. useDeferredValue Pattern
+                {"🔄"} 2. useDeferredValue Pattern
               </Heading>
               <Text className={styles.sectionDescription}>
-                Defer non-urgent updates to keep the UI responsive. Perfect for search inputs, filters, and heavy computations.
+                {"Ever typed in a search box and the whole UI froze? 🥶 useDeferredValue is your secret weapon! It tells React \"hey, this update can wait\" so your input stays buttery smooth while heavy filtering happens in the background. Your users will love you for it!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Laggy search inputs are the fastest way to lose users — this hook makes that problem disappear! ✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Deferred State Updates • Search Optimization • Pending UI States • Before/After Comparison
               </Text>
             </div>
 
@@ -184,10 +208,22 @@ function SearchList({ items }: { items: string[] }) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. useTransition for Non-Blocking UI
+                {"🎭"} 3. useTransition for Non-Blocking UI
               </Heading>
               <Text className={styles.sectionDescription}>
-                Mark state updates as transitions to keep urgent updates (like typing) responsive while heavy updates happen in the background.
+                {"Think of useTransition as a VIP lane for your state updates! 🏎️ Urgent stuff (typing, clicking) gets the fast lane, while heavy operations (filtering 10K items, switching tabs) cruise in the background. The result? A UI that NEVER. FEELS. SLOW."}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"useTransition is the difference between a janky app and a silky-smooth experience. Your users can feel it! 🧈"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> startTransition API • Tab Switching Pattern • List Filtering • isPending States
               </Text>
             </div>
 
@@ -284,10 +320,22 @@ function FilterableList({ items }: { items: Item[] }) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Streaming SSR
+                {"🌊"} 4. Streaming SSR
               </Heading>
               <Text className={styles.sectionDescription}>
-                Stream HTML to the client progressively, showing content as it becomes available instead of waiting for everything.
+                {"Why make users stare at a blank screen? 😤 Streaming SSR sends HTML to the browser as it's ready — like a buffet where dishes arrive as they're cooked instead of making everyone wait for the full meal. Progressive loading FTW! 🍽️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Streaming SSR can cut your Time-to-First-Byte dramatically — this is how modern Next.js apps fly! 🛫"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Progressive HTML Streaming • Nested Suspense • Server Components • Progressive Enhancement
               </Text>
             </div>
 

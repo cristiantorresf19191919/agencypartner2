@@ -53,26 +53,32 @@ export default function ReactQueryPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Unit 70: Advanced Mutations (The "Optimistic Update" Pattern)
+                {"🔄"} Unit 70: Advanced Mutations (The {"\""}Optimistic Update{"\""} Pattern)
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>Real-World Scenario:</strong> A "Like" button or "Todo Checkbox." Users expect this to be instant. You cannot wait 200ms for the server to reply.
+                {"⚡"} Picture this: your user smashes that Like button and... nothing happens for 200ms. Awkward! {"😬"} {"Let's"} fix that with <strong>Optimistic Updates</strong> {"—"} the art of making your UI feel instant by updating <strong>before</strong> the server even responds. If things go south? We roll it right back like nothing happened! {"🎭"}
                 <br /><br />
-                <strong>The Realistic Complexity:</strong>
+                <strong>{"🎯"} The Flow:</strong>
                 <br />
-                1. User clicks "Like".
+                1. User clicks {"\""}Like{"\""} {"❤️"}
                 <br />
-                2. <strong>Immediately</strong> update the UI to show the heart (Optimistic).
+                2. <strong>Immediately</strong> update the UI (Optimistic magic!)
                 <br />
-                3. Send request to server.
+                3. Send request to server in the background {"📡"}
                 <br />
-                4. If server fails, <strong>Rollback</strong> to the previous state automatically.
+                4. If server fails, <strong>Rollback</strong> automatically {"🔙"}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Why this matters:</strong> In production, users expect instant feedback when interacting with UI elements. By using optimistic updates, we make the app feel instant while still maintaining data consistency through automatic rollback on errors.
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"—"} Without optimistic updates, your app feels sluggish and users rage-click everything!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> onMutate snapshots {"•"} Optimistic UI updates {"•"} Automatic rollback on error {"•"} Cache invalidation with onSettled
               </Text>
             </div>
 
@@ -151,22 +157,24 @@ const LikeButton = ({ postId }: { postId: string }) => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Unit 71 & 73: Search Grid (Cancellation + KeepPreviousData)
+                {"🔍"} Unit 71 & 73: Search Grid (Cancellation + KeepPreviousData)
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>Real-World Scenario:</strong> A Data Table with Search and Pagination.
+                {"🏎️"} Ever typed fast in a search box and got stale results flashing? {"That's"} a <strong>race condition</strong> {"—"} and {"it's"} sneaky! {"🐛"} User types {"\""}Ap{"\""}, then {"\""}Appl{"\""}, and the slow {"\""}Ap{"\""} response arrives <em>after</em> {"\""}Appl{"\""} and overwrites it. Yikes!
                 <br /><br />
-                <strong>The Realistic Complexity:</strong>
-                <br />
-                • <strong>Race Condition:</strong> User types "Ap", then "Appl". The "Ap" request might finish <em>after</em> "Appl" and show wrong data. (Solved by Cancellation).
-                <br />
-                • <strong>UX Jitter:</strong> Table shouldn't blink or disappear when switching pages.
+                {"🛡️"} <strong>The fix:</strong> AbortSignal kills stale requests, and <code>placeholderData</code> keeps your table smooth {"—"} no blinky spinners between pages! {"✨"}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Why this matters:</strong> Race conditions can cause incorrect data to be displayed. By using AbortSignal for cancellation and placeholderData for smooth transitions, we ensure data integrity and a polished user experience.
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Race conditions silently corrupt your UI data and are notoriously hard to debug in production!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> AbortSignal cancellation {"•"} Race condition prevention {"•"} placeholderData for jitter-free pagination {"•"} staleTime caching
               </Text>
             </div>
 
@@ -260,18 +268,24 @@ const ProductTable = () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Unit 72: Infinite Feed with Data Transformation
+                {"📜"} Unit 72: Infinite Feed with Data Transformation
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>Real-World Scenario:</strong> A Social Media Feed (Twitter/Instagram).
+                {"📱"} Think Twitter, Instagram, TikTok {"—"} that endless scroll we all love (and {"can't"} stop using {"😅"}). The API gives you <strong>pages of pages</strong> (arrays of arrays), but your component just wants one nice flat list. {"🤷"}
                 <br /><br />
-                <strong>The Realistic Complexity:</strong> The API returns "Pages" (arrays of arrays), but the UI just wants one flat list of items.
+                {"✨"} Enter the <code>select</code> trick {"—"} transform data at the query level so your components stay clean and blissfully unaware of pagination madness! {"🧹"}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Why this matters:</strong> The <code>select</code> option allows us to transform data at the query level, keeping components clean and focused on rendering. This is a senior pattern for data transformation that improves both performance and maintainability.
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"—"} Clean data transformation = happy components that {"don't"} need to know about pagination internals!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useInfiniteQuery setup {"•"} select for data flattening {"•"} Intersection Observer auto-load {"•"} getNextPageParam cursors
               </Text>
             </div>
 
@@ -371,27 +385,40 @@ const FeedWithAutoLoad = () => {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              Summary of Senior Practices Used
+              {"🏆"} Summary of Senior Practices Used
             </Heading>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟢"} <strong>Impact: LOW</strong> {"—"} A quick recap to cement these patterns in your brain forever! {"🧠"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Optimistic UI recap {"•"} AbortSignal recap {"•"} Selectors recap {"•"} Placeholder Data recap
+              </Text>
+            </div>
+
             <div className="space-y-4">
               <div>
                 <Text className={styles.sectionDescription}>
-                  <strong>1. Optimistic UI:</strong> Used <code>onMutate</code> to make the app feel instant (Unit 70). The UI updates immediately, and if the server request fails, we automatically rollback to the previous state.
+                  {"⚡"} <strong>1. Optimistic UI:</strong> Used <code>onMutate</code> to make the app feel instant (Unit 70). The UI updates immediately, and if the server request fails, we automatically rollback to the previous state. {"🔄"}
                 </Text>
               </div>
               <div>
                 <Text className={styles.sectionDescription}>
-                  <strong>2. AbortSignal:</strong> Used for network efficiency and preventing race conditions (Unit 73). When a user types quickly, previous requests are automatically cancelled, ensuring only the latest data is displayed.
+                  {"🛑"} <strong>2. AbortSignal:</strong> Used for network efficiency and preventing race conditions (Unit 73). When a user types quickly, previous requests are automatically cancelled, ensuring only the latest data is displayed. {"🏎️"}
                 </Text>
               </div>
               <div>
                 <Text className={styles.sectionDescription}>
-                  <strong>3. Selectors:</strong> Used <code>select</code> to clean up data <em>before</em> it reaches the component (Unit 72). This keeps components focused on rendering and improves performance by transforming data at the query level.
+                  {"🧹"} <strong>3. Selectors:</strong> Used <code>select</code> to clean up data <em>before</em> it reaches the component (Unit 72). This keeps components focused on rendering and improves performance by transforming data at the query level. {"✨"}
                 </Text>
               </div>
               <div>
                 <Text className={styles.sectionDescription}>
-                  <strong>4. Placeholder Data:</strong> Used to create "Jitter-free" pagination (Unit 71). The previous page's data remains visible while the next page loads, creating a smooth user experience without loading spinners.
+                  {"🎯"} <strong>4. Placeholder Data:</strong> Used to create {"\""}Jitter-free{"\""} pagination (Unit 71). The previous {"page's"} data remains visible while the next page loads, creating a smooth user experience without loading spinners. {"🧈"}
                 </Text>
               </div>
             </div>

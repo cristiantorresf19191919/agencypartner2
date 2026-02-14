@@ -58,10 +58,22 @@ export default function APILayerPage() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {t("api-layer-what-title")}
+                  {"🏗️"} {t("api-layer-what-title")}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  {t("api-layer-what-desc")}
+                  {"Think of the API layer as a bouncer for your app — it decides who talks to the backend and how. No more spaghetti fetch calls scattered across your components! 🍝 Let's build a clean, organized gateway that keeps your UI and data layers happily separated."}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> — {"A dedicated API layer keeps your codebase organized and your components blissfully unaware of HTTP details"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> API Layer Definition • Separation of Concerns • Benefits Overview
                 </Text>
               </div>
 
@@ -82,10 +94,22 @@ export default function APILayerPage() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {t("api-layer-bad-title")}
+                  {"🚨"} {t("api-layer-bad-title")}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  {t("api-layer-bad-desc")}
+                  {"We've all been there — fetch calls living right inside your components like uninvited guests at a party. 🎉 Let's see why mixing API logic with UI code is a recipe for spaghetti and how to fix it!"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Mixing API calls with UI code makes everything harder to test, debug, and maintain — don't do it!"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Anti-Pattern Examples • Mixed Concerns • Separation Solution
                 </Text>
               </div>
 
@@ -187,10 +211,22 @@ export function UserProfile() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {t("api-layer-why-title")}
+                  {"💡"} {t("api-layer-why-title")}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  {t("api-layer-why-desc")}
+                  {"Why should you care about an API layer? Because your future self will thank you! 🙏 A proper API layer makes your app easier to maintain, test, and scale. Here are the key reasons it's a game-changer."}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Understanding WHY matters is the difference between a junior dev and a senior architect"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Separation of Concerns • Maintainability • Reusability • Flexibility
                 </Text>
               </div>
 
@@ -237,16 +273,22 @@ export function UserProfile() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {t("api-layer-hooks-title")}
+                  {"🪝"} {t("api-layer-hooks-title")}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  {t("api-layer-hooks-desc")}
+                  {"Custom hooks are like superpowers for your API layer! 🦸 They encapsulate all the loading, error, and data management so your components stay clean and focused. Build once, use everywhere — that's the dream!"}
                 </Text>
               </div>
 
-              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
                 <Text className={styles.infoText}>
-                  {t("api-layer-hooks-benefit")}
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Custom hooks turn repetitive fetch-and-state patterns into elegant, reusable one-liners"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> useFetch Hook • Type-Safe Wrappers • Reusable API Hooks
                 </Text>
               </div>
 
@@ -377,10 +419,22 @@ function UserProfile({ userId }) {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {t("api-layer-complete-title")}
+                  {"🧩"} {t("api-layer-complete-title")}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  {t("api-layer-complete-desc")}
+                  {"Time to put it all together! 🎯 This is the full blueprint for a production-grade API layer — types, requests, and aggregated hooks all working in harmony. Copy this structure and never look back!"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"This is the full pattern you'll use in every production project — master it and level up your architecture game"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Folder Structure • TypeScript Types • Request Hooks • Hook Aggregation
                 </Text>
               </div>
 
@@ -522,8 +576,20 @@ function UserProfile() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  {t("api-layer-takeaways-title")}
+                  {"🎯"} {t("api-layer-takeaways-title")}
                 </Heading>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟢"} <strong>Impact: LOW</strong> — {"Quick recap to cement everything you've learned — bookmark this for your next project!"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Core Principles • Best Practices Summary • Next Steps
+                </Text>
+              </div>
               </div>
 
               <div className="space-y-4">

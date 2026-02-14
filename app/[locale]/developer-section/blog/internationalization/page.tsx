@@ -41,10 +41,20 @@ export default function InternationalizationPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
-              <Heading level={2} className={styles.sectionTitle}>1. react-i18next Patterns</Heading>
+              <Heading level={2} className={styles.sectionTitle}>{"🌍"} 1. react-i18next Patterns</Heading>
               <Text className={styles.sectionDescription}>
-                Set up and use react-i18next for translations.
+                {"Ready to make your app speak every language? 🗣️ Let's set up react-i18next and watch your translations come alive — it's easier than ordering coffee in a foreign country! ☕🌎"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> — {"Going multilingual opens your app to millions of new users worldwide! 🚀"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> i18next Setup {"•"} Translation Resources {"•"} useTranslation Hook {"•"} Language Switching
+                </Text>
+              </div>
             </div>
             <CodeEditor
               code={`// ✅ Setup

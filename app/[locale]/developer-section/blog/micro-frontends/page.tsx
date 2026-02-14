@@ -41,10 +41,20 @@ export default function MicroFrontendsPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
-              <Heading level={2} className={styles.sectionTitle}>1. Module Federation</Heading>
+              <Heading level={2} className={styles.sectionTitle}>{"📦"} 1. Module Federation</Heading>
               <Text className={styles.sectionDescription}>
-                Share code between micro-frontends using Webpack Module Federation.
+                {"Think of Module Federation as a teleporter for your code! 🌀 Share components, utilities, and even entire features across independently deployed apps — no monorepo required. It's the ultimate team autonomy superpower! 💪"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Module Federation is the backbone of scalable micro-frontend architectures — master it and unlock true team independence! 🔓"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Webpack Module Federation {"•"} Shared Dependencies {"•"} Remote Containers {"•"} Independent Deployments
+                </Text>
+              </div>
             </div>
             <CodeEditor
               code={`// Module Federation enables sharing code

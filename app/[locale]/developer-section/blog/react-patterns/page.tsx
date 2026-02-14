@@ -54,10 +54,22 @@ export default function ReactPatternsPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                {t("react-patterns-compound-title-bilingual")}
+                {"🧩 "}{t("react-patterns-compound-title-bilingual")}
               </Heading>
               <Text className={styles.sectionDescription}>
-                {t("react-patterns-compound-desc")}
+                {"Build components that talk to each other like best friends! 🤝 Compound Components let you create flexible, composable APIs where parent and children share state seamlessly through Context. It's like LEGO blocks for your UI! 🧱"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"— The secret sauce behind every great component library. Master this and you'll build APIs that developers actually enjoy using! 🎯"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Context-based state sharing {"•"} Composable sub-components {"•"} Flexible API design {"•"} Real-world Accordion example
               </Text>
             </div>
 
@@ -219,10 +231,22 @@ export default App;
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                {t("react-patterns-hooks-title")}
+                {"🪝 "}{t("react-patterns-hooks-title")}
               </Heading>
               <Text className={styles.sectionDescription}>
-                {t("react-patterns-hooks-desc")}
+                {"Stop copy-pasting the same useState + useEffect combo everywhere! 🛑 Custom Hooks let you extract reusable logic into clean, testable functions. Write it once, use it everywhere — your future self will thank you! 🙏"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"— The #1 pattern every React developer must master. If you're duplicating logic across components, you're doing it wrong! 🚨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Extracting reusable logic {"•"} useUser custom hook {"•"} Eliminating code duplication {"•"} Shared state patterns
               </Text>
             </div>
 
@@ -333,10 +357,22 @@ export default App;`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                {t("react-patterns-hoc-title")}
+                {"🎁 "}{t("react-patterns-hoc-title")}
               </Heading>
               <Text className={styles.sectionDescription}>
-                {t("react-patterns-hoc-desc")}
+                {"Wrap your components in superpowers! 🦸 HOCs are like gift wrapping — they take a component and return an enhanced version with extra abilities (auth, logging, theming). Think of them as component decorators! ✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"— A classic pattern that's still relevant for cross-cutting concerns like auth guards and analytics wrappers! 🔐"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Authentication HOC {"•"} Component enhancement {"•"} Cross-cutting concerns {"•"} withAuth pattern
               </Text>
             </div>
 
@@ -448,10 +484,22 @@ export default App;`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                {t("react-patterns-render-props-title")}
+                {"🎨 "}{t("react-patterns-render-props-title")}
               </Heading>
-              <Text className="text-zinc-300 mb-6">
-                {t("react-patterns-render-props-desc")}
+              <Text className="text-zinc-300 mb-4">
+                {"Pass a function as children and let the consumer decide what to render! 🖌️ Render Props give you maximum flexibility — the component handles the logic, and YOU choose the presentation. It's like a choose-your-own-adventure for UI! 📖"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"— The OG flexibility pattern! Still powerful for sharing behavior between components without coupling them together 🔗"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Function-as-children pattern {"•"} MouseTracker example {"•"} Decoupled rendering {"•"} Reusable behavior sharing
               </Text>
             </div>
 
@@ -508,10 +556,22 @@ export default App;`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                {t("react-patterns-hydration-title")}
+                {"💧 "}{t("react-patterns-hydration-title")}
               </Heading>
-              <Text className="text-zinc-300 mb-6">
-                {t("react-patterns-hydration-desc")}
+              <Text className="text-zinc-300 mb-4">
+                {"React 18 changed the game with Selective Hydration! 🎮 Instead of hydrating your entire app at once (blocking everything), React can now hydrate components in priority order. Users click a button? That component gets hydrated FIRST! It's like a VIP line for interactivity! 🎪"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"— This is how Netflix and Meta keep their apps feeling instant. Streaming SSR + selective hydration = blazing fast perceived performance! 🚀"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Traditional SSR waterfall {"•"} Streaming HTML {"•"} Suspense boundaries {"•"} Priority-based hydration
               </Text>
             </div>
 

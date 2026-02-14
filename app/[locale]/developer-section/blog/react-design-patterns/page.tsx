@@ -53,16 +53,22 @@ export default function ReactDesignPatternsPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Modern Component Patterns
+                {"🧩"} Modern Component Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Function components have become the de facto standard for React development, replacing class components for practically all use cases. This shift reflects React's move toward a more functional programming paradigm, emphasizing simplicity and composability.
+                {"Function components aren't just the \"new way\" — they're the ONLY way you should be writing React in 2025! 🎉 This paradigm shift toward functional programming makes your code simpler, more composable, and honestly? Way more fun to write."}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Key Benefit:</strong> Function components follow a straightforward input-output model, making them easier to understand and test. They also enable using React's hooks system for state management and lifecycle events.
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"This is the foundation of everything else — if you're still writing class components, it's time to make the switch! 🚀"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Function Components • useState & useEffect • Async Data Fetching • Loading & Error States
               </Text>
             </div>
 
@@ -119,16 +125,22 @@ export default App;`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Custom Hooks for Logic Reusability
+                {"🪝"} Custom Hooks for Logic Reusability
               </Heading>
               <Text className={styles.sectionDescription}>
-                Custom hooks represent one of the most powerful patterns in modern React development. They enable the extraction of stateful logic into reusable functions, promoting code reuse and separation of concerns.
+                {"Custom hooks are like superpowers for your components! 💪 Extract stateful logic into neat, reusable functions and watch your codebase become cleaner, DRY-er, and infinitely more testable. Once you start writing custom hooks, you'll wonder how you ever lived without them."}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Why this matters:</strong> Custom hooks can help extract complex logic from components, making them more focused on rendering. The same logic can be shared across multiple components without duplication, and custom hooks can be tested independently.
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Custom hooks are the #1 pattern senior devs use to keep components lean and logic reusable. Master this! 🎯"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useFormInput Hook • useLocalStorage Hook • TypeScript Generics with Hooks • Type-Safe State Management
               </Text>
             </div>
 
@@ -239,16 +251,22 @@ export default App;`}
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Context API for Application-Wide State
+                {"🌐"} Context API for Application-Wide State
               </Heading>
               <Text className={styles.sectionDescription}>
-                The Context API has matured into a reasonable solution for managing application-wide state, reducing the need for external state management libraries. With React 19, the Context API has become even more powerful by introducing the <code>use</code> function for accessing context values.
+                {"Say goodbye to prop drilling nightmares! 🎉 The Context API has evolved into a seriously powerful tool for managing global state — and with React 19's shiny new use() function, it's more flexible than ever. No more Redux boilerplate for simple shared state!"}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Key Benefit:</strong> The Context API is well-suited for theme management, user authentication, localization, and feature flags across an application. React 19's <code>use()</code> API allows using context in conditional blocks.
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Context is the go-to for themes, auth, and i18n — skip it and you'll drown in prop drilling! 🏊"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> createContext • ThemeProvider Pattern • {"React 19's use() API"} • Conditional Context Access
               </Text>
             </div>
 
@@ -316,10 +334,22 @@ function App() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                TypeScript Integration
+                {"🔷"} TypeScript Integration
               </Heading>
               <Text className={styles.sectionDescription}>
-                TypeScript has become an integral part of React development, with many new projects adopting it from the outset. The benefits include type safety, improved developer experience with enhanced IDE support, and self-documenting code.
+                {"TypeScript + React = a match made in developer heaven! 💙 Catch bugs before they reach production, enjoy autocomplete that actually works, and write code that documents itself. In 2025, starting a React project without TypeScript is like driving without a seatbelt."}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"TypeScript catches bugs at compile time that would otherwise crash your app at 3 AM. Your future self will thank you! 🙏"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Type-Safe Props • Generic Components • Union Types • Interface Composition
               </Text>
             </div>
 
@@ -433,10 +463,22 @@ function UserSelector() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                React 19 and Ecosystem Updates
+                {"🚀"} React 19 and Ecosystem Updates
               </Heading>
               <Text className={styles.sectionDescription}>
-                React 19 introduced several new hooks, including <code>useActionState</code>, <code>useFormStatus</code>, <code>useOptimistic</code>, and the new <code>use</code> API. These hooks provide elegant solutions for everyday tasks like form handling and optimistic UI updates.
+                {"React 19 dropped some absolute bangers! 🔥 New hooks like useOptimistic and useActionState make everyday tasks feel effortless. Forms? Handled. Optimistic UI? Built-in. Server Components? Chef's kiss. This is the most exciting React update in years!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"React 19 changes how we build apps fundamentally — these APIs are the future and you need them in your toolkit! ⚡"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useOptimistic Hook • Server Components • useActionState • Form Actions
               </Text>
             </div>
 
@@ -537,16 +579,22 @@ function AddToCartButton({ productId }: { productId: string }) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Modern Frameworks
+                {"⚡"} Modern Frameworks
               </Heading>
               <Text className={styles.sectionDescription}>
-                The modern React ecosystem has evolved significantly, with frameworks playing a critical role in elevating developer experience and application performance. In 2025, three solutions often stand out: <strong>Next.js</strong>, <strong>Remix</strong>, and <strong>Vite</strong>.
+                {"Choosing a React framework in 2025 is like picking your starter Pokemon — each one has unique strengths! 🎮 Next.js is the all-rounder, Remix champions web fundamentals, and Vite is the speed demon. Let's break down when to pick each one."}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Next.js:</strong> Comprehensive solution with flexible rendering, API routes, and full-stack capabilities. <strong>Remix:</strong> Emphasizes web fundamentals and progressive enhancement. <strong>Vite:</strong> Lightning-fast build tool with near-instantaneous startup times.
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Your framework choice shapes your entire app architecture — pick wisely and you'll thank yourself for years! 🏗️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Next.js App Router • Remix Loaders • Vite Configuration • Framework Comparison
               </Text>
             </div>
 
@@ -616,10 +664,22 @@ export default defineConfig({
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Component Libraries and Design Systems
+                {"🎨"} Component Libraries and Design Systems
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>Tailwind CSS</strong> has become a popular choice for styling in React applications, providing utility-first CSS classes. For enterprise applications requiring complex components, professional UI libraries like <strong>KendoReact</strong> offer comprehensive component suites.
+                {"Time to make your apps look gorgeous! 💅 Tailwind CSS has taken the React world by storm with its utility-first approach, and for enterprise-level UIs, libraries like KendoReact give you polished, production-ready components out of the box. Why reinvent the wheel when you can build on greatness?"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — {"Great styling accelerates development and delights users — the right library can save you weeks of work! 🎯"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Tailwind CSS Utilities • Product Card Styling • DataGrid Components • Enterprise UI Libraries
               </Text>
             </div>
 
@@ -682,8 +742,20 @@ function UserManagement() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              Wrap-up: React Best Practices for 2025
+              {"🏁"} Wrap-up: React Best Practices for 2025
             </Heading>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟢"} <strong>Impact: LOW</strong> — {"A quick cheat sheet to bookmark and revisit whenever you need a refresher! 📌"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Key Takeaways • Best Practices Summary • Quick Reference Guide
+              </Text>
+            </div>
             <div className="space-y-4">
               <div>
                 <Text className={styles.sectionDescription}>

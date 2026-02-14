@@ -53,7 +53,7 @@ export default function ReactBestPracticesPage() {
         </Heading>
         <Text className={styles.subtitle}>
           {postContent?.subtitle ||
-            "Comprehensive performance optimization guide for React and Next.js applications from Vercel Engineering. 45+ rules across 8 categories: eliminating waterfalls, bundle size, server-side performance, client data fetching, re-renders, rendering, JavaScript micro-optimizations, and advanced patterns. Each rule includes editable code examples with live preview."}
+            "🚀 The ultimate performance optimization guide for React & Next.js — straight from Vercel Engineering! 57 battle-tested rules across 8 categories: eliminating waterfalls, bundle size, server-side performance, client data fetching, re-renders, rendering, JS micro-optimizations, and advanced patterns. Every rule comes with editable code examples + live preview so you can learn by doing! 🎯"}
         </Text>
         {postContent?.introParagraph && (
           <Text className={`${styles.sectionDescription} mt-3`}>
@@ -75,14 +75,24 @@ export default function ReactBestPracticesPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              1. Eliminating Waterfalls (CRITICAL)
+              {"🌊 1. Eliminating Waterfalls"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Waterfalls are the #1 performance killer. Each sequential await adds full network latency. Execute independent operations in parallel and defer await until the branch that needs it.
+              {"🚨 Waterfalls are the #1 performance killer in web apps — and they're hiding everywhere! Each sequential await adds a full network round-trip, turning what should be a snappy 100ms load into a painful multi-second crawl. 💡 The fix? Fire independent fetches in parallel with Promise.all(), defer await until you actually need the result, and use Suspense boundaries to stream content as it loads."}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — These are the highest-ROI optimizations you can make. Fix waterfalls first and {"you'll"} see the biggest performance gains!
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Promise.all() parallelization • Deferred awaits • Dependency-based parallel execution • API route optimization • Suspense streaming
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Promise.all() for Independent Operations</Heading>
-            <Text className="text-white/80 text-sm mb-3">Run both panels to see the difference: the bad example waits for each fetch one after another; the good example runs them in parallel.</Text>
+            <Text className="text-white/80 text-sm mb-3">{"🏃‍♂️ Run both panels to see the difference: the bad example waits for each fetch one after another (like standing in 3 separate lines 😩); the good example runs them all at once! ⚡"}</Text>
             <CodeComparison
               comparisonId="waterfalls-promise-all"
               language="tsx"
@@ -134,6 +144,12 @@ function App() {
 }
 export default App;`}
             />
+            <div className={styles.tipLine}>
+              <span className={styles.tipLineIcon}>{"💡"}</span>
+              <span className={styles.tipLineText}>
+                <strong>Pro tip:</strong> If one fetch depends on another (like needing a user ID to fetch their profile), start the independent fetches first, await what you need, then fire the dependent ones. Check the Dependency-Based Parallelization example below!
+              </span>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Defer Await Until Needed</Heading>
             <CodeComparison
@@ -264,11 +280,21 @@ async function DataDisplay() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              2. Bundle Size Optimization (CRITICAL)
+              {"📦 2. Bundle Size Optimization"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Import directly from source, avoid barrel files, use dynamic imports for heavy components, defer third‑party scripts, and preload on hover/focus.
+              {"📏 Every kilobyte of JavaScript must be parsed, compiled, and executed before your app becomes interactive — that's dead time your users are staring at a blank screen! 🎯 Import directly from source modules (bye bye barrel files 👋), use next/dynamic for heavy components like editors and charts, defer non-critical third-party scripts, and preload on hover/focus so assets are ready the instant your user clicks."}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — Smaller bundles = faster Time to Interactive. Your users on slow 3G connections will thank you! 🙏
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Barrel file avoidance • Dynamic imports • Third-party deferral • Conditional module loading • Hover/focus preloading
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Avoid Barrel File Imports</Heading>
             <CodeComparison
@@ -282,6 +308,12 @@ import TextField from '@mui/material/TextField'
 
 // Or: next.config.js experimental.optimizePackageImports: ['lucide-react', '@mui/material']`}
             />
+            <div className={styles.tipLine}>
+              <span className={styles.tipLineIcon}>{"💡"}</span>
+              <span className={styles.tipLineText}>
+                {"In Next.js, you can add"} <code className="text-purple-400 text-xs">optimizePackageImports</code> {"to your config instead of rewriting every import! The bundler handles it automatically. 🪄"}
+              </span>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Dynamic Imports for Heavy Components</Heading>
             <CodeComparison
@@ -347,6 +379,9 @@ export default function RootLayout({ children }) {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Preload on Hover/Focus</Heading>
@@ -363,6 +398,9 @@ export default function RootLayout({ children }) {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
           </Stack>
         </Card>
@@ -373,11 +411,21 @@ export default function RootLayout({ children }) {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              3. Server-Side Performance (HIGH)
+              {"🖥️ 3. Server-Side Performance"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Use React.cache() for per-request deduplication, LRU for cross-request cache, minimize serialization at RSC boundaries, parallelize with composition, and use after() for non-blocking work.
+              {"⚙️ Server Components run on every single request, so inefficiencies multiply fast — what's 10ms wasted becomes 10ms × 1000 req/s = 10 seconds of server time burned every second! 🔥 Use React.cache() to deduplicate fetches within a request, LRU caches across requests, and keep RSC serialization lean. Parallelize data loading through component composition, use after() for non-blocking work, and 🔐 always authenticate Server Actions — they're public HTTP endpoints anyone can hit!"}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — Server optimizations scale with traffic. Small wins here pay off big under load! 📈
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> React.cache() dedup • LRU caching • RSC serialization • Parallel composition • after() non-blocking • Server Action auth • Reference deduplication
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Per-Request Deduplication with React.cache()</Heading>
             <CodeComparison
@@ -421,6 +469,9 @@ export async function getUser(id: string) {
 }`}
               language="typescript"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Minimize Serialization at RSC Boundaries</Heading>
@@ -502,6 +553,96 @@ export async function POST(request: Request) {
   return new Response(JSON.stringify({ status: 'success' }))
 }`}
             />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Authenticate Server Actions Like API Routes (CRITICAL)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🔐 Server Actions are public HTTP endpoints — anyone can call them with a POST request, even without your UI! Think of them like unlocked API routes. 🚪 You MUST verify authentication and authorization inside every Server Action. Never assume the caller is who your UI thinks they are — that's how data breaches happen! 😱"}
+            </Text>
+            <CodeComparison
+              comparisonId="server-auth-actions"
+              language="tsx"
+              whatToNoticeBad={[
+                "No auth check: anyone with the endpoint URL can delete any project.",
+                "Trusts that userId comes from an authenticated user — it doesn't.",
+              ]}
+              whatToNoticeGood={[
+                "Verifies session inside the action — unauthenticated callers get rejected.",
+                "Checks authorization: only the project owner can delete their project.",
+              ]}
+              wrong={`'use server'
+
+export async function deleteProject(projectId: string) {
+  // ❌ No authentication or authorization check!
+  await db.project.delete({ where: { id: projectId } })
+  revalidatePath('/projects')
+}`}
+              good={`'use server'
+
+import { auth } from '@/lib/auth'
+
+export async function deleteProject(projectId: string) {
+  // ✅ Verify authentication
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized')
+  }
+
+  // ✅ Verify authorization (user owns this project)
+  const project = await db.project.findUnique({
+    where: { id: projectId }
+  })
+  if (project?.ownerId !== session.user.id) {
+    throw new Error('Forbidden')
+  }
+
+  await db.project.delete({ where: { id: projectId } })
+  revalidatePath('/projects')
+}`}
+            />
+            <div className={styles.tipLine}>
+              <span className={styles.tipLineIcon}>{"🛡️"}</span>
+              <span className={styles.tipLineText}>
+                <strong>Security tip:</strong> Consider creating a reusable <code className="text-purple-400 text-xs">requireAuth()</code> wrapper that throws on unauthenticated access. Use it as the first line of every Server Action!
+              </span>
+            </div>
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Avoid Duplicate Serialization in RSC Props (LOW)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🔗 React Server Components serialize props by reference, not value. So when you call .toSorted() or .filter() twice, you create two different references — even though the content is identical! 🤯 RSC will serialize the same data twice. Sort once, assign to a variable, pass the same reference everywhere."}
+            </Text>
+            <CodeComparison
+              comparisonId="server-dedup-props"
+              language="tsx"
+              whatToNoticeBad={[
+                ".toSorted() creates a new array reference — RSC serializes it as a separate copy.",
+                "Both <Sidebar> and <Main> receive the same data but serialized twice.",
+              ]}
+              whatToNoticeGood={[
+                "Sort once, store in a variable, pass the same reference to both components.",
+                "RSC deduplicates by reference — data is serialized only once.",
+              ]}
+              wrong={`async function Page() {
+  const items = await fetchItems()
+  return (
+    <>
+      {/* ❌ .toSorted() creates a new reference each call */}
+      <Sidebar items={items.toSorted(byDate)} />
+      <Main items={items.toSorted(byDate)} />
+    </>
+  )
+}`}
+              good={`async function Page() {
+  const items = await fetchItems()
+  // ✅ Sort once, reuse the same reference
+  const sorted = items.toSorted(byDate)
+  return (
+    <>
+      <Sidebar items={sorted} />
+      <Main items={sorted} />
+    </>
+  )
+}`}
+            />
           </Stack>
         </Card>
       </section>
@@ -511,11 +652,21 @@ export async function POST(request: Request) {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              4. Client-Side Data Fetching (MEDIUM-HIGH)
+              {"🔄 4. Client-Side Data Fetching"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Use SWR for deduplication, deduplicate global event listeners, use passive listeners for scroll, and version/minimize localStorage.
+              {"🌐 Fetching data on the client without a caching layer? You're asking for trouble — redundant network requests, stale data, and gnarly race conditions! 😱 Use SWR or React Query for automatic request deduplication, smart caching, and background revalidation. Deduplicate global event listeners (memory leaks are no joke 💀), use passive listeners for scroll/touch to keep the main thread free, and version your localStorage schema so deployments don't corrupt user data."}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟡"} <strong>Impact: MEDIUM-HIGH</strong> — Smart data fetching eliminates wasted requests and keeps your UI feeling fresh and responsive! ✨
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> SWR deduplication • Event listener management • Passive listeners • localStorage versioning
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Use SWR for Automatic Deduplication</Heading>
             <CodeComparison
@@ -535,6 +686,12 @@ function UserList() {
   return <ul>{(users||[]).map(u => <li key={u.id}>{u.name}</li>)}</ul>
 }`}
             />
+            <div className={styles.tipLine}>
+              <span className={styles.tipLineIcon}>{"💡"}</span>
+              <span className={styles.tipLineText}>
+                {"SWR automatically deduplicates requests — if 5 components call useSWR('/api/users'), only ONE fetch fires! 🎯 Plus you get stale-while-revalidate, error retry, and focus revalidation for free."}
+              </span>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Deduplicate Global Event Listeners</Heading>
             <CodeEditor
@@ -563,6 +720,9 @@ function useKeyboardShortcut(key, callback) {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Passive Event Listeners for Scroll</Heading>
@@ -577,7 +737,7 @@ document.addEventListener('wheel', handleWheel, { passive: true })`}
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Version and Minimize localStorage</Heading>
             <Text className="text-slate-300 mb-4 text-sm">
-              Add version prefix to keys and store only needed fields. Prevents schema conflicts and accidental storage of sensitive data. Always wrap in try-catch as getItem/setItem throw in incognito mode or when quota is exceeded.
+              {"🗄️ Version your localStorage keys and store only what you need! Prevents schema conflicts across deployments and stops you from accidentally caching sensitive data. Always wrap in try-catch — localStorage throws in incognito mode and when quota is exceeded! 💥"}
             </Text>
             <CodeComparison
               comparisonId="client-localstorage"
@@ -627,7 +787,7 @@ function cachePrefs(user: FullUser) {
 }`}
             />
             <Text className="text-slate-400 text-xs mt-2">
-              Benefits: Schema evolution via versioning, reduced storage size, prevents storing tokens/PII/internal flags.
+              {"✅ Benefits: Schema evolution via versioning • 📦 Reduced storage size • 🔒 Prevents storing tokens/PII/internal flags"}
             </Text>
           </Stack>
         </Card>
@@ -638,11 +798,21 @@ function cachePrefs(user: FullUser) {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              5. Re-render Optimization (MEDIUM)
+              {"⚡ 5. Re-render Optimization"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Defer state reads to usage, extract to memoized components, narrow effect deps, subscribe to derived booleans, use functional setState, lazy state init, and startTransition for non-urgent updates.
+              {"🔥 Unnecessary re-renders are React's silent performance thief! Every re-render walks the component tree, diffs virtual DOM, and can trigger expensive computations — even when nothing visible changed. 🧈 Learn to derive state during render, use useRef for transient values, hoist default props, keep effect deps narrow, and wrap non-urgent updates in startTransition to keep your UI butter-smooth."}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — Death by a thousand re-renders! Each one is cheap, but they add up fast in complex UIs. 🎯
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Deferred state reads • Memoized components • Effect dependencies • Derived state • Functional setState • Lazy init • Transitions • Default prop hoisting • useRef for transient values • Event handler logic
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Defer State Reads to Usage Point</Heading>
             <CodeComparison
@@ -774,6 +944,9 @@ export const App = () => {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Narrow Effect Dependencies</Heading>
@@ -786,7 +959,7 @@ export const App = () => {
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Subscribe to Derived State</Heading>
             <Text className="text-slate-300 mb-4 text-sm">
-              Subscribe to derived boolean state instead of continuous values to reduce re-render frequency. Re-renders only when the boolean changes, not on every pixel change.
+              {"🎯 Subscribe to a derived boolean instead of a continuous value! Why re-render on every single pixel of resize when you only care about \"is it mobile or not\"? Re-render only when the boolean flips — that's potentially 100× fewer renders! 📉"}
             </Text>
             <CodeComparison
               comparisonId="rerender-sidebar"
@@ -877,6 +1050,9 @@ export const App = () => {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Functional setState Updates</Heading>
@@ -898,6 +1074,12 @@ const removeItem = useCallback((id) => {
   setItems(curr => curr.filter(item => item.id !== id))
 }, [])`}
             />
+            <div className={styles.tipLine}>
+              <span className={styles.tipLineIcon}>{"💡"}</span>
+              <span className={styles.tipLineText}>
+                {"Functional setState (setItems(curr => ...)) gives you the latest value guaranteed — no stale closures, no dependency on items. Your useCallback dependencies become [] instead of [items]! 🎯"}
+              </span>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Interactive Example: Functional setState</Heading>
             <CodeEditor
@@ -994,6 +1176,9 @@ function TodoList() {
 export const App = () => <TodoList />`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Lazy State Initialization</Heading>
@@ -1114,6 +1299,9 @@ function SettingsPanel() {
 export const App = () => <SettingsPanel />`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Transitions for Non-Urgent Updates</Heading>
@@ -1209,6 +1397,249 @@ function ScrollTracker() {
 export const App = () => <ScrollTracker />`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Calculate Derived State During Rendering (MEDIUM)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🧮 If you can compute it from props or state, just... compute it! Don't store derived values in state and sync with useEffect — that's a Rube Goldberg machine for a simple calculation! 🎪 The effect approach causes an extra render cycle (render → effect → setState → re-render) and the derived value is stale for one frame."}
+            </Text>
+            <CodeComparison
+              comparisonId="rerender-derived-state"
+              language="tsx"
+              whatToNoticeBad={[
+                "useState + useEffect: two render cycles to compute fullName.",
+                "For one frame, fullName is stale (empty string) before the effect runs.",
+              ]}
+              whatToNoticeGood={[
+                "Derived during render: always in sync, single render cycle.",
+                "No extra state, no effect, no risk of stale values.",
+              ]}
+              wrong={`function UserCard({ firstName, lastName }) {
+  const [fullName, setFullName] = useState('')
+
+  useEffect(() => {
+    setFullName(\`\${firstName} \${lastName}\`)
+  }, [firstName, lastName])
+
+  return <div>{fullName}</div>
+}`}
+              good={`function UserCard({ firstName, lastName }) {
+  // ✅ Derive during render — always in sync
+  const fullName = \`\${firstName} \${lastName}\`
+  return <div>{fullName}</div>
+}
+
+// For expensive computations, use useMemo:
+function FilteredList({ items, query }) {
+  const filtered = useMemo(
+    () => items.filter(i => i.name.includes(query)),
+    [items, query]
+  )
+  return <ul>{filtered.map(i => <li key={i.id}>{i.name}</li>)}</ul>
+}`}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Hoist Default Non-Primitive Props (MEDIUM)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🪤 Sneaky bug alert! Default values like"} <code className="text-purple-400">{'() => {}'}</code>, <code className="text-purple-400">{'[]'}</code>, or <code className="text-purple-400">{'{}'}</code> {"in destructured props create a NEW reference on every render, silently breaking React.memo! 😤 Your memoized child re-renders every time even though \"nothing changed\". Extract defaults to module-level constants and the problem vanishes. ✨"}
+            </Text>
+            <CodeComparison
+              comparisonId="rerender-hoist-defaults"
+              language="tsx"
+              whatToNoticeBad={[
+                "Default () => {} creates a new function reference every render.",
+                "React.memo on Child is useless — onChange is always a new reference.",
+              ]}
+              whatToNoticeGood={[
+                "Module-level constant: same reference across all renders.",
+                "React.memo on Child works correctly — onChange is referentially stable.",
+              ]}
+              wrong={`// ❌ Default creates new reference every render
+function Parent({ onChange = () => {} }) {
+  return <MemoizedChild onChange={onChange} />
+}
+
+function Parent2({ items = [] }) {
+  return <MemoizedList items={items} />
+}`}
+              good={`// ✅ Hoist defaults to module scope
+const noop = () => {}
+const emptyArray: Item[] = []
+
+function Parent({ onChange = noop }) {
+  return <MemoizedChild onChange={onChange} />
+}
+
+function Parent2({ items = emptyArray }) {
+  return <MemoizedList items={items} />
+}`}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">{"Don't Wrap Simple Expressions in useMemo (LOW-MEDIUM)"}</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🤔 Plot twist: useMemo has overhead! It stores previous values, compares dependencies, and manages cache entries. For a simple user.role === 'admin' check? The memoization costs MORE than just computing it! 😅 Save useMemo for the heavy stuff — filtering large arrays, complex transformations, expensive calculations."}
+            </Text>
+            <CodeComparison
+              comparisonId="rerender-simple-memo"
+              language="tsx"
+              whatToNoticeBad={[
+                "useMemo for a simple boolean comparison — overhead exceeds the computation.",
+                "useMemo for basic string concatenation — completely unnecessary.",
+              ]}
+              whatToNoticeGood={[
+                "Direct expressions: faster than useMemo's dependency-checking overhead.",
+                "Reserve useMemo for expensive operations like filtering large arrays.",
+              ]}
+              wrong={`function UserStatus({ user }) {
+  // ❌ useMemo overhead > simple boolean check
+  const isAdmin = useMemo(() => user.role === 'admin', [user.role])
+
+  // ❌ useMemo overhead > string concatenation
+  const greeting = useMemo(
+    () => \`Hello, \${user.name}!\`,
+    [user.name]
+  )
+
+  return <div>{greeting} {isAdmin && '(Admin)'}</div>
+}`}
+              good={`function UserStatus({ user }) {
+  // ✅ Direct computation — cheaper than useMemo
+  const isAdmin = user.role === 'admin'
+  const greeting = \`Hello, \${user.name}!\`
+
+  // ✅ Reserve useMemo for expensive work
+  const sortedPosts = useMemo(
+    () => user.posts.toSorted((a, b) => b.date - a.date),
+    [user.posts]
+  )
+
+  return <div>{greeting} {isAdmin && '(Admin)'}</div>
+}`}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Put Interaction Logic in Event Handlers (MEDIUM)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🎯 Stop playing telephone with your side effects! Don't do \"user clicks → setState → effect detects state → runs API call\". That's an unnecessary game of telephone! 📞 Just run the side effect directly in the event handler. Clearer code, fewer renders, less room for bugs."}
+            </Text>
+            <CodeComparison
+              comparisonId="rerender-move-to-handler"
+              language="tsx"
+              whatToNoticeBad={[
+                "State change triggers effect which sends the message — indirect, hard to follow.",
+                "Extra render cycle: setState → render → effect → API call.",
+              ]}
+              whatToNoticeGood={[
+                "Handler sends the message directly — clear cause-and-effect.",
+                "Single render, no unnecessary intermediate state.",
+              ]}
+              wrong={`function ChatInput() {
+  const [message, setMessage] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+
+  // ❌ Effect watches for submitted state
+  useEffect(() => {
+    if (submitted) {
+      sendMessage(message)
+      setMessage('')
+      setSubmitted(false)
+    }
+  }, [submitted, message])
+
+  return (
+    <form onSubmit={(e) => {
+      e.preventDefault()
+      setSubmitted(true) // Indirect: triggers effect
+    }}>
+      <input value={message} onChange={e => setMessage(e.target.value)} />
+    </form>
+  )
+}`}
+              good={`function ChatInput() {
+  const [message, setMessage] = useState('')
+
+  // ✅ Side effect runs directly in the handler
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    sendMessage(message) // Direct: cause and effect
+    setMessage('')
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input value={message} onChange={e => setMessage(e.target.value)} />
+    </form>
+  )
+}`}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use useRef for Transient Values (MEDIUM)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🐭 Tracking mouse position with useState? That's 60+ re-renders PER SECOND! 🤯 Values that change fast but don't need to update the UI — mouse coords, scroll offsets, interval IDs — belong in useRef. It's like a secret notebook React doesn't watch. Update it as often as you want, zero re-renders! 🥷"}
+            </Text>
+            <CodeComparison
+              comparisonId="rerender-useref-transient"
+              language="tsx"
+              whatToNoticeBad={[
+                "useState for mouse position: 60+ re-renders per second during mousemove.",
+                "Every pixel of mouse movement triggers a full component re-render.",
+              ]}
+              whatToNoticeGood={[
+                "useRef stores the position without triggering re-renders.",
+                "Read mouseRef.current when needed (e.g., on click) — zero re-renders from tracking.",
+              ]}
+              wrong={`function Canvas() {
+  // ❌ 60+ re-renders/sec from mouse movement
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handler = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handler)
+    return () => window.removeEventListener('mousemove', handler)
+  }, [])
+
+  const handleClick = () => {
+    placeMarker(mousePos.x, mousePos.y)
+  }
+
+  return <div onClick={handleClick}>Canvas</div>
+}`}
+              good={`function Canvas() {
+  // ✅ Zero re-renders from mouse tracking
+  const mouseRef = useRef({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handler = (e) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY }
+    }
+    window.addEventListener('mousemove', handler)
+    return () => window.removeEventListener('mousemove', handler)
+  }, [])
+
+  const handleClick = () => {
+    const { x, y } = mouseRef.current
+    placeMarker(x, y)
+  }
+
+  return <div onClick={handleClick}>Canvas</div>
+}
+
+// Also useful for interval/timeout IDs
+function Poller() {
+  const intervalRef = useRef<NodeJS.Timeout>()
+
+  useEffect(() => {
+    intervalRef.current = setInterval(poll, 5000)
+    return () => clearInterval(intervalRef.current)
+  }, [])
+
+  const stopPolling = () => clearInterval(intervalRef.current)
+  return <button onClick={stopPolling}>Stop</button>
+}`}
             />
           </Stack>
         </Card>
@@ -1219,15 +1650,25 @@ export const App = () => <ScrollTracker />`}
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              6. Rendering Performance (MEDIUM)
+              {"🎨 6. Rendering Performance"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Animate SVG wrappers, use content-visibility for long lists, hoist static JSX, reduce SVG precision, avoid hydration flicker, use Activity for show/hide, and prefer ternary over && for conditionals.
+              {"🖌️ Once React commits changes to the DOM, the browser still has work to do — layout, paint, composite. Let's make that work as light as possible! 🏎️ Animate SVG wrappers for GPU acceleration, use content-visibility to skip off-screen layout, hoist static JSX, trim SVG precision, suppress expected hydration mismatches, use React's Activity component, replace manual loading states with useTransition, and always use explicit ternary conditionals (0 rendering as text is a classic gotcha! 😬)."}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — These optimizations make your app feel polished and smooth. Users notice jank even if they {"can't"} explain it! 👀
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> SVG animation • content-visibility • Static JSX hoisting • Hydration mismatches • Activity component • Ternary conditionals • SVG precision • suppressHydrationWarning • useTransition loading
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Animate SVG Wrapper, Not SVG Element</Heading>
             <Text className="text-slate-300 mb-4 text-sm">
-              Many browsers don't have hardware acceleration for CSS3 animations on SVG elements. Wrap SVG in a &lt;div&gt; and animate the wrapper instead for GPU-accelerated animations.
+              {"🎬 Most browsers can't GPU-accelerate CSS animations directly on SVG elements — they fall back to software rendering! 🐌 The fix is dead simple: wrap your SVG in a <div> and animate the wrapper. Same visual result, but now the GPU handles it. Buttery smooth! 🧈"}
             </Text>
             <CodeComparison
               comparisonId="rendering-spinner"
@@ -1259,7 +1700,7 @@ export const App = () => <ScrollTracker />`}
 }`}
             />
             <Text className="text-slate-400 text-xs mt-2">
-              This applies to all CSS transforms and transitions (transform, opacity, translate, scale, rotate). The wrapper div enables GPU acceleration for smoother animations.
+              {"🎯 This applies to all CSS transforms — transform, opacity, translate, scale, rotate. The wrapper div unlocks GPU acceleration for silky smooth animations! 🧈"}
             </Text>
             <CodeEditor
               code={`import { useState } from 'react'
@@ -1335,11 +1776,14 @@ export const App = () => {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">CSS content-visibility for Long Lists</Heading>
             <Text className="text-slate-300 mb-4 text-sm">
-              Apply <code className="text-purple-400">content-visibility: auto</code> to defer off-screen rendering. For 1000 messages, browser skips layout/paint for ~990 off-screen items (10× faster initial render).
+              {"📜 Got a list with 1000+ items? The browser is doing layout and paint for ALL of them, even the 990 you can't see! 🙈 Apply"} <code className="text-purple-400">content-visibility: auto</code> {"and the browser skips off-screen items entirely. That's a potential 10× faster initial render! 🚀"}
             </Text>
             <CodeEditor
               code={`/* CSS: 
@@ -1393,11 +1837,14 @@ export const App = () => {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Hoist Static JSX Elements</Heading>
             <Text className="text-slate-300 mb-4 text-sm">
-              Extract static JSX outside components to avoid re-creation on every render. Especially helpful for large and static SVG nodes.
+              {"🏗️ If your JSX never changes, why recreate it every render? Extract static elements outside the component — React will reuse the same object reference. Especially impactful for big SVG nodes! 🎨"}
             </Text>
             <CodeComparison
               comparisonId="rendering-skeleton"
@@ -1426,7 +1873,7 @@ function Container() {
 }`}
             />
             <Text className="text-slate-400 text-xs mt-2">
-              Note: If your project has React Compiler enabled, the compiler automatically hoists static JSX elements, making manual hoisting unnecessary.
+              {"🤖 Note: If React Compiler is enabled in your project, it does this automatically! One less thing to worry about. ✨"}
             </Text>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Prevent Hydration Mismatch Without Flickering</Heading>
@@ -1472,6 +1919,9 @@ function Dropdown({ isOpen }) {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use Explicit Conditional (Ternary, Not &&)</Heading>
@@ -1597,11 +2047,14 @@ export const App = () => {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Optimize SVG Precision</Heading>
             <Text className="text-slate-300 mb-4 text-sm">
-              Reduce SVG coordinate precision to decrease file size. The optimal precision depends on the viewBox size, but in general reducing precision should be considered.
+              {"✂️ Does your SVG really need 6 decimal places? M 10.293847 20.847362 → M 10.3 20.8 — same visual result, 40% smaller file! 📐 Use SVGO to automate this across all your icons."}
             </Text>
             <CodeComparison
               comparisonId="js-precision"
@@ -1663,6 +2116,113 @@ export const App = () => {
 }`}
               language="tsx"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Suppress Expected Hydration Mismatches (LOW-MEDIUM)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"⏰ Some values are just inherently different between server and client — timestamps, random IDs, locale dates. Instead of the classic \"useEffect + useState\" dance to fix the hydration warning (which causes a flash! 💫), just use"} <code className="text-purple-400">suppressHydrationWarning</code>{". Tell React \"I know this is different, it's fine!\" 👌 One render, no flash, no extra state."}
+            </Text>
+            <CodeComparison
+              comparisonId="rendering-hydration-suppress"
+              language="tsx"
+              whatToNoticeBad={[
+                "useEffect + useState causes a flash: first render shows nothing, then the date appears.",
+                "Two renders on the client just to display a timestamp.",
+              ]}
+              whatToNoticeGood={[
+                "suppressHydrationWarning tells React this mismatch is expected.",
+                "Single render, no flash, no extra state — server value is replaced seamlessly.",
+              ]}
+              wrong={`function LastUpdated() {
+  const [date, setDate] = useState('')
+  useEffect(() => {
+    // ❌ Extra render to avoid hydration warning
+    setDate(new Date().toLocaleString())
+  }, [])
+  return <span>{date}</span>
+}`}
+              good={`function LastUpdated() {
+  return (
+    <span suppressHydrationWarning>
+      {new Date().toLocaleString()}
+    </span>
+  )
+}
+
+// Also useful for random IDs
+function UniqueField() {
+  return (
+    <input
+      id={crypto.randomUUID()}
+      suppressHydrationWarning
+    />
+  )
+}`}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Use useTransition Over Manual Loading States (LOW)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🔄 Stop managing"} <code className="text-purple-400">isLoading</code> {"state manually — React has a better way!"} <code className="text-purple-400">useTransition</code> {"gives you a free"} <code className="text-purple-400">isPending</code> {"boolean, keeps your current UI visible while processing (no jarring spinners! 🎡), and plays perfectly with Suspense. Less code, better UX! 🎉"}
+            </Text>
+            <CodeComparison
+              comparisonId="rendering-usetransition-loading"
+              language="tsx"
+              whatToNoticeBad={[
+                "Manual isLoading state requires three setState calls (loading start, data, loading end).",
+                "UI blanks out immediately — user sees a spinner while waiting.",
+              ]}
+              whatToNoticeGood={[
+                "useTransition gives you isPending automatically — no manual loading state.",
+                "Previous UI stays visible (non-blocking) until the new data is ready.",
+              ]}
+              wrong={`function FilteredList({ items }) {
+  const [filter, setFilter] = useState('')
+  const [filtered, setFiltered] = useState(items)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleFilter = (value) => {
+    setIsLoading(true)
+    setFilter(value)
+    // Simulate expensive filter
+    const result = items.filter(i => i.name.includes(value))
+    setFiltered(result)
+    setIsLoading(false)
+  }
+
+  return (
+    <div>
+      <input onChange={e => handleFilter(e.target.value)} />
+      {isLoading ? <Spinner /> : <List items={filtered} />}
+    </div>
+  )
+}`}
+              good={`import { useState, useTransition } from 'react'
+
+function FilteredList({ items }) {
+  const [filter, setFilter] = useState('')
+  const [filtered, setFiltered] = useState(items)
+  const [isPending, startTransition] = useTransition()
+
+  const handleFilter = (value) => {
+    setFilter(value)
+    startTransition(() => {
+      // Non-urgent: previous list stays visible
+      setFiltered(items.filter(i => i.name.includes(value)))
+    })
+  }
+
+  return (
+    <div>
+      <input onChange={e => handleFilter(e.target.value)} />
+      <div style={{ opacity: isPending ? 0.6 : 1 }}>
+        <List items={filtered} />
+      </div>
+    </div>
+  )
+}`}
             />
           </Stack>
         </Card>
@@ -1673,11 +2233,21 @@ export const App = () => {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              7. JavaScript Performance (LOW-MEDIUM)
+              {"🚀 7. JavaScript Performance"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Batch DOM/CSS, use Set/Map for lookups, cache property access and function results, cache storage reads, combine iterations, length-check first, early exit, hoist RegExp, use loop for min/max, and toSorted() for immutability.
+              {"🔬 Micro-optimizations that individually seem tiny but compound massively in hot paths — tight loops over thousands of items, real-time data crunching, or 60fps animation frames. 💪 Batch DOM reads/writes (layout thrashing is brutal!), swap Array.includes() for Set.has() (O(n) → O(1)!), cache property access in loops, combine array iterations into single passes, and always prefer toSorted() over sort() for immutability. These are the tricks that separate good code from blazing fast code! 🔥"}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟣"} <strong>Impact: LOW-MEDIUM</strong> — Each trick saves microseconds, but in hot loops processing 10K+ items, they add up to milliseconds that matter! ⚡
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> DOM batching • Set/Map lookups • Index maps • Property caching • Function caching • Storage caching • Combined iterations • Length checks • Early returns • RegExp hoisting • Loop min/max • toSorted()
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Batch DOM CSS Changes</Heading>
             <CodeComparison
@@ -1700,6 +2270,12 @@ items.filter(item => allowedIds.includes(item.id))`}
               good={`const allowedIds = new Set(['a', 'b', 'c'])
 items.filter(item => allowedIds.has(item.id))`}
             />
+            <div className={styles.tipLine}>
+              <span className={styles.tipLineIcon}>{"⚡"}</span>
+              <span className={styles.tipLineText}>
+                {"Array.includes() is O(n) per call — with 1000 items checked 1000 times, that's 1,000,000 comparisons! Set.has() is O(1), so it's always 1000 lookups total. 🧮"}
+              </span>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Build Index Maps for Repeated Lookups</Heading>
             <CodeComparison
@@ -1767,6 +2343,9 @@ function setLocalStorage(key, value) {
 }`}
               language="typescript"
               readOnly={false}
+              collapsePanelsByDefault
+              compactToolbar
+              maxCodeHeight={800}
             />
 
             <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Combine Multiple Array Iterations</Heading>
@@ -1879,11 +2458,21 @@ for (const user of users) {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              8. Advanced Patterns (LOW)
+              {"🧩 8. Advanced Patterns"}
             </Heading>
             <Text className={styles.sectionDescription}>
-              Store event handlers in refs for stable subscriptions; use useLatest for stable callback refs without adding to dependency arrays.
+              {"🧙‍♂️ These are the patterns that separate React apprentices from React wizards! They solve subtle, maddening bugs that only appear in complex apps. Store event handlers in refs for rock-solid subscriptions that don't re-attach on every render, use useLatest for stable callback refs (goodbye dependency array headaches! 👋), and initialize app-wide services at module level — because useEffect running twice in Strict Mode is not the init behavior you want! 😅"}
             </Text>
+            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟢"} <strong>Impact: LOW</strong> — Niche but powerful. When you need these patterns, {"you'll"} be glad you know them! 🎯
+              </Text>
+            </div>
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Event handler refs • useLatest pattern • Module-level initialization
+              </Text>
+            </div>
 
             <Heading level={3} className="text-xl font-semibold text-white mt-4 mb-2">Store Event Handlers in Refs</Heading>
             <CodeComparison
@@ -1930,6 +2519,46 @@ function SearchInput({ onSearch }) {
     const t = setTimeout(() => onSearchRef.current(query), 300)
     return () => clearTimeout(t)
   }, [query])
+}`}
+            />
+
+            <Heading level={3} className="text-xl font-semibold text-white mt-6 mb-2">Initialize App Once, Not Per Mount (LOW-MEDIUM)</Heading>
+            <Text className="text-slate-300 mb-4 text-sm">
+              {"🏁 Analytics, feature flags, SDK setup — these should run ONCE, period. But useEffect runs on every mount (and twice in Strict Mode! 😵‍💫). Put init logic at module level with a simple boolean guard. Runs before the first render, never again. Clean and predictable! ✅"}
+            </Text>
+            <CodeComparison
+              comparisonId="advanced-init-once"
+              language="tsx"
+              whatToNoticeBad={[
+                "useEffect runs on every mount (twice in Strict Mode).",
+                "Analytics or SDK init runs multiple times, causing duplicate events or errors.",
+              ]}
+              whatToNoticeGood={[
+                "Module-level flag guarantees init runs exactly once.",
+                "No dependency on component lifecycle — runs before first render.",
+              ]}
+              wrong={`function App() {
+  useEffect(() => {
+    // ❌ Runs on every mount (twice in Strict Mode)
+    analytics.init('key-123')
+    featureFlags.load()
+  }, [])
+
+  return <Main />
+}`}
+              good={`// ✅ Module-level guard: runs exactly once
+let initialized = false
+
+function initApp() {
+  if (initialized) return
+  initialized = true
+  analytics.init('key-123')
+  featureFlags.load()
+}
+
+function App() {
+  initApp() // Safe to call multiple times
+  return <Main />
 }`}
             />
           </Stack>

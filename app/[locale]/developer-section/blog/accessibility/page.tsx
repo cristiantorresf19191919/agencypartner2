@@ -47,10 +47,22 @@ export default function AccessibilityPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. ARIA Patterns
+                {"🏷️"} 1. ARIA Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use ARIA attributes to enhance semantic HTML and provide additional context to assistive technologies.
+                {"🦮"} ARIA attributes are like giving your HTML superpowers for assistive tech! They tell screen readers {"\""}hey, this is a dialog{"\""} or {"\""}this button opens a menu.{"\""} Without them, your beautiful modal is just a mysterious div to someone using a screen reader. {"🤷‍♂️✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"—"} Proper ARIA is the difference between an app that works for everyone and one that locks out millions of users!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> role & aria-modal {"•"} aria-labelledby & aria-describedby {"•"} Focus restoration {"•"} Accessible modal pattern
               </Text>
             </div>
 
@@ -125,10 +137,22 @@ const Modal = ({ isOpen, onClose, children, title }: ModalProps) => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Keyboard Navigation
+                {"⌨️"} 2. Keyboard Navigation
               </Heading>
               <Text className={styles.sectionDescription}>
-                Ensure all interactive elements are keyboard accessible. Implement proper tab order, keyboard shortcuts, and escape handlers.
+                {"🎹"} Not everyone uses a mouse {"—"} and your app should work just as well with Tab, Enter, and Arrow keys! Power users LOVE keyboard shortcuts, and accessibility users NEED them. Make every interactive element reachable by keyboard and {"you've"} leveled up your UX game! {"🎮🏆"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Keyboard-only users are locked out of your app if you skip this {"—"} {"it's"} a legal and moral must!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Arrow key navigation {"•"} Escape to close {"•"} Tab order management {"•"} Custom keyboard shortcuts hook
               </Text>
             </div>
 
@@ -268,10 +292,22 @@ function Editor() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Focus Management
+                {"🎯"} 3. Focus Management
               </Heading>
               <Text className={styles.sectionDescription}>
-                Manage focus properly: trap focus in modals, restore focus after actions, and provide visible focus indicators.
+                {"🔒"} When a modal opens, focus should be trapped inside {"—"} not wandering around behind it like a lost tourist! {"🧳"} And when it closes? Focus goes RIGHT back where it was. {"It's"} the little details that separate good apps from great ones! {"✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Bad focus management makes modals and dialogs completely unusable for keyboard and screen reader users!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useFocusTrap hook {"•"} Focus restoration {"•"} Skip-to-content links {"•"} Visible focus indicators
               </Text>
             </div>
 
@@ -387,10 +423,22 @@ function SkipToContent() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Screen Reader Optimization
+                {"🔊"} 4. Screen Reader Optimization
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use live regions, proper labels, and semantic HTML to provide clear information to screen readers.
+                {"🗣️"} Your app should tell a story {"—"} even when {"it's"} being read aloud! Live regions announce dynamic changes ({"\""}3 items added to cart!{"\""} {"🛒"}), proper labels describe buttons, and sr-only text adds context without cluttering the visual UI. {"It's"} like subtitles for your app! {"📺"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Screen reader users rely entirely on these patterns to understand and interact with your application!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> aria-live regions {"•"} Loading state announcements {"•"} Screen reader only text {"•"} Accessible form labels
               </Text>
             </div>
 
@@ -504,10 +552,22 @@ function FormField({ id, label, error, required, ...props }: FormFieldProps) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Semantic HTML
+                {"🏗️"} 5. Semantic HTML
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use proper HTML elements that convey meaning. Avoid div soup and use semantic elements like nav, main, article, section, etc.
+                {"🍜"} Div soup is NOT on the menu! {"🚫"} Using proper semantic elements like <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, and <code>&lt;section&gt;</code> gives your HTML meaning. Screen readers use landmarks to navigate, and search engines love structured content. {"It's"} a win-win-win! {"🏆🏆🏆"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"—"} Semantic HTML is the foundation of accessibility {"—"} get this right and everything else becomes easier!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Semantic elements vs divs {"•"} Landmark regions {"•"} Proper heading hierarchy {"•"} Navigation patterns
               </Text>
             </div>
 
@@ -590,10 +650,22 @@ function Layout({ children }: { children: React.ReactNode }) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                6. Form Accessibility
+                {"📋"} 6. Form Accessibility
               </Heading>
               <Text className={styles.sectionDescription}>
-                Create accessible forms with proper labels, error messages, fieldset grouping, and validation feedback.
+                {"✍️"} Forms are the #1 interaction point in most apps {"—"} and the #1 accessibility pain point! {"😬"} Proper labels, fieldset grouping, error announcements, and aria-describedby hints make the difference between a form {"that's"} a joy to fill out and one {"that's"} impossible for screen reader users. {"Let's"} make forms accessible for ALL! {"🌍🤝"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"—"} Inaccessible forms literally prevent users from signing up, checking out, or contacting you!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Label & htmlFor pairing {"•"} Fieldset & legend grouping {"•"} Error summary patterns {"•"} aria-describedby hints
               </Text>
             </div>
 

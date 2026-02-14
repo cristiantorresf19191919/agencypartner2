@@ -47,27 +47,39 @@ export default function ErrorHandlingPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Error Boundary Pattern
+                {"🛡️"} 1. Error Boundary Pattern
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>The Problem:</strong> JavaScript errors in React components crash the entire app. Error Boundaries catch errors in the component tree and display fallback UI.
+                {"💥"} One uncaught error and BOOM {"—"} your entire React app goes white screen of death! {"😱"} Error Boundaries are your {"app's"} safety net, catching errors in the component tree and showing a friendly fallback instead of chaos.
                 <br /><br />
-                <strong>The Solution:</strong> Create class-based Error Boundaries (or use libraries) to catch errors and prevent app-wide crashes.
+                {"🔧"} <strong>The fix:</strong> Wrap risky components in class-based Error Boundaries (or use <code>react-error-boundary</code>) and {"you'll"} sleep better at night! {"😴"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"—"} Without Error Boundaries, a single bug in one component can nuke your entire application!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Error Boundary class component {"•"} getDerivedStateFromError {"•"} componentDidCatch logging {"•"} Fallback UI patterns
               </Text>
             </div>
 
             <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
               <Text className={styles.infoText}>
-                <strong>Important:</strong> Error Boundaries only catch errors in:
-                <br />• Component rendering
-                <br />• Lifecycle methods
-                <br />• Constructors
+                {"💡"} <strong>Important:</strong> Error Boundaries only catch errors in:
+                <br />{"•"} Component rendering
+                <br />{"•"} Lifecycle methods
+                <br />{"•"} Constructors
                 <br />
                 <br />They do NOT catch errors in:
-                <br />• Event handlers
-                <br />• Async code (setTimeout, promises)
-                <br />• Server-side rendering
-                <br />• Errors thrown in the Error Boundary itself
+                <br />{"•"} Event handlers
+                <br />{"•"} Async code (setTimeout, promises)
+                <br />{"•"} Server-side rendering
+                <br />{"•"} Errors thrown in the Error Boundary itself
               </Text>
             </div>
 
@@ -154,10 +166,22 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Modern Error Boundary (Using react-error-boundary)
+                {"🪝"} 2. Modern Error Boundary (Using react-error-boundary)
               </Heading>
               <Text className={styles.sectionDescription}>
-                Since Error Boundaries must be class components, use the <code>react-error-boundary</code> library for a hooks-friendly API.
+                {"🎉"} Writing class components in 2026? No thanks! The <code>react-error-boundary</code> library gives you all the error-catching goodness with a hooks-friendly API. {"It's"} like Error Boundaries got a modern makeover! {"💅"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} The go-to library for error boundaries in modern React {"—"} granular, composable, and hook-compatible!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> react-error-boundary setup {"•"} FallbackComponent pattern {"•"} Granular boundaries {"•"} resetKeys for auto-recovery
               </Text>
             </div>
 
@@ -235,10 +259,22 @@ function UserProfileWithRetry({ userId }: { userId: string }) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Async Error Handling
+                {"🌊"} 3. Async Error Handling
               </Heading>
               <Text className={styles.sectionDescription}>
-                Error Boundaries don't catch async errors. Handle them explicitly in useEffect, event handlers, and async functions.
+                {"🚨"} Plot twist: Error Boundaries {"don't"} catch async errors! {"😤"} That <code>useEffect</code> fetch that fails? That event handler that throws? {"They're"} on their own. Time to handle them explicitly with custom hooks and proper try/catch patterns! {"🎣"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Most real-world errors are async {"—"} ignore them and your users see blank screens with zero feedback!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useAsync custom hook {"•"} Cancellation with cleanup {"•"} Error state management {"•"} Error reporting integration
               </Text>
             </div>
 
@@ -330,10 +366,22 @@ const UserProfile = ({ userId }: { userId: string }) => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Error Reporting (Sentry, LogRocket)
+                {"📊"} 4. Error Reporting (Sentry, LogRocket)
               </Heading>
               <Text className={styles.sectionDescription}>
-                Integrate error reporting services to track, analyze, and fix production errors.
+                {"🔍"} An error happened in production and nobody knows about it? {"That's"} the real nightmare! {"👻"} Plug in Sentry or LogRocket and {"you'll"} know about bugs before your users even finish complaining. Track, analyze, and squash those production bugs like a pro! {"🐛🔨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"—"} Flying blind in production without error reporting is a recipe for disaster!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Sentry initialization {"•"} User context & breadcrumbs {"•"} LogRocket session replay {"•"} Error filtering
               </Text>
             </div>
 
@@ -435,10 +483,22 @@ LogRocket.captureException(error, {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Error Recovery Strategies
+                {"🔄"} 5. Error Recovery Strategies
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement recovery mechanisms: retry logic, fallback data, offline mode, and graceful degradation.
+                {"💪"} Errors will happen {"—"} {"it's"} how you bounce back that matters! Retry with exponential backoff, fall back to cached data, go offline gracefully, and degrade features instead of crashing. Your app should be a phoenix, not a house of cards! {"🏗️🔥"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Resilient apps keep users happy even when things go wrong behind the scenes!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Exponential backoff retry {"•"} Fallback cached data {"•"} Offline mode with localStorage {"•"} Graceful degradation
               </Text>
             </div>
 
@@ -540,10 +600,22 @@ function FeatureWithFallback() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                6. Error State Management
+                {"🗄️"} 6. Error State Management
               </Heading>
               <Text className={styles.sectionDescription}>
-                Centralize error handling with Context, custom hooks, or state management libraries.
+                {"🎯"} Scattered try/catch blocks everywhere? {"That's"} chaos! {"🌪️"} Centralize your error handling with a dedicated ErrorContext and custom hooks. One place to rule all errors, one place to toast them, one place to report them! {"💍"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"—"} Centralized error management keeps your codebase clean and your error UX consistent!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> ErrorContext provider {"•"} useError hook {"•"} Toast notifications {"•"} Global error collection
               </Text>
             </div>
 
@@ -635,10 +707,22 @@ function MyComponent() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                7. User-Friendly Error Messages
+                {"💬"} 7. User-Friendly Error Messages
               </Heading>
               <Text className={styles.sectionDescription}>
-                Transform technical errors into user-friendly messages. Don't expose stack traces or internal errors to users.
+                {"😱"} {"\""}TypeError: Cannot read properties of undefined{"\""} {"—"} your users should NEVER see that! Transform scary technical gibberish into friendly, actionable messages. {"\""}Oops, something went wrong. Try refreshing!{"\""} is way better than a raw stack trace! {"🤗"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"—"} Friendly error messages turn frustrated users into patient ones who actually retry!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Error message mapping {"•"} HTTP status translation {"•"} Contextual messages {"•"} Technical detail toggles
               </Text>
             </div>
 

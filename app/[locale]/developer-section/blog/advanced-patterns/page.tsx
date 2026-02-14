@@ -53,20 +53,22 @@ export default function AdvancedPatternsPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Module 1: Render Props (The "Headless" Pattern)
+                {"🎭"} Module 1: Render Props (The "Headless" Pattern)
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>The "Why" (Senior Benefit):</strong>
-                <br />
-                • <strong>Inversion of Control:</strong> Hooks are great for logic, but Render Props are king for <strong>Rendering Control</strong>. You provide the <em>data</em> and <em>state</em>, but you let the consumer define the <em>HTML</em>.
-                <br />
-                • <strong>Decoupling:</strong> A "Headless" component (like a Combobox or Toggle) shouldn't care if it renders as a <code>&lt;ul&gt;</code> or a <code>&lt;div&gt;</code>. It just provides the logic.
+                {"Ready to unlock ultimate component flexibility? 🔓 Render Props let YOU decide what gets rendered while the component handles all the messy logic. It's like hiring a chef who preps all the ingredients but lets you plate the dish however you want. This is the secret sauce behind Radix UI, React Aria, and every serious headless library!"}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Why this matters:</strong> Render Props enable true component composition and flexibility. They're the foundation of headless UI libraries like Radix UI and React Aria, allowing you to separate logic from presentation completely.
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Render Props are the backbone of headless UI libraries — master this and you can build anything! 🏗️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Inversion of Control • SortableList Pattern • Toggle Component • Children as Function
               </Text>
             </div>
 
@@ -166,20 +168,22 @@ export const Toggle = ({ children }: ToggleProps) => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Module 2: Wrapper Components (The "Guard" Pattern)
+                {"🛡️"} Module 2: Wrapper Components (The "Guard" Pattern)
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>The "Why" (Senior Benefit):</strong>
-                <br />
-                • <strong>DRY (Don't Repeat Yourself):</strong> Instead of checking <code>if (isLoading)</code> or <code>if (isAdmin)</code> in every single page, you create a wrapper that handles it globally.
-                <br />
-                • <strong>Composition:</strong> You can stack wrappers (<code>&lt;AuthGuard&gt;&lt;Layout&gt;&lt;Page /&gt;&lt;/Layout&gt;&lt;/AuthGuard&gt;</code>) to build complex page requirements cleanly.
+                {"Stop copy-pasting if (isAdmin) checks everywhere! 🛑 Wrapper Components are your app's bouncers — they decide who gets in and what gets shown. Stack them like building blocks: AuthGuard > FeatureGuard > Layout > Page. Clean, composable, and SO satisfying to use."}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Why this matters:</strong> Wrapper components eliminate repetitive conditional logic across your application. They're essential for building scalable applications with consistent access control, loading states, and feature flags.
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Wrapper components prevent security holes and eliminate hundreds of lines of repetitive conditional logic! 🔐"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> FeatureGuard Pattern • AuthGuard Pattern • Composable Wrappers • Error Boundary Wrapper
               </Text>
             </div>
 
@@ -288,20 +292,22 @@ export const ErrorBoundaryWrapper = ({
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Module 3: Polymorphic Components (The "Design System" Pattern)
+                {"🦎"} Module 3: Polymorphic Components (The "Design System" Pattern)
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>The "Why" (Senior Benefit):</strong>
-                <br />
-                • <strong>Semantics & Accessibility:</strong> Sometimes a "Card" is just a <code>&lt;div&gt;</code>. Sometimes it's a clickable <code>&lt;article&gt;</code>. Sometimes a "Button" looks like a button but needs to be an <code>&lt;a&gt;</code> tag because it's a link.
-                <br />
-                • <strong>The "As" Prop:</strong> This pattern allows a single component to shapeshift into any HTML element while keeping its styles.
+                {"Shapeshifting components! 🦸 Imagine a Button that can be a <button>, an <a>, or even a <div> — all with the same styles and full TypeScript support. The 'as' prop pattern is how Material UI, Chakra, and Mantine build their magic. Once you learn this, you'll see it EVERYWHERE."}
               </Text>
             </div>
 
-            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mb-6`}>
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
               <Text className={styles.infoText}>
-                <strong>Why this matters:</strong> Polymorphic components are the foundation of modern design systems (Material UI, Chakra UI, Mantine). They provide flexibility while maintaining type safety and accessibility, allowing components to adapt to different semantic contexts.
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"This is THE pattern behind every major design system — learn it to build truly reusable component libraries! 📚"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> {"The 'as' Prop"} • ComponentPropsWithoutRef • Polymorphic Text • Polymorphic Button • Polymorphic Card
               </Text>
             </div>
 
@@ -450,8 +456,20 @@ export const Card = <T extends ElementType = 'div'>({
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              Summary of Senior Practices Used
+              {"🏆"} Summary of Senior Practices Used
             </Heading>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟢"} <strong>Impact: LOW</strong> — {"A handy recap of the power moves you just learned — bookmark this for your next code review! 📖"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Generics Recap • Composition Patterns • Prop Spreading • Inversion of Control
+              </Text>
+            </div>
             <div className="space-y-4">
               <div>
                 <Text className={styles.sectionDescription}>

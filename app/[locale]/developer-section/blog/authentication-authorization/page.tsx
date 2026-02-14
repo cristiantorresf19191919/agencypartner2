@@ -47,19 +47,29 @@ export default function AuthenticationAuthorizationPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. JWT Deep Dive
+                {"🎫"} 1. JWT Deep Dive
               </Heading>
               <Text className={styles.sectionDescription}>
-                JSON Web Tokens (JWT) are the foundation of modern stateless authentication. Understand their structure, security considerations, and production patterns.
+                {"JWTs are like digital passports for your users! 🛂 They carry identity, permissions, and expiration — all in a compact, signed token. Let's crack one open and understand every piece of this authentication powerhouse! 🔬✨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"JWTs power 90%+ of modern APIs — misconfigure them and your entire auth system crumbles! 💥"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> JWT Structure {"•"} Token Creation {"•"} Verification {"•"} Refresh Flow {"•"} Secure Storage {"•"} Axios Interceptors
+                </Text>
+              </div>
             </div>
 
             <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
               <Text className={styles.infoText}>
                 <strong>JWT Structure:</strong> Header.Payload.Signature
-                <br />• <strong>Header:</strong> Algorithm and token type
-                <br />• <strong>Payload:</strong> Claims (user data, expiration, etc.)
-                <br />• <strong>Signature:</strong> Verifies token integrity
+                <br />{"•"} <strong>Header:</strong> Algorithm and token type
+                <br />{"•"} <strong>Payload:</strong> Claims (user data, expiration, etc.)
+                <br />{"•"} <strong>Signature:</strong> Verifies token integrity
               </Text>
             </div>
 
@@ -318,11 +328,21 @@ axios.interceptors.response.use(
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. OAuth 2.0 / OpenID Connect
+                {"🌐"} 2. OAuth 2.0 / OpenID Connect
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement OAuth 2.0 and OpenID Connect for secure third-party authentication. Learn authorization flows, PKCE, and production patterns.
+                {"\"Sign in with Google\" — sounds simple, right? 🤔 Behind that button is a beautiful dance of redirects, tokens, and cryptographic verification! Let's master OAuth 2.0 and OIDC so you can implement \"Login with anything\" like a pro! 💃🔐"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"OAuth is the industry standard for third-party auth — get PKCE wrong and attackers can hijack your users' accounts! 🏴‍☠️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> PKCE Flow {"•"} Code Verifier/Challenge {"•"} Token Exchange {"•"} ID Token Verification {"•"} NextAuth.js
+                </Text>
+              </div>
             </div>
 
             <CodeComparison
@@ -597,11 +617,21 @@ async function refreshAccessToken(token: any) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Session Management
+                {"🗂️"} 3. Session Management
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement secure session management with proper storage, rotation, and invalidation strategies.
+                {"Sessions are like VIP wristbands for your app — they prove who you are without re-checking your ID every time! 🎟️ But lose control of them and uninvited guests crash the party. Let's build bulletproof session management! 🏰🔒"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Session hijacking is a top attack vector — proper rotation and invalidation are your best defense! 🛡️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Session Creation {"•"} Validation {"•"} Rotation {"•"} Revocation {"•"} Redis Storage {"•"} Security Headers
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -848,11 +878,21 @@ async function deleteRedisSession(sessionId: string) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Refresh Token Strategies
+                {"🔄"} 4. Refresh Token Strategies
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement secure refresh token patterns: rotation, reuse detection, and automatic token refresh.
+                {"Tokens expire, but your users shouldn't have to re-login every 15 minutes! 😤 Refresh tokens keep the experience smooth while maintaining security. But beware — mishandle them and you've got a token replay nightmare! 🎬🔁"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Refresh token rotation with reuse detection catches stolen tokens instantly — your security early warning system! 🚨"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Token Rotation {"•"} Reuse Detection {"•"} Auto-refresh Client {"•"} Sliding Window {"•"} Token Families
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -1111,11 +1151,21 @@ async function refreshWithFamily(
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Role-Based Access Control (RBAC)
+                {"👑"} 5. Role-Based Access Control (RBAC)
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement hierarchical role-based access control with role inheritance and permission checking.
+                {"Not everyone gets the keys to the kingdom! 🏰 RBAC lets you define who can do what — from guests peeking through the window to admins holding all the keys. Build a hierarchy that makes sense and scales beautifully! 👥📊"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"RBAC is the backbone of authorization — without it, every user has the same power (yikes)! 😬"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Role Hierarchy {"•"} Permission Mapping {"•"} RBAC Middleware {"•"} Resource-based Access {"•"} Dynamic Roles
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -1347,11 +1397,21 @@ async function getEffectiveRole(
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                6. Permission-Based Systems
+                {"🎛️"} 6. Permission-Based Systems
               </Heading>
               <Text className={styles.sectionDescription}>
-                Fine-grained permission systems that go beyond roles, allowing granular control over user actions.
+                {"When roles aren't enough, permissions give you surgical precision! 🎯 Think of it as going from \"you can enter the building\" to \"you can enter room 42 on Tuesdays between 2-4pm.\" Maximum control, maximum flexibility! 🔧✨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> — {"Fine-grained permissions scale to enterprise complexity — essential for multi-tenant SaaS apps! 🏢"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Permission Structure {"•"} User Permissions {"•"} Permission Groups {"•"} Conditional Access {"•"} Caching
+                </Text>
+              </div>
             </div>
 
             <CodeEditor

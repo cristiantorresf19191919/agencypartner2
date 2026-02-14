@@ -41,10 +41,20 @@ export default function MigrationPatternsPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
-              <Heading level={2} className={styles.sectionTitle}>1. Class to Hooks Migration</Heading>
+              <Heading level={2} className={styles.sectionTitle}>{"🔀"} 1. Class to Hooks Migration</Heading>
               <Text className={styles.sectionDescription}>
-                Migrate class components to functional components with hooks.
+                {"Time to say goodbye to class components! 👋 Let's transform those verbose lifecycle methods into sleek, elegant hooks. It's like upgrading from a flip phone to a smartphone — same job, way better experience! 🚀"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Classes are the past, hooks are the future — this migration is non-negotiable for modern React! 🏗️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Class vs Functional Components {"•"} State Migration {"•"} Lifecycle to useEffect {"•"} Event Handlers
+                </Text>
+              </div>
             </div>
             <CodeComparison
               language="tsx"

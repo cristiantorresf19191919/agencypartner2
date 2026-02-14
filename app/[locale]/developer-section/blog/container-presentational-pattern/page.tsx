@@ -59,10 +59,22 @@ export default function ContainerPresentationalPatternPage() {
                 Core Concept
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                Separation of Concerns
+                {"🔀 Separation of Concerns"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                This pattern solves the biggest problem in large codebases: <strong className="text-purple-300">Tightly coupled Logic and UI.</strong>
+                {"This pattern tackles the biggest headache in large codebases: logic and UI tangled together like headphone cables! 🎧 By splitting the 'what to fetch' from the 'how to display,' you unlock true scalability and reusability! 🔓✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"— The foundational architecture principle that separates junior code from senior code. Get this right, everything else follows! 🏗️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Container vs Presentational {"•"} Logic layer {"•"} UI layer {"•"} Why decoupling matters
               </Text>
             </div>
 
@@ -97,11 +109,22 @@ export default function ContainerPresentationalPatternPage() {
                 Lesson 1
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                The "Junior" Way (Hard to Scale) ❌
+                {"🚫 The \"Junior\" Way (Hard to Scale) ❌"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                This is what we want to avoid. The fetching logic is trapped inside the component. 
-                If you need this same user data in a different view, you have to copy-paste this logic.
+                {"We've all been here! 😅 Fetch logic trapped inside the component like a bird in a cage. Need the same user data elsewhere? Time to copy-paste... and that's where the nightmare begins! 🔄💀 Let's see what NOT to do."}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"— Recognizing anti-patterns is the first step to writing better code. If your components fetch AND render, read on! 🚨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Coupled logic anti-pattern {"•"} Copy-paste problems {"•"} Testing difficulties {"•"} Duplicated loading states
               </Text>
             </div>
 
@@ -152,14 +175,25 @@ export default App;`}
                 Lesson 2
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                The "Senior" Way: The Generic DataSource ✅
+                {"✅ The \"Senior\" Way: The Generic DataSource"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                Instead of writing a loader for every single data type (<code className="text-purple-400">UserLoader</code>, <code className="text-purple-400">ProductLoader</code>, etc.), 
-                we build <strong className="text-green-300">one</strong> reusable <code className="text-purple-400">DataSource</code> component.
+                {"Why write a loader for EVERY data type when you can write ONE that rules them all? 👑 The Generic DataSource is your Swiss Army knife — one component that handles fetching, loading, and error states for ANY data. It's beautiful! 🤩"}
               </Text>
               <Text className="text-zinc-300 mb-4">
-                This covers <strong className="text-purple-300">DataSource</strong> and <strong className="text-purple-300">Render Props</strong> patterns.
+                {"This covers both the"} <strong className="text-purple-300">DataSource</strong> {"and"} <strong className="text-purple-300">Render Props</strong> {"patterns — two patterns for the price of one! 🎁"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"— One reusable component to handle ALL your data fetching. Write once, use everywhere — that's the senior way! 💎"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Generic DataSource component {"•"} Render Props pattern {"•"} Dynamic prop naming {"•"} Reusable loading logic
               </Text>
             </div>
 
@@ -233,10 +267,22 @@ export default App;`}
                 Lesson 3
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                The "Dumb" UI Components
+                {"🎨 The \"Dumb\" UI Components"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                These components are pure. They are incredibly easy to test and style because they have zero side effects.
+                {"Don't let the name fool you — \"dumb\" components are actually genius! 🧠 They're pure, predictable, and ridiculously easy to test. Give them props, they render. No side effects, no drama, no surprises. Same input = same output, every single time! 🎯"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟢"} <strong>Impact: LOW</strong> {"— Simple concept, massive payoff. Pure components are the building blocks of every maintainable codebase! 🧱"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Pure presentational components {"•"} Zero side effects {"•"} Easy testing {"•"} Reusable UI pieces
               </Text>
             </div>
 
@@ -296,10 +342,22 @@ export default App;`}
                 Lesson 4
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                Putting It Together (The Scalability Win) 🚀
+                {"🧩 Putting It Together (The Scalability Win) 🚀"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                Now, look at how clean your main App becomes. You can mix and match any Data Source with any UI component.
+                {"Now for the magic moment! ✨ Watch how clean your App becomes when you combine DataSource + Presentational components. Mix and match ANY data source with ANY UI component — it's like a buffet of reusability! 🍕🎉"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"— This is where it all comes together. See the full power of Container/Presentational in action! 🎬"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Combining patterns {"•"} Mix-and-match data sources {"•"} Clean App architecture {"•"} Type-safe composition
               </Text>
             </div>
 
@@ -365,11 +423,22 @@ export default App;`}
                 Lesson 5
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                Applying it to LocalStorage 💾
+                {"💾 Applying it to LocalStorage"}
               </Heading>
               <Text className="text-zinc-300 mb-4">
-                This pattern is so flexible that the "Source" doesn't even have to be an API. 
-                It can be LocalStorage, and the UI component <strong className="text-orange-300">doesn't even know the difference</strong>.
+                {"Here's where minds get blown! 🤯 The DataSource pattern is so flexible that the source doesn't have to be an API at all. LocalStorage? Sure! IndexedDB? Why not! The UI component"} <strong className="text-orange-300">{"doesn't even know the difference"}</strong>{" — and that's the whole point! 🎩✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"— Proof that great abstractions work everywhere. Same pattern, different source, zero changes to your UI! 🔄"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> LocalStorage data source {"•"} Source-agnostic UI {"•"} Swappable data layers {"•"} Abstraction power
               </Text>
             </div>
 
@@ -426,7 +495,7 @@ export default App;`}
                 Senior Level
               </div>
               <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-                🏆 Why This Makes You a Senior Dev
+                {"🏆 Why This Makes You a Senior Dev"}
               </Heading>
             </div>
 
@@ -477,7 +546,7 @@ export default App;`}
         <Card variant="elevated" className="p-10 !bg-gradient-to-br !from-purple-500/15 !to-blue-500/15 !border-purple-500/30">
           <Stack direction="col" gap="md">
             <Heading level={2} className="text-3xl font-bold mb-3 text-white">
-              Key Takeaways
+              {"🎯 Key Takeaways"}
             </Heading>
             <div className="grid md:grid-cols-2 gap-6">
               <div>

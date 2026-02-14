@@ -41,9 +41,21 @@ export default function AnimationsPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
-              <Heading level={2} className={styles.sectionTitle}>1. Framer Motion Patterns</Heading>
+              <Heading level={2} className={styles.sectionTitle}>{"🎬"} 1. Framer Motion Patterns</Heading>
               <Text className={styles.sectionDescription}>
-                Use Framer Motion for declarative animations with excellent performance.
+                {"✨"} Want your React app to feel alive? Framer Motion makes animations so easy {"it's"} almost cheating! {"🎮"} Declarative syntax, buttery-smooth transitions, layout animations, and drag gestures {"—"} all with excellent performance out of the box. Your users will think {"you're"} a wizard! {"🧙‍♂️💫"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Smooth animations are the secret sauce that makes apps feel polished and professional!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Basic motion components {"•"} Layout animations {"•"} Gesture handling (drag) {"•"} Enter/exit transitions
               </Text>
             </div>
             <CodeEditor

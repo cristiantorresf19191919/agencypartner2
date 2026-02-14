@@ -47,11 +47,21 @@ export default function TypeScriptAdvancedPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Generic Components
+                {"🧬"} 1. Generic Components
               </Heading>
               <Text className={styles.sectionDescription}>
-                Create reusable components that work with any data type while maintaining type safety.
+                {"Generics are like the Swiss Army knife of TypeScript! 🔧 Build components that adapt to ANY data type while keeping full type safety. Write once, use everywhere — your future self will thank you! 🎯"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Generic components eliminate code duplication and catch bugs at compile time — this is TypeScript's superpower! 💥"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Generic List Components {"•"} Generic Form Builders {"•"} Type Constraints {"•"} Multi-type Generics
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -189,11 +199,21 @@ function Form<T extends Record<string, any>>({
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Utility Types & Mapped Types
+                {"🛠️"} 2. Utility Types & Mapped Types
               </Heading>
               <Text className={styles.sectionDescription}>
-                Leverage TypeScript's built-in utility types and create custom mapped types for powerful type transformations.
+                {"TypeScript ships with an incredible toolbox of utility types — and you can build your own! 🧰 From Partial to Pick, Omit to Record, these type transformations are like magic spells for your codebase. Abracadabra, your types are perfect! ✨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Utility types turn complex type manipulation into one-liners — they're the cheat codes of TypeScript! 🎮"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Built-in Utility Types {"•"} Custom Mapped Types {"•"} Conditional Types {"•"} Template Literal Types {"•"} Branded Types
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -295,11 +315,21 @@ const productId = createProductId('456');
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Discriminated Unions
+                {"🏷️"} 3. Discriminated Unions
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use discriminated unions for type-safe state machines, API responses, and component variants.
+                {"Discriminated unions are the secret sauce of bulletproof TypeScript! 🔒 They let TypeScript automatically narrow types based on a tag field — no more runtime surprises. It's like giving your compiler X-ray vision! 👁️"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Discriminated unions eliminate entire categories of bugs and make impossible states truly impossible! 🛡️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> API Response Patterns {"•"} Component Variants {"•"} State Machines {"•"} Exhaustive Checks
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -408,11 +438,21 @@ function useAsyncState<T>() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Advanced Hooks Typing
+                {"🪝"} 4. Advanced Hooks Typing
               </Heading>
               <Text className={styles.sectionDescription}>
-                Type custom hooks properly, handle overloads, and create type-safe hook factories.
+                {"Custom hooks are awesome, but typing them correctly? That's where the real magic happens! 🎩 Learn to type overloads, factory patterns, and complex return types so your hooks are as type-safe as they are powerful. Level up your hook game! 📈"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Properly typed hooks make your entire codebase safer — every consumer gets perfect autocomplete and error checking! 🎯"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Typed Custom Hooks {"•"} Hook Overloads {"•"} Hook Factories {"•"} Generic Hook Patterns
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -540,11 +580,21 @@ const useUser = createUseApi<User>('/api/user');
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Type Guards & Assertions
+                {"🛡️"} 5. Type Guards & Assertions
               </Heading>
               <Text className={styles.sectionDescription}>
-                Create type guards to narrow types safely and assert types when you know more than TypeScript.
+                {"Type guards are your runtime bodyguards! 💂 They help TypeScript narrow types safely at runtime, while assertions let you tell the compiler \"trust me, I know what this is.\" Together, they're the dynamic duo of type safety! 🦸‍♂️🦸‍♀️"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> — {"Type guards bridge the gap between compile-time and runtime safety — essential for working with unknown data! 🌉"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Custom Type Guards {"•"} Discriminated Union Guards {"•"} Assertion Functions {"•"} Error Type Guards
+                </Text>
+              </div>
             </div>
 
             <CodeEditor

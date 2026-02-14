@@ -64,11 +64,21 @@ export default function NextJSBestPracticesPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. Next.js Fundamentals & App Router
+                {"📦"} 1. Next.js Fundamentals & App Router
               </Heading>
               <Text className={styles.sectionDescription}>
-                Understand the Next.js App Router architecture, file-based routing, and fundamental concepts that form the foundation of modern Next.js applications.
+                {"Welcome to the foundation of modern Next.js! 🏗️ The App Router is a game-changer — file-based routing that just makes sense. Drop a file, get a route. It's like magic, but better because it's deterministic! ✨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"The App Router is the backbone of every Next.js app — nail these fundamentals and everything else clicks into place! 🧩"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> App Router Architecture {"•"} File-based Routing {"•"} Layouts & Templates {"•"} Loading & Error States {"•"} Route Groups
+                </Text>
+              </div>
             </div>
 
             <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
@@ -207,11 +217,21 @@ export default function DashboardLayout({
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Server Components vs Client Components
+                {"⚡"} 2. Server Components vs Client Components
               </Heading>
               <Text className={styles.sectionDescription}>
-                Master the fundamental distinction between Server and Client Components. Learn when to use each, and how to structure your application for optimal performance.
+                {"This is THE most important concept in modern Next.js! 🧠 Server Components render on the server (zero JS shipped to the client), while Client Components handle interactivity. Master this split and your apps will be blazing fast! 🔥"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Getting the Server/Client boundary right is the #1 factor in Next.js app performance — mess this up and everything suffers! ⚠️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Server vs Client Components {"•"} When to Use Each {"•"} Data Fetching Patterns {"•"} Composition Strategies {"•"} Bundle Size Optimization
+                </Text>
+              </div>
             </div>
 
             <CodeComparison
@@ -346,11 +366,21 @@ function DashboardClient({ initialData }) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Data Fetching Patterns & Best Practices
+                {"🔄"} 3. Data Fetching Patterns & Best Practices
               </Heading>
               <Text className={styles.sectionDescription}>
-                Master Next.js data fetching: async Server Components, fetch caching, parallel and sequential requests, and streaming with Suspense.
+                {"Data fetching in Next.js is an art form! 🎨 From async Server Components to parallel requests and Suspense streaming — there's a pattern for every situation. Say goodbye to loading spinners and hello to instant data! 🏎️💨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"How you fetch data determines your app's speed and user experience — these patterns are the difference between 100ms and 3s load times! ⏱️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Async Server Components {"•"} Parallel & Sequential Fetching {"•"} Suspense Streaming {"•"} Loading States {"•"} Error Handling {"•"} Route Handlers
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -549,11 +579,21 @@ export async function DELETE(
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Caching Strategies & Data Revalidation
+                {"🗄️"} 4. Caching Strategies & Data Revalidation
               </Heading>
               <Text className={styles.sectionDescription}>
-                Optimize performance with Next.js caching: Request Memoization, Data Cache, Full Route Cache, and advanced revalidation patterns.
+                {"Caching is your secret weapon for blazing-fast apps! 🚀 Next.js has FOUR levels of caching built in, and mastering them is like having a turbo button for your entire application. Fresh data when you need it, cached speed when you don't! 💨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Proper caching can reduce server costs by 90% and make your app feel instant — this is where senior engineers shine! 💎"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Request Memoization {"•"} Data Cache {"•"} Full Route Cache {"•"} Time-based Revalidation {"•"} On-demand Revalidation {"•"} ISR
+                </Text>
+              </div>
             </div>
 
             <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
@@ -706,11 +746,21 @@ export default async function BlogPost({ params }: { params: { slug: string } })
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Advanced Routing Patterns
+                {"🗺️"} 5. Advanced Routing Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Master Next.js routing: dynamic routes, catch-all segments, route groups, parallel routes, intercepting routes, and advanced patterns.
+                {"Next.js routing goes WAY beyond basic pages! 🤯 Dynamic segments, catch-all routes, parallel routes, intercepting routes — it's like having a GPS that can navigate any road. Build complex UIs with elegant URL structures! 🛤️"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Advanced routing unlocks modals, dashboards, and multi-view layouts that feel native — your users will love it! ❤️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Dynamic Routes {"•"} Catch-all Segments {"•"} Route Groups {"•"} Parallel Routes {"•"} Intercepting Routes {"•"} Programmatic Navigation
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -899,11 +949,21 @@ export default function NavigationButton() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                6. Middleware & Edge Runtime
+                {"🌐"} 6. Middleware & Edge Runtime
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement authentication, redirects, header manipulation, and edge functions using Next.js Middleware running on the Edge Runtime.
+                {"Middleware is your app's bouncer at the door! 🚪 It intercepts every request before it reaches your pages — perfect for auth checks, A/B testing, geo-routing, and more. Running at the edge means millisecond response times worldwide! 🌍⚡"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Middleware is your first line of defense and optimization — auth, redirects, headers, all in one place at the edge! 🏰"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Authentication Middleware {"•"} A/B Testing {"•"} Geolocation Routing {"•"} Rate Limiting {"•"} Security Headers {"•"} Bot Detection
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -1128,11 +1188,21 @@ export const config = {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                7. Performance Optimization Strategies
+                {"🏎️"} 7. Performance Optimization Strategies
               </Heading>
               <Text className={styles.sectionDescription}>
-                Optimize Next.js applications for speed: image optimization, font optimization, code splitting, bundle optimization, and Core Web Vitals.
+                {"Speed is a feature, and Next.js gives you the tools to go FAST! 💨 From optimized images that load in a blink to fonts that never block rendering — every millisecond counts. Make your Lighthouse score turn green! 💚🏆"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Performance directly affects SEO, conversions, and user satisfaction — a 1s delay = 7% fewer conversions! 📉"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Image Optimization {"•"} Font Optimization {"•"} Code Splitting {"•"} Dynamic Imports {"•"} Bundle Analysis {"•"} Core Web Vitals
+                </Text>
+              </div>
             </div>
 
             <CodeComparison
@@ -1310,11 +1380,21 @@ export function reportWebVitals(metric: any) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                8. Metadata & SEO Best Practices
+                {"🔍"} 8. Metadata & SEO Best Practices
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement comprehensive SEO with dynamic metadata, Open Graph, Twitter Cards, structured data, and sitemap generation.
+                {"Want Google to love your app? 😍 Next.js makes SEO a breeze with built-in metadata APIs, dynamic OG images, and automatic sitemap generation. From rich snippets to Twitter Cards — make every search result click-worthy! 🎯📊"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Great SEO means free organic traffic — these patterns are the difference between page 1 and page 10 on Google! 📈"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Static & Dynamic Metadata {"•"} Open Graph {"•"} Twitter Cards {"•"} Structured Data {"•"} Sitemaps {"•"} Dynamic OG Images
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -1568,11 +1648,21 @@ export const metadata: Metadata = {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                9. Forms & Server Actions
+                {"📝"} 9. Forms & Server Actions
               </Heading>
               <Text className={styles.sectionDescription}>
-                Handle form submissions with Server Actions, progressive enhancement, validation, error handling, and optimistic updates.
+                {"Server Actions are a revolution for form handling! 🎉 No more API route boilerplate — just write a function, mark it 'use server', and boom — your form talks directly to the server. Add Zod validation and optimistic updates for chef's kiss perfection! 👨‍🍳💋"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Server Actions simplify your entire data mutation layer — less code, better DX, progressive enhancement for free! 🎁"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Server Actions {"•"} Form Validation with Zod {"•"} useFormState Hook {"•"} Optimistic Updates {"•"} File Uploads {"•"} Error Handling
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -1832,11 +1922,21 @@ export async function createPost(formData: FormData) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                10. TypeScript Patterns for Next.js
+                {"🔷"} 10. TypeScript Patterns for Next.js
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement type-safe Next.js applications with proper TypeScript patterns, type definitions, and best practices.
+                {"TypeScript + Next.js = a match made in heaven! 💙 Type your routes, params, metadata, server actions, and API responses. Your IDE becomes a superpower with autocomplete everywhere and errors caught before they ship! 🎯🛡️"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> — {"Proper TypeScript patterns prevent runtime errors and make refactoring a joy instead of a nightmare! 😌"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Typed Route Parameters {"•"} Typed Search Params {"•"} Typed Server Actions {"•"} Typed API Routes {"•"} Environment Variables {"•"} Generic Handlers
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -2012,11 +2112,21 @@ export const GET = createApiHandler(async (request) => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                11. Production-Ready Patterns
+                {"🏭"} 11. Production-Ready Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement production-grade patterns: error boundaries, monitoring, logging, environment configuration, and deployment best practices.
+                {"Time to ship to production like a pro! 🚢 Error boundaries that don't leave users stranded, monitoring that catches issues before they escalate, logging that tells the full story, and config that scales. This is what separates hobby projects from production apps! 💼"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Production patterns are the difference between a toy and a real product — skip these at your own peril! ⚠️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Error Boundaries {"•"} Monitoring & Analytics {"•"} Environment Config {"•"} Feature Flags {"•"} Health Checks {"•"} Rate Limiting {"•"} Security Headers
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -2303,11 +2413,21 @@ module.exports = {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                12. Real-World Application Examples
+                {"🌍"} 12. Real-World Application Examples
               </Heading>
               <Text className={styles.sectionDescription}>
-                Complete, production-ready examples: e-commerce product page, dashboard with real-time data, blog with comments, and authentication flow.
+                {"Theory is great, but real code is better! 🔥 Here are complete, copy-paste-ready examples straight from production: e-commerce pages, dashboards with live data, blog systems with comments, and auth flows. This is where all the patterns come together! 🧩✨"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> — {"Real-world examples bridge the gap between learning and building — use these as starting points for your own projects! 🚀"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> E-commerce Product Page {"•"} Real-time Dashboard {"•"} Blog with Comments {"•"} Authentication Flow
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -2563,11 +2683,21 @@ export async function login(prevState: any, formData: FormData) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                13. Senior Next.js Tooling & Testing Playbook
+                {"🧪"} 13. Senior Next.js Tooling & Testing Playbook
               </Heading>
               <Text className={styles.sectionDescription}>
-                Production-grade patterns for a senior workflow: edge runtime, cache-control, server actions with validation, revalidation, observability, and type-safe testing with Playwright/Vitest/MSW.
+                {"This is the senior engineer's secret playbook! 📖 Edge runtime tricks, cache-busting strategies, Zod-validated server actions, OpenTelemetry observability, and a full testing stack with Playwright + Vitest + MSW. If you're reading this, you're leveling up to Staff Engineer territory! 🏅🚀"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"Senior-level tooling and testing is what makes codebases maintainable for years — invest here and thank yourself later! 🙏"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Edge Runtime Patterns {"•"} Cache Tag Revalidation {"•"} Zod Server Actions {"•"} OpenTelemetry {"•"} Playwright E2E {"•"} Vitest + MSW
+                </Text>
+              </div>
             </div>
 
             <CodeEditor

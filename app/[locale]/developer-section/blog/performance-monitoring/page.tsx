@@ -47,10 +47,22 @@ export default function PerformanceMonitoringPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. React DevTools Profiler
+                {"🔬"} 1. React DevTools Profiler
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use React's built-in Profiler component and DevTools to identify performance bottlenecks.
+                {"Time to put on your detective hat! 🕵️ The React Profiler is your magnifying glass for finding performance villains lurking in your component tree. Track render times, spot unnecessary re-renders, and catch those sneaky bottlenecks before your users even notice them!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"You can't optimize what you can't measure — the Profiler reveals exactly where your renders are wasting time"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Profiler Component • onRender Callback • Performance Hooks • Slow Render Detection
               </Text>
             </div>
 
@@ -132,10 +144,22 @@ function ExpensiveComponent() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Web Vitals & Core Web Vitals
+                {"📊"} 2. Web Vitals & Core Web Vitals
               </Heading>
               <Text className={styles.sectionDescription}>
-                Measure and track Core Web Vitals (LCP, FID, CLS) to ensure optimal user experience.
+                {"Google is watching! 👀 Core Web Vitals (LCP, FID, CLS) directly impact your SEO rankings and user satisfaction. Track them like a hawk and keep your scores green. Your users' experience — and your search rankings — depend on it! 🏆"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Core Web Vitals affect SEO rankings AND user experience — poor scores mean lost traffic and unhappy users"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> LCP / FID / CLS Tracking • web-vitals Library • Custom Performance Observer • Custom Measurements
               </Text>
             </div>
 
@@ -205,10 +229,22 @@ measurePerformance('dataProcessing', () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Bundle Analysis
+                {"📦"} 3. Bundle Analysis
               </Heading>
               <Text className={styles.sectionDescription}>
-                Analyze your bundle size and identify optimization opportunities.
+                {"Your bundle is like a suitcase — pack too much and it won't close! 🧳 Bundle analysis helps you see exactly what's taking up space, find heavy dependencies hiding in node_modules, and decide what to lazy-load. Shrink that bundle and watch your load times plummet! 🚀"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Every KB counts — a bloated bundle means slower loads, higher bounce rates, and frustrated users on slow connections"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> webpack-bundle-analyzer • Dynamic Imports • Tree Shaking • CI Bundle Size Monitoring
               </Text>
             </div>
 

@@ -47,10 +47,22 @@ export default function FormManagementPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. React Hook Form Patterns
+                {"📝"} 1. React Hook Form Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                React Hook Form provides performant, flexible form handling with minimal re-renders.
+                {"⚡"} Tired of forms that re-render on every keystroke? React Hook Form is your best friend {"—"} performant, flexible, and so lightweight {"it's"} almost unfair! Build forms that {"don't"} make your browser cry. {"😂🏎️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> {"—"} Forms are everywhere in web apps {"—"} get them right and your whole app feels snappier!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> register & handleSubmit {"•"} Form validation rules {"•"} Error display {"•"} Custom validation functions
               </Text>
             </div>
 
@@ -161,10 +173,22 @@ function AdvancedForm() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Zod Schema Validation
+                {"🔒"} 2. Zod Schema Validation
               </Heading>
               <Text className={styles.sectionDescription}>
-                Use Zod for type-safe schema validation with React Hook Form.
+                {"🎯"} Why write validation logic twice (once in TS types, once in validation rules) when Zod does both? Define your schema once, get TypeScript types AND runtime validation for free! {"It's"} like a two-for-one deal that actually works. {"🤝✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Type-safe validation eliminates an entire category of runtime bugs before they reach production!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Zod schema definition {"•"} zodResolver integration {"•"} Type inference with z.infer {"•"} Nested object validation
               </Text>
             </div>
 
@@ -246,10 +270,22 @@ const orderSchema = z.object({
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Multi-step Forms
+                {"🪜"} 3. Multi-step Forms
               </Heading>
               <Text className={styles.sectionDescription}>
-                Build complex multi-step forms with validation at each step.
+                {"🧙"} Giant forms scare users away! Break them into bite-sized steps and suddenly that 20-field form feels like a breezy wizard. Validate at each step, navigate back and forth, and keep all data in one place with FormProvider. {"Nobody's"} abandoning THIS checkout flow! {"🛒✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> {"—"} Multi-step forms dramatically improve completion rates for complex workflows like checkout and onboarding!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Step-based form architecture {"•"} Per-step validation with trigger {"•"} FormProvider context {"•"} Step indicator UI
               </Text>
             </div>
 
@@ -347,10 +383,22 @@ function PersonalInfoStep() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Dynamic Forms
+                {"🔀"} 4. Dynamic Forms
               </Heading>
               <Text className={styles.sectionDescription}>
-                Create forms with dynamic fields that can be added or removed.
+                {"🎭"} Sometimes you {"don't"} know how many fields {"you'll"} need {"—"} and {"that's"} okay! With <code>useFieldArray</code>, users can add and remove fields on the fly. Think {"\""}Add another team member{"\""} or {"\""}Add another address.{"\""} Dynamic forms that just work! {"➕➖"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> {"—"} Dynamic forms unlock flexible UIs for invoices, team management, and any repeatable data entry!
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useFieldArray hook {"•"} Dynamic append & remove {"•"} Conditional field rendering {"•"} watch for reactive fields
               </Text>
             </div>
 

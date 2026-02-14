@@ -53,10 +53,10 @@ export default function StateManagementPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Understanding State Concerns
+                {"🧠"} Understanding State Concerns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Most React apps don't need a traditional "state management library" like Redux. Instead, break your state into different concerns and use the right tool for each:
+                {"Forget everything you thought you knew about Redux! 🤯 Most React apps don't need a massive state library. The secret sauce? Break your state into categories and pick the right tool for each. It's like using the right utensil for each course of a meal — you wouldn't eat soup with a fork!"}
                 <br /><br />
                 • <strong>Remote State:</strong> Data from APIs, databases → Use <strong>TanStack Query</strong> or <strong>SWR</strong>
                 <br />
@@ -65,6 +65,18 @@ export default function StateManagementPage() {
                 • <strong>Local State:</strong> Component-specific state → Use <strong>useState</strong> or <strong>useReducer</strong>
                 <br />
                 • <strong>Shared State:</strong> State shared across components → Use <strong>Zustand</strong> or <strong>Context</strong> (sparingly)
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"This mental model changes EVERYTHING about how you think about state — get it right and 90% of your problems vanish"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> State Categories • Remote vs Local vs URL vs Shared • Tool Selection Guide
               </Text>
             </div>
 
@@ -83,12 +95,22 @@ export default function StateManagementPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Unit 74: Immutable Updates with useImmer
+                {"✨"} Unit 74: Immutable Updates with useImmer
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>The Problem:</strong> Updating nested state objects and arrays in React requires creating new objects at every level. This leads to verbose, error-prone code with lots of spread operators.
-                <br /><br />
-                <strong>The Solution:</strong> <code>useImmer</code> from the <strong>Immer</strong> library lets you write "mutating" code that's actually immutable under the hood. It's like writing regular JavaScript, but React-safe.
+                {"Tired of spread operator madness? 🤪 Imagine writing state updates that LOOK like mutations but are actually 100% immutable under the hood. That's Immer! It's like having a magic notebook — scribble whatever you want, and it creates a clean copy automatically. No more ...spreading ...everything ...everywhere! 🎩✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Immer turns painful nested updates into simple, readable one-liners that just work"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useImmer Hook • Nested State Updates • Array Manipulation • Complex State Structures
               </Text>
             </div>
 
@@ -240,12 +262,22 @@ function ComplexStateExample() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Unit 75: Cleaner Reducer with useImmerReducer
+                {"⚡"} Unit 75: Cleaner Reducer with useImmerReducer
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>The Problem:</strong> Traditional <code>useReducer</code> requires you to return new state objects manually. Complex reducers become hard to read and maintain.
-                <br /><br />
-                <strong>The Solution:</strong> <code>useImmerReducer</code> lets you write reducers that "mutate" the draft state directly. Much cleaner for complex state logic.
+                {"If useReducer is the serious, buttoned-up version of state management, then useImmerReducer is its cool, laid-back cousin. 😎 Write your reducer cases with direct mutations — no more return statements with spread operators everywhere. Your reducers just got 50% shorter and 200% more readable!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — {"Cleaner reducers mean fewer bugs in complex state logic — your team will thank you during code reviews"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> useImmerReducer API • Reducer Simplification • Action Patterns • Todo App Example
               </Text>
             </div>
 
@@ -393,18 +425,28 @@ function TodoApp() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Remote State: TanStack Query (React Query)
+                {"🌐"} Remote State: TanStack Query (React Query)
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>What it solves:</strong> ~80% of traditional "state management" is actually about fetching, caching, and synchronizing remote data. TanStack Query handles all of this automatically.
-                <br /><br />
-                <strong>Features:</strong> Automatic caching, request deduplication, background refetching, optimistic updates, pagination, infinite queries, and more.
+                {"Here's a mind-blowing fact: ~80% of what you call 'state management' is actually just fetching data from a server! 🤯 TanStack Query swoops in like a superhero and handles caching, deduplication, refetching, and optimistic updates — all automatically. Say goodbye to isLoading useState nightmares!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"TanStack Query single-handedly eliminates 80% of your state management complexity — it's the biggest bang for your buck"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Query Keys • Caching Strategy • Mutations • Optimistic Updates • Request Deduplication
               </Text>
             </div>
 
             <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
               <Text className={styles.infoText}>
-                <strong>Key Benefit:</strong> You don't manage loading states, error states, or caching manually. The library handles it all, and multiple components can use the same data without duplicate requests.
+                <strong>Key Benefit:</strong> You don{"'"}t manage loading states, error states, or caching manually. The library handles it all, and multiple components can use the same data without duplicate requests.
               </Text>
             </div>
 
@@ -497,18 +539,28 @@ function LikeButton({ postId }: { postId: string }) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                Shared State: Zustand
+                {"🐻"} Shared State: Zustand
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>When to use:</strong> When you need to share state between components that aren't closely related, and Context becomes unwieldy (Provider Hell, performance issues).
-                <br /><br />
-                <strong>Why Zustand:</strong> Dead simple API, no providers needed, automatic re-render optimization, TypeScript-friendly, and works great with React Server Components.
+                {"Meet Zustand — the bear-themed state library that's small, fast, and ridiculously simple! 🐻 No providers, no boilerplate, no headaches. Just create a store and use it anywhere. It's like Context, but without the performance problems and Provider Hell. Your components only re-render when THEIR slice of state changes. Magic! ✨"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Zustand replaces Context + Redux for shared state with a fraction of the code and zero Provider Hell"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Store Creation • Selective Subscriptions • DevTools & Persist • Immer Integration
               </Text>
             </div>
 
             <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
               <Text className={styles.infoText}>
-                <strong>Key Benefit:</strong> Zustand solves the "Provider Hell" problem. You create a store and use it anywhere. Only components that use the changed part of state will re-render.
+                <strong>Key Benefit:</strong> Zustand solves the {"\"Provider Hell\""} problem. You create a store and use it anywhere. Only components that use the changed part of state will re-render.
               </Text>
             </div>
 
@@ -636,12 +688,22 @@ const useComplexStore = create<{ items: Array<{ id: number; count: number }> }>(
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                URL State: nuqs (Next.js Query State)
+                {"🔗"} URL State: nuqs (Next.js Query State)
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>What it solves:</strong> Syncing component state with URL query parameters. Manual syncing is error-prone and leads to bugs.
-                <br /><br />
-                <strong>Why nuqs:</strong> Type-safe, automatic two-way syncing between URL and state, works with Next.js App Router, and handles serialization automatically.
+                {"Stop fighting with URL params manually! 🛑 nuqs gives you useState-like simplicity for URL query parameters. Type-safe, auto-synced, and works perfectly with Next.js App Router. Share a link and the state is already there — it's like teleportation for your app state! 🚀"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — {"URL state done right means shareable, bookmarkable, and back-button-friendly user experiences"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Query Params • Type-Safe Parsers • Pagination • Complex Filters
               </Text>
             </div>
 
@@ -739,8 +801,20 @@ function ComplexState() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
-              TL;DR: State Management Strategy for 2025
+              {"🎯"} {"TL;DR: State Management Strategy for 2025"}
             </Heading>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxGreen} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟢"} <strong>Impact: LOW</strong> — {"Quick cheat sheet to remember — pin this to your desk and never overthink state management again!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Remote State Strategy • URL State Strategy • Local State Strategy • Shared State Strategy
+              </Text>
+            </div>
             <div className="space-y-4">
               <div>
                 <Text className={styles.sectionDescription}>

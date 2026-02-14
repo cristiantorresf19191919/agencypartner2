@@ -53,20 +53,28 @@ export default function AdvancedReactConceptsPage() {
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  📘 Module 1: The "Element Prop" Pattern
+                  {"🧱 Module 1: The \"Element Prop\" Pattern"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>Context:</strong> When building reusable layout components (like Cards, Modals, or Headers), we often need flexibility in what we render in specific "slots" (e.g., a header action, a footer button).
-                  <br /><br />
-                  <strong>The Junior Anti-Pattern:</strong> Passing strings or booleans forces the parent component to "know" too much about the implementation details. It limits flexibility.
-                  <br /><br />
-                  <strong>The Senior Solution:</strong> Instead of passing <em>data</em> to let the child build the UI, pass the <strong>UI itself</strong>. This pattern is extensively used in libraries like Material UI and Ant Design.
+                  {"Stop passing booleans and strings to control what renders! 🛑 The Element Prop pattern flips the script — instead of telling a component WHAT to render, you hand it the actual JSX. It's like giving someone a painting instead of paint-by-numbers instructions! 🎨🖼️"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> {"— Used extensively in Material UI, Ant Design, and Radix. This is how the pros build flexible component APIs! 💪"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Element props vs boolean props {"•"} Slot-based rendering {"•"} Decoupled component APIs {"•"} Performance benefits
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Benefits:</strong> <strong>Decoupling:</strong> The component doesn't need to import child components or know about their props. <strong>Performance:</strong> The passed elements are instantiated by the parent, so they don't necessarily re-render just because the parent re-renders (if they are memoized or static).
+                  {"💡"} <strong>Benefits:</strong> <strong>Decoupling:</strong> {"The component doesn't need to import child components or know about their props."} <strong>Performance:</strong> {"The passed elements are instantiated by the parent, so they don't necessarily re-render just because the parent re-renders (if they are memoized or static). 🚀"}
                 </Text>
               </div>
 
@@ -160,20 +168,28 @@ export default App;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  📘 Module 2: Optimizing Context API (Split Context Pattern)
+                  {"⚡ Module 2: Optimizing Context API (Split Context Pattern)"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>Context:</strong> A naive React Context implementation causes a "re-render blast radius." If <em>any</em> part of the context value changes, <em>every</em> component consuming that context re-renders, even if they didn't need the specific data that changed.
-                  <br /><br />
-                  <strong>The Junior Anti-Pattern:</strong> Bundling state and actions into a single object forces re-renders on components that only needed the actions.
-                  <br /><br />
-                  <strong>The Senior Solution:</strong> Split the "Data" (State) and the "Actions" (Dispatch) into separate contexts.
+                  {"Your Context is probably causing more re-renders than you think! 😬 Every time ANY part of your context changes, EVERY consumer re-renders — even if they only use a tiny piece. The Split Context Pattern is like giving each consumer their own VIP subscription! 🎟️✨"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> {"— The #1 performance killer in large React apps. Fix this and watch your re-renders drop dramatically! 📉🔥"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Re-render blast radius {"•"} Context splitting {"•"} useMemo for stable references {"•"} Custom consumer hooks
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxPurple} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Benefits:</strong> <strong>Performance:</strong> Components that only need to trigger an action (like a LogoutButton) utilize the actions context. They will <strong>never</strong> re-render when the state changes. <strong>Scalability:</strong> Prevents the "Context Hell" performance bottleneck in large apps.
+                  {"💡"} <strong>Benefits:</strong> <strong>Performance:</strong> {"Components that only need to trigger an action (like a LogoutButton) utilize the actions context. They will"} <strong>never</strong> {"re-render when the state changes. 🎯"} <strong>Scalability:</strong> {"Prevents the \"Context Hell\" performance bottleneck in large apps. 🏗️"}
                 </Text>
               </div>
 
@@ -316,20 +332,28 @@ export default App;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  📘 Module 3: Less UseEffects (Derived State)
+                  {"🧮 Module 3: Less UseEffects (Derived State)"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  <strong>Context:</strong> `useEffect` is widely overused for logic that should happen during rendering or in event handlers. This leads to "race conditions," infinite loops, and double-rendering bugs.
-                  <br /><br />
-                  <strong>The Junior Anti-Pattern:</strong> Using an effect to update one state variable based on another state variable. This causes two renders: one for the prop change, and another after the effect runs.
-                  <br /><br />
-                  <strong>The Senior Solution:</strong> Calculate values <strong>during the render</strong>. If the calculation is expensive, wrap it in `useMemo`, but <strong>never</strong> put it in `useEffect` or `useState`.
+                  {"Stop putting EVERYTHING in useEffect! 🛑 It's the most overused hook in React and the source of countless race conditions, infinite loops, and mystery re-renders. If you can calculate it during render, DO IT during render. Your components will be simpler, faster, and bug-free! 🐛➡️✨"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> {"— useEffect abuse is the #1 source of bugs in React apps. Learn derived state and eliminate an entire category of bugs! 🎯"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> useEffect overuse {"•"} Derived state with useMemo {"•"} Single vs double renders {"•"} When to actually use effects
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxGreen} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Why this matters:</strong> Derived state eliminates unnecessary re-renders, prevents race conditions, and makes the code more predictable. Effects should be reserved for <strong>synchronization with external systems</strong> (like connecting to a socket or observing DOM changes), not for transforming data.
+                  {"💡"} <strong>Why this matters:</strong> {"Derived state eliminates unnecessary re-renders, prevents race conditions, and makes the code more predictable. Effects should be reserved for"} <strong>synchronization with external systems</strong> {"(like connecting to a socket or observing DOM changes), not for transforming data. 🔌"}
                 </Text>
               </div>
 
@@ -421,26 +445,38 @@ export default App;`}
             <Stack direction="col" gap="md">
               <div>
                 <Heading level={2} className={styles.sectionTitle}>
-                  When to Use useEffect
+                  {"📌 When to Use useEffect"}
                 </Heading>
                 <Text className={styles.sectionDescription}>
-                  Effects should be reserved for <strong>synchronization with external systems</strong>. Here are valid use cases:
+                  {"OK so when SHOULD you use useEffect? 🤔 Think of it as a bridge to the outside world — use it ONLY when you need to sync with something React doesn't control. Here's the definitive list! 📝"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔵"} <strong>Impact: MEDIUM</strong> {"— Knowing when NOT to use useEffect is just as important as knowing when to use it. Master this mental model! 🧠"}
+                </Text>
+              </div>
+
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Valid useEffect use cases {"•"} External system sync {"•"} Event listeners {"•"} Cleanup patterns
                 </Text>
               </div>
 
               <div className={`${styles.infoBox} ${styles.infoBoxOrange} mb-6`}>
                 <Text className={styles.infoText}>
-                  <strong>Valid useEffect Use Cases:</strong>
+                  {"✅"} <strong>Valid useEffect Use Cases:</strong>
                   <br />
-                  • Connecting to external APIs (WebSockets, REST subscriptions)
+                  {"•"} {"🔌 Connecting to external APIs (WebSockets, REST subscriptions)"}
                   <br />
-                  • Setting up event listeners (window resize, keyboard shortcuts)
+                  {"•"} {"👂 Setting up event listeners (window resize, keyboard shortcuts)"}
                   <br />
-                  • Integrating with third-party libraries (charts, maps)
+                  {"•"} {"📊 Integrating with third-party libraries (charts, maps)"}
                   <br />
-                  • Cleaning up resources (unsubscribing, removing listeners)
+                  {"•"} {"🧹 Cleaning up resources (unsubscribing, removing listeners)"}
                   <br />
-                  • Synchronizing with browser APIs (localStorage, history)
+                  {"•"} {"💾 Synchronizing with browser APIs (localStorage, history)"}
                 </Text>
               </div>
 

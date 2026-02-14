@@ -47,11 +47,21 @@ export default function SecurityPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. XSS Prevention
+                {"🛡️"} 1. XSS Prevention
               </Heading>
               <Text className={styles.sectionDescription}>
-                Prevent Cross-Site Scripting attacks by properly sanitizing user input and using React's built-in protections.
+                {"Don't let hackers turn your app into their playground! 🎭 Cross-Site Scripting is one of the most common web attacks, but React has your back — if you know how to use its superpowers properly! 💪🔒"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"XSS is the #1 web vulnerability — one slip-up with dangerouslySetInnerHTML and hackers own your users! 🚨"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> React Auto-escaping {"•"} DOMPurify Sanitization {"•"} Safe Rich Text {"•"} URL Validation
+                </Text>
+              </div>
             </div>
 
             <CodeComparison
@@ -126,11 +136,21 @@ function SafeLink({ href, children }: { href: string; children: React.ReactNode 
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. CSRF Protection
+                {"🎭"} 2. CSRF Protection
               </Heading>
               <Text className={styles.sectionDescription}>
-                Protect against Cross-Site Request Forgery attacks using tokens and SameSite cookies.
+                {"Imagine someone forging your signature on a check — that's basically CSRF! 📝 These sneaky attacks trick authenticated users into unwanted actions. Let's lock it down with tokens and smart cookie policies! 🍪🔐"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Without CSRF protection, attackers can make your logged-in users do anything — transfer money, change passwords, you name it! 😱"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> CSRF Tokens {"•"} Custom Hooks {"•"} Secure Fetch Wrapper {"•"} SameSite Cookies
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -224,11 +244,21 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Authentication Patterns
+                {"🔑"} 3. Authentication Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Secure authentication with JWT, httpOnly cookies, and proper token management.
+                {"Who goes there?! 🏰 Authentication is your app's front gate — get it wrong and everyone walks right in! Let's build rock-solid auth with JWT, httpOnly cookies, and protected routes that even the sneakiest intruders can't bypass! 🚪🔒"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🔴"} <strong>Impact: CRITICAL</strong> — {"Broken auth is the #2 OWASP vulnerability — your entire app's security depends on getting this right! 🏗️"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Auth Context {"•"} Session Management {"•"} Protected Routes {"•"} Role-based Access
+                </Text>
+              </div>
             </div>
 
             <CodeEditor
@@ -345,11 +375,21 @@ function RoleProtectedRoute({
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Content Security Policy
+                {"📜"} 4. Content Security Policy
               </Heading>
               <Text className={styles.sectionDescription}>
-                Implement CSP headers to prevent XSS and other injection attacks.
+                {"Think of CSP as your app's bouncer list — only approved scripts, styles, and resources get in! 🚧 It's the ultimate defense-in-depth layer that stops injection attacks even when other defenses fail. Set it up once, sleep better forever! 😴🛡️"}
               </Text>
+              <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"🟠"} <strong>Impact: HIGH</strong> — {"CSP is your last line of defense — even if XSS slips through, CSP blocks malicious scripts from executing! 🧱"}
+                </Text>
+              </div>
+              <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+                <Text className={styles.infoText}>
+                  {"📋"} <strong>In this section:</strong> Next.js CSP Config {"•"} Security Headers {"•"} Permissions Policy {"•"} Meta Tags
+                </Text>
+              </div>
             </div>
 
             <CodeEditor

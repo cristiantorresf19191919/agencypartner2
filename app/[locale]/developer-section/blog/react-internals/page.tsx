@@ -41,9 +41,21 @@ export default function ReactInternalsPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <div>
-              <Heading level={2} className={styles.sectionTitle}>1. Fiber Architecture</Heading>
+              <Heading level={2} className={styles.sectionTitle}>{"🧬"} 1. Fiber Architecture</Heading>
               <Text className={styles.sectionDescription}>
-                React Fiber is the reconciliation engine that enables concurrent rendering.
+                {"Ever wonder what's actually happening under React's hood? 🔧 Fiber is the genius reconciliation engine that makes concurrent rendering possible. It breaks rendering into tiny, interruptible chunks so your UI never freezes — even when processing heavy updates. It's basically React's secret superpower!"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Understanding Fiber is what separates senior devs from everyone else — it's the foundation of ALL concurrent features! 🧠"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Fiber Nodes • Interruptible Rendering • Priority-Based Updates • Time Slicing
               </Text>
             </div>
             <CodeEditor

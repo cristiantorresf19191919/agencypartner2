@@ -47,18 +47,28 @@ export default function TestingStrategiesPage() {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                1. React Testing Library Best Practices
+                {"🧪"} 1. React Testing Library Best Practices
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>The Junior Mistake:</strong> Testing implementation details, using data-testid everywhere, and testing how components work internally.
-                <br /><br />
-                <strong>The Senior Approach:</strong> Test user behavior, use semantic queries, and test what users see and interact with.
+                {"Stop testing implementation details — test what your USERS see and do! 👆 The junior dev tests state variables and CSS classes. The senior dev tests button clicks and screen content. Level up your testing game by thinking like a user, not like a compiler! 🎮"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Testing the right way means tests that survive refactors — fragile tests are worse than no tests at all"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Semantic Queries • User Event Simulation • Accessible Testing Patterns • Anti-Patterns to Avoid
               </Text>
             </div>
 
             <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
               <Text className={styles.infoText}>
-                <strong>Testing Philosophy:</strong> React Testing Library encourages testing from the user's perspective. Query by role, label, text, and other accessible attributes. Avoid testing implementation details like state variables or internal methods.
+                <strong>Testing Philosophy:</strong> React Testing Library encourages testing from the user{"'"}s perspective. Query by role, label, text, and other accessible attributes. Avoid testing implementation details like state variables or internal methods.
               </Text>
             </div>
 
@@ -132,10 +142,22 @@ test('increments counter when button is clicked', async () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                2. Testing Custom Hooks
+                {"🪝"} 2. Testing Custom Hooks
               </Heading>
               <Text className={styles.sectionDescription}>
-                <strong>Challenge:</strong> Hooks can only be called inside components. Learn how to test hooks in isolation using <code>renderHook</code> and test them through components.
+                {"Hooks are tricky little creatures — they can't live outside components! 🐛 But with renderHook, you can test them in isolation like a proper scientist in a lab. Master fake timers, rerender triggers, and async hook testing to bulletproof your custom logic! 💪"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Custom hooks are the backbone of reusable logic — testing them properly prevents bugs from spreading everywhere"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> renderHook API • Fake Timers • Rerender Testing • Debounce Hook Example
               </Text>
             </div>
 
@@ -222,10 +244,22 @@ describe('useDebounce', () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                3. Testing Context & Providers
+                {"🎭"} 3. Testing Context & Providers
               </Heading>
               <Text className={styles.sectionDescription}>
-                Learn to test components that consume Context, create test utilities for providers, and test context value changes.
+                {"Context is everywhere in React apps, but testing it can feel like untangling Christmas lights! 🎄 Learn the secret sauce: custom render functions that wrap your components with the right providers. Once you nail this pattern, testing contextified components becomes a breeze! 🌬️"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — {"A reusable test render wrapper saves you from writing provider boilerplate in every single test file"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Custom Render Functions • Provider Wrappers • Mock Context Values • Theme Toggle Testing
               </Text>
             </div>
 
@@ -323,10 +357,22 @@ test('renders with custom theme', () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                4. Mocking Strategies
+                {"🎪"} 4. Mocking Strategies
               </Heading>
               <Text className={styles.sectionDescription}>
-                Master different mocking techniques: module mocks, function mocks, API mocks with MSW (Mock Service Worker), and when to use each approach.
+                {"Mocking is an art form! 🎨 From intercepting network requests with MSW to jest.fn() wizardry, this section covers every trick in the mocking playbook. Stop hitting real APIs in tests and start controlling your test environment like a puppeteer! 🧵"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Proper mocking makes tests fast, reliable, and deterministic — no more flaky tests ruining your CI pipeline"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> MSW (Mock Service Worker) • Module Mocks • Function Mocks • Window API Mocking • Partial Mocks
               </Text>
             </div>
 
@@ -425,10 +471,22 @@ jest.mock('./api', () => ({
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                5. Integration Testing Patterns
+                {"🔗"} 5. Integration Testing Patterns
               </Heading>
               <Text className={styles.sectionDescription}>
-                Test multiple components working together, test user flows, and ensure components integrate correctly with each other.
+                {"Unit tests check the bricks, but integration tests check the building! 🏗️ Test real user flows — filling forms, clicking buttons, waiting for data. When components work together in tests, they'll work together in production. It's like a dress rehearsal before opening night! 🎬"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"Integration tests catch the bugs that unit tests miss — they test the REAL user experience end to end"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Complete User Flows • Provider Wrappers • Search & Filter Testing • Login Flow Testing
               </Text>
             </div>
 
@@ -519,10 +577,22 @@ test('search and filter integration', async () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                6. E2E Testing with Playwright
+                {"🎭"} 6. E2E Testing with Playwright
               </Heading>
               <Text className={styles.sectionDescription}>
-                End-to-end testing ensures your entire application works correctly from the user's perspective. Playwright provides reliable, fast E2E tests.
+                {"Playwright is the final boss of testing! 🎮 It launches real browsers, clicks real buttons, and tests your ENTIRE app from start to finish. Login flows, checkout processes, visual regressions — if a user can break it, Playwright can catch it. Cross-browser testing? It's got Chrome, Firefox, AND Safari covered! 🌐"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxRed} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔴"} <strong>Impact: CRITICAL</strong> — {"E2E tests are your last line of defense — they catch the bugs that slip through unit and integration tests"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Playwright Setup • Auth Flows • Checkout Testing • Visual Regression • Cross-Browser
               </Text>
             </div>
 
@@ -611,10 +681,22 @@ test.describe('Cross-browser testing', () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                7. Accessibility Testing
+                {"♿"} 7. Accessibility Testing
               </Heading>
               <Text className={styles.sectionDescription}>
-                Ensure your components are accessible. Test with jest-axe, screen readers, and keyboard navigation.
+                {"Building for everyone isn't optional — it's a superpower! 💪 Accessibility testing ensures your app works for keyboard users, screen reader users, and everyone in between. jest-axe catches violations automatically, and you'll learn to test focus traps, ARIA attributes, and keyboard navigation like a pro! 🌟"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxOrange} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🟠"} <strong>Impact: HIGH</strong> — {"Accessible apps serve ALL users — and automated a11y tests catch issues before they reach production"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> jest-axe Setup • Keyboard Navigation • ARIA Attributes • Focus Management Testing
               </Text>
             </div>
 
@@ -689,10 +771,22 @@ test('focus is trapped in modal', async () => {
           <Stack direction="col" gap="md">
             <div>
               <Heading level={2} className={styles.sectionTitle}>
-                8. Test-Driven Development (TDD)
+                {"🔴"} 8. Test-Driven Development (TDD)
               </Heading>
               <Text className={styles.sectionDescription}>
-                Learn the TDD cycle: Red → Green → Refactor. Write tests first, then implement the feature.
+                {"Red. Green. Refactor. Repeat! 🔄 TDD flips development on its head — write the test FIRST, watch it fail (red), make it pass (green), then clean it up (refactor). It feels weird at first, but once you get the flow, you'll write better code faster and with way more confidence! 🎯"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxBlue} mt-3 mb-4`}>
+              <Text className={styles.infoText}>
+                {"🔵"} <strong>Impact: MEDIUM</strong> — {"TDD produces better-designed code with built-in test coverage — it's a discipline that pays dividends over time"}
+              </Text>
+            </div>
+
+            <div className={`${styles.infoBox} ${styles.infoBoxPurple} mt-2 mb-4`}>
+              <Text className={styles.infoText}>
+                {"📋"} <strong>In this section:</strong> Red-Green-Refactor Cycle • useLocalStorage TDD Example • Step-by-Step Implementation
               </Text>
             </div>
 
