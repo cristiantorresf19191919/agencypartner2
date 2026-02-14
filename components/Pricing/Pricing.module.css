@@ -44,22 +44,25 @@
 
 .pricingCards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
   max-width: 1200px;
   margin: 3rem auto 0;
-  align-items: start;
+  align-items: stretch;
 }
 
 .pricingCard {
+  display: flex;
+  flex-direction: column;
   background: var(--white);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(160, 106, 249, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(160, 106, 249, 0.18);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  min-height: 0;
 }
 
 [data-theme="dark"] .pricingCard {
@@ -84,9 +87,8 @@
 }
 
 .pricingCard.featured {
-  transform: scale(1.05);
-  box-shadow: 0 8px 32px rgba(160, 106, 249, 0.3);
-  border: 2px solid #a06af9;
+  box-shadow: 0 12px 40px rgba(160, 106, 249, 0.25);
+  border: 2px solid rgba(160, 106, 249, 0.5);
 }
 
 .pricingCard.featured::before {
@@ -139,6 +141,8 @@
 }
 
 .featuresList {
+  flex: 1;
+  min-height: 0;
   background: #f8f5ff;
   border-radius: 12px;
   padding: 1.2rem;
@@ -162,8 +166,13 @@
   margin-right: 0.5rem;
 }
 
+.cardFooter {
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
 .priceContainer {
-  margin: 1.5rem 0;
+  margin: 1rem 0 0;
   text-align: center;
 }
 
@@ -185,16 +194,19 @@
 }
 
 .ctaButton {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
-  padding: 14px 32px;
-  border-radius: 50px;
+  padding: 14px 24px;
+  border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
   text-align: center;
   transition: all 0.3s ease;
   color: white;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
 }
 
 .ctaButton.purple {
@@ -242,13 +254,22 @@
   box-shadow: 0 8px 25px rgba(160, 106, 249, 0.3);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .pricingCards {
     grid-template-columns: 1fr;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .pricingCards {
+    gap: 1.5rem;
   }
 
-  .pricingCard.featured {
-    transform: scale(1);
+  .pricingCard {
+    padding: 1.5rem;
   }
 }
 

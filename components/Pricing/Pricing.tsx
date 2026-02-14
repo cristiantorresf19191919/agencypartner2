@@ -158,7 +158,7 @@ const Pricing = ({
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            whileHover={{ scale: plan.featured ? 1.05 : 1.02, y: -5 }}
+            whileHover={{ y: -6 }}
             transition={{ duration: 0.3 }}
           >
             <div className={styles.cardHeader}>
@@ -180,29 +180,31 @@ const Pricing = ({
                 </li>
               ))}
             </ul>
-            <div className={styles.priceContainer}>
-              {plan.oldPrice && (
-                <span>
-                  <del>{plan.oldPrice}</del>
-                </span>
-              )}
-              <br />
-              <strong>{plan.price}</strong>{' '}
-              <span className={styles.currency}>{plan.currency}</span>
+            <div className={styles.cardFooter}>
+              <div className={styles.priceContainer}>
+                {plan.oldPrice && (
+                  <>
+                    <span><del>{plan.oldPrice}</del></span>
+                    <br />
+                  </>
+                )}
+                <strong>{plan.price}</strong>
+                {plan.currency ? <span className={styles.currency}> {plan.currency}</span> : null}
+              </div>
+              <a
+                href="#contacto"
+                className={`${styles.ctaButton} ${styles[plan.buttonGradient]}`}
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    const { trackCTAClick, trackPricingView } = require('@/lib/analytics');
+                    trackCTAClick(`pricing_${plan.name.toLowerCase()}`, 'pricing_section');
+                    trackPricingView(plan.name);
+                  }
+                }}
+              >
+                <i className="fas fa-arrow-right" aria-hidden /> {plan.buttonText}
+              </a>
             </div>
-            <a
-              href="#contacto"
-              className={`${styles.ctaButton} ${styles[plan.buttonGradient]}`}
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  const { trackCTAClick, trackPricingView } = require('@/lib/analytics');
-                  trackCTAClick(`pricing_${plan.name.toLowerCase()}`, 'pricing_section');
-                  trackPricingView(plan.name);
-                }
-              }}
-            >
-              <i className="fas fa-arrow-right"></i> {plan.buttonText}
-            </a>
           </motion.div>
         ))}
       </motion.div>
