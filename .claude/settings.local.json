@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /c/Users/crist/Programming/agencypartner2 log --oneline -20)",
+      "Bash(git -C /c/Users/crist/Programming/agencypartner2 log --format='%h %s' -30)",
+      "WebFetch(domain:codesandbox.io)",
+      "Bash(npm run build:*)"
+    ]
+  }
+}
