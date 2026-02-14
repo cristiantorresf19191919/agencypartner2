@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 import styles from './ServicesOverview.module.css';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -13,7 +14,32 @@ interface Service {
 }
 
 const ServicesOverview = () => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { amount: 0.08, once: true });
+  const lastScrollY = useRef(0);
+  const scrollDirectionDown = useRef(true);
+  const hasAnimated = useRef(false);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  // Track scroll direction (only matters when section is about to enter view)
+  useEffect(() => {
+    const handleScroll = () => {
+      const y = window.scrollY ?? document.documentElement.scrollTop;
+      scrollDirectionDown.current = y > lastScrollY.current;
+      lastScrollY.current = y;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Run stagger cascade only when section enters view while scrolling down
+  useEffect(() => {
+    if (isInView && !hasAnimated.current && scrollDirectionDown.current) {
+      hasAnimated.current = true;
+      setShouldAnimate(true);
+    }
+  }, [isInView]);
 
   const services: Service[] = [
     {
@@ -91,48 +117,59 @@ const ServicesOverview = () => {
   ];
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: {},
     visible: {
-      opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        delayChildren: 0.1,
+        staggerChildren: 0.14,
       },
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 48,
+      filter: 'blur(4px)',
+    },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5 },
+      filter: 'blur(0px)',
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 0.61, 0.36, 1],
+      },
     },
   };
 
   return (
-    <section id="servicios-overview" className={styles.services}>
+    <section ref={sectionRef} id="servicios-overview" className={styles.services}>
       <motion.div
         className={styles.pill}
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <i className="fas fa-cubes"></i> {t('services-pill')}
       </motion.div>
-      
+
       <motion.h2
         className={styles.sectionTitle}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
         dangerouslySetInnerHTML={{ __html: t('services-title') }}
       />
-      
+
       <motion.p
         className={styles.sectionSubtitle}
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
       >
         {t('services-subtitle')}
       </motion.p>
@@ -141,16 +178,14 @@ const ServicesOverview = () => {
         className={styles.cardsContainer}
         variants={containerVariants}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
+        animate={shouldAnimate ? 'visible' : 'hidden'}
       >
         {services.map((service, index) => (
           <motion.div
             key={index}
             className={`${styles.serviceCard} ${styles[service.gradient]}`}
-            variants={itemVariants}
-            whileHover={{ scale: 1.03, y: -5 }}
-            transition={{ duration: 0.3 }}
+            variants={cardVariants}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
           >
             <div className={styles.cardIcon} aria-hidden="true" role="presentation">
               <i className={service.icon}></i>

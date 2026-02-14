@@ -55,9 +55,14 @@
   border-radius: 16px;
   padding: 2rem;
   text-align: left;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
+  will-change: transform;
+}
+
+.serviceCard:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="dark"] .serviceCard {
