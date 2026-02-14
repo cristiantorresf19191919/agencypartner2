@@ -91,7 +91,7 @@ const Hero = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             if (entry.target.id === 'stat-proyectos') {
-              animateNumber(statProyectosRef, 15, '+');
+              animateNumber(statProyectosRef, 3, 'x');
             } else if (entry.target.id === 'stat-satisfaccion') {
               animateNumber(statSatisfaccionRef, 98, '%');
             } else if (entry.target.id === 'stat-entrega') {
@@ -120,15 +120,6 @@ const Hero = () => {
       opacity: 1,
       y: 0,
       transition: { duration: 0.8, ease: 'easeOut' },
-    },
-  };
-
-  const bannerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { delay: 0.3, duration: 0.6, ease: 'easeOut' },
     },
   };
 
@@ -174,25 +165,46 @@ const Hero = () => {
           dangerouslySetInnerHTML={{ __html: t('hero-title') }}
         />
 
-        <motion.div
-          className={styles.floatingBanner}
-          variants={bannerVariants}
-          initial="hidden"
-          animate="visible"
-          whileHover={{ scale: 1.02 }}
-        >
-          <i className="fas fa-route"></i>
-          <span>{t('hero-banner')}</span>
-        </motion.div>
-
         <motion.p
           className={styles.heroSubtitle}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
         >
           {t('hero-subtitle')}
         </motion.p>
+
+        <motion.div
+          className={styles.heroButtons}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+        >
+          <a
+            href="#contacto"
+            className={styles.ctaButtonPrimary}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                const { trackCTAClick } = require('@/lib/analytics');
+                trackCTAClick('hero_primary', 'hero_section');
+              }
+            }}
+          >
+            <i className="fas fa-rocket"></i> {t('cta-start')}
+          </a>
+          <a
+            href="#servicios"
+            className={styles.ctaButtonSecondary}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                const { trackCTAClick } = require('@/lib/analytics');
+                trackCTAClick('hero_secondary', 'hero_section');
+              }
+            }}
+          >
+            {t('cta-services')}
+          </a>
+        </motion.div>
 
         <motion.div
           className={styles.heroFeatures}
@@ -222,35 +234,19 @@ const Hero = () => {
         </motion.div>
 
         <motion.div
-          className={styles.heroButtons}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
+          className={styles.socialProof}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
         >
-          <a
-            href="#contacto"
-            className={styles.ctaButtonPrimary}
-            onClick={() => {
-              if (typeof window !== 'undefined') {
-                const { trackCTAClick } = require('@/lib/analytics');
-                trackCTAClick('hero_primary', 'hero_section');
-              }
-            }}
-          >
-            <i className="fas fa-rocket"></i> {t('cta-start')}
-          </a>
-          <a
-            href="#servicios"
-            className={styles.ctaButtonSecondary}
-            onClick={() => {
-              if (typeof window !== 'undefined') {
-                const { trackCTAClick } = require('@/lib/analytics');
-                trackCTAClick('hero_secondary', 'hero_section');
-              }
-            }}
-          >
-            {t('cta-services')}
-          </a>
+          <span className={styles.socialProofLabel}>{t('social-proof')}</span>
+          <div className={styles.socialProofLogos}>
+            <span className={styles.socialProofItem}><i className="fas fa-store"></i> E-commerce</span>
+            <span className={styles.socialProofItem}><i className="fas fa-briefcase-medical"></i> Salud</span>
+            <span className={styles.socialProofItem}><i className="fas fa-graduation-cap"></i> EdTech</span>
+            <span className={styles.socialProofItem}><i className="fas fa-utensils"></i> Restaurantes</span>
+            <span className={styles.socialProofItem}><i className="fas fa-building"></i> SaaS</span>
+          </div>
         </motion.div>
       </div>
     </section>
