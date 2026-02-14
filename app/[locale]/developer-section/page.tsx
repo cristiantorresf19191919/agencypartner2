@@ -22,6 +22,7 @@ import {
   QuestionAnswer as InterviewIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
+import HeroSearch from "@/components/Search/HeroSearch";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
 
@@ -181,6 +182,10 @@ export default function DeveloperSectionPage() {
             <Text className={styles.subtitle}>
               {t("developer-section-subtitle")}
             </Text>
+
+            <div className={styles.heroSearchWrapper}>
+              <HeroSearch />
+            </div>
           </motion.div>
 
           {/* Card Grid */}

@@ -150,6 +150,18 @@
   line-height: 1.6;
 }
 
+.heroSearchWrapper {
+  margin-top: 2rem;
+  position: relative;
+  z-index: 100;
+}
+
+@media (min-width: 768px) {
+  .heroSearchWrapper {
+    margin-top: 2.5rem;
+  }
+}
+
 /* ============ Bento Grid Layout ============ */
 .blogNavigation {
   display: flex;
