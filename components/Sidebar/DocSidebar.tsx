@@ -100,9 +100,11 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
       const sections = document.querySelectorAll("section[id]");
       let currentId = "";
 
+      // Find the last section whose top has scrolled past the threshold.
+      // This keeps the active item highlighted as you scroll through a section.
       sections.forEach((section) => {
         const top = section.getBoundingClientRect().top;
-        if (top >= 0 && top <= 300) {
+        if (top <= 150) {
           currentId = section.getAttribute("id") || "";
         }
       });
@@ -193,6 +195,22 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
           icon: <WaterDropIcon sx={{ fontSize: 20 }} />,
           color: "#66BB6A"
         },
+      ],
+    },
+    {
+      titleKey: "React Best Practices",
+      icon: <TrendingUpIcon sx={{ fontSize: 24 }} />,
+      color: "#10B981",
+      defaultOpen: true,
+      items: [
+        { id: "eliminating-waterfalls", titleKey: "1. Eliminating Waterfalls", href: "/developer-section/blog/react-best-practices#eliminating-waterfalls", icon: <WaterDropIcon sx={{ fontSize: 20 }} />, color: "#EF4444" },
+        { id: "bundle-size", titleKey: "2. Bundle Size", href: "/developer-section/blog/react-best-practices#bundle-size", icon: <CategoryIcon sx={{ fontSize: 20 }} />, color: "#F59E0B" },
+        { id: "server-side", titleKey: "3. Server-Side Perf", href: "/developer-section/blog/react-best-practices#server-side", icon: <FactoryIcon sx={{ fontSize: 20 }} />, color: "#3B82F6" },
+        { id: "client-data", titleKey: "4. Client-Side Data", href: "/developer-section/blog/react-best-practices#client-data", icon: <SwapHorizIcon sx={{ fontSize: 20 }} />, color: "#8B5CF6" },
+        { id: "rerender", titleKey: "5. Re-Renders", href: "/developer-section/blog/react-best-practices#rerender", icon: <GpsFixedIcon sx={{ fontSize: 20 }} />, color: "#EC4899" },
+        { id: "rendering", titleKey: "6. Rendering", href: "/developer-section/blog/react-best-practices#rendering", icon: <VisibilityIcon sx={{ fontSize: 20 }} />, color: "#06B6D4" },
+        { id: "javascript", titleKey: "7. JS Micro-opts", href: "/developer-section/blog/react-best-practices#javascript", icon: <CodeIcon sx={{ fontSize: 20 }} />, color: "#84CC16" },
+        { id: "advanced", titleKey: "8. Advanced Patterns", href: "/developer-section/blog/react-best-practices#advanced", icon: <LayersIcon sx={{ fontSize: 20 }} />, color: "#F97316" },
       ],
     },
     {
