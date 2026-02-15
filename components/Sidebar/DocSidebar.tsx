@@ -55,6 +55,13 @@ interface SidebarSection {
   color?: string;
 }
 
+/** Table of contents entry for the current page (headings with id). */
+export interface TableOfContentsEntry {
+  id: string;
+  label: string;
+  level: number; // 1 = h2, 2 = h3, etc. for indentation
+}
+
 export interface DocSidebarProps {
   /** When provided, mobile drawer is controlled by parent (e.g. header hamburger). */
   mobileOpen?: boolean;
@@ -64,9 +71,13 @@ export interface DocSidebarProps {
   hideMobileTrigger?: boolean;
   /** Called when desktop sidebar is collapsed or expanded so layout can adjust main content. */
   onSidebarOpenChange?: (open: boolean) => void;
+  /** When provided, sidebar shows a page-level table of contents instead of global nav. Scroll-spy highlights the section in view. */
+  tableOfContents?: TableOfContentsEntry[];
+  /** Related blog posts for "Similar articles" (e.g. same category). Shown below TOC when tableOfContents is used. */
+  relatedPosts?: { slug: string; title: string }[];
 }
 
-function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobileTrigger = false, onSidebarOpenChange }: DocSidebarProps = {}) {
+function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobileTrigger = false, onSidebarOpenChange, tableOfContents, relatedPosts = [] }: DocSidebarProps = {}) {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const pathname = usePathname();
@@ -97,15 +108,14 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = document.querySelectorAll("section[id]");
+      // Support both section[id] and h2[id], h3[id] for scroll-spy (matches auto-TOC extraction)
+      const anchors = document.querySelectorAll("section[id], h2[id], h3[id]");
       let currentId = "";
 
-      // Find the last section whose top has scrolled past the threshold.
-      // This keeps the active item highlighted as you scroll through a section.
-      sections.forEach((section) => {
-        const top = section.getBoundingClientRect().top;
+      anchors.forEach((el) => {
+        const top = el.getBoundingClientRect().top;
         if (top <= 150) {
-          currentId = section.getAttribute("id") || "";
+          currentId = el.getAttribute("id") || "";
         }
       });
 
@@ -115,6 +125,7 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
     };
 
     window.addEventListener("scroll", handleScroll);
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -658,6 +669,21 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
     }
   };
 
+  /** Scroll to section and update hash (for page TOC). */
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (typeof window !== "undefined") {
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${id}`);
+      }
+      setActiveId(id);
+    }
+    onMobileClose?.();
+  };
+
+  const usePageToc = Boolean(tableOfContents?.length);
+
   const sidebarContent = (
     <Box
       sx={{
@@ -696,7 +722,7 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
               letterSpacing: "0.5px",
             }}
           >
-            {t("nav-blog") || "Documentation"}
+            {usePageToc ? (t("sidebar-on-this-page") || "On this page") : (t("nav-blog") || "Documentation")}
           </Typography>
         )}
         <IconButton
@@ -721,32 +747,124 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
         </IconButton>
       </Box>
 
-      {/* Navigation Content */}
+      {/* Navigation Content — page TOC or global nav */}
       <Box
         sx={{
           flex: 1,
-          minHeight: 0, // Important for flex children to allow scrolling
+          minHeight: 0,
           overflowY: "auto",
           overflowX: "hidden",
           px: sidebarOpen ? 2 : 1,
           py: 3,
           display: "flex",
           flexDirection: "column",
-          "&::-webkit-scrollbar": {
-            width: "8px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "transparent",
-          },
+          "&::-webkit-scrollbar": { width: "8px" },
+          "&::-webkit-scrollbar-track": { background: "transparent" },
           "&::-webkit-scrollbar-thumb": {
             background: alpha("#ffffff", 0.2),
             borderRadius: "4px",
-            "&:hover": {
-              background: alpha("#ffffff", 0.3),
-            },
+            "&:hover": { background: alpha("#ffffff", 0.3) },
           },
         }}
       >
+        {usePageToc ? (
+          <>
+            {/* Page table of contents — scroll-spy + click to scroll */}
+            <List sx={{ p: 0, display: "flex", flexDirection: "column", gap: 0.25 }}>
+              {(tableOfContents ?? []).map((entry) => {
+                const isActive = activeId === entry.id;
+                const pl = sidebarOpen ? (entry.level === 1 ? 1.5 : 1.5 + (entry.level - 1) * 2) : 1;
+                return (
+                  <ListItemButton
+                    key={entry.id}
+                    onClick={() => scrollToSection(entry.id)}
+                    sx={{
+                      py: 1.5,
+                      px: pl,
+                      borderRadius: 2,
+                      borderLeft: "3px solid",
+                      borderLeftColor: isActive ? "#a78bfa" : "transparent",
+                      bgcolor: isActive ? alpha("#a78bfa", 0.15) : "transparent",
+                      "&:hover": {
+                        bgcolor: isActive ? alpha("#a78bfa", 0.2) : alpha("#ffffff", 0.06),
+                        borderLeftColor: isActive ? "#a78bfa" : alpha("#ffffff", 0.2),
+                      },
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    {sidebarOpen && (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: isActive ? 600 : 500,
+                          color: isActive ? "#c4b5fd" : alpha("#ffffff", 0.85),
+                          fontSize: entry.level === 1 ? "0.875rem" : "0.8125rem",
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {entry.label}
+                      </Typography>
+                    )}
+                  </ListItemButton>
+                );
+              })}
+            </List>
+
+            {/* Similar articles — related posts from same category */}
+            {sidebarOpen && relatedPosts.length > 0 && (
+              <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${alpha("#ffffff", 0.08)}` }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    px: 1.5,
+                    mb: 1.5,
+                    fontWeight: 600,
+                    fontSize: "0.75rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: alpha("#ffffff", 0.5),
+                  }}
+                >
+                  {t("sidebar-similar-articles") || "Similar articles"}
+                </Typography>
+                <List sx={{ p: 0, display: "flex", flexDirection: "column", gap: 0.25 }}>
+                  {relatedPosts.map((post) => (
+                    <Link
+                      key={post.slug}
+                      href={createLocalizedPath(`/developer-section/blog/${post.slug}`)}
+                      style={{ textDecoration: "none" }}
+                      onClick={() => onMobileClose?.()}
+                    >
+                      <ListItemButton
+                        sx={{
+                          py: 1.25,
+                          px: 1.5,
+                          borderRadius: 2,
+                          "&:hover": {
+                            bgcolor: alpha("#a78bfa", 0.12),
+                          },
+                          transition: "background 0.2s ease",
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: alpha("#ffffff", 0.85),
+                            fontSize: "0.8125rem",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {post.title}
+                        </Typography>
+                      </ListItemButton>
+                    </Link>
+                  ))}
+                </List>
+              </Box>
+            )}
+          </>
+        ) : (
+        <>
         <List sx={{ p: 0, gap: 3, display: "flex", flexDirection: "column" }}>
           {navigation.map((section, idx) => {
             const sectionKey = `section-${idx}`;
@@ -939,6 +1057,60 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
             );
           })}
         </List>
+
+            {/* Similar articles when showing global nav (blog post with no page TOC) */}
+
+            {sidebarOpen && relatedPosts.length > 0 && (
+              <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${alpha("#ffffff", 0.08)}` }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    px: 1.5,
+                    mb: 1.5,
+                    fontWeight: 600,
+                    fontSize: "0.75rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: alpha("#ffffff", 0.5),
+                  }}
+                >
+                  {t("sidebar-similar-articles") || "Similar articles"}
+                </Typography>
+                <List sx={{ p: 0, display: "flex", flexDirection: "column", gap: 0.25 }}>
+                  {relatedPosts.map((post) => (
+                    <Link
+                      key={post.slug}
+                      href={createLocalizedPath(`/developer-section/blog/${post.slug}`)}
+                      style={{ textDecoration: "none" }}
+                      onClick={() => onMobileClose?.()}
+                    >
+                      <ListItemButton
+                        sx={{
+                          py: 1.25,
+                          px: 1.5,
+                          borderRadius: 2,
+                          "&:hover": { bgcolor: alpha("#a78bfa", 0.12) },
+                          transition: "background 0.2s ease",
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: alpha("#ffffff", 0.85),
+                            fontSize: "0.8125rem",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {post.title}
+                        </Typography>
+                      </ListItemButton>
+                    </Link>
+                  ))}
+                </List>
+              </Box>
+            )}
+        </>
+        )}
       </Box>
     </Box>
   );
