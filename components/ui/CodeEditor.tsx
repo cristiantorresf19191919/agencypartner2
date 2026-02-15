@@ -66,14 +66,14 @@ interface CodeEditorProps {
 
 /** Default editor height when content has many lines (developer section). */
 const LARGE_CODE_HEIGHT = 920;
-const MEDIUM_CODE_HEIGHT = 560;
-const SMALL_CODE_HEIGHT = 420;
+const LINE_HEIGHT_PX = 22;
+const EDITOR_VERTICAL_PADDING = 120; // toolbar + container padding
 
+/** Height that fits the code so the editor doesn't show a large empty gap below short snippets. */
 function getContentBasedHeight(code: string): number {
-  const lines = (code || "").trim().split("\n").length;
-  if (lines > 25) return LARGE_CODE_HEIGHT;
-  if (lines > 15) return MEDIUM_CODE_HEIGHT;
-  return SMALL_CODE_HEIGHT;
+  const lines = Math.max(1, (code || "").trim().split("\n").length);
+  const contentHeight = lines * LINE_HEIGHT_PX + EDITOR_VERTICAL_PADDING;
+  return Math.min(LARGE_CODE_HEIGHT, Math.max(220, contentHeight));
 }
 
 const REACT_UMD = `
@@ -181,6 +181,21 @@ export function CodeEditor({
   const [resizingHorizontal, setResizingHorizontal] = useState(false);
   const resizableContainerRef = useRef<HTMLDivElement | null>(null);
   const lastInitialCodeRef = useRef<string | null>(null);
+  const [editorAreaHeight, setEditorAreaHeight] = useState<number | null>(null);
+
+  // Measure code area height so Monaco can fill the container (no gap above Preview/Console)
+  useEffect(() => {
+    const el = editorContainerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const h = entry.contentRect.height;
+        if (h > 0) setEditorAreaHeight(h);
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const handleVerticalResize = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -858,6 +873,7 @@ export function solution() {
     </div>
   );
 
+  const isResizableDesktop = isRunnable && !isKotlin && !showStaticBlock && !isMobile;
   const editorSection = !showStaticBlock && (
     <div
       className={isFullscreen ? styles.editorSectionFullscreen : styles.editorSection}
@@ -865,7 +881,8 @@ export function solution() {
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        minHeight: isFullscreen ? undefined : (isMobile ? 200 : editorHeightNum),
+        minHeight: isFullscreen ? undefined : isResizableDesktop ? 0 : (isMobile ? 200 : editorHeightNum),
+        flex: isResizableDesktop ? 1 : undefined,
         maxHeight: isMobile && !isFullscreen ? "none" : undefined,
       }}
     >
@@ -1115,7 +1132,7 @@ export function solution() {
         className={styles.editorArea}
         style={{
           minHeight: isFullscreen ? "40vh" : undefined,
-          maxHeight: isFullscreen ? undefined : (isMobile ? 320 : effectiveMaxCodeHeight),
+          maxHeight: isFullscreen ? undefined : isResizableDesktop ? "none" : (isMobile ? 320 : effectiveMaxCodeHeight),
         }}
       >
         <div
@@ -1128,7 +1145,15 @@ export function solution() {
           }}
         >
           <MonacoEditor
-            height={isFullscreen ? fullscreenEditorHeight : (isMobile ? mobileEditorHeight : Math.min(editorHeightNum, effectiveMaxCodeHeight))}
+            height={
+              isFullscreen
+                ? fullscreenEditorHeight
+                : isMobile
+                  ? mobileEditorHeight
+                  : isResizableDesktop && editorAreaHeight != null
+                    ? editorAreaHeight
+                    : Math.min(editorHeightNum, effectiveMaxCodeHeight)
+            }
             language={isReactLike ? "typescript" : (enableMultiFile && currentFile ? currentFile.language : normalizedLang)}
             path={isKotlin ? `kotlin-${uniqueId.replace(/:/g, "")}.kt` : (enableMultiFile && currentFile ? currentFile.name : `App-${uniqueId.replace(/:/g, "")}.tsx`)}
             value={currentCode}

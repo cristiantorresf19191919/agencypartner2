@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { CodeEditor } from "./CodeEditor";
 import { useLanguage } from "@/contexts/LanguageContext";
+import styles from "./CodeComparison.module.css";
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -80,16 +81,16 @@ export function CodeComparison({
         </div>
       )}
 
-      <div className="flex flex-col w-full block" style={{ gap: "2rem" }}>
+      <div className={styles.wrapper}>
         <div className="w-full block" key={`${baseKey}-bad`}>
           {whatToNoticeBad && whatToNoticeBad.length > 0 && (
-            <div className="mb-3">
-              <p className="text-xs font-semibold text-red-400/90 uppercase tracking-wide mb-1.5">
+            <div className={`${styles.noticeCard} ${styles.noticeCardBad}`}>
+              <p className={`${styles.noticeLabel} ${styles.noticeLabelBad}`}>
                 {t("code-what-to-notice")}
               </p>
-              <ul className="list-disc list-inside text-sm text-white/85 space-y-0.5">
+              <ul className={styles.noticeList}>
                 {whatToNoticeBad.map((item, i) => (
-                  <li key={i}>{item}</li>
+                  <li key={i} className={styles.noticeItem}>{item}</li>
                 ))}
               </ul>
             </div>
@@ -109,13 +110,13 @@ export function CodeComparison({
 
         <div className="w-full block" key={`${baseKey}-good`}>
           {whatToNoticeGood && whatToNoticeGood.length > 0 && (
-            <div className="mb-3">
-              <p className="text-xs font-semibold text-green-400/90 uppercase tracking-wide mb-1.5">
+            <div className={`${styles.noticeCard} ${styles.noticeCardGood}`}>
+              <p className={`${styles.noticeLabel} ${styles.noticeLabelGood}`}>
                 {t("code-what-to-notice")}
               </p>
-              <ul className="list-disc list-inside text-sm text-white/85 space-y-0.5">
+              <ul className={styles.noticeList}>
                 {whatToNoticeGood.map((item, i) => (
-                  <li key={i}>{item}</li>
+                  <li key={i} className={styles.noticeItem}>{item}</li>
                 ))}
               </ul>
             </div>
