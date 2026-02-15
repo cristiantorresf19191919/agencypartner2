@@ -239,12 +239,23 @@ const capstoneStarter = [
 const ENDPOINT_POST_ID = "GET /posts/{id}";
 const ENDPOINT_POST_DETAILS = "GET /posts/{id}/details";
 
+const tableOfContents = [
+  { id: "module-1-reactive-shift", label: "Module 1: The Reactive Shift (Architecture)", level: 1 },
+  { id: "module-2-data-model", label: "Module 2: The Data Model (Kotlin Style)", level: 1 },
+  { id: "module-3-repository", label: "Module 3: The Reactive Repository", level: 1 },
+  { id: "module-4-service", label: "Module 4: The Service Layer", level: 1 },
+  { id: "module-5-controller", label: "Module 5: The Controller (API)", level: 1 },
+  { id: "module-6-template", label: "Module 6: ReactiveMongoTemplate", level: 1 },
+  { id: "capstone-blog-engine", label: "Final Capstone: Reactive Blog Engine", level: 1 },
+  { id: "recap", label: "Recap: Key Takeaways", level: 1 },
+];
+
 export default function KotlinSpringMongoDBReactivePage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
 
   return (
-    <BlogContentLayout>
+    <BlogContentLayout tableOfContents={tableOfContents}>
       <nav className={styles.breadcrumb} aria-label="Breadcrumb">
         <ol className={styles.breadcrumbList}>
           <li>
@@ -510,7 +521,7 @@ export default function KotlinSpringMongoDBReactivePage() {
       </section>
 
       {/* Recap */}
-      <section className={styles.section}>
+      <section id="recap" className={styles.section}>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>
