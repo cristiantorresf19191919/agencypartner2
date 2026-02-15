@@ -13,14 +13,27 @@ type BlogPostId =
   | 'edge-computing'
   | string; // Allow any string for flexibility
 
+/** Priority key for styling category badges */
+export type CategoryPriorityKey = 'critical' | 'high' | 'medium-high' | 'medium' | 'low-medium' | 'low';
+
+export type BlogPostCategoryItem = {
+  label: string;
+  priority: string;
+  priorityKey: CategoryPriorityKey;
+};
+
 type BlogPostContent = {
   title: string;
   subtitle: string;
   breadcrumbLabel: string;
   /** Optional intro paragraph after subtitle */
   introParagraph?: string;
-  /** Optional description for categories / how to use the page */
+  /** Optional description for categories / how to use the page (fallback when categories array not set) */
   categoriesDescription?: string;
+  /** Optional structured categories list (e.g. for React best practices priority list) */
+  categories?: BlogPostCategoryItem[];
+  /** Optional short tip for run/edit instructions when categories are shown */
+  categoriesRunTip?: string;
 };
 
 type BlogTranslations = {
@@ -146,6 +159,17 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'React Best Practices',
       introParagraph: 'Estas prácticas están ordenadas por impacto: las críticas (waterfalls y bundle) afectan directamente el tiempo de carga y la experiencia del usuario; las de nivel medio (re-renders, rendering) mejoran la fluidez; las avanzadas pulen casos concretos. Usa los ejemplos en el editor: edita, ejecuta (Run) y compara el comportamiento.',
       categoriesDescription: 'Categorías por prioridad: 1. Eliminar cascadas (CRÍTICO) • 2. Tamaño de bundle (CRÍTICO) • 3. Servidor (ALTO) • 4. Datos en cliente (MEDIO-ALTO) • 5. Re-renders (MEDIO) • 6. Rendering (MEDIO) • 7. JavaScript (BAJO-MEDIO) • 8. Avanzado (BAJO). Todos los bloques son editables; pulsa Run (⌘/Ctrl+Enter) para ver la vista previa.',
+      categories: [
+        { label: 'Eliminar cascadas', priority: 'CRÍTICO', priorityKey: 'critical' },
+        { label: 'Tamaño de bundle', priority: 'CRÍTICO', priorityKey: 'critical' },
+        { label: 'Servidor', priority: 'ALTO', priorityKey: 'high' },
+        { label: 'Datos en cliente', priority: 'MEDIO-ALTO', priorityKey: 'medium-high' },
+        { label: 'Re-renders', priority: 'MEDIO', priorityKey: 'medium' },
+        { label: 'Rendering', priority: 'MEDIO', priorityKey: 'medium' },
+        { label: 'JavaScript', priority: 'BAJO-MEDIO', priorityKey: 'low-medium' },
+        { label: 'Avanzado', priority: 'BAJO', priorityKey: 'low' },
+      ],
+      categoriesRunTip: 'Todos los bloques son editables; pulsa Run (⌘/Ctrl+Enter) para ver la vista previa.',
     },
     en: {
       title: 'Vercel React Best Practices',
@@ -153,6 +177,17 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'React Best Practices',
       introParagraph: 'These practices are ordered by impact: critical ones (waterfalls and bundle size) directly affect load time and user experience; medium-priority rules (re-renders, rendering) improve responsiveness; advanced ones polish edge cases. Use the examples in the editor: edit, run, and compare behavior.',
       categoriesDescription: 'Categories by priority: 1. Eliminating Waterfalls (CRITICAL) • 2. Bundle Size (CRITICAL) • 3. Server-Side (HIGH) • 4. Client Data Fetching (MEDIUM-HIGH) • 5. Re-render (MEDIUM) • 6. Rendering (MEDIUM) • 7. JavaScript (LOW-MEDIUM) • 8. Advanced (LOW). All code blocks are editable—try Run (⌘/Ctrl+Enter) to see the preview.',
+      categories: [
+        { label: 'Eliminating Waterfalls', priority: 'CRITICAL', priorityKey: 'critical' },
+        { label: 'Bundle Size', priority: 'CRITICAL', priorityKey: 'critical' },
+        { label: 'Server-Side', priority: 'HIGH', priorityKey: 'high' },
+        { label: 'Client Data Fetching', priority: 'MEDIUM-HIGH', priorityKey: 'medium-high' },
+        { label: 'Re-render', priority: 'MEDIUM', priorityKey: 'medium' },
+        { label: 'Rendering', priority: 'MEDIUM', priorityKey: 'medium' },
+        { label: 'JavaScript', priority: 'LOW-MEDIUM', priorityKey: 'low-medium' },
+        { label: 'Advanced', priority: 'LOW', priorityKey: 'low' },
+      ],
+      categoriesRunTip: 'All code blocks are editable—press Run (⌘/Ctrl+Enter) to see the preview.',
     },
   },
   'nextjs-best-practices': {
@@ -209,6 +244,22 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'DSA',
       introParagraph: 'This guide covers the most important data structures and algorithms for technical interviews and professional development. Each section includes theory, visualizations, executable code in both languages, and practical challenges. Use the editor to experiment with the code.',
       categoriesDescription: 'Contents: 1. Complexity & Big O • 2. Arrays & Strings • 3. Linked Lists • 4. Stacks & Queues • 5. Hash Tables • 6. Trees & BST • 7. Heaps • 8. Graphs • 9. Sorting • 10. Searching • 11. Dynamic Programming • 12. Greedy Algorithms',
+    },
+  },
+  'spring-reactive-programming': {
+    es: {
+      title: 'Dominando Spring Reactive Programming',
+      subtitle: 'Guía completa de programación reactiva con Spring. Desde el Manifiesto Reactivo y la especificación Reactive Streams hasta Project Reactor, Spring WebFlux y patrones reactivos listos para producción, todo con ejemplos de código en Kotlin.',
+      breadcrumbLabel: 'Spring Reactive',
+      introParagraph: 'Esta guía cubre desde los fundamentos de la programación reactiva hasta patrones avanzados de producción. Cada sección incluye ejemplos de código editables en Kotlin con Spring WebFlux y Project Reactor.',
+      categoriesDescription: 'Contenido: 1. Introducción Reactiva • 2. Manifiesto Reactivo • 3. Reactive Streams • 4. Spring Framework • 5. RxJava y Reactor • 6. Mono y Flux • 7. Hot vs Cold • 8. Lazy vs Eager • 9. Backpressure • 10. Operadores • 11. Operadores Avanzados • 12. Manejo de Errores • 13. Patrones Async • 14. Spring WebFlux • 15. WebClient • 16. Repos Reactivos • 17. CAP Theorem • 18. Kafka • 19. Saga Pattern • 20. Resiliencia • 21. Spring Cloud Gateway • 22. SSE • 23. Testing',
+    },
+    en: {
+      title: 'Mastering Spring Reactive Programming',
+      subtitle: 'A comprehensive guide to reactive programming with Spring. From the Reactive Manifesto and Reactive Streams specification to Project Reactor, Spring WebFlux, and production-ready reactive patterns, all with Kotlin code examples.',
+      breadcrumbLabel: 'Spring Reactive',
+      introParagraph: 'This guide covers reactive programming from fundamentals to advanced production patterns. Each section includes editable Kotlin code examples with Spring WebFlux and Project Reactor.',
+      categoriesDescription: 'Contents: 1. Introducing Reactive • 2. Reactive Manifesto • 3. Reactive Streams • 4. Spring Framework • 5. RxJava & Reactor • 6. Mono & Flux • 7. Hot vs Cold • 8. Lazy vs Eager • 9. Backpressure • 10. Operators • 11. Advanced Operators • 12. Error Handling • 13. Async Patterns • 14. Spring WebFlux • 15. WebClient • 16. Reactive Repos • 17. CAP Theorem • 18. Kafka • 19. Saga Pattern • 20. Resilience • 21. Spring Cloud Gateway • 22. SSE • 23. Testing',
     },
   },
 };

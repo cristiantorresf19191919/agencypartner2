@@ -552,6 +552,15 @@ export const blogCategories: BlogCategory[] = [
         slug: "kotlin-spring-mongodb-reactive",
         topics: ["Reactive MongoDB", "@Document & data classes", "ReactiveMongoRepository", "flatMap & switchIfEmpty", "WebFlux REST", "ReactiveMongoTemplate", "Post + Comment capstone"],
       },
+      {
+        id: "spring-reactive-programming",
+        title: "Mastering Spring Reactive Programming",
+        description: "Comprehensive guide to reactive programming with Spring: Reactive Manifesto, Project Reactor, Mono & Flux, backpressure, reactive streams, Spring WebFlux, and real-world reactive patterns with Kotlin code examples.",
+        icon: "⚡",
+        color: "from-cyan-500 to-blue-600",
+        slug: "spring-reactive-programming",
+        topics: ["Reactive Manifesto", "Reactive Streams", "Project Reactor", "Mono & Flux", "Hot vs Cold Publishers", "Backpressure", "Advanced Operators", "Spring WebFlux", "WebClient", "Reactive Repositories", "CAP Theorem", "Kafka Messaging", "Saga Pattern", "Resilience Patterns", "Spring Cloud Gateway"],
+      },
     ],
   },
   {
@@ -679,8 +688,17 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
 
 // Helper function to get category for a post
 export function getCategoryForPost(postSlug: string): BlogCategory | undefined {
-  return blogCategories.find((cat) => 
+  return blogCategories.find((cat) =>
     cat.posts.some((post) => post.slug === postSlug)
   );
+}
+
+/** Get related blog posts from the same category (excluding current), for "Similar articles" sidebar. */
+export function getRelatedBlogPosts(currentSlug: string, limit = 4): BlogPost[] {
+  const category = getCategoryForPost(currentSlug);
+  if (!category) return [];
+  return category.posts
+    .filter((p) => p.slug !== currentSlug)
+    .slice(0, limit);
 }
 
