@@ -1,0 +1,722 @@
+/* Backend Interview Page — Hero & standout elements */
+
+/* Green inline code across all content areas */
+.contentWrapper code {
+  color: #6ee7b7;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 0.125em 0.375em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.heroWrapper {
+  position: relative;
+  margin-bottom: 3rem;
+  padding: 2rem 0 2.5rem;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(59, 130, 246, 0.15));
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(196, 181, 253, 0.95);
+  margin-bottom: 1.25rem;
+}
+
+.heroTitle {
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: white;
+  margin-bottom: 1rem;
+  max-width: 42ch;
+}
+
+.heroSubtitle {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 56ch;
+  margin-bottom: 1.5rem;
+}
+
+/* Hero stats strip */
+.heroStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+}
+
+.heroStatItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.heroStatIcon {
+  font-size: 1.25rem;
+}
+
+.heroStatText {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.heroStatValue {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.chapterNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.chapterNavLink {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(147, 197, 253, 0.9);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.chapterNavLink:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+/* Chapter header with difficulty badge */
+.chapterHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.difficultyBadge {
+  flex-shrink: 0;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.difficultyIntermediate {
+  background: rgba(59, 130, 246, 0.2);
+  color: rgba(147, 197, 253, 0.95);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.difficultyAdvanced {
+  background: rgba(249, 115, 22, 0.2);
+  color: rgba(254, 215, 170, 0.95);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+}
+
+.difficultyExpert {
+  background: rgba(239, 68, 68, 0.2);
+  color: rgba(254, 202, 202, 0.95);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+/* Interview callout — stands out */
+.interviewCallout {
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 64, 175, 0.05) 100%);
+  border-left-color: rgba(59, 130, 246, 0.7);
+}
+
+.interviewCalloutLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(147, 197, 253, 0.9);
+  margin-bottom: 0.5rem;
+}
+
+.interviewCalloutContent {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Warning / gotcha callout */
+.warningCallout {
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid rgba(249, 115, 22, 0.7);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.04) 100%);
+}
+
+.warningCalloutLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(251, 191, 36, 0.9);
+  margin-bottom: 0.5rem;
+}
+
+.warningCalloutContent {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Pro tip callout */
+.proTip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.06) 0%, rgba(16, 185, 129, 0.03) 100%);
+}
+
+.proTipIcon {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  margin-top: 0.125rem;
+}
+
+.proTipContent {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Key concept card — rounded, subtle shadow */
+.keyConceptCard {
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  margin: 1rem 0;
+  background: linear-gradient(145deg, rgba(88, 28, 135, 0.12) 0%, rgba(59, 130, 246, 0.06) 50%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.keyConceptTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 0.5rem;
+}
+
+.keyConceptText {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Architecture diagram — layered boxes */
+.archDiagram {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.archLayer {
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid;
+  position: relative;
+}
+
+.archLayerPresentation {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: rgba(147, 197, 253, 0.95);
+}
+
+.archLayerApplication {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: rgba(196, 181, 253, 0.95);
+}
+
+.archLayerDomain {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: rgba(110, 231, 183, 0.95);
+}
+
+.archLayerInfra {
+  background: rgba(249, 115, 22, 0.12);
+  border-color: rgba(249, 115, 22, 0.3);
+  color: rgba(254, 215, 170, 0.95);
+}
+
+.archLayerSub {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-top: 0.25rem;
+}
+
+.archArrow {
+  text-align: center;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.3);
+  line-height: 1;
+}
+
+/* Bullet list with custom markers */
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.featureListItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.featureListIcon {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  font-size: 0.75rem;
+  color: rgba(34, 197, 94, 0.8);
+}
+
+/* Comparison table */
+.comparisonTable {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comparisonTable th,
+.comparisonTable td {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.comparisonTable th {
+  background: rgba(59, 130, 246, 0.15);
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+.comparisonTable td {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.comparisonTable tr:last-child td {
+  border-bottom: none;
+}
+
+.comparisonTable tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Scope functions grid */
+.scopeFunctionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.scopeCard {
+  padding: 1rem 1.25rem;
+  background: linear-gradient(145deg, rgba(34, 197, 94, 0.06) 0%, rgba(16, 185, 129, 0.04) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 0.75rem;
+}
+
+.scopeCardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6ee7b7;
+  margin-bottom: 0.25rem;
+}
+
+.scopeCardSub {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.scopeCardDesc {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Stack appendix */
+.stackAppendix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.stackItem {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.stackItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.stackItemLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.25rem;
+}
+
+.stackItemValue {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Testing pyramid */
+.testingPyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pyramidLayer {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid;
+  transition: transform 0.2s;
+}
+
+.pyramidLayer:hover {
+  transform: scale(1.02);
+}
+
+.pyramidE2E {
+  width: 40%;
+  min-width: 160px;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: rgba(254, 202, 202, 0.95);
+}
+
+.pyramidIntegration {
+  width: 60%;
+  min-width: 220px;
+  background: rgba(249, 115, 22, 0.12);
+  border-color: rgba(249, 115, 22, 0.3);
+  color: rgba(254, 215, 170, 0.95);
+}
+
+.pyramidUnit {
+  width: 80%;
+  min-width: 280px;
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: rgba(110, 231, 183, 0.95);
+}
+
+.pyramidLabel {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-top: 0.125rem;
+}
+
+/* Interview question number */
+.interviewQNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.25);
+  color: rgba(147, 197, 253, 0.95);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Design pattern cards grid */
+.patternCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.patternCard {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s;
+}
+
+.patternCard:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: linear-gradient(145deg, rgba(139, 92, 246, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+}
+
+.patternCardTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 0.375rem;
+}
+
+.patternCardDesc {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Chapter overview card — learning objectives at the start of each chapter */
+.chapterOverview {
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  margin: 0.5rem 0 1.5rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.chapterOverviewLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(196, 181, 253, 0.9);
+  margin-bottom: 0.625rem;
+}
+
+.chapterOverviewList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.chapterOverviewItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chapterOverviewItem::before {
+  content: '→';
+  flex-shrink: 0;
+  color: rgba(139, 92, 246, 0.7);
+  font-weight: 600;
+}
+
+/* Real-world scenario callout */
+.scenarioCallout {
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid rgba(168, 85, 247, 0.6);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(124, 58, 237, 0.04) 100%);
+}
+
+.scenarioCalloutLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(196, 181, 253, 0.9);
+  margin-bottom: 0.5rem;
+}
+
+.scenarioCalloutContent {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Key takeaway card — summary at end of chapter */
+.keyTakeaway {
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0 0;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.06) 0%, rgba(16, 185, 129, 0.03) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.keyTakeawayLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(110, 231, 183, 0.9);
+  margin-bottom: 0.5rem;
+}
+
+.keyTakeawayContent {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Microservices flow diagram */
+.flowDiagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.flowNode {
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid;
+  text-align: center;
+  min-width: 100px;
+}
+
+.flowNodeBlue {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: rgba(147, 197, 253, 0.95);
+}
+
+.flowNodePurple {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: rgba(196, 181, 253, 0.95);
+}
+
+.flowNodeGreen {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: rgba(110, 231, 183, 0.95);
+}
+
+.flowNodeOrange {
+  background: rgba(249, 115, 22, 0.12);
+  border-color: rgba(249, 115, 22, 0.3);
+  color: rgba(254, 215, 170, 0.95);
+}
+
+.flowArrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .heroStats {
+    gap: 1rem;
+  }
+
+  .archDiagram {
+    padding: 1rem;
+  }
+
+  .pyramidE2E {
+    width: 60%;
+  }
+
+  .pyramidIntegration {
+    width: 80%;
+  }
+
+  .pyramidUnit {
+    width: 100%;
+  }
+
+  .patternCardsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .flowDiagram {
+    flex-direction: column;
+  }
+
+  .flowArrow {
+    transform: rotate(90deg);
+  }
+}
