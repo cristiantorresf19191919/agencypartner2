@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { Stack, Heading, Text } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -20,136 +21,217 @@ import {
   DataObject as TsIcon,
   RecordVoiceOver as SoftSkillsIcon,
   QuestionAnswer as InterviewIcon,
+  Storage as BackendIcon,
+  Bolt as ReactiveIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
 
-// Card data for cleaner rendering
-const cards = [
+// Card data organized by content type
+type ContentCategory = "blog" | "playground" | "course" | "challenge" | "interview";
+
+interface ContentCard {
+  id: string;
+  category: ContentCategory;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  titleKey: string;
+  descKey: string;
+  ctaKey: string;
+}
+
+// Grouped content: Blog (articles) | Playgrounds | Courses | Challenges | Interview Prep
+const contentGroups: Array<{
+  id: ContentCategory;
+  sectionKey: string;
+  cards: ContentCard[];
+}> = [
   {
     id: "blog",
-    category: "blog",
-    href: "/developer-section/blog",
-    icon: Code2,
-    titleKey: "nav-blog",
-    descKey: "nav-blog-desc",
-    ctaKey: "explore-blog",
+    sectionKey: "hub-section-blog",
+    cards: [
+      {
+        id: "blog",
+        category: "blog",
+        href: "/developer-section/blog",
+        icon: Code2,
+        titleKey: "nav-blog",
+        descKey: "nav-blog-desc",
+        ctaKey: "explore-blog",
+      },
+    ],
   },
   {
     id: "playground",
-    category: "playground",
-    href: "/developer-section/playground",
-    icon: TerminalIcon,
-    titleKey: "live-code-lab-title",
-    descKey: "live-code-lab-desc",
-    ctaKey: "open-playground",
+    sectionKey: "hub-section-playgrounds",
+    cards: [
+      {
+        id: "playground",
+        category: "playground",
+        href: "/developer-section/playground",
+        icon: TerminalIcon,
+        titleKey: "live-code-lab-title",
+        descKey: "live-code-lab-desc",
+        ctaKey: "open-playground",
+      },
+      {
+        id: "kotlin-playground",
+        category: "playground",
+        href: "/developer-section/kotlin-playground",
+        icon: KotlinIcon,
+        titleKey: "kotlin-playground-title",
+        descKey: "kotlin-playground-desc",
+        ctaKey: "open-kotlin",
+      },
+    ],
   },
   {
-    id: "kotlin-playground",
-    category: "playground",
-    href: "/developer-section/kotlin-playground",
-    icon: KotlinIcon,
-    titleKey: "kotlin-playground-title",
-    descKey: "kotlin-playground-desc",
-    ctaKey: "open-kotlin",
+    id: "course",
+    sectionKey: "hub-section-courses",
+    cards: [
+      {
+        id: "kotlin-course",
+        category: "course",
+        href: "/developer-section/kotlin-course",
+        icon: SchoolIcon,
+        titleKey: "kotlin-course-card-title",
+        descKey: "kotlin-course-card-desc",
+        ctaKey: "start-course",
+      },
+      {
+        id: "kotlin-java-interop",
+        category: "course",
+        href: "/developer-section/kotlin-java-interop",
+        icon: InteropIcon,
+        titleKey: "kotlin-java-interop-card-title",
+        descKey: "kotlin-java-interop-card-desc",
+        ctaKey: "start-course",
+      },
+      {
+        id: "react-course",
+        category: "course",
+        href: "/developer-section/react-course",
+        icon: ReactIcon,
+        titleKey: "react-course-card-title",
+        descKey: "react-course-card-desc",
+        ctaKey: "start-course",
+      },
+      {
+        id: "typescript-course",
+        category: "course",
+        href: "/developer-section/typescript-course",
+        icon: TsIcon,
+        titleKey: "typescript-course-card-title",
+        descKey: "typescript-course-card-desc",
+        ctaKey: "start-course",
+      },
+      {
+        id: "css-course",
+        category: "course",
+        href: "/developer-section/css-course",
+        icon: CssIcon,
+        titleKey: "css-course-card-title",
+        descKey: "css-course-card-desc",
+        ctaKey: "start-course",
+      },
+      {
+        id: "android-kotlin",
+        category: "course",
+        href: "/developer-section/android-kotlin",
+        icon: AndroidIcon,
+        titleKey: "android-playbook-card-title",
+        descKey: "android-playbook-card-desc",
+        ctaKey: "start-learning",
+      },
+      {
+        id: "spring-reactive",
+        category: "course",
+        href: "/developer-section/blog/spring-reactive-programming",
+        icon: ReactiveIcon,
+        titleKey: "spring-reactive-card-title",
+        descKey: "spring-reactive-card-desc",
+        ctaKey: "start-course",
+      },
+    ],
   },
   {
-    id: "kotlin-course",
-    category: "course",
-    href: "/developer-section/kotlin-course",
-    icon: SchoolIcon,
-    titleKey: "kotlin-course-card-title",
-    descKey: "kotlin-course-card-desc",
-    ctaKey: "start-course",
+    id: "challenge",
+    sectionKey: "hub-section-challenges",
+    cards: [
+      {
+        id: "challenges",
+        category: "challenge",
+        href: "/developer-section/challenges",
+        icon: ChallengesIcon,
+        titleKey: "coding-challenges-card-title",
+        descKey: "coding-challenges-card-desc",
+        ctaKey: "start-challenges",
+      },
+      {
+        id: "react-challenges",
+        category: "challenge",
+        href: "/developer-section/react-challenges",
+        icon: ReactIcon,
+        titleKey: "react-challenges-card-title",
+        descKey: "react-challenges-card-desc",
+        ctaKey: "solve-react-challenges",
+      },
+    ],
   },
   {
-    id: "kotlin-java-interop",
-    category: "course",
-    href: "/developer-section/kotlin-java-interop",
-    icon: InteropIcon,
-    titleKey: "kotlin-java-interop-card-title",
-    descKey: "kotlin-java-interop-card-desc",
-    ctaKey: "start-course",
-  },
-  {
-    id: "react-course",
-    category: "course",
-    href: "/developer-section/react-course",
-    icon: ReactIcon,
-    titleKey: "react-course-card-title",
-    descKey: "react-course-card-desc",
-    ctaKey: "start-course",
-  },
-  {
-    id: "typescript-course",
-    category: "course",
-    href: "/developer-section/typescript-course",
-    icon: TsIcon,
-    titleKey: "typescript-course-card-title",
-    descKey: "typescript-course-card-desc",
-    ctaKey: "start-course",
-  },
-  {
-    id: "css-course",
-    category: "course",
-    href: "/developer-section/css-course",
-    icon: CssIcon,
-    titleKey: "css-course-card-title",
-    descKey: "css-course-card-desc",
-    ctaKey: "start-course",
-  },
-  {
-    id: "challenges",
-    category: "challenge",
-    href: "/developer-section/challenges",
-    icon: ChallengesIcon,
-    titleKey: "coding-challenges-card-title",
-    descKey: "coding-challenges-card-desc",
-    ctaKey: "start-challenges",
-  },
-  {
-    id: "react-challenges",
-    category: "challenge",
-    href: "/developer-section/react-challenges",
-    icon: ReactIcon,
-    titleKey: "react-challenges-card-title",
-    descKey: "react-challenges-card-desc",
-    ctaKey: "solve-react-challenges",
-  },
-  {
-    id: "react-interview",
-    category: "interview",
-    href: "/developer-section/react-interview",
-    icon: InterviewIcon,
-    titleKey: "react-interview-card-title",
-    descKey: "react-interview-card-desc",
-    ctaKey: "practice-interviews",
-  },
-  {
-    id: "soft-skills-interview",
-    category: "interview",
-    href: "/developer-section/soft-skills-interview",
-    icon: SoftSkillsIcon,
-    titleKey: "soft-skills-interview-card-title",
-    descKey: "soft-skills-interview-card-desc",
-    ctaKey: "practice-soft-skills",
-  },
-  {
-    id: "android-kotlin",
-    category: "course",
-    href: "/developer-section/android-kotlin",
-    icon: AndroidIcon,
-    titleKey: "android-playbook-card-title",
-    descKey: "android-playbook-card-desc",
-    ctaKey: "start-learning",
+    id: "interview",
+    sectionKey: "hub-section-interviews",
+    cards: [
+      {
+        id: "react-interview",
+        category: "interview",
+        href: "/developer-section/react-interview",
+        icon: InterviewIcon,
+        titleKey: "react-interview-card-title",
+        descKey: "react-interview-card-desc",
+        ctaKey: "practice-interviews",
+      },
+      {
+        id: "soft-skills-interview",
+        category: "interview",
+        href: "/developer-section/soft-skills-interview",
+        icon: SoftSkillsIcon,
+        titleKey: "soft-skills-interview-card-title",
+        descKey: "soft-skills-interview-card-desc",
+        ctaKey: "practice-soft-skills",
+      },
+      {
+        id: "backend-interview",
+        category: "interview",
+        href: "/developer-section/backend-interview",
+        icon: BackendIcon,
+        titleKey: "backend-interview-card-title",
+        descKey: "backend-interview-card-desc",
+        ctaKey: "practice-backend",
+      },
+    ],
   },
 ];
 
 export default function DeveloperSectionPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
+
+  const handleCardMouseMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty("--mouse-x", `${x}%`);
+    card.style.setProperty("--mouse-y", `${y}%`);
+  }, []);
+
+  const handleCardMouseLeave = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.currentTarget.style.removeProperty("--mouse-x");
+    e.currentTarget.style.removeProperty("--mouse-y");
+  }, []);
 
   return (
     <main>
@@ -188,53 +270,63 @@ export default function DeveloperSectionPage() {
             </div>
           </motion.div>
 
-          {/* Card Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
-            className={styles.blogNavigation}
-          >
-            <div className={styles.navGrid}>
-              {cards.map((card, index) => {
-                const Icon = card.icon;
-                return (
-                  <motion.a
-                    key={card.id}
-                    href={createLocalizedPath(card.href)}
-                    className={styles.blogCard}
-                    data-category={card.category}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 + index * 0.03, duration: 0.4 }}
-                    whileHover={{ y: -4 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <div className={styles.glowEffect} />
+          {/* Content Sections: Blog | Playgrounds | Courses | Challenges | Interview Prep */}
+          <div className={styles.contentSections}>
+            {contentGroups.map((group, groupIndex) => (
+              <motion.section
+                key={group.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + groupIndex * 0.08, duration: 0.5 }}
+                className={styles.contentSection}
+              >
+                <h2 className={styles.sectionTitle}>{t(group.sectionKey)}</h2>
+                <div className={styles.navGrid}>
+                  {group.cards.map((card, cardIndex) => {
+                    const Icon = card.icon;
+                    return (
+                      <motion.a
+                        key={card.id}
+                        href={createLocalizedPath(card.href)}
+                        className={styles.blogCard}
+                        data-category={card.category}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          delay: 0.15 + groupIndex * 0.08 + cardIndex * 0.03,
+                          duration: 0.4,
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                        onMouseMove={handleCardMouseMove}
+                        onMouseLeave={handleCardMouseLeave}
+                      >
+                        <div className={styles.glowEffect} />
 
-                    <div className={styles.cardContent}>
-                      <div className={styles.iconContainer}>
-                        <Icon className={styles.icon} />
-                      </div>
+                        <div className={styles.cardContent}>
+                          <div className={styles.iconContainer}>
+                            <Icon className={styles.icon} />
+                          </div>
 
-                      <Heading level={2} className={styles.cardTitle}>
-                        {t(card.titleKey)}
-                      </Heading>
+                          <Heading level={2} className={styles.cardTitle}>
+                            {t(card.titleKey)}
+                          </Heading>
 
-                      <Text className={styles.cardDescription}>
-                        {t(card.descKey)}
-                      </Text>
+                          <Text className={styles.cardDescription}>
+                            {t(card.descKey)}
+                          </Text>
 
-                      <div className={styles.ctaLink}>
-                        <span>{t(card.ctaKey)}</span>
-                        <ArrowRight className={styles.ctaArrow} />
-                      </div>
-                    </div>
-                  </motion.a>
-                );
-              })}
-            </div>
-          </motion.div>
+                          <div className={styles.ctaLink}>
+                            <span>{t(card.ctaKey)}</span>
+                            <ArrowRight className={styles.ctaArrow} />
+                          </div>
+                        </div>
+                      </motion.a>
+                    );
+                  })}
+                </div>
+              </motion.section>
+            ))}
+          </div>
 
           {/* Need Help Section */}
           <motion.div
