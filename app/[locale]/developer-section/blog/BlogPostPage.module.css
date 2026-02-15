@@ -527,6 +527,31 @@
     max-width: 100%;
     width: 100%;
   }
+
+  .categoriesBlock {
+    padding: 1rem 1rem 0.875rem;
+  }
+
+  .categoriesGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem 0;
+  }
+
+  .categoriesItem {
+    font-size: 0.875rem;
+  }
+
+  .tocGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tipLine {
+    padding: 0.875rem 1rem;
+  }
+
+  .infoBox {
+    padding: 0.625rem 0.875rem;
+  }
 }
 
 /* ============ DSA Blog Post Styles ============ */

@@ -688,35 +688,101 @@
 }
 
 @media (max-width: 640px) {
+  .heroWrapper {
+    padding: 1.5rem 0 2rem;
+  }
+
   .heroStats {
     gap: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .interviewCallout,
+  .warningCallout,
+  .scenarioCallout {
+    padding: 1rem 1.125rem;
+  }
+
+  .proTip {
+    padding: 0.875rem 1rem;
+  }
+
+  .keyConceptCard {
+    padding: 1rem 1.125rem;
+  }
+
+  .chapterOverview {
+    padding: 1rem 1.125rem;
+  }
+
+  .keyTakeaway {
+    padding: 1rem 1.125rem;
   }
 
   .archDiagram {
     padding: 1rem;
   }
 
+  .archLayer {
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .comparisonTable {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .comparisonTable th,
+  .comparisonTable td {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
   .pyramidE2E {
     width: 60%;
+    min-width: 0;
   }
 
   .pyramidIntegration {
     width: 80%;
+    min-width: 0;
   }
 
   .pyramidUnit {
     width: 100%;
+    min-width: 0;
+  }
+
+  .testingPyramid {
+    padding: 1rem;
   }
 
   .patternCardsGrid {
     grid-template-columns: 1fr;
   }
 
+  .scopeFunctionsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .stackAppendix {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
   .flowDiagram {
     flex-direction: column;
+    padding: 1rem;
   }
 
   .flowArrow {
     transform: rotate(90deg);
+  }
+
+  .flowNode {
+    min-width: 0;
+    width: 100%;
   }
 }
