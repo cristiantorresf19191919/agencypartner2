@@ -5,9 +5,18 @@ import { Stack, Heading, Text, ButtonLink, CodeComparison, Card, CodeEditor } fr
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
 import BlogContentLayout from "@/components/Layout/BlogContentLayout";
-import { useBlogPostContent } from "@/lib/blogTranslations";
+import { useBlogPostContent, type CategoryPriorityKey } from "@/lib/blogTranslations";
 import { getCategoryForPost } from "@/lib/blogCategories";
 import styles from "../BlogPostPage.module.css";
+
+const PRIORITY_BADGE_CLASS: Record<CategoryPriorityKey, string> = {
+  critical: styles.categoriesBadgeCritical,
+  high: styles.categoriesBadgeHigh,
+  "medium-high": styles.categoriesBadgeMediumHigh,
+  medium: styles.categoriesBadgeMedium,
+  "low-medium": styles.categoriesBadgeLowMedium,
+  low: styles.categoriesBadgeLow,
+};
 
 export default function ReactBestPracticesPage() {
   const { t, language } = useLanguage();
@@ -62,13 +71,40 @@ export default function ReactBestPracticesPage() {
         )}
       </div>
 
-      {(postContent?.categoriesDescription) && (
+      {postContent?.categories && postContent.categories.length > 0 ? (
+        <div className={styles.categoriesBlock}>
+          <p className={styles.categoriesHeading}>
+            {language === "es" ? "Categorías por prioridad" : "Categories by priority"}
+          </p>
+          <div className={styles.categoriesGrid}>
+            {postContent.categories.map((item, i) => (
+              <div key={i} className={styles.categoriesItem}>
+                <span className={styles.categoriesItemNum}>{i + 1}.</span>
+                <span
+                  className={`${styles.categoriesBadge} ${PRIORITY_BADGE_CLASS[item.priorityKey]}`}
+                >
+                  {item.priority}
+                </span>
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
+          {postContent.categoriesRunTip && (
+            <p className={styles.categoriesRunTip}>
+              <span aria-hidden>▶</span>
+              {postContent.categoriesRunTip.split(/(\(⌘\/Ctrl\+Enter\))/g).map((part, i) =>
+                part === "(⌘/Ctrl+Enter)" ? <kbd key={i}>⌘/Ctrl+Enter</kbd> : part
+              )}
+            </p>
+          )}
+        </div>
+      ) : postContent?.categoriesDescription ? (
         <div className={`${styles.infoBox} ${styles.infoBoxBlue} mb-6`}>
           <Text className={styles.infoText}>
             {postContent.categoriesDescription}
           </Text>
         </div>
-      )}
+      ) : null}
 
       {/* 1. Eliminating Waterfalls */}
       <section id="eliminating-waterfalls" className={styles.section}>
@@ -156,12 +192,12 @@ export default App;`}
               comparisonId="waterfalls-defer-await"
               language="typescript"
               whatToNoticeBad={[
-                "await runs before the skip check: we always fetch userData even when we will skip.",
-                "Wastes latency and server work when skipProcessing is true.",
+                "The await runs before we check skipProcessing, so we always fetch userData even when we're going to skip—wasting a round-trip.",
+                "When skipProcessing is true, we still pay the latency and server cost of fetchUserData. Move the guard above any async work.",
               ]}
               whatToNoticeGood={[
-                "Early return before any await: no fetch when we are going to skip.",
-                "Only fetch when we actually need the data.",
+                "Return early before any await: if we're going to skip, we never call fetchUserData, so zero wasted latency or server work.",
+                "We only fetch when we actually need the data. This pattern is essential for fast API routes and server components.",
               ]}
               wrong={`async function handleRequest(userId: string, skipProcessing: boolean) {
   const userData = await fetchUserData(userId)
@@ -180,12 +216,12 @@ export default App;`}
               comparisonId="waterfalls-better-all"
               language="typescript"
               whatToNoticeBad={[
-                "First we wait for user and config; then we wait for profile (depends on user.id).",
-                "Two round-trips: cannot start fetchProfile until user is ready.",
+                "We wait for user and config first, then we wait for profile (which depends on user.id). Two sequential round-trips.",
+                "fetchProfile cannot start until user is ready, so total time is the sum of both phases instead of overlapping work.",
               ]}
               whatToNoticeGood={[
-                "better-all runs independent tasks in parallel and resolves dependencies (profile needs user).",
-                "user and config start immediately; profile starts as soon as user is available.",
+                "Independent tasks (user, config) run in parallel; profile starts as soon as user is available, so dependencies are resolved without blocking.",
+                "user and config fire immediately; profile runs in parallel with the tail of the first phase. Fewer round-trips and better latency.",
               ]}
               wrong={`const [user, config] = await Promise.all([fetchUser(), fetchConfig()])
 const profile = await fetchProfile(user.id)`}
