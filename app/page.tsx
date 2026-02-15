@@ -8,23 +8,34 @@ import FAQ from '@/components/FAQ/FAQ';
 import Portfolio from '@/components/Portfolio/Portfolio';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
+import AnimatedSection from '@/components/ui/AnimatedSection';
 
 export default function Home() {
   return (
     <main>
       <Header />
       <Hero />
-      <ServicesOverview />
-      <Pricing />
-      <FAQ
-        title={
-          <>
-            Preguntas <strong>Frecuentes</strong>
-          </>
-        }
-      />
-      <Portfolio />
-      <Contact />
+      <AnimatedSection>
+        <ServicesOverview />
+      </AnimatedSection>
+      <AnimatedSection>
+        <Pricing />
+      </AnimatedSection>
+      <AnimatedSection>
+        <FAQ
+          title={
+            <>
+              Preguntas <strong>Frecuentes</strong>
+            </>
+          }
+        />
+      </AnimatedSection>
+      <AnimatedSection>
+        <Portfolio />
+      </AnimatedSection>
+      <AnimatedSection>
+        <Contact />
+      </AnimatedSection>
       <Footer />
     </main>
   );
