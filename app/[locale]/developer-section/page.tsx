@@ -154,6 +154,15 @@ const contentGroups: Array<{
         descKey: "spring-reactive-card-desc",
         ctaKey: "start-course",
       },
+      {
+        id: "reactor-flux",
+        category: "course",
+        href: "/developer-section/reactor-flux",
+        icon: ReactiveIcon,
+        titleKey: "reactor-flux-card-title",
+        descKey: "reactor-flux-card-desc",
+        ctaKey: "start-course",
+      },
     ],
   },
   {

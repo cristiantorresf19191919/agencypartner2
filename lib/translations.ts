@@ -352,6 +352,8 @@ const translations = {
     'android-playbook-card-desc': 'Desarrollo Android de cero a experto con Jetpack Compose, Kotlin Coroutines y Clean Architecture. Lecciones interactivas con editores de código.',
     'spring-reactive-card-title': 'Spring Reactive Programming',
     'spring-reactive-card-desc': 'Domina la programación reactiva con Spring: Reactive Manifesto, Project Reactor, Mono & Flux, backpressure, Spring WebFlux y patrones reactivos con Kotlin.',
+    'reactor-flux-card-title': 'Reactor Flux — Guía Completa',
+    'reactor-flux-card-desc': 'Referencia interactiva de todos los operadores de Flux: creación, transformación, filtrado, combinación, backpressure, scheduling y más con ejemplos ejecutables en Kotlin.',
     'start-learning': 'Comenzar',
     /* Challenges landing */
     'challenges-pill': 'Retos',
@@ -858,6 +860,8 @@ const translations = {
     'android-playbook-card-desc': 'Zero-to-Hero Android development with Jetpack Compose, Kotlin Coroutines, and Clean Architecture. Interactive lessons with code editors.',
     'spring-reactive-card-title': 'Spring Reactive Programming',
     'spring-reactive-card-desc': 'Master reactive programming with Spring: Reactive Manifesto, Project Reactor, Mono & Flux, backpressure, Spring WebFlux, and reactive patterns with Kotlin.',
+    'reactor-flux-card-title': 'Reactor Flux — Complete Guide',
+    'reactor-flux-card-desc': 'Interactive reference for all Flux operators: creation, transformation, filtering, combining, backpressure, scheduling, and more with runnable Kotlin examples.',
     'start-learning': 'Start Learning',
     /* Challenges landing */
     'challenges-pill': 'Challenges',
