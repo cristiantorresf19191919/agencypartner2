@@ -1,0 +1,1014 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   ReactorFlux.module.css – Reactor Flux documentation page
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Page Layout ─────────────────────────────────────────────────────────────── */
+
+.pageWrap {
+  display: flex;
+  min-height: 100vh;
+  background: var(--background, #0a0a0f);
+  position: relative;
+}
+
+/* ─── Mobile Sidebar Toggle ───────────────────────────────────────────────────── */
+
+.mobileSidebarToggle {
+  display: none;
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 1100;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  color: rgba(196, 181, 253, 1);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(139, 92, 246, 0.15);
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.mobileSidebarToggle:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.6);
+  transform: scale(1.05);
+}
+
+@media (max-width: 1024px) {
+  .mobileSidebarToggle {
+    display: flex;
+  }
+}
+
+/* ─── Sidebar Backdrop (mobile) ───────────────────────────────────────────────── */
+
+.sidebarBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────────────────────────── */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 10, 15, 0.98) 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              min-width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1001;
+}
+
+.sidebarCollapsed {
+  width: 0;
+  min-width: 0;
+  border-right: none;
+}
+
+.sidebarCollapsed .sidebarNav,
+.sidebarCollapsed .sidebarHeader,
+.sidebarCollapsed .sidebarFooter {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1300;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebarMobileOpen {
+    transform: translateX(0);
+  }
+
+  .sidebarCollapsed {
+    width: 280px;
+    min-width: 280px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .sidebarCollapsed .sidebarNav,
+  .sidebarCollapsed .sidebarHeader,
+  .sidebarCollapsed .sidebarFooter {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* ─── Sidebar Header ──────────────────────────────────────────────────────────── */
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: opacity 0.2s;
+}
+
+.sidebarTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebarIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.sidebarCollapseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.sidebarCollapseBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.collapseChevron {
+  font-size: 1.125rem !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: rotate(0deg);
+}
+
+.collapseChevronOpen {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 1024px) {
+  .sidebarCollapseBtn {
+    display: none;
+  }
+}
+
+/* ─── Sidebar Navigation ──────────────────────────────────────────────────────── */
+
+.sidebarNav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 0;
+  transition: opacity 0.2s;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+}
+
+.sidebarNav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebarNav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebarNav::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 4px;
+}
+
+.tocGroup {
+  margin-bottom: 0.125rem;
+}
+
+.tocLink {
+  display: block;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.tocLink:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tocLinkActive {
+  color: rgba(196, 181, 253, 1);
+  background: rgba(139, 92, 246, 0.1);
+  border-left-color: rgba(139, 92, 246, 0.7);
+  font-weight: 600;
+}
+
+.tocChildren {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tocLinkChild {
+  padding-left: 1.75rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+/* ─── Sidebar Footer ──────────────────────────────────────────────────────────── */
+
+.sidebarFooter {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  transition: opacity 0.2s;
+}
+
+.playgroundLink {
+  display: block;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(6, 182, 212, 0.95);
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.playgroundLink:hover {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: rgba(6, 182, 212, 1);
+}
+
+/* ─── Main Content ────────────────────────────────────────────────────────────── */
+
+.mainContent {
+  flex: 1;
+  min-width: 0;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 4rem;
+  transition: max-width 0.3s;
+}
+
+.mainContentExpanded {
+  max-width: 1000px;
+}
+
+@media (max-width: 1024px) {
+  .mainContent {
+    padding: 1.5rem 1.25rem 3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .mainContent {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+}
+
+/* ─── Breadcrumb ──────────────────────────────────────────────────────────────── */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.breadcrumbLink {
+  color: rgba(147, 197, 253, 0.8);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumbLink:hover {
+  color: rgba(147, 197, 253, 1);
+}
+
+.breadcrumbSep {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.breadcrumbCurrent {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* ─── Typography ──────────────────────────────────────────────────────────────── */
+
+.h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.98);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0 0 1.5rem;
+  scroll-margin-top: 5rem;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(196, 181, 253, 0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.h2 {
+  font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 3rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+  scroll-margin-top: 5rem;
+}
+
+.h3 {
+  font-size: clamp(1.0625rem, 2.5vw, 1.25rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 2.25rem 0 0.75rem;
+  scroll-margin-top: 5rem;
+}
+
+/* ─── Paragraph ───────────────────────────────────────────────────────────────── */
+
+.paragraph {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 0 0 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Info / Note Boxes ───────────────────────────────────────────────────────── */
+
+.noteBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0 1.25rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.infoBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0 1.25rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.06) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.noteBoxIcon,
+.infoBoxIcon {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  margin-top: 0.0625rem;
+}
+
+.noteBoxText,
+.infoBoxText {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ─── Image Figure ────────────────────────────────────────────────────────────── */
+
+.imageFigure {
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+.imageWrap {
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 1rem;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.imageMaximize {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.imageWrap:hover .imageMaximize {
+  opacity: 1;
+}
+
+.imageMaximize:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.imageCaption {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* ─── Code Snippet ────────────────────────────────────────────────────────────── */
+
+.codeSnippet {
+  margin: 1.25rem 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.codeSnippetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.codeSnippetTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(196, 181, 253, 0.8);
+}
+
+.codeActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.runBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(34, 197, 94, 0.95);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.runBtn:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.45);
+}
+
+.runBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.maximizeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.maximizeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.playgroundLinkInline {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(6, 182, 212, 0.8);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.playgroundLinkInline:hover {
+  color: rgba(6, 182, 212, 1);
+}
+
+@media (max-width: 640px) {
+  .playgroundLinkInline {
+    display: none;
+  }
+}
+
+.codeBlock {
+  padding: 1rem 1.25rem;
+  margin: 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+  tab-size: 2;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.25) transparent;
+}
+
+.codeBlock::-webkit-scrollbar {
+  height: 4px;
+}
+
+.codeBlock::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.codeBlock::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.25);
+  border-radius: 4px;
+}
+
+.codeMeta {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-style: italic;
+}
+
+/* ─── Snippet Output ──────────────────────────────────────────────────────────── */
+
+.snippetOutput {
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(34, 197, 94, 0.95);
+  background: rgba(34, 197, 94, 0.06);
+  border-top: 1px solid rgba(34, 197, 94, 0.15);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.snippetOutputError {
+  color: rgba(239, 68, 68, 0.95);
+  background: rgba(239, 68, 68, 0.06);
+  border-top-color: rgba(239, 68, 68, 0.15);
+}
+
+/* ─── List ────────────────────────────────────────────────────────────────────── */
+
+.list {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 0 0 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.list li {
+  margin-bottom: 0.5rem;
+}
+
+.list li:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── Page Footer ─────────────────────────────────────────────────────────────── */
+
+.pageFooter {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(147, 197, 253, 0.9);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: rgba(147, 197, 253, 1);
+}
+
+/* ─── Image Lightbox ──────────────────────────────────────────────────────────── */
+
+.lightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: pointer;
+}
+
+.lightboxContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default;
+}
+
+.lightboxImage {
+  display: block;
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 0.75rem;
+  background: white;
+  padding: 1.5rem;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.lightboxClose {
+  position: absolute;
+  top: -0.75rem;
+  right: -0.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.lightboxClose:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* ─── Code Expanded Lightbox ──────────────────────────────────────────────────── */
+
+.codeLightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: pointer;
+}
+
+.codeLightboxContent {
+  width: 90vw;
+  max-width: 960px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(10, 10, 15, 0.98);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(139, 92, 246, 0.1);
+  cursor: default;
+}
+
+.codeLightboxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.codeLightboxTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(196, 181, 253, 0.8);
+}
+
+.codeLightboxToolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fontSizeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.fontSizeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.codeLightboxClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.08);
+  color: rgba(239, 68, 68, 0.8);
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.codeLightboxClose:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.codeLightboxPre {
+  flex: 1;
+  overflow: auto;
+  padding: 1.5rem;
+  margin: 0;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+  tab-size: 2;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.25) transparent;
+}
+
+.codeLightboxPre::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.codeLightboxPre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.codeLightboxPre::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.25);
+  border-radius: 4px;
+}
+
+/* ─── Kotlin Syntax Highlighting ──────────────────────────────────────────────── */
+
+.ktKeyword {
+  color: #c678dd;
+  font-weight: 600;
+}
+
+.ktType {
+  color: #e5c07b;
+}
+
+.ktString {
+  color: #98c379;
+}
+
+.ktComment {
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+.ktNumber {
+  color: #d19a66;
+}
+
+.ktIdent {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ─── Light Mode Overrides ────────────────────────────────────────────────────── */
+
+:global([data-theme="light"]) .pageWrap {
+  background: #fdfcff;
+}
+
+:global([data-theme="light"]) .sidebar {
+  background: linear-gradient(180deg, #f8f7ff 0%, #f0eef8 100%);
+  border-right-color: rgba(139, 92, 246, 0.12);
+}
+
+:global([data-theme="light"]) .sidebarHeader {
+  border-bottom-color: rgba(139, 92, 246, 0.08);
+}
+
+:global([data-theme="light"]) .sidebarTitle {
+  color: #23243a;
+}
+
+:global([data-theme="light"]) .sidebarCollapseBtn {
+  background: rgba(0, 0, 0, 0.05);
+  color: #4a4b6a;
+}
+
+:global([data-theme="light"]) .tocLink {
+  color: #4a4b6a;
+}
+
+:global([data-theme="light"]) .tocLink:hover {
+  color: #23243a;
+  background: rgba(139, 92, 246, 0.06);
+}
+
+:global([data-theme="light"]) .tocLinkActive {
+  color: #6f42c1;
+  background: rgba(139, 92, 246, 0.08);
+  border-left-color: #6f42c1;
+}
+
+:global([data-theme="light"]) .sidebarFooter {
+  border-top-color: rgba(139, 92, 246, 0.08);
+}
+
+:global([data-theme="light"]) .breadcrumb {
+  color: #6b7280;
+}
+
+:global([data-theme="light"]) .breadcrumbLink {
+  color: #6f42c1;
+}
+
+:global([data-theme="light"]) .breadcrumbSep {
+  color: #9ca3af;
+}
+
+:global([data-theme="light"]) .breadcrumbCurrent {
+  color: #23243a;
+}
+
+:global([data-theme="light"]) .h1 {
+  background: linear-gradient(135deg, #23243a 0%, #6f42c1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:global([data-theme="light"]) .h2 {
+  color: #23243a;
+  border-bottom-color: rgba(139, 92, 246, 0.15);
+}
+
+:global([data-theme="light"]) .h3 {
+  color: #23243a;
+}
+
+:global([data-theme="light"]) .paragraph {
+  color: #4a4b6a;
+}
+
+:global([data-theme="light"]) .noteBox {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+:global([data-theme="light"]) .infoBox {
+  background: rgba(139, 92, 246, 0.05);
+  border-color: rgba(139, 92, 246, 0.15);
+}
+
+:global([data-theme="light"]) .noteBoxText,
+:global([data-theme="light"]) .infoBoxText {
+  color: #4a4b6a;
+}
+
+:global([data-theme="light"]) .imageWrap {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+:global([data-theme="light"]) .imageCaption {
+  color: #6b7280;
+}
+
+:global([data-theme="light"]) .codeSnippet {
+  background: #1e1e2e;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+:global([data-theme="light"]) .codeSnippetHead {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+:global([data-theme="light"]) .list {
+  color: #4a4b6a;
+}
+
+:global([data-theme="light"]) .pageFooter {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+:global([data-theme="light"]) .backLink {
+  color: #6f42c1;
+}
+
+:global([data-theme="light"]) .mobileSidebarToggle {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(139, 92, 246, 0.3);
+  color: #6f42c1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+:global([data-theme="light"]) .snippetOutput {
+  color: #16a34a;
+  background: rgba(34, 197, 94, 0.06);
+}
+
+:global([data-theme="light"]) .snippetOutputError {
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.06);
+}
