@@ -27,7 +27,12 @@ export interface KotlinDSChallenge {
   explanation: string;
   hints: string[];
   expectedOutput: string;
-  testCases: { description: string; validate: (code: string) => boolean }[];
+  sampleInput: string;
+  sampleOutput: string;
+  inputFormat: string;
+  outputFormat: string;
+  constraints?: string;
+  testCases: { description: string; input: string; output: string; validate: (code: string) => boolean }[];
 }
 
 export const DS_TOPICS: DSTopic[] = [
@@ -51,4 +56,8 @@ export function getDSChallengesByTopic(topicId: string): KotlinDSChallenge[] {
 
 export function getDSChallengeById(id: string): KotlinDSChallenge | undefined {
   return DS_CHALLENGES.find((c) => c.id === id);
+}
+
+export function getDSTopicById(topicId: string): DSTopic | undefined {
+  return DS_TOPICS.find((t) => t.id === topicId);
 }
