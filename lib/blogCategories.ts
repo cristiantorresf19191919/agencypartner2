@@ -422,6 +422,15 @@ export const blogCategories: BlogCategory[] = [
         slug: "refactoring-guru",
         topics: ["Refused Bequest", "Code Smells", "Refactoring Techniques", "Object-Orientation Abusers", "Inheritance Patterns"],
       },
+      {
+        id: "frontend-design-patterns-2026",
+        title: "Frontend Design Patterns That Actually Work in 2026",
+        description: "Master the most effective frontend design patterns for 2026: Atomic Design, Signals vs Context API, Container Queries, Dark Mode theming, Progressive Disclosure, AI-enhanced workflows, lazy loading, tree shaking, and accessibility-first components. Executable code examples included.",
+        icon: "🎨",
+        color: "from-cyan-500 to-purple-500",
+        slug: "frontend-design-patterns-2026",
+        topics: ["Atomic Design", "Signals vs Context API", "Container Queries", "Dark Mode & Theming", "Progressive Disclosure", "Lazy Loading & Code Splitting", "Tree Shaking", "Accessibility-First Components", "AI-Enhanced Workflows", "CSS Grid & Flexbox"],
+      },
     ],
   },
   {

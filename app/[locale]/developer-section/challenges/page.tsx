@@ -5,11 +5,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { motion } from "framer-motion";
-import { EmojiEvents as TrophyIcon, Psychology as ReactIcon, Code as CodeIcon, School as SchoolIcon, ArrowForward as ArrowRight } from "@mui/icons-material";
+import { EmojiEvents as TrophyIcon, Psychology as ReactIcon, Code as CodeIcon, School as SchoolIcon, Bolt as BoltIcon, DataObject as DSIcon, ArrowForward as ArrowRight } from "@mui/icons-material";
 import Link from "next/link";
 import { CHALLENGES } from "@/lib/challengesData";
 import { REACT_CHALLENGES } from "@/lib/reactChallengesData";
 import { REACT19_LESSONS } from "@/lib/react19InterviewData";
+import { REACTOR_CHALLENGES, REACTOR_TOPICS } from "@/lib/reactorChallengesData";
+import { DS_CHALLENGES, DS_TOPICS } from "@/lib/kotlinDSChallengesData";
 import styles from "./ChallengesLanding.module.css";
 
 export default function ChallengesLandingPage() {
@@ -20,6 +22,8 @@ export default function ChallengesLandingPage() {
   const challengesCount = CHALLENGES?.length || 0;
   const reactChallengesCount = REACT_CHALLENGES?.length || 0;
   const react19LessonsCount = REACT19_LESSONS?.length || 0;
+  const reactorChallengesCount = REACTOR_CHALLENGES?.length || 0;
+  const dsChallengesCount = DS_CHALLENGES?.length || 0;
 
   return (
     <main className={styles.page}>
@@ -181,6 +185,102 @@ export default function ChallengesLandingPage() {
 
                 <div className={styles.cardCta}>
                   <span>{t('start-learning')}</span>
+                  <ArrowRight className={styles.ctaArrow} />
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+            style={{ width: '100%' }}
+          >
+            <Link
+              href={createLocalizedPath("/developer-section/reactor-challenges")}
+              className={styles.challengeCard}
+              style={{ display: 'block' }}
+            >
+              <div className={styles.cardGlow} />
+              <div className={styles.cardGradient1} />
+              <div className={styles.cardGradient2} />
+
+              <div className={styles.cardContent}>
+                <div className={styles.iconContainer}>
+                  <BoltIcon className={styles.icon} />
+                </div>
+
+                <h2 className={styles.cardTitle}>
+                  {t('challenges-card-reactor-title')}
+                </h2>
+
+                <p className={styles.cardDescription}>
+                  {t('challenges-card-reactor-desc')}
+                </p>
+
+                <div className={styles.cardStats}>
+                  <span className={styles.stat}>
+                    {reactorChallengesCount} {t('challenges-count')}
+                  </span>
+                  <span className={styles.stat}>
+                    {REACTOR_TOPICS.length} {t('reactor-badge-topics')}
+                  </span>
+                  <span className={styles.stat}>
+                    Kotlin
+                  </span>
+                </div>
+
+                <div className={styles.cardCta}>
+                  <span>{t('challenges-card-start')}</span>
+                  <ArrowRight className={styles.ctaArrow} />
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+            style={{ width: '100%' }}
+          >
+            <Link
+              href={createLocalizedPath("/developer-section/challenges/kotlin-ds")}
+              className={styles.challengeCard}
+              style={{ display: 'block' }}
+            >
+              <div className={styles.cardGlow} />
+              <div className={styles.cardGradient1} />
+              <div className={styles.cardGradient2} />
+
+              <div className={styles.cardContent}>
+                <div className={styles.iconContainer}>
+                  <DSIcon className={styles.icon} />
+                </div>
+
+                <h2 className={styles.cardTitle}>
+                  {t('challenges-card-kotlin-ds-title')}
+                </h2>
+
+                <p className={styles.cardDescription}>
+                  {t('challenges-card-kotlin-ds-desc')}
+                </p>
+
+                <div className={styles.cardStats}>
+                  <span className={styles.stat}>
+                    {dsChallengesCount} {t('challenges-count')}
+                  </span>
+                  <span className={styles.stat}>
+                    {DS_TOPICS.length} {t('challenges-ds-topics')}
+                  </span>
+                  <span className={styles.stat}>
+                    Kotlin
+                  </span>
+                </div>
+
+                <div className={styles.cardCta}>
+                  <span>{t('challenges-card-start')}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </div>

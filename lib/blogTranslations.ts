@@ -246,6 +246,22 @@ const blogTranslations: BlogTranslations = {
       categoriesDescription: 'Contents: 1. Complexity & Big O • 2. Arrays & Strings • 3. Linked Lists • 4. Stacks & Queues • 5. Hash Tables • 6. Trees & BST • 7. Heaps • 8. Graphs • 9. Sorting • 10. Searching • 11. Dynamic Programming • 12. Greedy Algorithms',
     },
   },
+  'frontend-design-patterns-2026': {
+    es: {
+      title: 'Patrones de Diseño Frontend que Realmente Funcionan en 2026',
+      subtitle: 'Domina los patrones de diseño frontend más efectivos para 2026: Atomic Design, Signals vs Context API, Container Queries, temas con modo oscuro, divulgación progresiva, flujos de trabajo mejorados con IA, carga diferida, tree shaking y componentes accesibles. Con ejemplos de código ejecutables.',
+      breadcrumbLabel: 'Patrones Frontend 2026',
+      introParagraph: 'Los patrones de diseño frontend de 2026 revolucionarán las interacciones de los usuarios con productos digitales. Desde el desarrollo orientado a componentes hasta flujos de trabajo potenciados por IA, estos patrones definen el futuro del diseño web frontend.',
+      categoriesDescription: 'Contenido: 1. Atomic Design • 2. Signals vs Context API • 3. Grid & Flexbox • 4. Modo Oscuro y Temas • 5. Divulgación Progresiva • 6. Container Queries • 7. Tipografía Responsiva • 8. UX Táctil • 9. Sistemas de Diseño • 10. Accesibilidad • 11. IA en Frontend • 12. Carga Diferida • 13. BEM & CSS Modules • 14. Virtual DOM • 15. Tree Shaking',
+    },
+    en: {
+      title: 'Frontend Design Patterns That Actually Work in 2026',
+      subtitle: 'Master the most effective frontend design patterns for 2026: Atomic Design, Signals vs Context API, Container Queries, Dark Mode theming, Progressive Disclosure, AI-enhanced workflows, lazy loading, tree shaking, and accessibility-first components. With executable code examples.',
+      breadcrumbLabel: 'Frontend Patterns 2026',
+      introParagraph: 'The frontend design patterns of 2026 will revolutionize user interactions with digital products. From component-driven development to AI-powered workflows, these patterns define the future of frontend web design.',
+      categoriesDescription: 'Contents: 1. Atomic Design • 2. Signals vs Context API • 3. Grid & Flexbox • 4. Dark Mode & Theming • 5. Progressive Disclosure • 6. Container Queries • 7. Responsive Typography • 8. Touch UX • 9. Design Systems • 10. Accessibility • 11. AI in Frontend • 12. Lazy Loading • 13. BEM & CSS Modules • 14. Virtual DOM • 15. Tree Shaking',
+    },
+  },
   'spring-reactive-programming': {
     es: {
       title: 'Dominando Spring Reactive Programming',
