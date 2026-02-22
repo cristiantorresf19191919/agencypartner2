@@ -165,6 +165,10 @@ export function CodeEditor({
   const [tertiaryMenuOpen, setTertiaryMenuOpen] = useState(false);
   const [tertiaryMenuRect, setTertiaryMenuRect] = useState<DOMRect | null>(null);
   const [copyDone, setCopyDone] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [mobileUiHidden, setMobileUiHidden] = useState(false);
+  const fullscreenRef = useRef(isFullscreen);
+  const scrollListenerRef = useRef<{ dispose: () => void } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
   type EditorInstance = {
@@ -179,6 +183,13 @@ export function CodeEditor({
   const [fullscreenEditorHeight, setFullscreenEditorHeight] = useState(400);
   const uniqueId = useId();
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    fullscreenRef.current = isFullscreen;
+  }, [isFullscreen]);
+  useEffect(() => {
+    if (!isFullscreen) setMobileUiHidden(false);
+  }, [isFullscreen]);
 
   const contentBasedHeight = useMemo(() => getContentBasedHeight(initialCode), [initialCode]);
   const effectiveHeight =
@@ -444,9 +455,8 @@ export function CodeEditor({
       formatOnType: true,
       // Richer syntax/semantic colors so code is easier to read (keywords, strings, etc.)
       semanticHighlighting: { enabled: true },
-      // Mobile: no error gutter (avoids clipped red markers), no line numbers to reduce noise
       glyphMargin: !isMobile,
-      lineNumbers: (isMobile ? "off" : "on") as "on" | "off",
+      lineNumbers: "on" as const,
       folding: !isMobile,
       // Enhanced editor experience
       lineHeight: isMobile ? 22 : 26,
@@ -758,6 +768,11 @@ export function solution() {
     }
   }, [buildCombinedCode, isKotlin, isRunnable, isReactLike]);
 
+  // When Run produces console output, auto-expand Console so user sees it without hunting
+  useEffect(() => {
+    if (logs.length > 0 || error) setConsoleCollapsed(false);
+  }, [logs.length, error]);
+
   const handleReset = useCallback(() => {
     if (enableMultiFile) {
       setFiles([{ name: "App.tsx", content: initialCode, language }]);
@@ -815,6 +830,20 @@ export function solution() {
 
   const handleBeforeMount = useCallback((monaco: any) => {
     ensureEmmetJSX(monaco);
+    // Custom theme: brighter keywords for readability on dark background (accessibility)
+    monaco.editor.defineTheme("vs-dark-bright-keywords", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "keyword", foreground: "93c5fd", fontStyle: "" },
+        { token: "type", foreground: "93c5fd" },
+        { token: "comment", foreground: "86efac" },
+      ],
+      colors: {
+        "editorLineNumber.foreground": "#6b7280",
+        "editorLineNumber.activeForeground": "#9ca3af",
+      },
+    });
   }, []);
 
   const handleEditorMount = useCallback(
@@ -824,10 +853,22 @@ export function solution() {
       requestAnimationFrame(() => {
         editor?.layout();
       });
+      // Mobile fullscreen: auto-hide toolbar and bottom bar on scroll down, show on scroll up
+      scrollListenerRef.current?.dispose();
+      if (isMobile) {
+        let lastScrollTop = 0;
+        scrollListenerRef.current = editor.onDidScrollChange((e: { scrollTop: number }) => {
+          if (!fullscreenRef.current) return;
+          const scrollTop = e.scrollTop;
+          if (scrollTop > lastScrollTop && scrollTop > 50) setMobileUiHidden(true);
+          else if (scrollTop < lastScrollTop) setMobileUiHidden(false);
+          lastScrollTop = scrollTop;
+        });
+      }
       // Avoid editor.focus() on mount: it causes the page to scroll to the focused
       // editor. Blog posts have many CodeEditors; the last one to mount would
       // scroll the page to the bottom. Users can click into an editor to focus it.
-      monaco.editor.setTheme("vs-dark");
+      monaco.editor.setTheme("vs-dark-bright-keywords");
       monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
       const isTsOrJs =
         isReactLike ||
@@ -886,8 +927,15 @@ export function solution() {
         );
       }
     },
-    [disableLinting, isRunnable, isReactLike, normalizedLang]
+    [disableLinting, isRunnable, isReactLike, normalizedLang, isMobile]
   );
+
+  useEffect(() => {
+    return () => {
+      scrollListenerRef.current?.dispose();
+      scrollListenerRef.current = null;
+    };
+  }, []);
 
   // Mobile: default to static read-only block; "Open editor" expands inline (contained, no fixed/sticky/portal)
   const showStaticBlock = isMobile && !mobileEditorOpen;
@@ -900,15 +948,18 @@ export function solution() {
     <div className={isFullscreen ? styles.staticBlockFullscreen : styles.staticBlock}>
       <div className={styles.staticToolbar}>
         <div className={styles.staticToolbarLeft}>
-          <span className={styles.staticToolbarIcon} aria-hidden>
-            <Code2 className={`${styles.iconMd} ${styles.iconCyan}`} strokeWidth={2} />
-          </span>
           <span className={styles.staticToolbarLang}>{language}</span>
         </div>
         <div className={styles.staticToolbarRight}>
-          <button type="button" onClick={handleCopy} className={styles.btnCopyStatic} aria-label="Copy code">
-            <Copy className={`${styles.iconMd} ${styles.iconCopyOpacity}`} strokeWidth={2} />
-            <span className={styles.staticToolbarBtnLabel}>{copyDone ? "Copied" : "Copy"}</span>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className={styles.btnCopyStatic}
+            aria-label={copyDone ? "Copied" : "Copy code"}
+            title={copyDone ? "Copied" : "Copy code"}
+          >
+            {copyDone ? <Check className={`${styles.iconMd} ${styles.iconCyan}`} strokeWidth={2.5} /> : <Copy className={`${styles.iconMd} ${styles.iconCopyOpacity}`} strokeWidth={2} />}
+            <span className={styles.staticToolbarBtnLabel}>{copyDone ? "Copied!" : "Copy"}</span>
           </button>
           <button
             type="button"
@@ -918,8 +969,9 @@ export function solution() {
             }}
             className={styles.btnOpenEditor}
             aria-label="Open editor fullscreen"
+            title="Open editor"
           >
-            <Code2 className={styles.iconMd} strokeWidth={2} />
+            <Maximize2 className={styles.iconMd} strokeWidth={2} />
             <span className={styles.staticToolbarBtnLabel}>Open editor</span>
           </button>
         </div>
@@ -945,6 +997,7 @@ export function solution() {
           </pre>
         )}
       </div>
+      <div className={styles.staticFooter} aria-hidden />
     </div>
   );
 
@@ -1018,7 +1071,7 @@ export function solution() {
                 setMobileEditorOpen(false);
                 if (isFullscreen) setIsFullscreen(false);
               }}
-              className={styles.btnClose}
+              className={`${styles.btnClose} ${isFullscreen ? styles.btnCloseGhost : ""}`}
               aria-label="Close editor"
             >
               <X className={styles.iconMd} strokeWidth={2} />
@@ -1051,25 +1104,29 @@ export function solution() {
               <span className={styles.toolbarDivider} aria-hidden />
             </>
           )}
-          <button
-            onClick={handleCopy}
-            aria-label="Copy code"
-            className={`${styles.btnCopy} ${isMobile ? styles.btnCopyMinWidth : ""}`}
-          >
-            <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />
-            <span className={styles.toolbarBtnLabel}>{copyDone ? "Copied" : "Copy"}</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleSelectAll}
-            aria-label="Select all"
-            className={styles.btn}
-            title="Select all"
-          >
-            <MousePointer2 className={styles.iconSm} strokeWidth={2} />
-            {!isMobile && <span className={styles.toolbarBtnLabel}>Select all</span>}
-          </button>
-          {!readOnly && (
+          {!isMobile && (
+            <button
+              onClick={handleCopy}
+              aria-label="Copy code"
+              className={`${styles.btnCopy} ${styles.btnCopyMinWidth}`}
+            >
+              <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />
+              <span className={styles.toolbarBtnLabel}>{copyDone ? "Copied" : "Copy"}</span>
+            </button>
+          )}
+          {!isMobile && (
+            <button
+              type="button"
+              onClick={handleSelectAll}
+              aria-label="Select all"
+              className={styles.btn}
+              title="Select all"
+            >
+              <MousePointer2 className={styles.iconSm} strokeWidth={2} />
+              <span className={styles.toolbarBtnLabel}>Select all</span>
+            </button>
+          )}
+          {!isMobile && !readOnly && (
             <button
               type="button"
               onClick={handlePaste}
@@ -1078,7 +1135,7 @@ export function solution() {
               title="Paste"
             >
               <ClipboardPaste className={styles.iconSm} strokeWidth={2} />
-              {!isMobile && <span className={styles.toolbarBtnLabel}>Paste</span>}
+              <span className={styles.toolbarBtnLabel}>Paste</span>
             </button>
           )}
           {/* Reset — desktop non-compact, always visible */}
@@ -1156,7 +1213,7 @@ export function solution() {
                 )}
             </div>
           )}
-          {/* Mobile dropdown — always visible */}
+          {/* Mobile: single "More" (⋮) overflow — Copy, Select all, Paste, Reset, Fullscreen; keeps tab + Run large and tappable */}
           {isMobile && (
             <div className={styles.mobileMenuWrap}>
               <button
@@ -1166,12 +1223,19 @@ export function solution() {
                 aria-label="More options"
                 aria-expanded={mobileMenuOpen}
               >
-                <ChevronDown className={styles.iconMd} strokeWidth={2} />
+                <MoreVertical className={styles.iconMd} strokeWidth={2} />
               </button>
               {mobileMenuOpen && (
                 <>
                   <div className={styles.mobileMenuBackdrop} aria-hidden onClick={() => setMobileMenuOpen(false)} />
                   <div className={styles.mobileMenuDropdown}>
+                    <button
+                      type="button"
+                      onClick={() => { handleCopy(); setMobileMenuOpen(false); }}
+                      className={styles.mobileMenuItem}
+                    >
+                      <Copy className={styles.iconMd} /> {copyDone ? "Copied" : "Copy All"}
+                    </button>
                     <button
                       type="button"
                       onClick={() => { handleSelectAll(); setMobileMenuOpen(false); }}
@@ -1190,7 +1254,7 @@ export function solution() {
                     )}
                     <button
                       type="button"
-                      onClick={() => { handleReset(); setMobileMenuOpen(false); }}
+                      onClick={() => { setResetConfirmOpen(true); setMobileMenuOpen(false); }}
                       className={styles.mobileMenuItem}
                     >
                       <RotateCcw className={styles.iconMd} /> Reset
@@ -1535,41 +1599,59 @@ export function solution() {
   );
 
   const mobileFloatingActionBar = isMobile && isFullscreen && mobileEditorOpen && (
-    <div className={styles.floatingActionBar}>
-      <button
-        type="button"
-        onClick={handleCopy}
-        className={`${styles.floatingActionBtn} ${copyDone ? styles.floatingActionBtnActive : ""}`}
-      >
-        {copyDone ? <Check className={styles.iconLg} strokeWidth={2} /> : <Copy className={styles.iconLg} strokeWidth={2} />}
-        <span>{copyDone ? "Copied!" : "Copy All"}</span>
-      </button>
-      {!readOnly && (
-        <button type="button" onClick={handlePaste} className={styles.floatingActionBtn}>
-          <ClipboardPaste className={styles.iconLg} strokeWidth={2} />
-          <span>Paste</span>
+    <>
+      <div className={`${styles.floatingActionBar} ${mobileUiHidden ? styles.floatingActionBarHidden : ""}`}>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className={`${styles.floatingActionBtn} ${copyDone ? styles.floatingActionBtnActive : ""}`}
+        >
+          {copyDone ? <Check className={styles.iconLg} strokeWidth={2} /> : <Copy className={styles.iconLg} strokeWidth={2} />}
+          <span>{copyDone ? "Copied!" : "Copy All"}</span>
         </button>
+        {!readOnly && (
+          <button type="button" onClick={handlePaste} className={styles.floatingActionBtn}>
+            <ClipboardPaste className={styles.iconLg} strokeWidth={2} />
+            <span>Paste</span>
+          </button>
+        )}
+        <button type="button" onClick={handleSelectAll} className={styles.floatingActionBtn}>
+          <MousePointer2 className={styles.iconLg} strokeWidth={2} />
+          <span>Select All</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setResetConfirmOpen(true)}
+          className={`${styles.floatingActionBtn} ${styles.floatingActionBtnDestructive}`}
+        >
+          <RotateCcw className={styles.iconLg} strokeWidth={2} />
+          <span>Reset</span>
+        </button>
+      </div>
+      {resetConfirmOpen && (
+        <div className={styles.resetConfirmBackdrop} onClick={() => setResetConfirmOpen(false)} role="presentation">
+          <div className={styles.resetConfirmModal} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="reset-confirm-title">
+            <p id="reset-confirm-title" className={styles.resetConfirmTitle}>Reset code?</p>
+            <p className={styles.resetConfirmBody}>Your changes will be lost. This cannot be undone.</p>
+            <div className={styles.resetConfirmActions}>
+              <button type="button" onClick={() => setResetConfirmOpen(false)} className={styles.resetConfirmCancel}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleReset();
+                  setResetConfirmOpen(false);
+                }}
+                className={styles.resetConfirmReset}
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-      <button type="button" onClick={handleSelectAll} className={styles.floatingActionBtn}>
-        <MousePointer2 className={styles.iconLg} strokeWidth={2} />
-        <span>Select All</span>
-      </button>
-      <button type="button" onClick={handleReset} className={styles.floatingActionBtn}>
-        <RotateCcw className={styles.iconLg} strokeWidth={2} />
-        <span>Reset</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          setIsFullscreen(false);
-          setMobileEditorOpen(false);
-        }}
-        className={`${styles.floatingActionBtn} ${styles.floatingActionBtnMinimize}`}
-      >
-        <Minimize2 className={styles.iconLg} strokeWidth={2} />
-        <span>Exit</span>
-      </button>
-    </div>
+    </>
   );
 
   const fullscreenOverlay =
@@ -1606,7 +1688,7 @@ export function solution() {
       >
         {/* Full-screen editor: fills viewport; inner has explicit height so flex children get space */}
         <motion.div
-          className={styles.fullscreenInner}
+          className={`${styles.fullscreenInner} ${isMobile && mobileUiHidden ? styles.fullscreenUiHidden : ""}`}
           style={{
             height: "100%",
             minHeight: 0,
@@ -1671,12 +1753,17 @@ export function solution() {
     <>
       {showFullscreenPortal ? (
         <div className={styles.fullscreenPlaceholder} style={{ minHeight: 48 }} aria-hidden>
-          Editor open in fullscreen. Use Exit or Close to return.
+          Editor open in fullscreen. Use Close to return.
         </div>
       ) : (
         shell
       )}
       {fullscreenOverlay}
+      {copyDone && (
+        <div className={styles.copyToast} role="status" aria-live="polite">
+          Copied!
+        </div>
+      )}
     </>
   );
 }
