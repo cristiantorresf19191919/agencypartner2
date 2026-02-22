@@ -363,6 +363,8 @@ export default function ReactCourseLessonPage() {
                   onVerify={handleVerify}
                   verifyButtonLabel={t("verify-button")}
                   collapsePanelsByDefault={false}
+                  compactToolbar
+                  enableMultiFile
                 />
               </div>
             </div>

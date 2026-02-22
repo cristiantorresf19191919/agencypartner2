@@ -130,6 +130,8 @@ export default function TypeScriptCourseLessonPage() {
               onVerify={onVerify}
               verifyButtonLabel="Verify"
               collapsePanelsByDefault={false}
+              compactToolbar
+              enableMultiFile
             />
           </div>
         </div>
