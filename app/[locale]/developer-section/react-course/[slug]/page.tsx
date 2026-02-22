@@ -30,6 +30,7 @@ import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
 import Link from "next/link";
 import { ensureEmmetJSX } from "@/lib/emmetMonaco";
+import { HighlightedCode } from "@/components/ui/HighlightedCode";
 
 /** Parse body text: **bold** and `code` into React nodes */
 function parseSectionBody(body: string, inlineCodeClass: string): React.ReactNode[] {
@@ -547,9 +548,7 @@ export default function ReactCourseLessonPage() {
                           </div>
                         )}
                         {sec.code && (
-                          <pre className={playStyles.sectionCodeBlock}>
-                            <code>{sec.code}</code>
-                          </pre>
+                          <HighlightedCode code={sec.code} language="tsx" className={playStyles.sectionCodeBlock} />
                         )}
                       </div>
                     ))}

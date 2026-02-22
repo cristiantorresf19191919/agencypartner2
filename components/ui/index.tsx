@@ -6,6 +6,7 @@ export { Text } from './Text';
 export { ButtonLink } from './ButtonLink';
 export { CodeComparison } from './CodeComparison';
 export { CodeEditor } from './CodeEditor';
+export { HighlightedCode } from './HighlightedCode';
 export { KotlinTypeScriptBlock } from './KotlinTypeScriptBlock';
 export { FullscreenIframeModal } from './FullscreenIframeModal';
 

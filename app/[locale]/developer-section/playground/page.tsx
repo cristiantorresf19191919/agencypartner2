@@ -12,6 +12,10 @@ import {
   AutoAwesome as SparklesIcon,
   Terminal as TerminalIcon,
   Bolt as BoltIcon,
+  ContentCopy as CopyIcon,
+  ContentPaste as PasteIcon,
+  SelectAll as SelectAllIcon,
+  Check as CheckIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
@@ -88,6 +92,7 @@ export default function PlaygroundPage() {
   const [error, setError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [copyDone, setCopyDone] = useState(false);
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
 
@@ -347,11 +352,14 @@ export default function PlaygroundPage() {
   useEffect(() => {
     if (isFullscreen) {
       document.body.style.overflow = "hidden";
+      document.body.setAttribute("data-code-editor-fullscreen", "true");
     } else {
       document.body.style.overflow = "";
+      document.body.removeAttribute("data-code-editor-fullscreen");
     }
     return () => {
       document.body.style.overflow = "";
+      document.body.removeAttribute("data-code-editor-fullscreen");
     };
   }, [isFullscreen]);
 
@@ -375,6 +383,32 @@ export default function PlaygroundPage() {
       });
     }
   };
+
+  const handleCopy = useCallback(async () => {
+    try {
+      const code = files.find((f) => f.name === activeFile)?.code || "";
+      await navigator.clipboard.writeText(code);
+      setCopyDone(true);
+      setTimeout(() => setCopyDone(false), 2000);
+    } catch { /* ignore */ }
+  }, [files, activeFile]);
+
+  const handlePaste = useCallback(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+    editor.focus();
+    editor.trigger("keyboard", "editor.action.clipboardPasteAction", {});
+  }, []);
+
+  const handleSelectAll = useCallback(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+    const model = editor.getModel();
+    if (model) {
+      editor.setSelection(model.getFullModelRange());
+      editor.focus();
+    }
+  }, []);
 
   const activeFileData = files.find((f) => f.name === activeFile) || files[0];
 
@@ -416,19 +450,21 @@ export default function PlaygroundPage() {
             <TerminalIcon fontSize="small" />
             Console capture
           </span>
-          <span className={styles.badge}>
+          <span className={styles.badge} data-mobile-hide>
             <FullscreenIcon fontSize="small" />
             Maximize editor
           </span>
         </div>
       </section>
 
-      <section className={styles.playgroundSection}>
+      <section className={`${styles.playgroundSection} ${isFullscreen ? styles.playgroundSectionFullscreen : ""}`}>
         <div className={`${styles.editorShell} ${isFullscreen ? styles.fullscreen : ""}`}>
           <div className={styles.toolbar}>
             <div className={styles.toolbarLeft}>
               <div className={styles.statusDot} />
-              <span className={styles.toolbarLabel}>TypeScript · Monaco with VS Code autocompletion</span>
+              <span className={styles.toolbarLabel} title="TypeScript · Monaco with VS Code autocompletion">
+                TypeScript · Monaco with VS Code autocompletion
+              </span>
             </div>
             <div className={styles.toolbarActions}>
               <button className={styles.iconButton} onClick={resetEditor} aria-label="Reset editor">
@@ -441,7 +477,8 @@ export default function PlaygroundPage() {
                 aria-label="Run code"
               >
                 <PlayIcon fontSize="small" />
-                {isRunning ? "Running…" : "Run (⌘/Ctrl + Enter)"}
+                <span className={styles.runLabel}>{isRunning ? "Running…" : "Run"}</span>
+                <span className={styles.shortcutOnly}> (⌘/Ctrl + Enter)</span>
               </button>
               <button
                 className={styles.iconButton}
@@ -503,9 +540,66 @@ export default function PlaygroundPage() {
               theme="vs-dark"
             />
           </div>
+
+          {isFullscreen && (
+            <>
+              <div className={styles.outputGridFullscreen}>
+                <div className={styles.panel}>
+                  <div className={styles.panelHeader}>
+                    <div className={styles.panelTitle}>
+                      <TerminalIcon fontSize="small" />
+                      Result
+                    </div>
+                  </div>
+                  <pre className={styles.panelBody}>{output}</pre>
+                  {error && <div className={styles.errorBox}>⚠️ {error}</div>}
+                </div>
+                <div className={styles.panel}>
+                  <div className={styles.panelHeader}>
+                    <div className={styles.panelTitle}>
+                      <BoltIcon fontSize="small" />
+                      Console
+                    </div>
+                    <span className={styles.panelMeta}>{logs.length ? `${logs.length}` : ""}</span>
+                  </div>
+                  <div className={styles.logList}>
+                    {logs.length === 0 ? (
+                      <p className={styles.emptyState}>Logs will show here.</p>
+                    ) : (
+                      logs.map((entry, idx) => (
+                        <div key={`fs-${entry}-${idx}`} className={styles.logLine}>{entry}</div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.floatingBar}>
+                <button type="button" onClick={runCode} disabled={isRunning} className={styles.floatingBtn}>
+                  <PlayIcon fontSize="small" />
+                  <span>{isRunning ? "Running" : "Run"}</span>
+                </button>
+                <button type="button" onClick={handleCopy} className={`${styles.floatingBtn} ${copyDone ? styles.floatingBtnActive : ""}`}>
+                  {copyDone ? <CheckIcon fontSize="small" /> : <CopyIcon fontSize="small" />}
+                  <span>{copyDone ? "Copied!" : "Copy All"}</span>
+                </button>
+                <button type="button" onClick={handlePaste} className={styles.floatingBtn}>
+                  <PasteIcon fontSize="small" />
+                  <span>Paste</span>
+                </button>
+                <button type="button" onClick={handleSelectAll} className={styles.floatingBtn}>
+                  <SelectAllIcon fontSize="small" />
+                  <span>Select All</span>
+                </button>
+                <button type="button" onClick={() => setIsFullscreen(false)} className={`${styles.floatingBtn} ${styles.floatingBtnExit}`}>
+                  <FullscreenExitIcon fontSize="small" />
+                  <span>Exit</span>
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
-        <div className={styles.outputGrid}>
+        {!isFullscreen && <div className={styles.outputGrid}>
           <div className={styles.panel}>
             <div className={styles.panelHeader}>
               <div className={styles.panelTitle}>
@@ -538,7 +632,7 @@ export default function PlaygroundPage() {
               )}
             </div>
           </div>
-        </div>
+        </div>}
 
         <div className={styles.footerActions}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>

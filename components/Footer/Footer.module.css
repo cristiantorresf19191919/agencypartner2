@@ -318,32 +318,46 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Mobile — collapsible footer, premium layout, FAB safe area */
+/* Mobile — collapsible footer, compact layout, FAB safe area */
 @media (max-width: 768px) {
   .footer {
-    padding-top: 1rem;
-    padding-bottom: max(2rem, env(safe-area-inset-bottom, 0px) + 5rem);
+    padding-top: 0;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 0px) + 4rem);
+  }
+
+  .footerWave {
+    top: -60px;
+    height: 60px;
+  }
+
+  .footerWave svg {
+    height: 60px;
   }
 
   .footerHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 0;
+    padding: 0.75rem 0;
     width: 100%;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .footerHeader .logo {
     margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .footerHeader .logo i {
+    font-size: 1.25rem;
   }
 
   .footerToggle {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border: none;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
@@ -383,54 +397,48 @@
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
   }
 
-  .backToTop {
-    bottom: max(1.25rem, env(safe-area-inset-bottom, 0px) + 5rem);
-    right: 1.25rem;
-    width: 48px;
-    height: 48px;
-  }
-
   .footerContainer {
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .footerMain {
     grid-template-columns: 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    padding-top: 1rem;
   }
 
   .footerBrand {
     text-align: center;
     align-items: center;
-    gap: 1.25rem;
+    gap: 0.875rem;
   }
 
   .logo {
     align-self: center;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
   }
 
   .logo i {
-    font-size: 1.65rem;
+    font-size: 1.4rem;
   }
 
   .tagline {
     text-align: center;
-    font-size: 1rem;
-    line-height: 1.65;
+    font-size: 0.9375rem;
+    line-height: 1.55;
     max-width: 100%;
-    color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .ctaButton {
     align-self: stretch;
     width: 100%;
-    max-width: 320px;
+    max-width: 280px;
     margin: 0 auto;
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9375rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(160, 106, 249, 0.35);
     -webkit-tap-highlight-color: transparent;
@@ -501,53 +509,111 @@
     transform: none;
   }
 
-  /* Profile card: compact, pill-style on mobile */
+  /* Profile card: compact on mobile */
   .developerInfo {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
     text-align: center;
-    margin-bottom: 1.75rem;
-    padding: 1.25rem 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 0.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
   }
 
   .developerCard {
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: row;
+    gap: 0.625rem;
   }
 
   .developerImage {
-    width: 72px;
-    height: 72px;
-    border: 3px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    width: 48px;
+    height: 48px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
   .developerName {
-    font-size: 1.0625rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     letter-spacing: 0.02em;
   }
 
-  /* Legal row: never obscured by FAB */
+  /* Legal row: compact, never obscured by FAB */
   .footerBottom {
-    padding-top: 1.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 0.25rem;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
-    gap: 0.625rem;
+    gap: 0.5rem;
   }
 
   .legalLinks a {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
   }
 
   .copyright {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.5;
-    padding: 0 0.5rem;
+    font-size: 0.6875rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.45;
+    padding: 0 0.25rem;
+  }
+
+  .backToTop {
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px) + 4rem);
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Very small screens: even tighter footer */
+@media (max-width: 480px) {
+  .footer {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px) + 3.5rem);
+  }
+
+  .footerHeader {
+    padding: 0.5rem 0;
+  }
+
+  .footerHeader .logo {
+    font-size: 1.1rem;
+  }
+
+  .footerHeader .logo i {
+    font-size: 1.15rem;
+  }
+
+  .footerToggle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .footerMain {
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-top: 0.75rem;
+  }
+
+  .tagline {
+    font-size: 0.875rem;
+  }
+
+  .developerInfo {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .developerImage {
+    width: 40px;
+    height: 40px;
+  }
+
+  .developerName {
+    font-size: 0.875rem;
+  }
+
+  .footerBottom {
+    padding-top: 0.75rem;
   }
 }

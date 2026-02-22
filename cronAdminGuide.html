@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products-Cron Admin & Infra Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#64748b', /* Slate Theme */
+                            600: '#475569',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            accent: '#3b82f6', /* Blue for Links/Highlights */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .code-block {
+            background-color: #0f172a;
+            /* Deepest Slate */
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            border: 1px solid #334155;
+            position: relative;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #334155;
+            color: #cbd5e1;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Smooth Anchor Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen flex overflow-hidden">
+
+    <aside class="w-72 bg-slate-900 text-slate-300 flex-col hidden lg:flex shadow-2xl z-10">
+        <div class="p-6 border-b border-slate-800 bg-slate-950">
+            <h1 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-terminal mr-3 text-brand-accent"></i>
+                Ops Guide
+            </h1>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-wider">Products-Cron Admin</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1">
+            <div class="px-3 py-2 text-xs font-bold text-slate-500 uppercase">Infrastructure</div>
+            <a href="#k8s-basics"
+                class="block px-3 py-2 rounded hover:bg-slate-800 hover:text-white transition text-sm"><i
+                    class="fas fa-cubes w-5"></i> Kubernetes Basics</a>
+            <a href="#network-flow"
+                class="block px-3 py-2 rounded hover:bg-slate-800 hover:text-white transition text-sm"><i
+                    class="fas fa-network-wired w-5"></i> Network Topology</a>
+            <a href="#gateway" class="block px-3 py-2 rounded hover:bg-slate-800 hover:text-white transition text-sm"><i
+                    class="fas fa-door-open w-5"></i> API Gateway</a>
+
+            <div class="mt-6 px-3 py-2 text-xs font-bold text-slate-500 uppercase">Operations</div>
+            <a href="#port-forwarding"
+                class="block px-3 py-2 rounded hover:bg-slate-800 hover:text-white transition text-sm"><i
+                    class="fas fa-link w-5"></i> Port Forwarding</a>
+            <a href="#endpoints"
+                class="block px-3 py-2 rounded hover:bg-slate-800 hover:text-white transition text-sm"><i
+                    class="fas fa-bolt w-5"></i> Admin Endpoints</a>
+
+            <div class="mt-6 px-3 py-2 text-xs font-bold text-slate-500 uppercase">Configuration</div>
+            <a href="#pipelines"
+                class="block px-3 py-2 rounded hover:bg-slate-800 hover:text-white transition text-sm"><i
+                    class="fas fa-code-branch w-5"></i> Pipelines & Helm</a>
+        </nav>
+        <div class="p-4 border-t border-slate-800 text-xs text-center text-slate-600">
+            <i class="fas fa-lock mr-1"></i> Internal Access Only
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto relative scroll-smooth bg-slate-50">
+        <div class="max-w-5xl mx-auto px-8 py-12">
+
+            <header class="mb-12">
+                <h1 class="text-4xl font-extrabold text-slate-900 mb-4">How to Call Products-Cron Admin Endpoints</h1>
+                <p class="text-lg text-slate-600">A plain English guide for developers to access internal Kubernetes
+                    services safely via VPN and Port Forwarding.</p>
+
+                <div class="mt-6 flex space-x-4">
+                    <div
+                        class="bg-blue-50 text-blue-800 px-4 py-2 rounded-lg border border-blue-200 text-sm flex items-center">
+                        <i class="fas fa-wifi mr-2"></i> Requires VPN
+                    </div>
+                    <div
+                        class="bg-purple-50 text-purple-800 px-4 py-2 rounded-lg border border-purple-200 text-sm flex items-center">
+                        <i class="fas fa-id-badge mr-2"></i> Requires Azure Login
+                    </div>
+                </div>
+            </header>
+
+            <section id="k8s-basics" class="mb-16">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Infrastructure Basics</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">What is Kubernetes (K8s)?</h3>
+                        <p class="text-slate-600 text-sm mb-4">Think of it as an orchestra conductor. It runs your app
+                            in "Containers" across multiple computers ("Nodes") to ensure reliability.</p>
+                        <h3 class="font-bold text-lg mb-2">The Cluster</h3>
+                        <p class="text-slate-600 text-sm">A private group of computers working as a single system.
+                            Nothing inside can be reached directly from the internet.</p>
+                    </div>
+                    <div>
+                        <div class="bg-white p-4 rounded shadow-sm border border-slate-200">
+                            <div class="mermaid">
+                                graph TD
+                                subgraph Cluster [Private Cluster]
+                                Node1[Node 1<br />VM]
+                                Node2[Node 2<br />VM]
+                                subgraph Pods
+                                P1(products-api)
+                                P2(admin-api)
+                                P3(products-cron)
+                                end
+                                end
+                                Node1 --- Pods
+                                Node2 --- Pods
+                                style Cluster fill:#f1f5f9,stroke:#94a3b8
+                                style P3 fill:#fca5a5,stroke:#b91c1c,color:white
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="network-flow" class="mb-16">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Network Topology</h2>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 mb-6">
+                    <h3 class="font-bold text-lg mb-4 text-center">From Internet to Pod</h3>
+                    <div class="mermaid">
+                        graph LR
+                        User((User)) --> AFD[Azure Front Door<br />(Global Edge)]
+                        AFD --> GW[API Gateway<br />(The Bouncer)]
+
+                        subgraph K8s [Kubernetes Cluster]
+                        direction TB
+                        API[products-api<br />(Public)]
+                        Cron[products-cron<br />(Hidden)]
+                        end
+
+                        GW -->|Allowed| API
+                        GW -.->|Blocked| Cron
+
+                        style Cron fill:#fca5a5,stroke:#b91c1c,stroke-dasharray: 5 5
+                        style API fill:#86efac,stroke:#15803d
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-2"><i class="fas fa-globe text-blue-500 mr-2"></i>Azure
+                            Front Door</h4>
+                        <ul class="text-sm text-slate-600 list-disc list-inside space-y-1">
+                            <li>Global Load Balancing</li>
+                            <li>SSL Termination</li>
+                            <li>DDoS Protection & WAF</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-2"><i
+                                class="fas fa-door-closed text-purple-500 mr-2"></i>API Gateway</h4>
+                        <ul class="text-sm text-slate-600 list-disc list-inside space-y-1">
+                            <li>Authentication (OAuth/JWT)</li>
+                            <li>Rate Limiting</li>
+                            <li>Routing (The "Bouncer")</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="gateway" class="mb-16">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Why is Cron Hidden?</h2>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r mb-6">
+                    <h3 class="text-red-800 font-bold mb-2">Security Risk</h3>
+                    <p class="text-red-700 text-sm mb-2">The cron service contains dangerous endpoints like
+                        <code>/test/expire-products</code> and has <strong>no internal authentication</strong>.
+                    </p>
+                    <p class="text-red-700 text-sm">If exposed on the Gateway, anyone on the internet could wipe our
+                        pricing cache.</p>
+                </div>
+
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="min-w-full divide-y divide-slate-200 bg-white text-sm">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Service Type</th>
+                                <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">On Gateway?</th>
+                                <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Example</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-6 py-4 font-mono text-green-600">api</td>
+                                <td class="px-6 py-4"><span
+                                        class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">YES</span>
+                                </td>
+                                <td class="px-6 py-4">products-api</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="px-6 py-4 font-mono text-red-600">cron</td>
+                                <td class="px-6 py-4"><span
+                                        class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">NO</span>
+                                </td>
+                                <td class="px-6 py-4">products-cron</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-mono text-slate-600">headless</td>
+                                <td class="px-6 py-4"><span
+                                        class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">NO</span>
+                                </td>
+                                <td class="px-6 py-4">inventory-receiver</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="port-forwarding" class="mb-16">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Port Forwarding Guide</h2>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 mb-8">
+                    <h3 class="font-bold text-lg mb-4 text-center">The Tunnel Concept</h3>
+                    <div class="mermaid">
+                        sequenceDiagram
+                        participant Laptop as Your Laptop (8096)
+                        participant VPN as VPN Tunnel
+                        participant K8s as K8s Cluster
+                        participant Pod as products-cron (8080)
+
+                        Laptop->>VPN: curl localhost:8096
+                        VPN->>K8s: Authenticated Route
+                        K8s->>Pod: Forward to Port 8080
+                        Pod-->>Laptop: 200 OK
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-4">
+                            <div
+                                class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">
+                                1</div>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-bold text-lg">Prerequisites</h3>
+                            <p class="text-sm text-slate-600 mb-2">Ensure you have the tools installed.</p>
+                            <div class="code-block">
+                                brew install azure-cli kubectl
+                                brew install Azure/kubelogin/kubelogin
+                                az login
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-shrink-0 mr-4">
+                            <div
+                                class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">
+                                2</div>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-bold text-lg">Run the Script</h3>
+                            <p class="text-sm text-slate-600 mb-2">Connect to VPN, then run the helper script.</p>
+                            <div class="code-block">
+                                cd Test-Utils/port-forward
+                                ./portforward-dev.sh
+                            </div>
+                            <div class="mt-2 text-sm text-slate-500 italic">
+                                Wait for "Forwarding port 8096". <strong>Do not close this terminal.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="endpoints" class="mb-16">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Admin Endpoints</h2>
+                <p class="mb-6 text-slate-600">Once the tunnel is open on port <strong>8096</strong>, use these commands
+                    in a new terminal.</p>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div
+                        class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                        <div class="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span
+                                    class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded uppercase mr-3">GET</span>
+                                <span
+                                    class="font-mono text-sm font-bold text-slate-700">/test/fi-Rate/update-cached-markup</span>
+                            </div>
+                            <i class="fas fa-sync text-slate-300"></i>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm text-slate-600 mb-4">Reapplies configuration markup to all cached FI
+                                products. Use this after changing <code>application.yml</code> values.</p>
+                            <div class="code-block">
+                                curl http://localhost:8096/test/fi-Rate/update-cached-markup
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                        <div class="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span
+                                    class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded uppercase mr-3">GET</span>
+                                <span class="font-mono text-sm font-bold text-slate-700">/test/fi-Rate/refresh</span>
+                            </div>
+                            <i class="fas fa-play text-slate-300"></i>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm text-slate-600 mb-4">Manually triggers the cron job batch immediately
+                                (bypassing the 5-minute schedule).</p>
+                            <div class="code-block">
+                                curl http://localhost:8096/test/fi-Rate/refresh
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                        <div class="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span
+                                    class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded uppercase mr-3">POST</span>
+                                <span
+                                    class="font-mono text-sm font-bold text-slate-700">/test/fi-Rate/expire-products</span>
+                            </div>
+                            <i class="fas fa-hourglass-end text-slate-300"></i>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm text-slate-600 mb-4">Forces products for a specific state to expire
+                                (backdates 90 days), forcing a full re-fetch from PEN.</p>
+                            <div class="code-block">
+                                curl -X POST http://localhost:8096/test/fi-Rate/expire-products \
+                                -H "Content-Type: application/json" \
+                                -d '{"dealerState": "FL"}'
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pipelines" class="mb-16">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Pipeline Deep Dive</h2>
+
+                <div class="bg-slate-900 text-slate-300 p-6 rounded-lg mb-8">
+                    <h3 class="text-white font-bold mb-4 text-center">Configuration Flow</h3>
+                    <div class="mermaid">
+                        graph TD
+                        A[values.yaml<br />Base Config] -->|Override| B[values-dev.yaml<br />Env Config]
+                        B -->|Inject| C[Helm Template]
+                        C -->|Generate| D[K8s Deployment]
+                        D -->|Deploy| E[Pod with Env Vars]
+
+                        style A fill:#1e293b,stroke:#94a3b8,color:white
+                        style B fill:#334155,stroke:#94a3b8,color:white
+                        style C fill:#475569,stroke:#94a3b8,color:white
+                        style E fill:#0f172a,stroke:#3b82f6,color:white
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">The Universal Chart Type</h3>
+                        <p class="text-sm text-slate-600 mb-4">This setting in <code>pipelines/dev.yml</code> determines
+                            visibility.</p>
+                        <div class="code-block">
+                            <span class="code-label">pipelines/dev.yml</span>
+                            - name: products-cron
+                            universalChartType: cron # ◄── HIDDEN
+                            - name: products-api
+                            universalChartType: api # ◄── PUBLIC
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Cron Schedule</h3>
+                        <p class="text-sm text-slate-600 mb-4">Defined in <code>values-dev.yaml</code>.</p>
+                        <div class="code-block">
+                            <span class="code-label">values-dev.yaml</span>
+                            # 5 minutes in ms
+                            FI_RATE_REFRESH_CRON_INTERVAL: "300000"
+                            # Cron expression
+                            CRON_RATE_EXPRESSION: "0 0/5 * * * *"
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="border-t border-slate-200 py-8 text-center text-slate-500 text-sm">
+                <p>&copy; 2026 DevOps Engineering. Internal Use Only.</p>
+            </footer>
+
+        </div>
+    </main>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e2e8f0',
+                primaryTextColor: '#0f172a',
+                primaryBorderColor: '#64748b',
+                lineColor: '#334155',
+                secondaryColor: '#f8fafc',
+                tertiaryColor: '#fff'
+            }
+        });
+    </script>
+</body>
+
+</html>

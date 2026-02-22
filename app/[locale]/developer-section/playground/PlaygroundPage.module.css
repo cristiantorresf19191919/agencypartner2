@@ -111,10 +111,27 @@
 
 .fullscreen {
     position: fixed;
-    inset: 16px;
+    inset: 0;
     z-index: 50;
+    height: 100dvh;
+    min-height: 100vh;
+    border-radius: 0;
+    background: #05070f;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Elevate parent stacking context so fixed child beats header/FAB z-index */
+.playgroundSectionFullscreen {
+    z-index: 2147483647;
+}
+
+.fullscreen .editorArea {
     height: auto;
-    box-shadow: 0 45px 120px rgba(0, 0, 0, 0.5);
+    flex: 1;
+    min-height: 0;
 }
 
 .toolbar {
@@ -190,6 +207,14 @@
 
 .isRunning {
     opacity: 0.9;
+}
+
+.runLabel {
+    display: inline;
+}
+
+.shortcutOnly {
+    display: inline;
 }
 
 .editorArea {
@@ -423,11 +448,277 @@
     }
 
     .fullscreen {
-        inset: 0;
+        padding: env(safe-area-inset-top) 0 0 0;
     }
 
     .footerActions {
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+/* Mobile: single-row compact toolbar, less chrome, more code space */
+@media (max-width: 768px) {
+    .heroSection {
+        padding: 80px 16px 24px;
+    }
+
+    .title {
+        font-size: clamp(22px, 5.5vw, 28px);
+        margin: 12px auto 10px;
+    }
+
+    .subtitle {
+        font-size: 15px;
+    }
+
+    .heroBadges {
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .badge {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .playgroundSection {
+        padding: 12px 16px 64px;
+        gap: 16px;
+        /* Leave space so FAB doesn’t cover Result/Console content */
+        padding-bottom: max(64px, calc(72px + env(safe-area-inset-bottom)));
+    }
+
+    .editorShell {
+        height: 420px;
+        border-radius: 12px;
+    }
+
+    .toolbar {
+        flex-direction: row;
+        align-items: center;
+        padding: 10px 12px;
+        gap: 8px;
+        min-height: 44px;
+    }
+
+    .toolbarLeft {
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .toolbarLabel {
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .statusDot {
+        width: 8px;
+        height: 8px;
+        flex-shrink: 0;
+    }
+
+    .toolbarActions {
+        width: auto;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+
+    .iconButton,
+    .primaryButton {
+        height: 36px;
+        padding: 0 10px;
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    .iconButton span:not(.hideOnMobile),
+    .primaryButton span:not(.hideOnMobile) {
+        display: inline;
+    }
+
+    .editorArea {
+        height: calc(100% - 52px);
+    }
+
+    .fileTabs {
+        padding: 6px 8px;
+        gap: 6px;
+    }
+
+    .tab,
+    .newFileButton {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .outputGrid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .panel {
+        padding: 12px;
+    }
+
+    .panelHeader {
+        padding: 6px 8px 10px;
+    }
+
+    .panelBody {
+        min-height: 100px;
+        padding: 10px;
+    }
+
+    .footerActions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+}
+
+/* Very small screens: icon-only secondary buttons to keep one row */
+@media (max-width: 480px) {
+    .heroSection {
+        padding: 72px 12px 20px;
+    }
+
+    .playgroundSection {
+        padding: 10px 10px 48px;
+        padding-bottom: max(48px, calc(72px + env(safe-area-inset-bottom)));
+    }
+
+    /* Hide redundant “Maximize editor” hero badge on small screens (toolbar has Maximize) */
+    .badge[data-mobile-hide] {
+        display: none !important;
+    }
+
+    .editorShell {
+        height: 380px;
+    }
+
+    .toolbar {
+        padding: 8px 10px;
+        gap: 6px;
+    }
+
+    .toolbarLabel {
+        font-size: 11px;
+    }
+
+    .iconButton span {
+        display: none !important;
+    }
+
+    .primaryButton .shortcutOnly {
+        display: none !important;
+    }
+
+    .iconButton,
+    .primaryButton {
+        padding: 0 8px;
+        min-width: 36px;
+    }
+}
+
+/* ========== Fullscreen output grid (compact) ========== */
+.outputGridFullscreen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    flex-shrink: 0;
+    max-height: 180px;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(8, 12, 26, 0.95);
+}
+
+@media (max-width: 768px) {
+    .outputGridFullscreen {
+        grid-template-columns: 1fr;
+        max-height: 140px;
+    }
+}
+
+.outputGridFullscreen .panel {
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+    padding: 8px;
+}
+
+.outputGridFullscreen .panelBody {
+    min-height: 60px;
+    max-height: 100px;
+    overflow: auto;
+    padding: 8px;
+}
+
+.outputGridFullscreen .logList {
+    max-height: 80px;
+    margin-top: 4px;
+}
+
+/* ========== Floating action bar (fullscreen) ========== */
+.floatingBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 0.25rem;
+    padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom));
+    background: rgba(5, 7, 15, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.floatingBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    padding: 0.5rem 0.25rem;
+    border: none;
+    background: none;
+    color: #9bb3d9;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: color 0.15s, background 0.15s;
+    border-radius: 0.5rem;
+    min-width: 0;
+}
+
+.floatingBtn:active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e9f3ff;
+}
+
+.floatingBtnActive {
+    color: #7cf4ff;
+}
+
+.floatingBtnExit:active {
+    color: #ff5f6d;
+    background: rgba(255, 95, 109, 0.1);
+}
+
+/* ========== Fullscreen placeholder ========== */
+.fullscreenPlaceholder {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(12, 18, 36, 0.6);
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #9bb3d9;
 }

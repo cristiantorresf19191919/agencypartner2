@@ -23,6 +23,7 @@ import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
 import Link from "next/link";
+import { HighlightedCode } from "@/components/ui/HighlightedCode";
 
 const PISTON_EXECUTE_URL = "https://emkc.org/api/v2/piston/execute";
 
@@ -312,9 +313,7 @@ export default function KotlinJavaInteropLessonPage() {
                 <h4 className={playStyles.descSub}>Code examples</h4>
                 {lesson.codeExamples.map((ex, i) => (
                   <div key={i} style={{ marginBottom: "16px" }}>
-                    <pre className={playStyles.sample} style={{ marginTop: "8px" }}>
-                      <code style={{ fontSize: "13px", color: "#ddecff" }}>{ex.code}</code>
-                    </pre>
+                    <HighlightedCode code={ex.code} language="kotlin" className={playStyles.sample} style={{ marginTop: "8px" }} />
                     {ex.comment && (
                       <p className={playStyles.descBody} style={{ fontSize: "13px", marginTop: "6px", color: "#9fc4ff" }}>
                         {ex.comment}
@@ -356,9 +355,7 @@ export default function KotlinJavaInteropLessonPage() {
                     {p.solution && (
                       <details style={{ marginTop: "10px" }}>
                         <summary style={{ cursor: "pointer", color: "#7cf4ff", fontSize: "13px" }}>Show solution</summary>
-                        <pre className={playStyles.sample} style={{ marginTop: "8px", fontSize: "12px" }}>
-                          <code>{p.solution}</code>
-                        </pre>
+                        <HighlightedCode code={p.solution} language="kotlin" className={playStyles.sample} style={{ marginTop: "8px", fontSize: "12px" }} />
                       </details>
                     )}
                   </div>

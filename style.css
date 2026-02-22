@@ -437,8 +437,8 @@ body.dark-mode .floating-gradient-banner {
     }
 
     .whatsapp-button-container {
-        bottom: var(--space-md);
-        right: var(--space-md);
+        bottom: max(var(--space-md), env(safe-area-inset-bottom));
+        right: max(var(--space-md), env(safe-area-inset-right));
     }
 
     .whatsapp-blob {
@@ -2756,8 +2756,8 @@ body.dark-mode #contact-form textarea:focus {
     }
 
     .whatsapp-button-container {
-        bottom: var(--space-md);
-        right: var(--space-md);
+        bottom: max(var(--space-md), env(safe-area-inset-bottom));
+        right: max(var(--space-md), env(safe-area-inset-right));
     }
 
     .whatsapp-blob {
@@ -3832,8 +3832,8 @@ body.dark-mode .fab-secondary.theme {
 
 @media (max-width: 768px) {
     .fab-container {
-        bottom: 1.5rem;
-        right: 1.5rem;
+        bottom: max(1.5rem, env(safe-area-inset-bottom));
+        right: max(1.5rem, env(safe-area-inset-right));
     }
 
     .fab-container.active .fab-secondary:nth-child(1) {

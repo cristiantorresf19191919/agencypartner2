@@ -18,6 +18,7 @@ import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
 import Link from "next/link";
+import { HighlightedCode } from "@/components/ui/HighlightedCode";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -151,9 +152,7 @@ export default function CssCourseLessonPage() {
             {lesson.initialHTML && (
               <>
                 <h4 className={playStyles.descSub}>HTML structure (read-only)</h4>
-                <pre className={playStyles.sample} style={{ fontSize: "12px", overflow: "auto" }}>
-                  <code>{lesson.initialHTML}</code>
-                </pre>
+                <HighlightedCode code={lesson.initialHTML} language="css" className={playStyles.sample} style={{ fontSize: "12px", overflow: "auto" }} />
               </>
             )}
             <div style={{ marginTop: "24px", display: "flex", gap: "12px", flexWrap: "wrap" }}>

@@ -13,6 +13,7 @@ import {
 } from "@mui/icons-material";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
+import { HighlightedCode } from "@/components/ui/HighlightedCode";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
@@ -419,9 +420,7 @@ export default function React19LessonPage() {
                   <h4 className={playStyles.descSub} style={{ color: "#ef4444" }}>
                     ❌ Old Way (React 18)
                   </h4>
-                  <pre className={playStyles.sample} style={{ borderColor: "rgba(239, 68, 68, 0.3)" }}>
-                    {lesson.oldWayCode}
-                  </pre>
+                  <HighlightedCode code={lesson.oldWayCode} language="tsx" className={playStyles.sample} style={{ borderColor: "rgba(239, 68, 68, 0.3)" }} />
                 </div>
               )}
 
@@ -430,9 +429,7 @@ export default function React19LessonPage() {
                   <h4 className={playStyles.descSub} style={{ color: "#10b981" }}>
                     ✅ New Way (React 19)
                   </h4>
-                  <pre className={playStyles.sample} style={{ borderColor: "rgba(16, 185, 129, 0.3)" }}>
-                    {lesson.newWayCode}
-                  </pre>
+                  <HighlightedCode code={lesson.newWayCode} language="tsx" className={playStyles.sample} style={{ borderColor: "rgba(16, 185, 129, 0.3)" }} />
                 </div>
               )}
 

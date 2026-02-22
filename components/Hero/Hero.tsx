@@ -1,9 +1,47 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Hero.module.css';
+
+const TYPING_SPEED_MS = 45;
+const START_DELAY_MS = 600;
+
+function useTypingEffect(fullText: string, isActive: boolean) {
+  const [displayedLength, setDisplayedLength] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
+  const fullTextRef = useRef(fullText);
+  fullTextRef.current = fullText;
+
+  useEffect(() => {
+    if (!isActive || !fullText) return;
+    setDisplayedLength(0);
+    setHasStarted(false);
+
+    const startTimeout = setTimeout(() => {
+      setHasStarted(true);
+    }, START_DELAY_MS);
+
+    return () => clearTimeout(startTimeout);
+  }, [fullText, isActive]);
+
+  useEffect(() => {
+    if (!hasStarted || displayedLength >= fullTextRef.current.length) return;
+
+    const id = setInterval(() => {
+      setDisplayedLength((prev) => {
+        const next = prev + 1;
+        if (next >= fullTextRef.current.length) clearInterval(id);
+        return next;
+      });
+    }, TYPING_SPEED_MS);
+
+    return () => clearInterval(id);
+  }, [hasStarted, displayedLength]);
+
+  return fullText.slice(0, displayedLength);
+}
 
 interface WindowWithParticlesJS extends Window {
   particlesJS?: (id: string, config: unknown) => void;
@@ -11,6 +49,9 @@ interface WindowWithParticlesJS extends Window {
 
 const Hero = () => {
   const { language, t } = useLanguage();
+  const subtitleText = t('hero-subtitle');
+  const typedSubtitle = useTypingEffect(subtitleText, true);
+  const isTypingComplete = typedSubtitle.length === subtitleText.length;
   const particlesRef = useRef<HTMLDivElement>(null);
   const statProyectosRef = useRef<HTMLSpanElement>(null);
   const statSatisfaccionRef = useRef<HTMLSpanElement>(null);
@@ -169,9 +210,15 @@ const Hero = () => {
           className={styles.heroSubtitle}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          aria-label={subtitleText}
         >
-          {t('hero-subtitle')}
+          {typedSubtitle}
+          <span
+            className={styles.typingCursor}
+            aria-hidden
+            style={{ opacity: isTypingComplete ? 0 : 1 }}
+          />
         </motion.p>
 
         <motion.div

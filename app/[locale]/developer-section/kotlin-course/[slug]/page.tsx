@@ -21,6 +21,7 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import KotlinDocLessonLayout from "@/components/Layout/KotlinDocLessonLayout";
 import { getCoroutinesBasicsDoc, getCoroutinesChannelsDoc, getKotlinLessonForLocale } from "@/lib/courseTranslations";
+import { HighlightedCode } from "@/components/ui/HighlightedCode";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDeveloperSectionFont } from "@/contexts/DeveloperSectionFontContext";
@@ -761,9 +762,7 @@ export default function KotlinCourseLessonPage() {
                     {p.solution && (
                       <details style={{ marginTop: "12px" }}>
                         <summary style={{ cursor: "pointer", color: "#7cf4ff", fontSize: "13px" }}>Example solution</summary>
-                        <pre className={playStyles.sample} style={{ marginTop: "8px", fontSize: "12px" }}>
-                          <code>{p.solution}</code>
-                        </pre>
+                        <HighlightedCode code={p.solution} language="kotlin" className={playStyles.sample} style={{ marginTop: "8px", fontSize: "12px" }} />
                       </details>
                     )}
                   </div>

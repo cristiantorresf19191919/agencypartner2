@@ -24,6 +24,7 @@ import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
 import { ensureEmmetJSX } from "@/lib/emmetMonaco";
+import { HighlightedCode } from "@/components/ui/HighlightedCode";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -881,7 +882,7 @@ export default function ReactChallengePage() {
               )}
 
               <h4 className={playStyles.descSub}>Problem Code</h4>
-              <pre className={playStyles.sample}>{challenge.problemCode}</pre>
+              <HighlightedCode code={challenge.problemCode} language="tsx" className={playStyles.sample} />
 
               {challenge.hints.length > 0 && (
                 <>
@@ -921,9 +922,7 @@ export default function ReactChallengePage() {
                   <h4 className={playStyles.descSub} style={{ marginTop: "24px", color: "#ff9800" }}>
                     Solution
                   </h4>
-                  <pre className={playStyles.sample} style={{ borderColor: "rgba(255, 152, 0, 0.3)" }}>
-                    {challenge.solution}
-                  </pre>
+                  <HighlightedCode code={challenge.solution} language="tsx" className={playStyles.sample} style={{ borderColor: "rgba(255, 152, 0, 0.3)" }} />
                   <p style={{ marginTop: "12px", fontSize: "13px", color: "#c6d5ff", fontStyle: "italic" }}>
                     {challenge.explanation}
                   </p>

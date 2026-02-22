@@ -6,11 +6,20 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from 
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ChevronDown, ChevronRight, ChevronUp, Code2, MoreVertical, Check, XCircle } from "lucide-react";
+import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ClipboardPaste, MousePointer2, ChevronDown, ChevronRight, ChevronUp, Code2, MoreVertical, Check, XCircle } from "lucide-react";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
 import { ensureEmmetJSX } from "@/lib/emmetMonaco";
+import { Highlight, themes } from "prism-react-renderer";
 import styles from "./CodeEditor.module.css";
+
+/** Languages supported by prism-react-renderer's bundled Prism. */
+const HIGHLIGHT_LANGUAGES = new Set([
+  "markup", "html", "xml", "svg", "mathml", "ssml", "atom", "rss",
+  "css", "clike", "javascript", "js", "jsx", "typescript", "ts", "tsx",
+  "kotlin", "python", "json", "yaml", "markdown", "go", "rust", "swift",
+  "objectivec", "graphql", "cpp", "reason",
+]);
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -134,7 +143,7 @@ export function CodeEditor({
   disableLinting = true,
   enableMultiFile = false,
   autoInjectImports = true,
-  collapsePanelsByDefault = false,
+  collapsePanelsByDefault,
   exampleVariant,
   exampleBadgeLabel,
   maxCodeHeight,
@@ -158,7 +167,14 @@ export function CodeEditor({
   const [copyDone, setCopyDone] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const editorContainerRef = useRef<HTMLDivElement | null>(null);
-  const editorInstanceRef = useRef<{ layout: () => void } | null>(null);
+  type EditorInstance = {
+    layout: () => void;
+    getModel: () => { getFullModelRange: () => unknown } | null;
+    setSelection: (range: unknown) => void;
+    focus: () => void;
+    trigger: (source: string, handlerId: string, payload?: object) => void;
+  };
+  const editorInstanceRef = useRef<EditorInstance | null>(null);
   const tertiaryMenuButtonRef = useRef<HTMLButtonElement | null>(null);
   const [fullscreenEditorHeight, setFullscreenEditorHeight] = useState(400);
   const uniqueId = useId();
@@ -175,8 +191,9 @@ export function CodeEditor({
   // Resizable layout: editor gets more space by default (70%), Preview/Console split 50/50
   const [editorPanelRatio, setEditorPanelRatio] = useState(0.7);
   const [previewConsoleRatio, setPreviewConsoleRatio] = useState(0.5);
-  const [previewCollapsed, setPreviewCollapsed] = useState(collapsePanelsByDefault);
-  const [consoleCollapsed, setConsoleCollapsed] = useState(collapsePanelsByDefault);
+  const effectiveCollapseByDefault = collapsePanelsByDefault ?? true;
+  const [previewCollapsed, setPreviewCollapsed] = useState(effectiveCollapseByDefault);
+  const [consoleCollapsed, setConsoleCollapsed] = useState(effectiveCollapseByDefault);
   const [resizingVertical, setResizingVertical] = useState(false);
   const [resizingHorizontal, setResizingHorizontal] = useState(false);
   const resizableContainerRef = useRef<HTMLDivElement | null>(null);
@@ -260,8 +277,15 @@ export function CodeEditor({
   useEffect(() => setIsMounted(true), []);
 
   useEffect(() => {
-    if (isFullscreen) setShowFullscreenPortal(true);
-  }, [isFullscreen]);
+    if (isFullscreen) {
+      setShowFullscreenPortal(true);
+      // On mobile fullscreen, auto-collapse Preview/Console so the code area gets maximum space
+      if (isMobile) {
+        setPreviewCollapsed(true);
+        setConsoleCollapsed(true);
+      }
+    }
+  }, [isFullscreen, isMobile]);
 
   useEffect(() => {
     if (!isFullscreen || !editorContainerRef.current) return;
@@ -272,6 +296,24 @@ export function CodeEditor({
     ro.observe(el);
     return () => ro.disconnect();
   }, [isFullscreen, showFullscreenPortal]);
+
+  // Prevent scroll-chaining: when Monaco reaches its scroll boundary, stop the wheel event from scrolling the parent page.
+  useEffect(() => {
+    const el = editorContainerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      const scrollable = el.querySelector(".monaco-scrollable-element") as HTMLElement | null;
+      if (!scrollable) return;
+      const { scrollTop, scrollHeight, clientHeight } = scrollable;
+      const atTop = scrollTop <= 0 && e.deltaY < 0;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0;
+      if (atTop || atBottom) {
+        e.preventDefault();
+      }
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   // When editor container scrolls into view, re-layout Monaco so code is visible (fixes blank editor when below fold)
   useEffect(() => {
@@ -739,6 +781,23 @@ export function solution() {
     }
   }, [currentCode]);
 
+  const handleSelectAll = useCallback(() => {
+    const editor = editorInstanceRef.current;
+    if (!editor) return;
+    const model = editor.getModel();
+    if (model) {
+      editor.setSelection(model.getFullModelRange());
+      editor.focus();
+    }
+  }, []);
+
+  const handlePaste = useCallback(() => {
+    const editor = editorInstanceRef.current;
+    if (!editor || readOnly) return;
+    editor.focus();
+    editor.trigger("keyboard", "editor.action.clipboardPasteAction", {});
+  }, [readOnly]);
+
   useEffect(() => {
     if (!isRunnable || isKotlin) return;
     const handler = (e: KeyboardEvent) => {
@@ -866,9 +925,25 @@ export function solution() {
         </div>
       </div>
       <div className={styles.staticCodeWrap} style={{ minHeight: 140, maxHeight: 320 }}>
-        <pre className={styles.staticPre}>
-          <code>{currentCode}</code>
-        </pre>
+        {HIGHLIGHT_LANGUAGES.has(normalizedLang === "react" ? "tsx" : normalizedLang) ? (
+          <Highlight theme={themes.vsDark} code={currentCode} language={normalizedLang === "react" ? "tsx" : normalizedLang}>
+            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+              <pre className={`${styles.staticPre} ${className}`} style={{ ...style, margin: 0, minHeight: "100%", boxSizing: "border-box" }}>
+                {tokens.map((line, i) => (
+                  <div key={i} {...getLineProps({ line })}>
+                    {line.map((token, key) => (
+                      <span key={key} {...getTokenProps({ token })} />
+                    ))}
+                  </div>
+                ))}
+              </pre>
+            )}
+          </Highlight>
+        ) : (
+          <pre className={styles.staticPre}>
+            <code>{currentCode}</code>
+          </pre>
+        )}
       </div>
     </div>
   );
@@ -984,121 +1059,169 @@ export function solution() {
             <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />
             <span className={styles.toolbarBtnLabel}>{copyDone ? "Copied" : "Copy"}</span>
           </button>
+          <button
+            type="button"
+            onClick={handleSelectAll}
+            aria-label="Select all"
+            className={styles.btn}
+            title="Select all"
+          >
+            <MousePointer2 className={styles.iconSm} strokeWidth={2} />
+            {!isMobile && <span className={styles.toolbarBtnLabel}>Select all</span>}
+          </button>
           {!readOnly && (
-            <>
-              {isMobile ? (
-                <div className={styles.mobileMenuWrap}>
-                  <button
-                    type="button"
-                    onClick={() => setMobileMenuOpen((v) => !v)}
-                    className={styles.mobileMenuBtn}
-                    aria-label="More options"
-                    aria-expanded={mobileMenuOpen}
-                  >
-                    <ChevronDown className={styles.iconMd} strokeWidth={2} />
-                  </button>
-                  {mobileMenuOpen && (
-                    <>
-                      <div className={styles.mobileMenuBackdrop} aria-hidden onClick={() => setMobileMenuOpen(false)} />
+            <button
+              type="button"
+              onClick={handlePaste}
+              aria-label="Paste"
+              className={styles.btn}
+              title="Paste"
+            >
+              <ClipboardPaste className={styles.iconSm} strokeWidth={2} />
+              {!isMobile && <span className={styles.toolbarBtnLabel}>Paste</span>}
+            </button>
+          )}
+          {/* Reset — desktop non-compact, always visible */}
+          {!isMobile && !compactToolbar && (
+            <button type="button" onClick={handleReset} aria-label="Reset code" className={styles.btnReset}>
+              <RotateCcw className={styles.iconSm} strokeWidth={2} />
+              Reset
+            </button>
+          )}
+          {/* Maximize — desktop compact, always visible */}
+          {!isMobile && compactToolbar && (
+            <button
+              type="button"
+              onClick={() => setIsFullscreen((v) => !v)}
+              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+              className={styles.btnMaximize}
+            >
+              {isFullscreen ? <Minimize2 className={styles.iconSm} strokeWidth={2} /> : <Maximize2 className={styles.iconSm} strokeWidth={2} />}
+              {isFullscreen ? "Exit" : "Maximize"}
+            </button>
+          )}
+          {/* Tertiary menu — desktop compact, always visible */}
+          {!isMobile && compactToolbar && (
+            <div className={styles.mobileMenuWrap}>
+              <button
+                ref={tertiaryMenuButtonRef}
+                type="button"
+                onClick={() => setTertiaryMenuOpen((v) => !v)}
+                className={styles.btnTertiary}
+                aria-label="More options"
+                aria-expanded={tertiaryMenuOpen}
+              >
+                <MoreVertical className={styles.iconSm} strokeWidth={2} />
+              </button>
+              {tertiaryMenuOpen && tertiaryMenuRect && !isFullscreen && typeof document !== "undefined" &&
+                createPortal(
+                  <>
+                    <div className={styles.tertiaryMenuBackdropPortal} aria-hidden onClick={() => setTertiaryMenuOpen(false)} />
+                    <div
+                      className={styles.tertiaryMenuDropdownPortal}
+                      style={{
+                        position: "fixed",
+                        top: tertiaryMenuRect.bottom + 4,
+                        right: window.innerWidth - tertiaryMenuRect.right,
+                      }}
+                    >
                       <div className={styles.mobileMenuDropdown}>
-                        <button
-                          type="button"
-                          onClick={() => { handleReset(); setMobileMenuOpen(false); }}
-                          className={styles.mobileMenuItem}
-                        >
+                        <button type="button" onClick={() => { handleSelectAll(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
+                          <MousePointer2 className={styles.iconMd} /> Select all
+                        </button>
+                        {!readOnly && (
+                          <button type="button" onClick={() => { handlePaste(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
+                            <ClipboardPaste className={styles.iconMd} /> Paste
+                          </button>
+                        )}
+                        <button type="button" onClick={() => { handleReset(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
                           <RotateCcw className={styles.iconMd} /> Reset
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => { setIsFullscreen(true); setMobileMenuOpen(false); }}
-                          className={styles.mobileMenuItem}
-                        >
-                          <Maximize2 className={styles.iconMd} /> Fullscreen
-                        </button>
+                        <div className={styles.mobileMenuItemFontSize}>
+                          <span className={styles.mobileMenuItemLabel}>Font size</span>
+                          <div className={styles.fontSizeGroup}>
+                            <button type="button" onClick={() => setFontSize((s) => Math.max(10, s - 1))} aria-label="Decrease font size" className={styles.fontSizeBtn}>
+                              <Minus className={styles.iconSm} strokeWidth={2.5} />
+                            </button>
+                            <span className={styles.fontSizeValue}>{fontSize}</span>
+                            <button type="button" onClick={() => setFontSize((s) => Math.min(24, s + 1))} aria-label="Increase font size" className={styles.fontSizeBtn}>
+                              <Plus className={styles.iconSm} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </>
-                  )}
-                </div>
-              ) : (
+                    </div>
+                  </>,
+                  document.body
+                )}
+            </div>
+          )}
+          {/* Mobile dropdown — always visible */}
+          {isMobile && (
+            <div className={styles.mobileMenuWrap}>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((v) => !v)}
+                className={styles.mobileMenuBtn}
+                aria-label="More options"
+                aria-expanded={mobileMenuOpen}
+              >
+                <ChevronDown className={styles.iconMd} strokeWidth={2} />
+              </button>
+              {mobileMenuOpen && (
                 <>
-                  {!compactToolbar && (
-                    <button type="button" onClick={handleReset} aria-label="Reset code" className={styles.btnReset}>
-                      <RotateCcw className={styles.iconSm} strokeWidth={2} />
-                      Reset
-                    </button>
-                  )}
-                  {!isKotlin && (
+                  <div className={styles.mobileMenuBackdrop} aria-hidden onClick={() => setMobileMenuOpen(false)} />
+                  <div className={styles.mobileMenuDropdown}>
                     <button
                       type="button"
-                      onClick={runCode}
-                      disabled={isRunning}
-                      aria-label={isRunning ? "Running" : "Run code"}
-                      className={`${styles.btnRun} ${isMobile ? styles.btnRunMobile : ""} ${isRunning ? styles.btnRunRunning : ""}`}
+                      onClick={() => { handleSelectAll(); setMobileMenuOpen(false); }}
+                      className={styles.mobileMenuItem}
                     >
-                      <Play className={styles.iconSm} fill="currentColor" strokeWidth={2} />
-                      <span className={styles.toolbarBtnLabel}>{isRunning ? "Running…" : "Run"}</span>
-                      <kbd className={styles.btnRunKbd}>⌘↵</kbd>
+                      <MousePointer2 className={styles.iconMd} /> Select all
                     </button>
-                  )}
-                  {compactToolbar && (
-                    <>
+                    {!readOnly && (
                       <button
                         type="button"
-                        onClick={() => setIsFullscreen((v) => !v)}
-                        aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
-                        className={styles.btnMaximize}
+                        onClick={() => { handlePaste(); setMobileMenuOpen(false); }}
+                        className={styles.mobileMenuItem}
                       >
-                        {isFullscreen ? <Minimize2 className={styles.iconSm} strokeWidth={2} /> : <Maximize2 className={styles.iconSm} strokeWidth={2} />}
-                        {isFullscreen ? "Exit" : "Maximize"}
+                        <ClipboardPaste className={styles.iconMd} /> Paste
                       </button>
-                      <div className={styles.mobileMenuWrap}>
-                        <button
-                          ref={tertiaryMenuButtonRef}
-                          type="button"
-                          onClick={() => setTertiaryMenuOpen((v) => !v)}
-                          className={styles.btnTertiary}
-                          aria-label="More options"
-                          aria-expanded={tertiaryMenuOpen}
-                        >
-                          <MoreVertical className={styles.iconSm} strokeWidth={2} />
-                        </button>
-                        {tertiaryMenuOpen && tertiaryMenuRect && !isFullscreen && typeof document !== "undefined" &&
-                          createPortal(
-                            <>
-                              <div className={styles.tertiaryMenuBackdropPortal} aria-hidden onClick={() => setTertiaryMenuOpen(false)} />
-                              <div
-                                className={styles.tertiaryMenuDropdownPortal}
-                                style={{
-                                  position: "fixed",
-                                  top: tertiaryMenuRect.bottom + 4,
-                                  right: window.innerWidth - tertiaryMenuRect.right,
-                                }}
-                              >
-                                <div className={styles.mobileMenuDropdown}>
-                                  <button type="button" onClick={() => { handleReset(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
-                                    <RotateCcw className={styles.iconMd} /> Reset
-                                  </button>
-                                  <div className={styles.mobileMenuItemFontSize}>
-                                    <span className={styles.mobileMenuItemLabel}>Font size</span>
-                                    <div className={styles.fontSizeGroup}>
-                                      <button type="button" onClick={() => setFontSize((s) => Math.max(10, s - 1))} aria-label="Decrease font size" className={styles.fontSizeBtn}>
-                                        <Minus className={styles.iconSm} strokeWidth={2.5} />
-                                      </button>
-                                      <span className={styles.fontSizeValue}>{fontSize}</span>
-                                      <button type="button" onClick={() => setFontSize((s) => Math.min(24, s + 1))} aria-label="Increase font size" className={styles.fontSizeBtn}>
-                                        <Plus className={styles.iconSm} strokeWidth={2.5} />
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </>,
-                            document.body
-                          )}
-                      </div>
-                    </>
-                  )}
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => { handleReset(); setMobileMenuOpen(false); }}
+                      className={styles.mobileMenuItem}
+                    >
+                      <RotateCcw className={styles.iconMd} /> Reset
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setIsFullscreen(true); setMobileMenuOpen(false); }}
+                      className={styles.mobileMenuItem}
+                    >
+                      <Maximize2 className={styles.iconMd} /> Fullscreen
+                    </button>
+                  </div>
                 </>
+              )}
+            </div>
+          )}
+          {/* Run buttons — editable only */}
+          {!readOnly && (
+            <>
+              {!isMobile && !compactToolbar && !isKotlin && (
+                <button
+                  type="button"
+                  onClick={runCode}
+                  disabled={isRunning}
+                  aria-label={isRunning ? "Running" : "Run code"}
+                  className={`${styles.btnRun} ${isRunning ? styles.btnRunRunning : ""}`}
+                >
+                  <Play className={styles.iconSm} fill="currentColor" strokeWidth={2} />
+                  <span className={styles.toolbarBtnLabel}>{isRunning ? "Running…" : "Run"}</span>
+                  <kbd className={styles.btnRunKbd}>⌘↵</kbd>
+                </button>
               )}
               {isMobile && !isKotlin && (
                 <button
@@ -1118,7 +1241,7 @@ export function solution() {
             <button
               type="button"
               onClick={() => setIsFullscreen((v) => !v)}
-              aria-label={isFullscreen ? "Exit fullscreen" : "Maximize"}
+              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
               className={styles.btnMaximize}
             >
               {isFullscreen ? <Minimize2 className={styles.iconSm} strokeWidth={2} /> : <Maximize2 className={styles.iconSm} strokeWidth={2} />}
@@ -1222,26 +1345,61 @@ export function solution() {
     </div>
   );
 
+  const mobileBothCollapsed = previewCollapsed && consoleCollapsed;
   const previewSection =
     isRunnable && !isKotlin ? (
-      <div className={isFullscreen ? styles.previewSectionFullscreen : styles.previewSection}>
-        <div className={isFullscreen ? styles.previewGridFullscreen : styles.previewGrid}>
-          <div className={styles.previewCol}>
-            <div className={styles.previewHeader}>
+      <div
+        className={isFullscreen ? styles.previewSectionFullscreen : styles.previewSection}
+        style={isFullscreen && mobileBothCollapsed ? { flex: "0 0 auto" } : undefined}
+      >
+        <div
+          className={isFullscreen ? styles.previewGridFullscreen : styles.previewGrid}
+          style={isFullscreen && mobileBothCollapsed ? { flex: "0 0 auto" } : undefined}
+        >
+          <div className={styles.previewCol} style={previewCollapsed ? { minHeight: 0 } : undefined}>
+            <div
+              className={styles.previewHeader}
+              style={{ cursor: "pointer" }}
+              onClick={() => setPreviewCollapsed((c) => !c)}
+              title={previewCollapsed ? "Expand Preview" : "Collapse Preview"}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPreviewCollapsed((c) => !c); } }}
+              aria-expanded={!previewCollapsed}
+            >
               <Monitor className={`${styles.iconSm} ${styles.iconCyanMuted}`} strokeWidth={2} />
               <span className={styles.previewHeaderLabel}>Preview</span>
+              {previewCollapsed ? (
+                <ChevronDown className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
+              ) : (
+                <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
+              )}
             </div>
-            {previewColContent}
+            {!previewCollapsed && previewColContent}
           </div>
-          <div className={styles.previewColConsole}>
-            <div className={styles.previewHeader}>
+          <div className={styles.previewColConsole} style={consoleCollapsed ? { minHeight: 0 } : undefined}>
+            <div
+              className={styles.previewHeader}
+              style={{ cursor: "pointer" }}
+              onClick={() => setConsoleCollapsed((c) => !c)}
+              title={consoleCollapsed ? "Expand Console" : "Collapse Console"}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setConsoleCollapsed((c) => !c); } }}
+              aria-expanded={!consoleCollapsed}
+            >
               <Terminal className={`${styles.iconSm} ${styles.iconEmerald}`} strokeWidth={2} />
               <span className={styles.previewHeaderLabel}>Console</span>
               {logs.length > 0 && (
                 <span className={styles.previewHeaderBadge}>{logs.length}</span>
               )}
+              {consoleCollapsed ? (
+                <ChevronDown className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
+              ) : (
+                <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
+              )}
             </div>
-            {consoleColContent}
+            {!consoleCollapsed && consoleColContent}
           </div>
         </div>
       </div>
@@ -1279,9 +1437,9 @@ export function solution() {
           <Monitor className={`${styles.iconSm} ${styles.iconCyanMuted}`} strokeWidth={2} />
           <span className={styles.previewHeaderLabel}>Preview</span>
           {previewCollapsed ? (
-            <ChevronRight className={styles.iconSm} style={{ marginLeft: "auto" }} />
+            <ChevronDown className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
           ) : (
-            <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} />
+            <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
           )}
         </div>
         {!previewCollapsed && previewColContent}
@@ -1314,9 +1472,9 @@ export function solution() {
             <span className={styles.previewHeaderBadge}>{logs.length}</span>
           )}
           {consoleCollapsed ? (
-            <ChevronRight className={styles.iconSm} style={{ marginLeft: "auto" }} />
+            <ChevronDown className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
           ) : (
-            <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} />
+            <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
           )}
         </div>
         {!consoleCollapsed && consoleColContent}
@@ -1376,6 +1534,44 @@ export function solution() {
     </div>
   );
 
+  const mobileFloatingActionBar = isMobile && isFullscreen && mobileEditorOpen && (
+    <div className={styles.floatingActionBar}>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className={`${styles.floatingActionBtn} ${copyDone ? styles.floatingActionBtnActive : ""}`}
+      >
+        {copyDone ? <Check className={styles.iconLg} strokeWidth={2} /> : <Copy className={styles.iconLg} strokeWidth={2} />}
+        <span>{copyDone ? "Copied!" : "Copy All"}</span>
+      </button>
+      {!readOnly && (
+        <button type="button" onClick={handlePaste} className={styles.floatingActionBtn}>
+          <ClipboardPaste className={styles.iconLg} strokeWidth={2} />
+          <span>Paste</span>
+        </button>
+      )}
+      <button type="button" onClick={handleSelectAll} className={styles.floatingActionBtn}>
+        <MousePointer2 className={styles.iconLg} strokeWidth={2} />
+        <span>Select All</span>
+      </button>
+      <button type="button" onClick={handleReset} className={styles.floatingActionBtn}>
+        <RotateCcw className={styles.iconLg} strokeWidth={2} />
+        <span>Reset</span>
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          setIsFullscreen(false);
+          setMobileEditorOpen(false);
+        }}
+        className={`${styles.floatingActionBtn} ${styles.floatingActionBtnMinimize}`}
+      >
+        <Minimize2 className={styles.iconLg} strokeWidth={2} />
+        <span>Exit</span>
+      </button>
+    </div>
+  );
+
   const fullscreenOverlay =
     showFullscreenPortal &&
     isMounted &&
@@ -1414,7 +1610,9 @@ export function solution() {
           style={{
             height: "100%",
             minHeight: 0,
-            padding: "env(safe-area-inset-top) max(env(safe-area-inset-right), 12px) env(safe-area-inset-bottom) max(env(safe-area-inset-left), 12px)",
+            padding: isMobile
+              ? "env(safe-area-inset-top) 0 0 0"
+              : "env(safe-area-inset-top) max(env(safe-area-inset-right), 12px) env(safe-area-inset-bottom) max(env(safe-area-inset-left), 12px)",
             position: "relative",
           }}
           initial={{ opacity: 0, scale: 0.98 }}
@@ -1436,6 +1634,14 @@ export function solution() {
                 }}
               >
                 <div className={styles.mobileMenuDropdown}>
+                  <button type="button" onClick={() => { handleSelectAll(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
+                    <MousePointer2 className={styles.iconMd} /> Select all
+                  </button>
+                  {!readOnly && (
+                    <button type="button" onClick={() => { handlePaste(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
+                      <ClipboardPaste className={styles.iconMd} /> Paste
+                    </button>
+                  )}
                   <button type="button" onClick={() => { handleReset(); setTertiaryMenuOpen(false); }} className={styles.mobileMenuItem}>
                     <RotateCcw className={styles.iconMd} /> Reset
                   </button>
@@ -1456,6 +1662,7 @@ export function solution() {
             </>
           )}
         </motion.div>
+        {mobileFloatingActionBar}
       </motion.div>,
       document.body
     );

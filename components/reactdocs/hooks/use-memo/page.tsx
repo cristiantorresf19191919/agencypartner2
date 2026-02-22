@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, Stack, Heading, Text, ButtonLink, CodeComparison } from "@/components/ui";
+import { Card, Stack, Heading, Text, ButtonLink, CodeComparison, HighlightedCode } from "@/components/ui";
 import { ExpensiveCalculation } from "@/components/hooks/ExpensiveCalculation";
 
 export default function UseMemoPage() {
@@ -166,32 +166,26 @@ function Component({ numbers }) {
               <div className="space-y-4">
                 <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg">
                   <Heading level={3} className="text-lg font-bold mb-2">Filtering/Sorting Arrays</Heading>
-                  <pre className="text-sm bg-zinc-900 text-zinc-100 p-4 rounded overflow-x-auto">
-{`const filteredItems = useMemo(
+                  <HighlightedCode code={`const filteredItems = useMemo(
   () => items.filter(item => item.category === category),
   [items, category]
-);`}
-                  </pre>
+);`} language="tsx" className="text-sm bg-zinc-900 text-zinc-100 p-4 rounded overflow-x-auto" />
                 </div>
 
                 <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg">
                   <Heading level={3} className="text-lg font-bold mb-2">Complex Calculations</Heading>
-                  <pre className="text-sm bg-zinc-900 text-zinc-100 p-4 rounded overflow-x-auto">
-{`const total = useMemo(
+                  <HighlightedCode code={`const total = useMemo(
   () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
   [items]
-);`}
-                  </pre>
+);`} language="tsx" className="text-sm bg-zinc-900 text-zinc-100 p-4 rounded overflow-x-auto" />
                 </div>
 
                 <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg">
                   <Heading level={3} className="text-lg font-bold mb-2">Derived Data</Heading>
-                  <pre className="text-sm bg-zinc-900 text-zinc-100 p-4 rounded overflow-x-auto">
-{`const sortedUsers = useMemo(
+                  <HighlightedCode code={`const sortedUsers = useMemo(
   () => [...users].sort((a, b) => a.name.localeCompare(b.name)),
   [users]
-);`}
-                  </pre>
+);`} language="tsx" className="text-sm bg-zinc-900 text-zinc-100 p-4 rounded overflow-x-auto" />
                 </div>
               </div>
             </Stack>
