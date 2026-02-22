@@ -417,6 +417,7 @@ export default function RootLayout({ children }) {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -436,6 +437,7 @@ export default function RootLayout({ children }) {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
           </Stack>
@@ -507,6 +509,7 @@ export async function getUser(id: string) {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -758,6 +761,7 @@ function useKeyboardShortcut(key, callback) {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -982,6 +986,7 @@ export const App = () => {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -1088,6 +1093,7 @@ export const App = () => {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -1214,6 +1220,7 @@ export const App = () => <TodoList />`}
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -1337,6 +1344,7 @@ export const App = () => <SettingsPanel />`}
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -1435,6 +1443,7 @@ export const App = () => <ScrollTracker />`}
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -1814,6 +1823,7 @@ export const App = () => {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -1875,6 +1885,7 @@ export const App = () => {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -1957,6 +1968,7 @@ function Dropdown({ isOpen }) {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -2085,6 +2097,7 @@ export const App = () => {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -2154,6 +2167,7 @@ export const App = () => {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 
@@ -2381,6 +2395,7 @@ function setLocalStorage(key, value) {
               readOnly={false}
               collapsePanelsByDefault
               compactToolbar
+              enableMultiFile
               maxCodeHeight={800}
             />
 

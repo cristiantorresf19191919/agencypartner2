@@ -1048,6 +1048,7 @@ export default function FrontendDesignPatterns2026Page() {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={600}
               height="auto"
             />
@@ -1112,6 +1113,7 @@ export default function FrontendDesignPatterns2026Page() {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1139,6 +1141,7 @@ export default function FrontendDesignPatterns2026Page() {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1170,6 +1173,7 @@ export default function FrontendDesignPatterns2026Page() {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1205,6 +1209,7 @@ export default function FrontendDesignPatterns2026Page() {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1266,6 +1271,7 @@ p {
               disableLinting={true}
               collapsePanelsByDefault={true}
               compactToolbar={true}
+              enableMultiFile
               height="auto"
             />
 
@@ -1357,6 +1363,7 @@ p {
               disableLinting={true}
               collapsePanelsByDefault={true}
               compactToolbar={true}
+              enableMultiFile
               height="auto"
             />
           </Stack>
@@ -1387,6 +1394,7 @@ p {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1419,6 +1427,7 @@ p {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1520,6 +1529,7 @@ function ProductCard({ title, price, image, rating, onAddToCart }: ProductCardPr
               disableLinting={true}
               collapsePanelsByDefault={true}
               compactToolbar={true}
+              enableMultiFile
               height="auto"
             />
           </Stack>
@@ -1546,6 +1556,7 @@ function ProductCard({ title, price, image, rating, onAddToCart }: ProductCardPr
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1572,6 +1583,7 @@ function ProductCard({ title, price, image, rating, onAddToCart }: ProductCardPr
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
@@ -1640,6 +1652,7 @@ function TodoList({ items }) {
               disableLinting={true}
               collapsePanelsByDefault={true}
               compactToolbar={true}
+              enableMultiFile
               height="auto"
             />
           </Stack>
@@ -1666,6 +1679,7 @@ function TodoList({ items }) {
               disableLinting={true}
               collapsePanelsByDefault={false}
               compactToolbar={true}
+              enableMultiFile
               maxCodeHeight={500}
               height="auto"
             />
