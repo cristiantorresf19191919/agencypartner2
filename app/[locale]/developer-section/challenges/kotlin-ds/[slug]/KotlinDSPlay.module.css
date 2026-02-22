@@ -1,0 +1,756 @@
+/* Kotlin DS Challenge Play — styles for [slug]/page.tsx */
+
+.editorLoading {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  color: #c2d8ff;
+  background: #0b1024;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #7cf4ff;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dsDiagram {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Celebration overlay */
+.celebrationOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.celebrationContent {
+  text-align: center;
+  padding: 48px 40px;
+  max-width: 420px;
+}
+
+.celebrationTrophy {
+  width: 80px;
+  height: 80px;
+  color: #fbbf24;
+  margin-bottom: 20px;
+}
+
+.celebrationTitle {
+  margin: 0 0 12px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #f1f6ff;
+}
+
+.celebrationText {
+  margin: 0 0 24px;
+  font-size: 16px;
+  color: #c6d5ff;
+  line-height: 1.5;
+}
+
+.celebrationStars {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.celebrationStar {
+  font-size: 32px;
+  opacity: 0.9;
+}
+
+.notFound {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 140px 24px 80px;
+  color: #c6d5ff;
+}
+
+.notFound a {
+  color: #7cf4ff;
+  font-weight: 600;
+}
+
+.notFound a:hover {
+  text-decoration: underline;
+}
+
+.playSection {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 100px 24px 40px;
+}
+
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #9fc4ff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.navBtn:hover {
+  border-color: rgba(124, 244, 255, 0.3);
+  background: rgba(124, 244, 255, 0.08);
+  color: #e6f0ff;
+}
+
+.navCenter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.topicBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.challengeNum {
+  font-size: 13px;
+  color: #8b9dc4;
+  font-weight: 600;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.description {
+  position: sticky;
+  top: 100px;
+  padding: 20px 0;
+}
+
+@media (max-width: 1100px) {
+  .description {
+    position: static;
+    top: auto;
+  }
+}
+
+.descHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.difficulty {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.easy {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.15));
+  color: #6ee7b7;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.medium {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(251, 191, 36, 0.15));
+  color: #fde047;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.hard {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.15));
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.pts {
+  font-size: 13px;
+  color: #9fc4ff;
+  font-weight: 600;
+}
+
+.descTitle {
+  margin: 0 0 14px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #f1f6ff;
+  line-height: 1.25;
+}
+
+.diagramWrap {
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.conceptCard {
+  margin: 16px 0;
+  padding: 18px 20px;
+  background: rgba(124, 244, 255, 0.06);
+  border: 1px solid rgba(124, 244, 255, 0.2);
+  border-radius: 12px;
+  border-left: 4px solid rgba(124, 244, 255, 0.5);
+}
+
+.conceptIcon {
+  color: #7cf4ff;
+  font-size: 22px !important;
+  margin-bottom: 8px;
+}
+
+.conceptTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e6f0ff;
+  margin: 0 0 8px;
+}
+
+.conceptText {
+  font-size: 14px;
+  color: #c6d5ff;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.descBody {
+  margin: 0;
+  font-size: 14px;
+  color: #c6d5ff;
+  line-height: 1.6;
+}
+
+.descSub {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #9fc4ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sample {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  color: #ddecff;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Hints */
+.hintsSection {
+  margin-top: 20px;
+}
+
+.hintToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+  color: #fde047;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hintToggle:hover {
+  background: rgba(251, 191, 36, 0.18);
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+.hintsList {
+  margin-top: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.hintItem {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.hintText {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #c6d5ff;
+  line-height: 1.5;
+}
+
+.revealHintBtn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(124, 244, 255, 0.3);
+  background: rgba(124, 244, 255, 0.1);
+  color: #7cf4ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.revealHintBtn:hover {
+  background: rgba(124, 244, 255, 0.18);
+}
+
+/* Solution */
+.solutionSection {
+  margin-top: 20px;
+}
+
+.solutionToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  color: #fca5a5;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.solutionToggle:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.solutionCode {
+  margin-top: 12px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  color: #ddecff;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+/* Editor column */
+.editorColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.langLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9fc4ff;
+}
+
+.shortcut {
+  font-size: 11px;
+  color: #8b9dc4;
+  font-weight: 500;
+}
+
+.editorWrap {
+  height: 480px;
+  border: 1px solid rgba(124, 244, 255, 0.15);
+  background: linear-gradient(180deg, rgba(8, 12, 28, 0.98), rgba(5, 8, 20, 0.99));
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  position: relative;
+  max-width: 100%;
+  min-width: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(124, 244, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@media (min-width: 768px) {
+  .editorWrap {
+    height: 580px;
+  }
+}
+
+@media (max-width: 767px) {
+  .editorWrap {
+    height: 320px;
+    max-height: 50vh;
+  }
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: #d0e0ff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iconBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.runBtn,
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.runBtn {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.35);
+}
+
+.runBtn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(124, 58, 237, 0.45);
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.4);
+}
+
+.submitBtn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #34d869, #22c55e);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(34, 197, 94, 0.5);
+}
+
+.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.outputPanel {
+  border: 1px solid rgba(124, 244, 255, 0.12);
+  background: linear-gradient(180deg, rgba(8, 14, 32, 0.96), rgba(6, 10, 22, 0.98));
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 220px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.outputHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e6f0ff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.passLabel {
+  color: #6ee7b7;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.failLabel {
+  color: #fca5a5;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Kotlin loading steps */
+.kotlinLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 40px 24px;
+  min-height: 180px;
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.05), rgba(167, 139, 250, 0.03));
+  border-radius: 12px;
+  margin: 16px;
+}
+
+.kotlinLoadingSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 260px;
+}
+
+.kotlinStep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.kotlinStep.active {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(167, 139, 250, 0.12));
+  border-color: rgba(167, 139, 250, 0.4);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
+}
+
+.kotlinStep.done {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(22, 163, 74, 0.1));
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.stepDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.kotlinStep.active .stepDot {
+  background: #a78bfa;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+}
+
+.kotlinStep.done .stepDot {
+  background: #6ee7b7;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+.stepLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b9dc4;
+  transition: color 0.3s ease;
+}
+
+.kotlinStep.active .stepLabel {
+  color: #e6f0ff;
+}
+
+.kotlinStep.done .stepLabel {
+  color: #a5f5cf;
+}
+
+.successBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 18px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(22, 163, 74, 0.3));
+  border: 2px solid rgba(34, 197, 94, 0.6);
+  border-radius: 14px;
+  color: #6ee7b7;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3);
+}
+
+.successIcon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* Test results */
+.testResults {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.testCase {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+}
+
+.testCase.testPassed {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.testCase.testFailed {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.testLabel {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #e6f0ff;
+}
+
+.testCase.testPassed .testLabel {
+  color: #6ee7b7;
+}
+
+.testCase.testFailed .testLabel {
+  color: #fca5a5;
+}
+
+.testDiff {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  font-size: 12px;
+  color: #c6d5ff;
+  line-height: 1.5;
+}
+
+.testDiff div {
+  margin-bottom: 4px;
+}
+
+.testDiff div:last-child {
+  margin-bottom: 0;
+}
+
+.testKey {
+  font-weight: 600;
+  color: #9fc4ff;
+  margin-right: 4px;
+}
+
+.errorLine {
+  margin: 10px 16px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  color: #fecaca;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.logList {
+  max-height: 200px;
+  overflow: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.emptyLog {
+  margin: 0;
+  color: #7b9ad0;
+  font-size: 14px;
+}
+
+.logLine {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ddecff;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
