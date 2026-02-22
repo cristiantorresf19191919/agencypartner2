@@ -192,6 +192,7 @@ export default function ReactLessonsPage() {
                   height={280}
                   disableLinting={false}
                   autoInjectImports={true}
+                  compactToolbar
                   enableMultiFile={true}
                 />
               </Stack>
