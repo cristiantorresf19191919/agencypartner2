@@ -43,6 +43,7 @@
 .courseSidebarHeader {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   padding: 16px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -68,6 +69,28 @@
   background: rgba(124, 244, 255, 0.12);
   color: #7cf4ff;
   border-color: rgba(124, 244, 255, 0.3);
+}
+
+.courseSidebarClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin-left: auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: #9fc4ff;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.courseSidebarClose:hover {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+  border-color: rgba(248, 113, 113, 0.3);
 }
 
 .courseSidebarTitle {
@@ -126,22 +149,24 @@
 }
 
 .courseNavItemActive {
-  background: linear-gradient(120deg, rgba(93, 95, 255, 0.15), rgba(124, 244, 255, 0.12));
-  border-color: rgba(124, 244, 255, 0.35);
+  background: rgba(124, 244, 255, 0.08);
+  border: none;
+  border-left: 4px solid #35e4b2;
+  border-radius: 0 10px 10px 0;
   color: #e6f0ff;
-  box-shadow: 0 2px 12px rgba(124, 244, 255, 0.15);
+  padding-left: 12px;
 }
 
 .courseNavStep {
   font-size: 11px;
   font-weight: 600;
-  color: #7cf4ff;
+  color: #a5f5ff;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .courseNavItemActive .courseNavStep {
-  color: #a5f5ff;
+  color: #cffafe;
 }
 
 .courseNavLabel {
@@ -193,8 +218,11 @@
   }
 
   .courseSidebarCollapsed {
-    width: 52px;
-    min-width: 52px;
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border-right: none;
+    box-shadow: none;
   }
 
   .courseSidebarCollapsed .courseSidebarHeader {
@@ -206,10 +234,64 @@
     margin: 0 auto;
   }
 
+  /* Mobile: no stranded strip; sidebar opens via sticky "Chapters" bar */
+  .courseSidebarCollapsed .courseSidebarHeader {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
   .courseMain {
-    margin-left: 52px;
+    margin-left: 0;
     min-width: 0;
   }
+}
+
+/* Sticky bottom bar: Chapters / Index trigger (mobile only, replaces stranded sidebar toggle) */
+.courseChaptersBar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(12, 16, 36, 0.97), rgba(7, 10, 24, 0.98));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 900px) {
+  .courseChaptersBar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.courseChaptersBarBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(124, 244, 255, 0.1);
+  color: #7cf4ff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.courseChaptersBarBtn:hover {
+  background: rgba(124, 244, 255, 0.18);
+  border-color: rgba(124, 244, 255, 0.3);
+  color: #a5f5ff;
 }
 
 .playSection {
@@ -220,6 +302,12 @@
   padding: 100px 24px 40px;
 }
 
+@media (max-width: 768px) {
+  .playSection {
+    padding: 24px 16px 100px;
+  }
+}
+
 /* When used with sidebar (React course): fill main area, no centering or max-width */
 .playSectionFullWidth {
   width: 100%;
@@ -228,6 +316,12 @@
   padding: 24px 28px 40px;
   flex: 1;
   min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .playSectionFullWidth {
+    padding: 20px 16px 100px;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -245,6 +339,12 @@
   margin-right: auto;
   padding: 100px 24px 40px;
   width: 100%;
+}
+
+@media (max-width: 900px) {
+  .playSectionStacked {
+    padding-bottom: 80px;
+  }
 }
 
 @media (min-width: 1400px) {
@@ -442,6 +542,14 @@
   line-height: 1.25;
 }
 
+@media (max-width: 480px) {
+  .descTitle {
+    font-size: clamp(1.25rem, 5.5vw, 1.5rem);
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+}
+
 .descSub {
   margin: 20px 0 8px;
   font-size: 13px;
@@ -456,6 +564,13 @@
   font-size: 14px;
   color: #c6d5ff;
   line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+  .descBody {
+    font-size: clamp(0.875rem, 2.5vw, 14px);
+    line-height: 1.65;
+  }
 }
 
 .sample {
@@ -1062,16 +1177,23 @@
   font-size: 14px;
   color: #c6d5ff;
   line-height: 1.7;
-  margin: 0;
+  margin: 0 0 1.25em;
+}
+
+@media (max-width: 480px) {
+  .conceptBody {
+    font-size: clamp(0.875rem, 2.5vw, 14px);
+    line-height: 1.65;
+  }
 }
 
 .conceptBody+.conceptBody {
-  margin-top: 10px;
+  margin-top: 1.25em;
 }
 
 .inlineCode {
-  padding: 2px 6px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
   font-family: "SF Mono", Consolas, monospace;

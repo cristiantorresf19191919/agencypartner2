@@ -76,6 +76,8 @@ export function CodeComparison({
               language="kotlin"
               readOnly={false}
               height="auto"
+              compactToolbar
+              enableMultiFile
             />
           </div>
         </div>

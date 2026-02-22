@@ -202,3 +202,55 @@ body {
     gap: 8px;
   }
 }
+
+/* Hide floating actions when mobile nav menu is open so user focuses on navigation */
+body[data-mobile-menu-open="true"] .floatingActionsWrapper {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Hide floating actions when code editor is in fullscreen focus mode */
+body[data-code-editor-fullscreen="true"] .floatingActionsWrapper {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Hide floating actions when reactor-flux nav drawer is open */
+body[data-reactor-drawer-open="true"] .floatingActionsWrapper {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Hide floating actions when Kotlin (or other course) side-drawer is open */
+body[data-course-drawer-open="true"] .floatingActionsWrapper {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Reading mode (doc pages): hide FABs on scroll down, show on scroll up */
+.floatingActionsWrapper {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+body[data-doc-reading-scroll="down"] .floatingActionsWrapper {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+}
+
+/* Home landing: bottom padding so hero trust banner and footer can scroll above FABs */
+.homeMain {
+  padding-bottom: 160px;
+}
+
+@media (max-width: 768px) {
+  .homeMain {
+    padding-bottom: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .homeMain {
+    padding-bottom: 120px;
+  }
+}

@@ -13,8 +13,8 @@ import {
   Code as CodeIcon,
   Fullscreen as FullscreenIcon,
   FullscreenExit as FullscreenExitIcon,
-  ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
+  Close as CloseIcon,
   School as SchoolIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
@@ -285,6 +285,43 @@ export default function KotlinCourseLessonPage() {
     };
   }, [isFullscreen]);
 
+  /* Hide global FABs when course drawer is open so they don’t cover nav items */
+  useEffect(() => {
+    if (!sidebarCollapsed) {
+      document.body.setAttribute("data-course-drawer-open", "true");
+    } else {
+      document.body.removeAttribute("data-course-drawer-open");
+    }
+    return () => document.body.removeAttribute("data-course-drawer-open");
+  }, [sidebarCollapsed]);
+
+  /* Reading mode: hide FABs when scrolling down, show when scrolling up */
+  useEffect(() => {
+    const threshold = 36;
+    let lastScrollY = typeof window !== "undefined" ? window.scrollY : 0;
+    let ticking = false;
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY || document.documentElement.scrollTop;
+        const delta = y - lastScrollY;
+        if (delta > threshold) {
+          document.body.setAttribute("data-doc-reading-scroll", "down");
+        } else if (delta < -threshold) {
+          document.body.setAttribute("data-doc-reading-scroll", "up");
+        }
+        lastScrollY = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.body.removeAttribute("data-doc-reading-scroll");
+    };
+  }, []);
+
   const resetToDefault = useCallback(() => {
     if (lesson) {
       const mainUri = "file:///Main.kt";
@@ -509,30 +546,38 @@ export default function KotlinCourseLessonPage() {
           aria-label="Kotlin course navigation"
         >
           <div className={playStyles.courseSidebarHeader}>
-            <button
-              type="button"
-              className={playStyles.courseSidebarToggle}
-              onClick={() => setSidebarCollapsed((c) => !c)}
-              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {sidebarCollapsed ? (
+            {sidebarCollapsed ? (
+              <button
+                type="button"
+                className={playStyles.courseSidebarToggle}
+                onClick={() => setSidebarCollapsed(false)}
+                aria-label="Expand sidebar"
+                title="Expand sidebar"
+              >
                 <ChevronRightIcon fontSize="small" />
-              ) : (
-                <ChevronLeftIcon fontSize="small" />
-              )}
-            </button>
-            {!sidebarCollapsed && (
-              <div className={playStyles.courseSidebarTitle}>
-                <SchoolIcon className={playStyles.courseSidebarIcon} />
-                <span>Kotlin Course</span>
-              </div>
+              </button>
+            ) : (
+              <>
+                <div className={playStyles.courseSidebarTitle}>
+                  <SchoolIcon className={playStyles.courseSidebarIcon} />
+                  <span>Kotlin Course</span>
+                </div>
+                <button
+                  type="button"
+                  className={playStyles.courseSidebarClose}
+                  onClick={() => setSidebarCollapsed(true)}
+                  aria-label={t("course-close-menu") ?? "Close menu"}
+                  title={t("course-close-menu") ?? "Close menu"}
+                >
+                  <CloseIcon fontSize="small" />
+                </button>
+              </>
             )}
           </div>
           {!sidebarCollapsed && (
             <nav className={playStyles.courseNav}>
               <ul className={playStyles.courseNavList}>
-                {KOTLIN_COURSE_LESSONS.map((l) => {
+                {KOTLIN_COURSE_LESSONS.map((l, i) => {
                   const isActive = slug === l.id;
                   const translated = getKotlinLessonForLocale(locale as "en" | "es", l.id);
                   return (
@@ -542,7 +587,7 @@ export default function KotlinCourseLessonPage() {
                         className={`${playStyles.courseNavItem} ${isActive ? playStyles.courseNavItemActive : ""}`}
                         aria-current={isActive ? "page" : undefined}
                       >
-                        <span className={playStyles.courseNavStep}>{t("course-step")} {l.step}</span>
+                        <span className={playStyles.courseNavStep}>{t("course-step")} {i + 1}</span>
                         <span className={playStyles.courseNavLabel}>{translated?.title ?? l.title}</span>
                       </Link>
                     </li>
@@ -562,6 +607,18 @@ export default function KotlinCourseLessonPage() {
               onKeyDown={(e) => e.key === "Escape" && setSidebarCollapsed(true)}
             />
           )}
+          {/* Mobile: sticky "Chapters" bar so TOC isn’t a stranded left-edge toggle */}
+          <div className={playStyles.courseChaptersBar} aria-hidden>
+            <button
+              type="button"
+              className={playStyles.courseChaptersBarBtn}
+              onClick={() => setSidebarCollapsed(false)}
+              aria-label={t("course-chapters") ?? "Chapters"}
+            >
+              <SchoolIcon fontSize="small" />
+              {t("course-chapters") ?? "Chapters"}
+            </button>
+          </div>
       <section className={`${playStyles.playSection} ${playStyles.playSectionStacked}`}>
         <div className={playStyles.layoutStacked}>
           {/* Full-width lesson content on top */}

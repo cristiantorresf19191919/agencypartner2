@@ -26,6 +26,8 @@ export function KotlinTypeScriptBlock({
             language="kotlin"
             readOnly={false}
             height="auto"
+            compactToolbar
+            enableMultiFile
           />
         </div>
       </div>
@@ -41,6 +43,8 @@ export function KotlinTypeScriptBlock({
             language="typescript"
             readOnly={false}
             height="auto"
+            compactToolbar
+            enableMultiFile
           />
         </div>
       </div>

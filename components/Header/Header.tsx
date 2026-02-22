@@ -85,7 +85,8 @@ const Header = () => {
           </button>
 
           <Link href="/" className={styles.logo}>
-            <i className="fas fa-code"></i> Optimus<strong>Agency</strong>
+            <i className="fas fa-code"></i>
+            <span className={styles.logoText}>Optimus<strong>Agency</strong></span>
           </Link>
 
           <ul className={styles.navLinks}>

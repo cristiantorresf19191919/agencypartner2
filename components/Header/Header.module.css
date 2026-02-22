@@ -140,8 +140,13 @@
   text-shadow: 0 2px 4px rgba(160, 106, 249, 0.2);
 }
 
+.logoText {
+  white-space: nowrap;
+}
+
 .logo strong {
   font-weight: 700;
+  margin-left: 0;
 }
 
 .navLinks {

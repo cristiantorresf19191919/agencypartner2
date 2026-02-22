@@ -1148,62 +1148,44 @@ export default function SpringReactiveProgrammingPage() {
       </nav>
 
       <div className={styles.headerSection}>
-        <Heading className={styles.title}>{postContent?.title || "Mastering Spring Reactive Programming"}</Heading>
+        <Heading className={styles.title}>{postContent?.title || "Dominando Spring Reactive Programming"}</Heading>
         <Text className={styles.subtitle}>
-          A comprehensive guide to reactive programming with Spring. From the <strong>Reactive Manifesto</strong> and <strong>Reactive Streams</strong> specification to <strong>Project Reactor</strong>, <strong>Spring WebFlux</strong>, and production-ready reactive patterns — all with Kotlin code examples.
+          From the <strong>Reactive Manifesto</strong> to <strong>Project Reactor</strong>, <strong>Spring WebFlux</strong>, and production-ready patterns — all with Kotlin code examples.
         </Text>
-        <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
-          <Text className={styles.infoText}>
-            <strong>Contents:</strong> Introducing Reactive Programming — Reactive Manifesto — Reactive Streams — Spring Framework Foundations — RxJava &amp; Reactor — Mono &amp; Flux — Hot vs Cold Publishers — Lazy vs Eager — Backpressure — Operators — Advanced Operators — Error Handling — Async Patterns — Spring WebFlux — WebClient — Reactive Repositories — CAP Theorem — Kafka Messaging — Saga Pattern — Resilience — Spring Cloud Gateway — SSE — Testing.
-          </Text>
-        </div>
-        <nav className={styles.sectionDescription} style={{ marginTop: "1.5rem" }} aria-label="Course contents">
-          <strong style={{ color: "rgba(255,255,255,0.95)" }}>Jump to:</strong>{" "}
-          <a href="#introducing-reactive" className="text-cyan-300 hover:underline">Intro</a>
-          {" · "}
-          <a href="#reactive-manifesto" className="text-cyan-300 hover:underline">Manifesto</a>
-          {" · "}
-          <a href="#reactive-streams" className="text-cyan-300 hover:underline">Streams</a>
-          {" · "}
-          <a href="#spring-foundations" className="text-cyan-300 hover:underline">Spring</a>
-          {" · "}
-          <a href="#rxjava-reactor" className="text-cyan-300 hover:underline">RxJava</a>
-          {" · "}
-          <a href="#mono-and-flux" className="text-cyan-300 hover:underline">Mono &amp; Flux</a>
-          {" · "}
-          <a href="#hot-vs-cold" className="text-cyan-300 hover:underline">Hot/Cold</a>
-          {" · "}
-          <a href="#lazy-vs-eager" className="text-cyan-300 hover:underline">Lazy/Eager</a>
-          {" · "}
-          <a href="#backpressure" className="text-cyan-300 hover:underline">Backpressure</a>
-          {" · "}
-          <a href="#operators" className="text-cyan-300 hover:underline">Operators</a>
-          {" · "}
-          <a href="#advanced-operators" className="text-cyan-300 hover:underline">Advanced Ops</a>
-          {" · "}
-          <a href="#error-handling" className="text-cyan-300 hover:underline">Errors</a>
-          {" · "}
-          <a href="#async-patterns" className="text-cyan-300 hover:underline">Async</a>
-          {" · "}
-          <a href="#spring-webflux" className="text-cyan-300 hover:underline">WebFlux</a>
-          {" · "}
-          <a href="#webclient" className="text-cyan-300 hover:underline">WebClient</a>
-          {" · "}
-          <a href="#reactive-repos" className="text-cyan-300 hover:underline">Repos</a>
-          {" · "}
-          <a href="#cap-theorem" className="text-cyan-300 hover:underline">CAP</a>
-          {" · "}
-          <a href="#kafka-messaging" className="text-cyan-300 hover:underline">Kafka</a>
-          {" · "}
-          <a href="#saga-pattern" className="text-cyan-300 hover:underline">Saga</a>
-          {" · "}
-          <a href="#resilience" className="text-cyan-300 hover:underline">Resilience</a>
-          {" · "}
-          <a href="#cloud-gateway" className="text-cyan-300 hover:underline">Gateway</a>
-          {" · "}
-          <a href="#sse" className="text-cyan-300 hover:underline">SSE</a>
-          {" · "}
-          <a href="#testing" className="text-cyan-300 hover:underline">Testing</a>
+        <nav className={styles.navChipsSection} aria-label="Course contents">
+          <div className={styles.navChipsLabel}>Jump to section</div>
+          <div className={styles.navChipsGrid}>
+            {[
+              { href: "#introducing-reactive", label: "Intro" },
+              { href: "#reactive-manifesto", label: "Manifesto" },
+              { href: "#reactive-streams", label: "Streams" },
+              { href: "#spring-foundations", label: "Spring" },
+              { href: "#rxjava-reactor", label: "RxJava" },
+              { href: "#mono-and-flux", label: "Mono & Flux" },
+              { href: "#hot-vs-cold", label: "Hot/Cold" },
+              { href: "#lazy-vs-eager", label: "Lazy/Eager" },
+              { href: "#backpressure", label: "Backpressure" },
+              { href: "#operators", label: "Operators" },
+              { href: "#advanced-operators", label: "Advanced Ops" },
+              { href: "#error-handling", label: "Errors" },
+              { href: "#async-patterns", label: "Async" },
+              { href: "#spring-webflux", label: "WebFlux" },
+              { href: "#webclient", label: "WebClient" },
+              { href: "#reactive-repos", label: "Repos" },
+              { href: "#cap-theorem", label: "CAP" },
+              { href: "#kafka-messaging", label: "Kafka" },
+              { href: "#saga-pattern", label: "Saga" },
+              { href: "#resilience", label: "Resilience" },
+              { href: "#cloud-gateway", label: "Gateway" },
+              { href: "#sse", label: "SSE" },
+              { href: "#testing", label: "Testing" },
+            ].map((item, i) => (
+              <a key={item.href} href={item.href} className={styles.navChip}>
+                <span className={styles.navChipNumber}>{String(i + 1).padStart(2, "0")}</span>
+                {item.label}
+              </a>
+            ))}
+          </div>
         </nav>
       </div>
 
@@ -1214,43 +1196,16 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Introducing Reactive Programming</Heading>
             <Text className={styles.sectionDescription}>
-              Reactive programming is defined in several ways:
+              Reactive programming builds systems that react to <strong>data as it flows</strong> rather than waiting for results. Instead of blocking threads, reactive programs describe transformation pipelines that execute when data becomes available.
             </Text>
             <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
-              <div className={styles.infoBoxLabel}>DEFINITION 1</div>
+              <div className={styles.infoBoxLabel}>IN A NUTSHELL</div>
               <Text className={styles.infoText}>
-                Declarative programming with an emphasis on <strong>asynchronous data streams</strong> and <strong>change propagation</strong> is known as reactive programming.
-              </Text>
-            </div>
-            <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
-              <div className={styles.infoBoxLabel}>DEFINITION 2</div>
-              <Text className={styles.infoText}>
-                Programming with <strong>asynchronous data streams</strong> is known as reactive programming.
-              </Text>
-            </div>
-            <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
-              <div className={styles.infoBoxLabel}>DEFINITION 3</div>
-              <Text className={styles.infoText}>
-                Reactive programming&apos;s fundamental tenet is that some data types express values that change over time. The values of computations involving these time-varying variables will also vary over time.
-              </Text>
-            </div>
-            <div className={`${styles.infoBox} ${styles.infoBoxOrange}`}>
-              <div className={styles.infoBoxLabel}>DEFINITION 4</div>
-              <Text className={styles.infoText}>
-                Reactive programming is a <strong>micro-architecture technique</strong> that uses event consumption and intelligent routing to modify behavior.
-              </Text>
-            </div>
-            <div className={`${styles.infoBox} ${styles.infoBoxRed}`}>
-              <div className={styles.infoBoxLabel}>DEFINITION 5</div>
-              <Text className={styles.infoText}>
-                A programming paradigm called reactive programming addresses <strong>asynchronous data streams</strong> and the particular spread of change.
+                Declarative programming with an emphasis on <strong>asynchronous data streams</strong> and <strong>change propagation</strong> — data types express values that change over time, and downstream computations update automatically.
               </Text>
             </div>
             <Text className={styles.sectionDescription}>
-              At its core, reactive programming is about building systems that react to <strong>data as it flows</strong>, rather than waiting for results. Instead of blocking a thread while waiting for a database query or an HTTP response, reactive programs describe a pipeline of transformations that execute when data becomes available.
-            </Text>
-            <Text className={styles.sectionDescription}>
-              Observable interfaces and functional programming are always brought up while discussing reactive programming. An <strong>Observable</strong> is one sort of data source where observers can be registered. A class of objects known as <strong>Subscribers</strong> is able to subscribe to a topic and receive updates anytime there is any change made to the subject. The subject keeps track of its observers and automatically updates the list if something changes.
+              The core abstraction is the <strong>Observable/Subscriber</strong> pattern. An Observable is a data source where observers register interest. <strong>Subscribers</strong> receive updates whenever the subject changes — the source keeps track of its observers and pushes notifications automatically.
             </Text>
             <CodeEditor code={observablePatternCode} language="kotlin" readOnly height={420} />
 
@@ -1276,32 +1231,29 @@ export default function SpringReactiveProgrammingPage() {
               </Text>
             </div>
 
-            <Heading level={3} className={styles.categoryTitle}>The Three Principles of Reactive Programming</Heading>
-            <Text className={styles.sectionDescription}>
-              Let&apos;s understand Reactive programming with the following three principles: <strong>Asynchronous</strong>, <strong>Streams</strong>, and <strong>Propagation of change</strong>.
-            </Text>
+            <Heading level={3} className={styles.categoryTitle}>The Three Principles</Heading>
             <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
               <div className={styles.infoBoxLabel}>1. ASYNCHRONOUS</div>
               <Text className={styles.infoText}>
-                When you run an application asynchronously, you can start working on another activity before the previous one is finished, saving you time. When using the reactive method, a database call returns right away rather than blocking the calling thread. The sequence of events in the software is asynchronous — you start working on the previous assignment in the background and then immediately move on to the next. As a result, the system can handle more jobs with reduced resource consumption.
+                A database call returns immediately rather than blocking the calling thread. The system handles more work with fewer resources.
               </Text>
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
               <div className={styles.infoBoxLabel}>2. STREAMS</div>
               <Text className={styles.infoText}>
-                Also known as <strong>data streams</strong>, these are the foundation of reactive programming. The data stream can be thought of as a pipeline of procedures that are applied to the data as it flows through them to alter or change it. Every value stream or sequence of values is referred to as an <strong>observable</strong> in reactive programming.
+                Data flows through a pipeline of transformations. Every value sequence is an <strong>observable</strong> that operators can filter, map, and combine.
               </Text>
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
               <div className={styles.infoBoxLabel}>3. PROPAGATION OF CHANGE</div>
               <Text className={styles.infoText}>
-                When a value changes upstream, all downstream computations that depend on it are automatically re-evaluated. This is the &quot;spreadsheet model&quot; — change one cell and every formula that references it updates instantly. In reactive systems, this propagation happens asynchronously through the stream pipeline.
+                When a value changes upstream, all dependent downstream computations re-evaluate automatically — the &quot;spreadsheet model&quot; applied to async streams.
               </Text>
             </div>
             <CodeEditor code={threePrinciplesCode} language="kotlin" readOnly height={500} />
 
             <Text className={styles.sectionDescription}>
-              <strong>Imperative vs Reactive:</strong> The fundamental shift is from &quot;pull&quot; (blocking, thread-per-request) to &quot;push&quot; (non-blocking, event-driven). Here&apos;s what that looks like in code:
+              <strong>Imperative vs Reactive:</strong> From &quot;pull&quot; (blocking) to &quot;push&quot; (non-blocking, event-driven):
             </Text>
             <CodeComparison
               comparisonId="imperative-vs-reactive"
@@ -1332,37 +1284,37 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>The Reactive Manifesto</Heading>
             <Text className={styles.sectionDescription}>
-              The <strong>Reactive Manifesto</strong> defines four key principles that reactive systems must embody. These are the architectural pillars upon which Spring WebFlux and Project Reactor are built.
+              Four architectural pillars that Spring WebFlux and Project Reactor are built upon:
             </Text>
             <div className={styles.conceptImage}>
               <img
                 src="/images/spring-reactive/reactive-manifesto.png"
                 alt="Reactive Manifesto — Responsive, Resilient, Elastic, Message Driven"
-                style={{ width: "100%", maxWidth: "600px", borderRadius: "8px", margin: "0 auto", display: "block", background: "white", padding: "1rem" }}
+                style={{ width: "100%", maxWidth: "500px", borderRadius: "8px", margin: "0 auto", display: "block", background: "white", padding: "1rem" }}
               />
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
               <div className={styles.infoBoxLabel}>RESPONSIVE</div>
               <Text className={styles.infoText}>
-                A responsive system responds in a timely manner. Responsiveness is the cornerstone of usability and utility. Reactive systems must respond to requests on time — it means the system establishes reliable upper bounds for response times, delivering a consistent quality of service.
+                Reliable upper bounds for response times. Consistent quality of service under all conditions.
               </Text>
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxOrange}`}>
               <div className={styles.infoBoxLabel}>RESILIENT</div>
               <Text className={styles.infoText}>
-                A reactive system needs to be built for failures and know how to handle them to remain responsive in the face of errors (crash, timeout, 500 errors, and so on). Resilience is achieved by replication, containment, isolation, and delegation. Failures are contained within each component, isolating components from each other.
+                Built for failures — replication, containment, isolation. Each component fails independently without cascading.
               </Text>
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
               <div className={styles.infoBoxLabel}>ELASTIC</div>
               <Text className={styles.infoText}>
-                A system that responds to stimuli must continue to do so when loads change. It needs to be able to handle the load with the least amount of resources and scale up and down. Reactive Systems can react to changes in the input rate by increasing or decreasing the resources allocated to service these inputs. This implies designs that have no contention points or central bottlenecks.
+                Scale up and down in response to load changes. No contention points or central bottlenecks.
               </Text>
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
               <div className={styles.infoBoxLabel}>MESSAGE DRIVEN</div>
               <Text className={styles.infoText}>
-                Asynchronous message passing is used by reactive system components to communicate with one another. This ensures loose coupling, isolation, and location transparency. Non-blocking communication allows recipients to only consume resources while active, leading to less system overhead.
+                Asynchronous message passing for loose coupling and location transparency. Recipients consume resources only while active.
               </Text>
             </div>
           </Stack>
@@ -1377,13 +1329,13 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Reactive Streams Specification</Heading>
             <Text className={styles.sectionDescription}>
-              Reactive Streams is a specification (now part of <code>java.util.concurrent.Flow</code> in Java 9+) that defines the contract for asynchronous stream processing with <strong>non-blocking backpressure</strong>. It has four core interfaces:
+              A specification (part of <code>java.util.concurrent.Flow</code> in Java 9+) defining the contract for async stream processing with <strong>non-blocking backpressure</strong>. Four core interfaces:
             </Text>
             <CodeEditor code={reactiveStreamsInterfacesCode} language="kotlin" readOnly height={440} />
             <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
               <div className={styles.infoBoxLabel}>KEY INSIGHT</div>
               <Text className={styles.infoText}>
-                <strong>Publisher</strong> produces data. <strong>Subscriber</strong> consumes data. <strong>Subscription</strong> is the link between them and enables <strong>backpressure</strong> — the subscriber controls how much data it can handle via <code>request(n)</code>. <strong>Processor</strong> is both a subscriber and a publisher (acts as a transformation stage).
+                <strong>Publisher</strong> produces &rarr; <strong>Subscriber</strong> consumes &rarr; <strong>Subscription</strong> enables backpressure via <code>request(n)</code> &rarr; <strong>Processor</strong> is both.
               </Text>
             </div>
           </Stack>
@@ -1398,11 +1350,11 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Spring Framework Foundations</Heading>
             <Text className={styles.sectionDescription}>
-              Before diving deeper into reactive programming, it&apos;s essential to understand the <strong>Spring Framework</strong> foundations that reactive Spring builds upon: <strong>Inversion of Control (IoC)</strong> and <strong>Dependency Injection (DI)</strong>.
+              The foundations that reactive Spring builds upon: <strong>IoC</strong> and <strong>Dependency Injection</strong>.
             </Text>
             <Heading level={3} className={styles.categoryTitle}>IoC &amp; Dependency Injection</Heading>
             <Text className={styles.sectionDescription}>
-              Inversion of Control transfers control of program elements from developers to a container/framework. Dependency Injection is a pattern for implementing IoC — an assembler joins objects together rather than individual objects managing their own dependencies. This decouples implementation from execution, enables modularity, and simplifies testing through component isolation.
+              IoC transfers control from developers to a container. DI wires objects together — decoupling implementation from execution and simplifying testing.
             </Text>
             <div className={styles.conceptImage}>
               <img
@@ -1442,15 +1394,14 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>RxJava &amp; Project Reactor</Heading>
             <Text className={styles.sectionDescription}>
-              <strong>RxJava</strong> is the JVM implementation of ReactiveX — the library that popularized reactive programming. <strong>Project Reactor</strong> is the 4th-generation reactive library based on the Reactive Streams specification, and it&apos;s what Spring WebFlux uses under the hood. While RxJava paved the way, Reactor is Spring&apos;s native choice.
+              <strong>RxJava</strong> popularized reactive on the JVM. <strong>Project Reactor</strong> is the 4th-gen library based on Reactive Streams — Spring&apos;s native choice.
             </Text>
             <CodeEditor code={rxJavaBasicsCode} language="kotlin" readOnly height={440} />
             <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
-              <div className={styles.infoBoxLabel}>RXJAVA VS REACTOR: DETAILED COMPARISON</div>
+              <div className={styles.infoBoxLabel}>COMPARISON</div>
               <Text className={styles.infoText}>
-                <strong>RxJava 3:</strong> <code>Observable</code>, <code>Single</code>, <code>Maybe</code>, <code>Completable</code>, <code>Flowable</code>. Does NOT fully implement Reactive Streams (only Flowable does). Netflix origin.<br/>
-                <strong>Project Reactor:</strong> <code>Flux</code> (0..N), <code>Mono</code> (0..1). Fully implements Reactive Streams spec. Spring-native. Better Java 8+ integration.<br/>
-                <strong>Key difference:</strong> Reactor was designed from the ground up for Reactive Streams compliance and is the default choice for Spring WebFlux. RxJava remains popular for Android development.
+                <strong>RxJava 3:</strong> <code>Observable</code>, <code>Single</code>, <code>Maybe</code>, <code>Flowable</code>. Only Flowable implements Reactive Streams.<br/>
+                <strong>Reactor:</strong> <code>Flux</code> (0..N), <code>Mono</code> (0..1). Full Reactive Streams compliance. Spring-native.
               </Text>
             </div>
           </Stack>
@@ -1465,16 +1416,11 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Mono &amp; Flux: The Building Blocks</Heading>
             <Text className={styles.sectionDescription}>
-              <strong>Project Reactor</strong> is the reactive library used by Spring WebFlux. It provides two core types that implement the <code>Publisher</code> interface:
+              Two core types that implement the <code>Publisher</code> interface in Project Reactor:
             </Text>
-            <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
-              <Text className={styles.infoText}>
-                <strong>In this section:</strong> Mono&lt;T&gt; creation and subscription — Flux&lt;T&gt; streams and operators — When to use Mono vs Flux — Marble diagram reading
-              </Text>
-            </div>
             <Heading level={3} className={styles.categoryTitle}>Mono&lt;T&gt; — 0 or 1 Element</Heading>
             <Text className={styles.sectionDescription}>
-              Think of <code>Mono</code> as a reactive <code>Optional</code> — it will emit at most one item, then complete. Perfect for single-value operations like finding a record by ID or saving an entity.
+              A reactive <code>Optional</code> — emits at most one item. Perfect for single-value operations like <code>findById</code>.
             </Text>
             <div className={styles.conceptImage}>
               <img
@@ -1489,7 +1435,7 @@ export default function SpringReactiveProgrammingPage() {
             <CodeEditor code={monoBasicsCode} language="kotlin" readOnly height={440} />
             <Heading level={3} className={styles.categoryTitle}>Flux&lt;T&gt; — 0 to N Elements</Heading>
             <Text className={styles.sectionDescription}>
-              <code>Flux</code> represents a stream of 0 to N elements. Use it for collections, event streams, or any scenario where multiple values are emitted over time.
+              A stream of 0 to N elements. Use for collections, event streams, or multiple values over time.
             </Text>
             <div className={styles.conceptImage}>
               <img
@@ -1514,7 +1460,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Hot vs Cold Publishers</Heading>
             <Text className={styles.sectionDescription}>
-              Understanding the difference between <strong>hot</strong> and <strong>cold</strong> publishers is crucial. A <strong>cold publisher</strong> generates data anew for each subscription — nothing happens before <code>subscribe()</code>. A <strong>hot publisher</strong> emits data regardless of subscribers; late subscribers miss earlier events.
+              <strong>Cold</strong>: generates data anew per subscription. <strong>Hot</strong>: emits regardless of subscribers — late joiners miss earlier events.
             </Text>
             <CodeEditor code={hotVsColdCode} language="kotlin" readOnly height={520} />
             <div className={`${styles.infoBox} ${styles.infoBoxOrange}`}>
@@ -1535,7 +1481,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Lazy vs Eager Loading</Heading>
             <Text className={styles.sectionDescription}>
-              A subtle but important distinction in Reactor: <code>Mono.just()</code> evaluates its argument <strong>eagerly</strong> (immediately), while <code>Mono.defer()</code> and <code>Mono.fromCallable()</code> evaluate <strong>lazily</strong> (only when subscribed). This matters when the value is expensive to compute.
+              <code>Mono.just()</code> evaluates <strong>eagerly</strong>. <code>Mono.defer()</code> and <code>fromCallable()</code> evaluate <strong>lazily</strong> — only when subscribed.
             </Text>
             <CodeEditor code={lazyVsEagerCode} language="kotlin" readOnly height={480} />
             <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
@@ -1556,7 +1502,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Backpressure</Heading>
             <Text className={styles.sectionDescription}>
-              Backpressure is one of the most important concepts in reactive programming. It&apos;s the mechanism by which a <strong>consumer signals to the producer</strong> how much data it can handle. Without backpressure, a fast producer could overwhelm a slow consumer, leading to out-of-memory errors or dropped data.
+              The mechanism by which a <strong>consumer signals to the producer</strong> how much data it can handle. Without it, fast producers overwhelm slow consumers.
             </Text>
             <CodeEditor code={backpressureCode} language="kotlin" readOnly height={520} />
             <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
@@ -1566,19 +1512,9 @@ export default function SpringReactiveProgrammingPage() {
               </Text>
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxOrange}`}>
-              <div className={styles.infoBoxLabel}>BACKPRESSURE OVERFLOW STRATEGIES</div>
+              <div className={styles.infoBoxLabel}>OVERFLOW STRATEGIES</div>
               <Text className={styles.infoText}>
-                <code>onBackpressureBuffer()</code> — Buffer excess items in memory (risk: OOM if unbounded).<br/>
-                <code>onBackpressureBuffer(maxSize, DROP_OLDEST)</code> — Buffer with max size, drop oldest when full.<br/>
-                <code>onBackpressureBuffer(maxSize, DROP_LATEST)</code> — Buffer with max size, drop newest when full.<br/>
-                <code>onBackpressureDrop()</code> — Drop items the consumer cannot keep up with.<br/>
-                <code>onBackpressureLatest()</code> — Keep only the most recent item, drop the rest.<br/>
-                <code>onBackpressureError()</code> — Signal <code>MissingBackpressureException</code> when overwhelmed.
-              </Text>
-            </div>
-            <div className={`${styles.infoBox} ${styles.infoBoxRed}`}>
-              <Text className={styles.infoText}>
-                <strong>CRITICAL:</strong> Never use unbounded <code>onBackpressureBuffer()</code> in production without a max size. An unbounded buffer under sustained load WILL cause OutOfMemoryError.
+                <code>onBackpressureBuffer()</code> — Buffer in memory &middot; <code>onBackpressureDrop()</code> — Drop excess &middot; <code>onBackpressureLatest()</code> — Keep only latest &middot; <code>onBackpressureError()</code> — Signal error. <strong>Always set a max buffer size in production.</strong>
               </Text>
             </div>
           </Stack>
@@ -1593,7 +1529,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Reactive Operators</Heading>
             <Text className={styles.sectionDescription}>
-              Operators are the vocabulary of reactive programming. They let you <strong>transform</strong>, <strong>filter</strong>, <strong>combine</strong>, and <strong>control</strong> data streams declaratively. Master these and you can express complex async logic in clean, readable pipelines.
+              The vocabulary of reactive programming — <strong>transform</strong>, <strong>filter</strong>, <strong>combine</strong>, and <strong>control</strong> data streams declaratively.
             </Text>
             <div className={styles.conceptImage}>
               <img
@@ -1618,7 +1554,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Advanced Operators</Heading>
             <Text className={styles.sectionDescription}>
-              Beyond the basics, Reactor provides powerful operators for <strong>reusable transformations</strong>, <strong>batching</strong>, <strong>caching</strong>, <strong>grouping</strong>, and <strong>recursive expansion</strong>. These are essential for production-grade reactive pipelines.
+              Production operators: <strong>reusable transformations</strong>, <strong>batching</strong>, <strong>caching</strong>, <strong>grouping</strong>, and <strong>recursive expansion</strong>.
             </Text>
             <Heading level={3} className={styles.categoryTitle}>transform, buffer, cache, groupBy</Heading>
             <CodeEditor code={advancedOperatorsCode} language="kotlin" readOnly height={620} />
@@ -1634,9 +1570,9 @@ export default function SpringReactiveProgrammingPage() {
         <AnimatedSection>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
-            <Heading level={2} className={styles.sectionTitle}>Error Handling in Reactive Streams</Heading>
+            <Heading level={2} className={styles.sectionTitle}>Error Handling</Heading>
             <Text className={styles.sectionDescription}>
-              In reactive programming, errors are <strong>first-class signals</strong>. When an error occurs in a pipeline, it propagates downstream and terminates the stream — unless you handle it. Reactor provides powerful operators for error recovery, fallbacks, and retries.
+              Errors are <strong>first-class signals</strong> that propagate downstream and terminate the stream unless handled with recovery operators.
             </Text>
             <CodeEditor code={errorHandlingCode} language="kotlin" readOnly height={620} />
           </Stack>
@@ -1651,21 +1587,13 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Async Programming Patterns</Heading>
             <Text className={styles.sectionDescription}>
-              Asynchronous programming means executing tasks concurrently with non-blocking operations. It relies on callbacks, promises, and reactive streams. The benefits: improved performance, scalability, better resource efficiency, and the ability to handle thousands of concurrent connections with a small thread pool.
+              Parallel processing, schedulers, and event-driven patterns with Reactor Sinks.
             </Text>
             <CodeEditor code={parallelProcessingCode} language="kotlin" readOnly height={620} />
             <div className={`${styles.infoBox} ${styles.infoBoxPurple}`}>
-              <div className={styles.infoBoxLabel}>SCHEDULERS IN DEPTH</div>
+              <div className={styles.infoBoxLabel}>SCHEDULERS</div>
               <Text className={styles.infoText}>
-                <strong>Schedulers.parallel()</strong> — Fixed pool, thread count = CPU cores. Use for CPU-bound computation (data transformation, encryption, compression). Never block on this scheduler.<br/>
-                <strong>Schedulers.boundedElastic()</strong> — Bounded, elastic thread pool (default max 10x CPU cores, 100K queued tasks). Use for I/O-bound work: wrapping blocking calls (JDBC, file I/O) via <code>subscribeOn(Schedulers.boundedElastic())</code>.<br/>
-                <strong>Schedulers.single()</strong> — Single reusable thread. Use for sequential tasks that must not run concurrently (e.g., writing to a shared log file).<br/>
-                <strong>Schedulers.immediate()</strong> — Execute on the current thread. Zero scheduling overhead. Use for testing or when you explicitly want no thread switching.
-              </Text>
-            </div>
-            <div className={`${styles.infoBox} ${styles.infoBoxRed}`}>
-              <Text className={styles.infoText}>
-                <strong>CRITICAL:</strong> Never call <code>.block()</code> on the Netty event loop thread. This will throw <code>IllegalStateException</code> and can deadlock your application. Wrap blocking calls with <code>Mono.fromCallable(...).subscribeOn(Schedulers.boundedElastic())</code>.
+                <code>parallel()</code> — CPU-bound (cores count) &middot; <code>boundedElastic()</code> — I/O-bound (wrapping blocking calls) &middot; <code>single()</code> — sequential tasks &middot; <code>immediate()</code> — current thread.
               </Text>
             </div>
           </Stack>
@@ -1680,35 +1608,29 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Spring WebFlux</Heading>
             <Text className={styles.sectionDescription}>
-              Spring WebFlux is the reactive web framework in Spring. It runs on a <strong>non-blocking event loop</strong> (Netty by default) instead of a thread-per-request model (Tomcat). It supports two programming models: <strong>annotated controllers</strong> (familiar <code>@RestController</code>) and <strong>functional routing</strong>.
+              The reactive web framework — runs on a <strong>non-blocking event loop</strong> (Netty) with two programming models: annotated controllers and functional routing.
             </Text>
             <div className={styles.conceptImage}>
               <img
                 src="/images/spring-reactive/mvc-vs-webflux-venn.png"
-                alt="Spring MVC vs Spring WebFlux Venn diagram — shared and unique features"
-                style={{ width: "100%", maxWidth: "600px", borderRadius: "8px", margin: "0 auto", display: "block", background: "white", padding: "1rem" }}
+                alt="Spring MVC vs Spring WebFlux Venn diagram"
+                style={{ width: "100%", maxWidth: "500px", borderRadius: "8px", margin: "0 auto", display: "block", background: "white", padding: "1rem" }}
               />
-              <Text className={styles.infoText} style={{ textAlign: "center", marginTop: "0.5rem", fontSize: "0.8rem", opacity: 0.6 }}>
-                Spring MVC vs Spring WebFlux — shared: @Controller, Reactive clients, Tomcat/Jetty/Undertow
-              </Text>
             </div>
             <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
-              <div className={styles.infoBoxLabel}>SPRING MVC VS SPRING WEBFLUX</div>
+              <div className={styles.infoBoxLabel}>MVC VS WEBFLUX</div>
               <Text className={styles.infoText}>
-                <strong>Shared:</strong> @Controller, @RequestMapping, reactive HTTP clients, Tomcat/Jetty/Undertow support.<br/>
-                <strong>MVC only:</strong> Imperative programming, JDBC/JPA, synchronous filters, thread-per-request model.<br/>
-                <strong>WebFlux only:</strong> Functional endpoints (RouterFunction), event loop model, Netty server, Reactor types (Mono/Flux), backpressure support.<br/>
-                <strong>When to choose WebFlux:</strong> High-concurrency APIs, streaming/real-time data, microservices with many outbound HTTP calls, applications where thread efficiency matters.
+                <strong>Shared:</strong> @Controller, reactive clients &middot; <strong>MVC:</strong> JDBC/JPA, thread-per-request &middot; <strong>WebFlux:</strong> RouterFunction, Netty, Mono/Flux, backpressure.
               </Text>
             </div>
             <Heading level={3} className={styles.categoryTitle}>Annotated Controllers</Heading>
             <Text className={styles.sectionDescription}>
-              The annotated style looks exactly like Spring MVC — but the return types are <code>Mono</code> and <code>Flux</code> instead of plain objects. The framework handles subscription and backpressure for you.
+              Same as Spring MVC but with <code>Mono</code>/<code>Flux</code> return types. The framework handles subscription and backpressure.
             </Text>
             <CodeEditor code={springWebFluxControllerCode} language="kotlin" readOnly height={580} />
             <Heading level={3} className={styles.categoryTitle}>Functional Routing</Heading>
             <Text className={styles.sectionDescription}>
-              Functional routing separates route definitions from handler logic. It&apos;s more explicit, composable, and testable — preferred in many reactive projects.
+              Separates route definitions from handler logic. More composable and testable.
             </Text>
             <CodeEditor code={springWebFluxFunctionalCode} language="kotlin" readOnly height={740} />
           </Stack>
@@ -1721,9 +1643,9 @@ export default function SpringReactiveProgrammingPage() {
         <AnimatedSection>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
-            <Heading level={2} className={styles.sectionTitle}>WebClient: Non-Blocking HTTP Client</Heading>
+            <Heading level={2} className={styles.sectionTitle}>WebClient</Heading>
             <Text className={styles.sectionDescription}>
-              <code>WebClient</code> is the reactive replacement for <code>RestTemplate</code>. It&apos;s fully non-blocking and supports streaming, timeouts, retries, and error handling out of the box.
+              The non-blocking replacement for <code>RestTemplate</code> — streaming, timeouts, retries built-in.
             </Text>
             <CodeEditor code={webClientCode} language="kotlin" readOnly height={680} />
           </Stack>
@@ -1737,9 +1659,6 @@ export default function SpringReactiveProgrammingPage() {
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
             <Heading level={3} className={styles.categoryTitle}>WebClient vs RestTemplate</Heading>
-            <Text className={styles.sectionDescription}>
-              <code>RestTemplate</code> is synchronous and blocking — the thread waits idle during the entire HTTP call. <code>WebClient</code> is non-blocking — the thread is free to handle other requests. As of Spring 5, RestTemplate is in maintenance mode and WebClient is the recommended replacement.
-            </Text>
             <CodeComparison
               comparisonId="resttemplate-vs-webclient"
               language="kotlin"
@@ -1758,9 +1677,6 @@ export default function SpringReactiveProgrammingPage() {
               blogMode
             />
             <Heading level={3} className={styles.categoryTitle}>Sequential vs Parallel Calls</Heading>
-            <Text className={styles.sectionDescription}>
-              One of the most powerful patterns in reactive programming: firing multiple HTTP calls in <strong>parallel</strong> with <code>Mono.zip()</code> instead of chaining them <strong>sequentially</strong> with <code>flatMap</code>. The total time drops from the sum of all calls to just the slowest one.
-            </Text>
             <CodeComparison
               comparisonId="sequential-vs-parallel"
               language="kotlin"
@@ -1777,9 +1693,6 @@ export default function SpringReactiveProgrammingPage() {
               blogMode
             />
             <Heading level={3} className={styles.categoryTitle}>Latency Optimization</Heading>
-            <Text className={styles.sectionDescription}>
-              Production-grade WebClient configurations include connection pooling, DNS caching, timeouts, retries, and response caching:
-            </Text>
             <CodeEditor code={latencyOptimizationCode} language="kotlin" readOnly height={580} />
           </Stack>
         </Card>
@@ -1793,7 +1706,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Server-Sent Events (SSE)</Heading>
             <Text className={styles.sectionDescription}>
-              SSE allows the server to <strong>push data to the client</strong> over a long-lived HTTP connection. In reactive Spring, a <code>Flux</code> naturally maps to an SSE stream — each emitted item becomes an event sent to the client.
+              Server pushes data to clients over a long-lived connection. A <code>Flux</code> naturally maps to an SSE stream.
             </Text>
             <CodeEditor code={sseCode} language="kotlin" readOnly height={560} />
             <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
@@ -1814,7 +1727,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Testing Reactive Code</Heading>
             <Text className={styles.sectionDescription}>
-              <code>StepVerifier</code> from <code>reactor-test</code> is the standard tool for testing reactive streams. It lets you assert on each element emitted, verify completion, and test error scenarios — all without blocking.
+              <code>StepVerifier</code> from <code>reactor-test</code> — assert elements, verify completion, test errors without blocking.
             </Text>
             <CodeEditor code={testingReactiveCode} language="kotlin" readOnly height={680} />
           </Stack>
@@ -1829,12 +1742,12 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Reactive Repositories</Heading>
             <Text className={styles.sectionDescription}>
-              Reactive data access means the database driver itself is non-blocking. Spring provides reactive repository support for <strong>R2DBC</strong> (PostgreSQL, MySQL, H2), <strong>MongoDB</strong>, and <strong>Couchbase</strong>. Each extends a reactive base interface that returns <code>Mono</code> and <code>Flux</code> instead of blocking types.
+              Non-blocking data access with <strong>R2DBC</strong>, <strong>MongoDB</strong>, and <strong>Couchbase</strong> — returning <code>Mono</code> and <code>Flux</code>.
             </Text>
             <CodeEditor code={reactiveReposCode} language="kotlin" readOnly height={780} />
             <Heading level={3} className={styles.categoryTitle}>Concurrency Control</Heading>
             <Text className={styles.sectionDescription}>
-              In reactive systems, <strong>optimistic locking</strong> is preferred over pessimistic locking because it doesn&apos;t hold locks across async boundaries. Use a <code>@Version</code> field — if two transactions try to update the same document, the second one gets an <code>OptimisticLockingFailureException</code> and retries.
+              <strong>Optimistic locking</strong> with <code>@Version</code> — no locks held across async boundaries.
             </Text>
             <CodeEditor code={concurrencyControlCode} language="kotlin" readOnly height={520} />
           </Stack>
@@ -1847,9 +1760,9 @@ export default function SpringReactiveProgrammingPage() {
         <AnimatedSection>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
-            <Heading level={2} className={styles.sectionTitle}>CAP Theorem &amp; Distributed Data</Heading>
+            <Heading level={2} className={styles.sectionTitle}>CAP Theorem</Heading>
             <Text className={styles.sectionDescription}>
-              The <strong>CAP Theorem</strong> states that a distributed data store can guarantee at most two of three properties: <strong>Consistency</strong>, <strong>Availability</strong>, and <strong>Partition Tolerance</strong>. In reactive microservices, we typically choose <strong>AP</strong> (Availability + Partition Tolerance) and rely on eventual consistency with the Saga pattern for distributed transactions.
+              Distributed stores guarantee at most two of: <strong>Consistency</strong>, <strong>Availability</strong>, <strong>Partition Tolerance</strong>. Reactive microservices typically choose AP with eventual consistency.
             </Text>
             <CodeEditor code={capTheoremCode} language="kotlin" readOnly height={580} />
           </Stack>
@@ -1864,7 +1777,7 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Messaging with Kafka</Heading>
             <Text className={styles.sectionDescription}>
-              Reactive messaging combines <strong>Kafka</strong> with <strong>Reactor</strong> to create fully non-blocking event-driven pipelines. Kafka messages are consumed and exposed as a <code>Flux</code> stream, which can be streamed to clients via SSE (Server-Sent Events) or processed through reactive pipelines.
+              Kafka + Reactor for fully non-blocking event-driven pipelines. Messages consumed as <code>Flux</code> streams.
             </Text>
             <div className={styles.conceptImage}>
               <img
@@ -1878,9 +1791,9 @@ export default function SpringReactiveProgrammingPage() {
             </div>
             <CodeEditor code={kafkaReactiveCode} language="kotlin" readOnly height={600} />
             <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
-              <div className={styles.infoBoxLabel}>PUB-SUB MODEL</div>
+              <div className={styles.infoBoxLabel}>PUB-SUB</div>
               <Text className={styles.infoText}>
-                Three components: <strong>Publisher</strong> (produces messages), <strong>Subscriber</strong> (consumes messages), <strong>Message Broker</strong> (Kafka, RabbitMQ). Two types: <strong>Topic-Based</strong> (subscribers choose topics) and <strong>Content-Based</strong> (routing based on message content). Channel types: Point-to-Point, Publish-Subscribe, Request-Reply, and Dead Letter Channels.
+                Publisher &rarr; Broker (Kafka) &rarr; Subscriber. Topic-based or content-based routing.
               </Text>
             </div>
           </Stack>
@@ -1893,25 +1806,15 @@ export default function SpringReactiveProgrammingPage() {
         <AnimatedSection>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
-            <Heading level={2} className={styles.sectionTitle}>Saga Pattern: Distributed Transactions</Heading>
+            <Heading level={2} className={styles.sectionTitle}>Saga Pattern</Heading>
             <Text className={styles.sectionDescription}>
-              In microservices, you can&apos;t use a single database transaction across services. The <strong>Saga Pattern</strong> solves this with a sequence of local transactions, each with a <strong>compensating action</strong> that undoes the work if a downstream step fails. This is the reactive alternative to Two-Phase Commit (2PC).
+              A sequence of local transactions with <strong>compensating actions</strong> — the reactive alternative to 2PC for distributed transactions.
             </Text>
             <CodeEditor code={sagaPatternCode} language="kotlin" readOnly height={560} />
             <div className={`${styles.infoBox} ${styles.infoBoxOrange}`}>
-              <div className={styles.infoBoxLabel}>KEY CHALLENGES</div>
+              <div className={styles.infoBoxLabel}>ORCHESTRATION</div>
               <Text className={styles.infoText}>
-                Lack of atomicity across services. Ensuring data consistency (eventual consistency). Handling compensating transactions correctly. Message delivery guarantees (idempotent services). Debugging distributed flows (use Spring Cloud Sleuth + Zipkin for distributed tracing).
-              </Text>
-            </div>
-            <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
-              <div className={styles.infoBoxLabel}>SAGA ORCHESTRATION FLOW</div>
-              <Text className={styles.infoText}>
-                <strong>Step 1:</strong> Create Order (compensate: Cancel Order)<br/>
-                <strong>Step 2:</strong> Charge Payment (compensate: Refund Payment)<br/>
-                <strong>Step 3:</strong> Reserve Inventory (compensate: Release Inventory)<br/>
-                <strong>Step 4:</strong> Send Confirmation (no compensation needed)<br/><br/>
-                If Step 3 fails: execute Refund Payment (Step 2 compensation), then Cancel Order (Step 1 compensation). Each compensation runs in reverse order. Services must be <strong>idempotent</strong> — retrying a compensation must produce the same result.
+                Create Order &rarr; Charge Payment &rarr; Reserve Inventory &rarr; Confirm. If Step 3 fails, compensations run in reverse. Services must be <strong>idempotent</strong>.
               </Text>
             </div>
           </Stack>
@@ -1926,16 +1829,13 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Resilience Patterns</Heading>
             <Text className={styles.sectionDescription}>
-              Production reactive systems must be resilient to failures. <strong>Resilience4j</strong> provides Circuit Breaker, Bulkhead, and Retry patterns that integrate seamlessly with Project Reactor. These prevent cascading failures and ensure graceful degradation.
+              <strong>Resilience4j</strong> Circuit Breaker, Bulkhead, and Retry — preventing cascading failures in reactive systems.
             </Text>
             <CodeEditor code={resilienceCode} language="kotlin" readOnly height={600} />
             <div className={`${styles.infoBox} ${styles.infoBoxRed}`}>
-              <div className={styles.infoBoxLabel}>CIRCUIT BREAKER STATE MACHINE</div>
+              <div className={styles.infoBoxLabel}>CIRCUIT BREAKER</div>
               <Text className={styles.infoText}>
-                <strong>CLOSED</strong> (normal operation) — All requests pass through. Failures are counted in a sliding window. When failure rate exceeds threshold (e.g. 50% of last 10 calls), transition to OPEN.<br/>
-                <strong>OPEN</strong> (circuit tripped) — All requests immediately go to fallback. No calls reach the downstream service. After <code>waitDurationInOpenState</code> (e.g. 10s), transition to HALF-OPEN.<br/>
-                <strong>HALF-OPEN</strong> (recovery test) — A limited number of test requests pass through. If they succeed, transition back to CLOSED. If they fail, transition back to OPEN.<br/>
-                <strong>Flow:</strong> CLOSED → (failure threshold exceeded) → OPEN → (wait duration elapsed) → HALF-OPEN → (success) → CLOSED / (failure) → OPEN
+                CLOSED (normal) &rarr; OPEN (failures exceed threshold) &rarr; HALF-OPEN (test recovery) &rarr; CLOSED or back to OPEN.
               </Text>
             </div>
           </Stack>
@@ -1950,15 +1850,9 @@ export default function SpringReactiveProgrammingPage() {
           <Stack direction="col" gap="md">
             <Heading level={2} className={styles.sectionTitle}>Spring Cloud Gateway</Heading>
             <Text className={styles.sectionDescription}>
-              Spring Cloud Gateway is a reactive API gateway built on <strong>Spring WebFlux</strong>. It provides dynamic routing, predicates, filters, path rewriting, rate limiting, circuit breaking, and metrics — all fully non-blocking. It&apos;s the entry point for your reactive microservices architecture.
+              Reactive API gateway built on WebFlux — routing, rate limiting, circuit breaking, all non-blocking.
             </Text>
             <CodeEditor code={cloudGatewayCode} language="kotlin" readOnly height={780} />
-            <div className={`${styles.infoBox} ${styles.infoBoxGreen}`}>
-              <div className={styles.infoBoxLabel}>GATEWAY FEATURES</div>
-              <Text className={styles.infoText}>
-                <strong>Predicates</strong>: Match routes by path, header, method, query params. <strong>Filters</strong>: Modify requests/responses (add headers, strip prefix, rate limit). <strong>Load Balancing</strong>: <code>lb://SERVICE-NAME</code> integrates with Eureka/Consul. <strong>Rate Limiting</strong>: Token bucket algorithm with Redis. <strong>Circuit Breaking</strong>: Per-route Resilience4j integration.
-              </Text>
-            </div>
           </Stack>
         </Card>
         </AnimatedSection>
@@ -1984,25 +1878,14 @@ export default function SpringReactiveProgrammingPage() {
         <AnimatedSection>
         <Card className={styles.sectionCard}>
           <Stack direction="col" gap="md">
-            <Heading level={2} className={styles.sectionTitle}>Recap: Key Takeaways</Heading>
+            <Heading level={2} className={styles.sectionTitle}>Key Takeaways</Heading>
             <ul className={styles.sectionDescription} style={{ listStyle: "disc", paddingLeft: "1.5rem" }}>
-              <li>Reactive programming = <strong>Observable + Change + Propagation to Observers</strong>. Three principles: Asynchronous, Streams, Propagation of change.</li>
-              <li>The <strong>Reactive Manifesto</strong> defines four pillars: Responsive, Resilient, Elastic, and Message Driven.</li>
-              <li><strong>Reactive Streams</strong> specification: Publisher, Subscriber, Subscription, Processor — Project Reactor implements it.</li>
-              <li>Spring Framework 6: Java 17 baseline, Jakarta EE namespace, AOT processing, GraalVM native images.</li>
-              <li><strong>Mono</strong> = 0 or 1 element. <strong>Flux</strong> = 0 to N elements. <strong>Cold</strong> publishers generate data per subscriber; <strong>hot</strong> publishers emit regardless.</li>
-              <li><strong>Lazy</strong> (<code>Mono.defer</code>) vs <strong>Eager</strong> (<code>Mono.just</code>) — defer computation until subscribe.</li>
-              <li><strong>Backpressure</strong> prevents fast producers from overwhelming slow consumers — <code>request(n)</code> controls flow.</li>
-              <li>Advanced operators: <code>transform</code> (reusable chains), <code>buffer</code> (batching), <code>cache</code> (replay), <code>groupBy</code>, <code>expand</code> (recursive).</li>
-              <li>Parallel processing with <code>ParallelFlux</code> and <code>Schedulers.parallel()</code>. Event-driven with <code>Sinks</code>.</li>
-              <li><strong>Spring WebFlux</strong> runs on a non-blocking event loop (Netty). Annotated controllers or functional routing.</li>
-              <li><strong>WebClient</strong> replaces RestTemplate. Use <code>Mono.zip()</code> for parallel calls (total time = slowest call).</li>
-              <li>Reactive repositories: <strong>R2DBC</strong> (PostgreSQL), <strong>Reactive MongoDB</strong>, <strong>Reactive Couchbase</strong>. Optimistic locking with <code>@Version</code>.</li>
-              <li><strong>CAP Theorem</strong>: choose 2 of 3 (Consistency, Availability, Partition Tolerance). Reactive microservices typically choose AP.</li>
-              <li><strong>Kafka + Reactor</strong>: consume messages as Flux streams, stream to clients via SSE.</li>
-              <li><strong>Saga Pattern</strong>: distributed transactions via compensating actions. <strong>Circuit Breaker</strong> + <strong>Bulkhead</strong> for resilience.</li>
-              <li><strong>Spring Cloud Gateway</strong>: reactive API gateway with routing, filters, rate limiting, and circuit breaking.</li>
-              <li>Never <code>.block()</code> on the event loop thread — use <code>flatMap</code> for async operations.</li>
+              <li><strong>Mono</strong> (0..1) and <strong>Flux</strong> (0..N) are the reactive building blocks</li>
+              <li><strong>Backpressure</strong> via <code>request(n)</code> prevents producers from overwhelming consumers</li>
+              <li><strong>WebFlux</strong> runs on Netty event loop — never <code>.block()</code> on it</li>
+              <li><strong>WebClient</strong> replaces RestTemplate — use <code>Mono.zip()</code> for parallel calls</li>
+              <li><strong>Saga Pattern</strong> for distributed transactions, <strong>Resilience4j</strong> for fault tolerance</li>
+              <li><strong>Spring Cloud Gateway</strong> ties it all together as the reactive API entry point</li>
             </ul>
           </Stack>
         </Card>

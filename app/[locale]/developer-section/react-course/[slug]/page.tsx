@@ -1,22 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import dynamic from "next/dynamic";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  PlayArrow as PlayIcon,
-  RestartAlt as ResetIcon,
-  CheckCircle as CheckIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Extension as ExtensionIcon,
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon,
 } from "@mui/icons-material";
-// @ts-ignore
-import * as Babel from "@babel/standalone";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
@@ -27,10 +17,9 @@ import type { LessonSection, LessonSectionTag } from "@/lib/webCourseTypes";
 import confetti from "canvas-confetti";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
-import type { OnMount } from "@monaco-editor/react";
 import Link from "next/link";
-import { ensureEmmetJSX } from "@/lib/emmetMonaco";
 import { HighlightedCode } from "@/components/ui/HighlightedCode";
+import { CodeEditor } from "@/components/ui/CodeEditor";
 
 /** Parse body text: **bold** and `code` into React nodes */
 function parseSectionBody(body: string, inlineCodeClass: string): React.ReactNode[] {
@@ -119,55 +108,6 @@ function SectionShapeIcon({ tag }: { tag: LessonSectionTag }) {
   );
 }
 
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
-  ssr: false,
-  loading: () => (
-    <div className={playStyles.editorLoading}>
-      <div className={playStyles.loadingSpinner} />
-      <p>Loading editor...</p>
-    </div>
-  ),
-});
-
-const REACT_UMD = `
-<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-`;
-
-function buildPreviewHTML(jsCode: string): string {
-  return `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    ${REACT_UMD}
-    <style>
-      body { margin: 0; padding: 16px; background:#0b1020; color:#e5edff; font-family: Inter, system-ui, -apple-system, sans-serif;}
-      #root { min-height: 100px; }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script>
-      try {
-        var exports = {}, module = { exports: exports };
-        ${jsCode}
-        var RootComponent = window.__APP__ || (typeof exports.default !== 'undefined' ? exports.default : null);
-        if (RootComponent && window.React && window.ReactDOM) {
-          var root = document.getElementById("root");
-          ReactDOM.createRoot(root).render(React.createElement(RootComponent));
-        } else if (window.ReactDOM) {
-          document.getElementById("root").innerHTML = "<pre style='color:#e5edff'>No default export App found.</pre>";
-        }
-      } catch (err) {
-        document.getElementById("root").innerHTML = "<pre style='color:#ef4444'>" + (err?.message || err) + "</pre>";
-      }
-    </script>
-  </body>
-</html>
-`;
-}
-
 export default function ReactCourseLessonPage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
@@ -212,39 +152,22 @@ export default function ReactCourseLessonPage() {
     }
   }
 
-  const [code, setCode] = useState("");
-  const [previewHtml, setPreviewHtml] = useState("");
-  const [previewError, setPreviewError] = useState<string | null>(null);
-  const [isRunningPreview, setIsRunningPreview] = useState(false);
-  const [verifyMessage, setVerifyMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [editorMaximized, setEditorMaximized] = useState(false);
-  const monacoRef = useRef<{ editor: any; monaco: any } | null>(null);
-  const uri = "file:///react-lesson.tsx";
 
-  useEffect(() => {
-    if (lesson) {
-      setCode(lesson.defaultCode);
-      setPreviewHtml("");
-      setPreviewError(null);
-      setVerifyMessage(null);
-      setShowSuccess(false);
-    }
-  }, [lesson?.id]);
-
-  useEffect(() => {
-    if (editorMaximized) document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, [editorMaximized]);
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && editorMaximized) setEditorMaximized(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [editorMaximized]);
+  const handleVerify = useCallback(
+    (code: string) => {
+      if (!lesson) return { success: false, message: "" };
+      const result = lesson.validationLogic(code, []);
+      if (result.success) {
+        try {
+          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+        } catch (_) {}
+        return { success: true, message: result.message ?? "Correct!" };
+      }
+      return { success: false, message: result.message ?? t("not-quite-try-again") };
+    },
+    [lesson, t]
+  );
 
   // #region agent log
   if (typeof fetch !== "undefined" && lesson && lesson.id !== slug) {
@@ -259,158 +182,9 @@ export default function ReactCourseLessonPage() {
         sessionId: "debug-session",
         hypothesisId: "B",
       }),
-    }).catch(() => { });
+    }).catch(() => {});
   }
   // #endregion
-
-  const resetToDefault = useCallback(() => {
-    if (lesson) {
-      setCode(lesson.defaultCode);
-      setPreviewError(null);
-      setVerifyMessage(null);
-      setShowSuccess(false);
-      const m = monacoRef.current?.monaco;
-      if (m) {
-        const model = m.editor.getModel(m.Uri.parse(uri));
-        if (model) model.setValue(lesson.defaultCode);
-      }
-    }
-  }, [lesson, uri]);
-
-  const getEditorCode = useCallback((): string => {
-    const m = monacoRef.current?.monaco;
-    if (m) {
-      const model = m.editor.getModel(m.Uri.parse(uri));
-      if (model) return model.getValue();
-    }
-    return code;
-  }, [code, uri]);
-
-  const runPreview = useCallback(() => {
-    setIsRunningPreview(true);
-    setPreviewError(null);
-    setPreviewHtml("");
-    try {
-      const src = getEditorCode();
-      const hasApp = /\b(App|window\.__APP__)\s*[=:]/.test(src);
-      const hasDefaultExport = /export\s+default\s+/.test(src);
-      let wrapped = src;
-      if (!hasApp && !hasDefaultExport) {
-        const exportMatches = [...src.matchAll(/export\s+(?:const|function|class)\s+(\w+)/g)];
-        const componentMatches = [...src.matchAll(/(?:const|function|class)\s+(\w+)\s*[=:]\s*(?:\([^)]*\)\s*=>|\([^)]*\)\s*\{)/g)];
-        let componentName: string | null = null;
-        if (exportMatches.length > 0) componentName = exportMatches[0][1];
-        else if (componentMatches.length > 0) {
-          for (const match of componentMatches) {
-            const name = match[1];
-            const componentCode = src.substring(match.index ?? 0);
-            if (componentCode.includes("return") && (componentCode.includes("<") || componentCode.includes("React.createElement"))) {
-              componentName = name;
-              break;
-            }
-          }
-        }
-        if (componentName) {
-          wrapped = `${src}
-;window.__APP__ = typeof ${componentName} !== "undefined" ? ${componentName} : (typeof exports !== "undefined" ? exports.default : null);`;
-        } else {
-          wrapped = `${src};window.__APP__ = typeof App !== "undefined" ? App : (typeof exports !== "undefined" ? exports.default : null);`;
-        }
-      } else {
-        wrapped = `${src};window.__APP__ = typeof App !== "undefined" ? App : (typeof exports !== "undefined" ? exports.default : null);`;
-      }
-      const result = Babel.transform(wrapped, {
-        presets: ["env", "react", "typescript"],
-        sourceType: "module",
-        filename: "App.tsx",
-      }).code;
-      setPreviewHtml(buildPreviewHTML(result || ""));
-    } catch (err) {
-      setPreviewError((err as Error).message);
-    } finally {
-      setIsRunningPreview(false);
-    }
-  }, [getEditorCode]);
-
-  const verify = useCallback(() => {
-    if (!lesson) return;
-    setVerifyMessage(null);
-    setShowSuccess(false);
-    const src = getEditorCode();
-    const result = lesson.validationLogic(src, []);
-    if (result.success) {
-      setVerifyMessage({ type: "success", text: result.message || "Correct!" });
-      setShowSuccess(true);
-      try {
-        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-      } catch (_) { }
-    } else {
-      setVerifyMessage({ type: "info", text: result.message || t("not-quite-try-again") });
-    }
-  }, [lesson, getEditorCode]);
-
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        e.preventDefault();
-        runPreview();
-      }
-    };
-    window.addEventListener("keydown", h);
-    return () => window.removeEventListener("keydown", h);
-  }, [runPreview]);
-
-  const editorOptions = useMemo(
-    () => ({
-      minimap: { enabled: false },
-      fontSize: 18,
-      fontLigatures: true,
-      scrollBeyondLastLine: false,
-      automaticLayout: true,
-      tabSize: 2,
-      formatOnPaste: true,
-      formatOnType: true,
-      lineHeight: 26,
-      padding: { top: 16, bottom: 16 },
-      renderLineHighlight: "all" as const,
-      cursorBlinking: "smooth" as const,
-      cursorSmoothCaretAnimation: "on" as const,
-      smoothScrolling: true,
-      fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace",
-    }),
-    []
-  );
-
-  const handleBeforeMount = (monaco: any) => {
-    ensureEmmetJSX(monaco);
-  };
-
-  const handleEditorMount: OnMount = (editor, monaco) => {
-    monacoRef.current = { editor, monaco };
-    monaco.editor.setTheme("vs-dark");
-    // Match CodeEditor (blog/react-patterns) so we don't get "Cannot find module 'react/jsx-runtime'"
-    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      target: monaco.languages.typescript.ScriptTarget.ES2020,
-      module: monaco.languages.typescript.ModuleKind.ESNext,
-      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-      jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
-      noEmit: true,
-      esModuleInterop: true,
-      allowSyntheticDefaultImports: true,
-      allowJs: true,
-      allowNonTsExtensions: true,
-      lib: ["ES2020", "DOM", "DOM.Iterable"],
-      types: ["react", "react-dom"],
-    });
-    // Resolve react/jsx-runtime so JSX doesn't report "Cannot find module"
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(
-      `declare module "react/jsx-runtime" {
-        export function jsx(type: any, props: any, key?: string): any;
-        export function jsxs(type: any, props: any, key?: string): any;
-      }`,
-      "file:///node_modules/react/jsx-runtime.d.ts"
-    );
-  };
 
   if (!lesson) {
     return (
@@ -581,199 +355,16 @@ export default function ReactCourseLessonPage() {
                 </div>
               </div>
 
-              {editorMaximized && typeof document !== "undefined" &&
-                createPortal(
-                  <div className={`${playStyles.editorColumnWrap} ${playStyles.fullscreen}`}>
-                    <div className={playStyles.editorColumn}>
-                      <div className={`${playStyles.editorWrap} code-editor-contained`}>
-                        <MonacoEditor
-                          height="100%"
-                          language="typescript"
-                          path={uri}
-                          value={code}
-                          onChange={(v) => setCode(v ?? "")}
-                          options={editorOptions}
-                          beforeMount={handleBeforeMount}
-                          onMount={handleEditorMount}
-                          theme="vs-dark"
-                        />
-                      </div>
-                      <div className={playStyles.toolbar}>
-                        <button type="button" className={playStyles.iconBtn} onClick={resetToDefault} aria-label="Reset">
-                          <ResetIcon fontSize="small" /> Reset
-                        </button>
-                        <button
-                          type="button"
-                          className={playStyles.runBtn}
-                          onClick={runPreview}
-                          disabled={isRunningPreview}
-                          style={{ marginRight: "8px" }}
-                        >
-                          <PlayIcon fontSize="small" /> {isRunningPreview ? "..." : t("preview-label")}
-                        </button>
-                        <button type="button" className={playStyles.submitBtn} onClick={verify}>
-                          <CheckIcon fontSize="small" /> {t("verify-button")}
-                        </button>
-                        <button
-                          type="button"
-                          className={playStyles.iconBtn}
-                          onClick={() => setEditorMaximized(false)}
-                          aria-label={t("exit-fullscreen")}
-                          title={t("exit-fullscreen")}
-                        >
-                          <FullscreenExitIcon fontSize="small" /> Exit
-                        </button>
-                      </div>
-                      {previewHtml && (
-                        <div className={playStyles.outputPanel} style={{ marginBottom: "16px" }}>
-                          <div className={playStyles.outputHead}>{t("preview-label")}</div>
-                          <div style={{ padding: "16px", background: "linear-gradient(180deg, #0a1424, #080d1c)", borderRadius: "14px", minHeight: "300px", border: "1px solid rgba(97,218,251,0.15)", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
-                            <iframe
-                              title="react-preview"
-                              sandbox="allow-scripts allow-same-origin"
-                              srcDoc={previewHtml}
-                              style={{ width: "100%", minHeight: "200px", border: "none", borderRadius: "4px", background: "#0e1628" }}
-                            />
-                            {previewError && (
-                              <div style={{ marginTop: "12px", padding: "12px", background: "rgba(244,67,54,0.1)", border: "1px solid rgba(244,67,54,0.3)", borderRadius: "4px", color: "#ff6b6b", fontSize: "13px" }}>
-                                ❌ {previewError}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      <div className={playStyles.outputPanel}>
-                        <div className={playStyles.outputHead}>{t("verify-button")}</div>
-                        <AnimatePresence mode="wait">
-                          {showSuccess && (
-                            <motion.div
-                              key="success"
-                              className={playStyles.successBanner}
-                              initial={{ opacity: 0, scale: 0.95 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0 }}
-                            >
-                              <CheckIcon className={playStyles.successIcon} /> {verifyMessage?.text}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                        {verifyMessage && !showSuccess && (
-                          <div
-                            className={verifyMessage.type === "success" ? playStyles.passLabel : verifyMessage.type === "error" ? playStyles.errorLine : undefined}
-                            style={
-                              verifyMessage.type === "info"
-                                ? { padding: "12px", color: "#9fc4ff", fontSize: "14px" }
-                                : undefined
-                            }
-                          >
-                            {verifyMessage.text}
-                          </div>
-                        )}
-                        {!verifyMessage && <p className={playStyles.emptyLog}>{t("verify-placeholder")}</p>}
-                      </div>
-                    </div>
-                  </div>,
-                  document.body
-                )}
-              {!editorMaximized && (
-                <div className={playStyles.editorColumnWrap}>
-                  <div className={playStyles.editorColumn}>
-                    <div className={`${playStyles.editorWrap} code-editor-contained`}>
-                      <MonacoEditor
-                        height="100%"
-                        language="typescript"
-                        path={uri}
-                        value={code}
-                        onChange={(v) => setCode(v ?? "")}
-                        options={editorOptions}
-                        beforeMount={handleBeforeMount}
-                        onMount={handleEditorMount}
-                        theme="vs-dark"
-                      />
-                    </div>
-                    <div className={playStyles.toolbar}>
-                      <button type="button" className={playStyles.iconBtn} onClick={resetToDefault} aria-label="Reset">
-                        <ResetIcon fontSize="small" /> Reset
-                      </button>
-                      <button
-                        type="button"
-                        className={playStyles.runBtn}
-                        onClick={runPreview}
-                        disabled={isRunningPreview}
-                        style={{ marginRight: "8px" }}
-                      >
-                        <PlayIcon fontSize="small" /> {isRunningPreview ? "..." : t("preview-label")}
-                      </button>
-                      <button type="button" className={playStyles.submitBtn} onClick={verify}>
-                        <CheckIcon fontSize="small" /> {t("verify-button")}
-                      </button>
-                      <button
-                        type="button"
-                        className={playStyles.iconBtn}
-                        onClick={() => setEditorMaximized(true)}
-                        aria-label={t("maximize-editor")}
-                        title={t("maximize-editor")}
-                      >
-                        <FullscreenIcon fontSize="small" /> Maximize
-                      </button>
-                    </div>
-                    {previewHtml && (
-                      <div className={playStyles.outputPanel} style={{ marginBottom: "16px" }}>
-                        <div className={playStyles.outputHead}>{t("preview-label")}</div>
-                        <div style={{ padding: "16px", background: "linear-gradient(180deg, #0a1424, #080d1c)", borderRadius: "14px", minHeight: "300px", border: "1px solid rgba(97,218,251,0.15)", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
-                          <iframe
-                            title="react-preview"
-                            sandbox="allow-scripts allow-same-origin"
-                            srcDoc={previewHtml}
-                            style={{ width: "100%", minHeight: "280px", border: "none", borderRadius: "12px", background: "#0a1424", boxShadow: "inset 0 2px 8px rgba(0,0,0,0.3)" }}
-                          />
-                          {previewError && (
-                            <div style={{ marginTop: "12px", padding: "12px", background: "rgba(244,67,54,0.1)", border: "1px solid rgba(244,67,54,0.3)", borderRadius: "4px", color: "#ff6b6b", fontSize: "13px" }}>
-                              ❌ {previewError}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    <div className={playStyles.outputPanel}>
-                      <div className={playStyles.outputHead}>{t("verify-button")}</div>
-                      <AnimatePresence mode="wait">
-                        {showSuccess && (
-                          <motion.div
-                            key="success"
-                            className={playStyles.successBanner}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                          >
-                            <CheckIcon className={playStyles.successIcon} /> {verifyMessage?.text}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                      {verifyMessage && !showSuccess && (
-                        <div
-                          className={verifyMessage.type === "success" ? playStyles.passLabel : verifyMessage.type === "error" ? playStyles.errorLine : undefined}
-                          style={
-                            verifyMessage.type === "info"
-                              ? { padding: "12px", color: "#9fc4ff", fontSize: "14px" }
-                              : undefined
-                          }
-                        >
-                          {verifyMessage.text}
-                        </div>
-                      )}
-                      {!verifyMessage && <p className={playStyles.emptyLog}>{t("verify-placeholder")}</p>}
-                    </div>
-                  </div>
-                </div>
-              )}
-              {editorMaximized && (
-                <div className={playStyles.editorColumnWrap} aria-hidden style={{ minHeight: 320 }}>
-                  <p style={{ padding: "12px", color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>
-                    Editor in fullscreen. Click Exit to return.
-                  </p>
-                </div>
-              )}
+              <div className={playStyles.editorColumnWrap}>
+                <CodeEditor
+                  key={lesson.id}
+                  code={lesson.defaultCode}
+                  language="tsx"
+                  onVerify={handleVerify}
+                  verifyButtonLabel={t("verify-button")}
+                  collapsePanelsByDefault={false}
+                />
+              </div>
             </div>
           </section>
 

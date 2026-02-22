@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from 
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ClipboardPaste, MousePointer2, ChevronDown, ChevronRight, ChevronUp, Code2, MoreVertical, Check, XCircle } from "lucide-react";
+import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, AlertCircle, FilePlus, X, Copy, ClipboardPaste, MousePointer2, ChevronDown, ChevronRight, ChevronUp, Code2, MoreVertical, Check, XCircle, FileCode2 } from "lucide-react";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
 import { ensureEmmetJSX } from "@/lib/emmetMonaco";
@@ -71,6 +71,20 @@ interface CodeEditorProps {
   maxCodeHeight?: number;
   /** Use compact toolbar: primary Run, secondary Copy, tertiary (Reset, font, Maximize) in ⋯ menu. */
   compactToolbar?: boolean;
+  /** Called when fullscreen state changes (e.g. so parent can unmount when exiting). */
+  onFullscreenChange?: (isFullscreen: boolean) => void;
+  /** When provided with language kotlin, Run button calls this with current code (e.g. Piston API). */
+  onRunKotlin?: (code: string) => void | Promise<void>;
+  /** Kotlin run stdout (displayed below editor when provided). */
+  kotlinRunOutput?: string;
+  /** Kotlin run stderr/error (displayed below editor when provided). */
+  kotlinRunError?: string;
+  /** When provided, Run button calls this instead of iframe run; use for TS sandbox etc. Result logs/error shown in Console. */
+  onRunCustom?: (code: string) => Promise<{ logs: string[]; error?: string }> | { logs: string[]; error?: string };
+  /** When provided, shows Verify button; called with (code, { logs }). Result shown below editor. */
+  onVerify?: (code: string, runOutput?: { logs: string[] }) => Promise<{ success: boolean; message: string }> | { success: boolean; message: string };
+  /** Label for Verify button when onVerify is set. Default "Verify". */
+  verifyButtonLabel?: string;
 }
 
 /** Default editor height when content has many lines (developer section). */
@@ -148,6 +162,13 @@ export function CodeEditor({
   exampleBadgeLabel,
   maxCodeHeight,
   compactToolbar = false,
+  onFullscreenChange,
+  onRunKotlin,
+  kotlinRunOutput,
+  kotlinRunError,
+  onRunCustom,
+  onVerify,
+  verifyButtonLabel = "Verify",
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
   const [isFullscreen, setIsFullscreen] = useState(defaultFullscreen);
@@ -156,6 +177,8 @@ export function CodeEditor({
   const [outputHtml, setOutputHtml] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [verifyResult, setVerifyResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
   const [fontSize, setFontSize] = useState(17);
   const [files, setFiles] = useState<CodeFile[]>([{ name: "App.tsx", content: initialCode, language }]);
@@ -180,6 +203,8 @@ export function CodeEditor({
   };
   const editorInstanceRef = useRef<EditorInstance | null>(null);
   const tertiaryMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [mobileMenuRect, setMobileMenuRect] = useState<DOMRect | null>(null);
   const [fullscreenEditorHeight, setFullscreenEditorHeight] = useState(400);
   const uniqueId = useId();
   const isMobile = useIsMobile();
@@ -282,8 +307,10 @@ export function CodeEditor({
   const normalizedLang = language.toLowerCase();
   const isKotlin = normalizedLang.includes("kotlin");
   const isReactLike = ["react", "tsx", "jsx"].includes(normalizedLang);
+  const useCustomRun = !!onRunCustom;
   const isRunnable =
-    !readOnly && (["javascript", "typescript", "jsx", "tsx", "react"].includes(normalizedLang) || isKotlin);
+    !readOnly &&
+    (["javascript", "typescript", "jsx", "tsx", "react"].includes(normalizedLang) || isKotlin || useCustomRun);
 
   useEffect(() => setIsMounted(true), []);
 
@@ -297,6 +324,10 @@ export function CodeEditor({
       }
     }
   }, [isFullscreen, isMobile]);
+
+  useEffect(() => {
+    onFullscreenChange?.(isFullscreen);
+  }, [isFullscreen, onFullscreenChange]);
 
   useEffect(() => {
     if (!isFullscreen || !editorContainerRef.current) return;
@@ -419,6 +450,25 @@ export function CodeEditor({
       window.removeEventListener("resize", update);
     };
   }, [tertiaryMenuOpen]);
+
+  // Position mobile menu dropdown in fullscreen: measure button so overlay can render above everything
+  useEffect(() => {
+    if (!mobileMenuOpen || !isFullscreen) {
+      setMobileMenuRect(null);
+      return;
+    }
+    const el = mobileMenuButtonRef.current;
+    if (!el) return;
+    const update = () => setMobileMenuRect(el.getBoundingClientRect());
+    const raf = requestAnimationFrame(update);
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [mobileMenuOpen, isFullscreen]);
 
   // Re-layout Monaco when panel collapse/expand, fullscreen, or resize ratios change so the editor re-paints and doesn't appear blank.
   useEffect(() => {
@@ -631,6 +681,29 @@ export function solution() {
   }, [enableMultiFile, files, currentCode, autoInjectImports, isReactLike]);
 
   const runCode = useCallback(async () => {
+    if (isKotlin && onRunKotlin) {
+      setIsRunning(true);
+      try {
+        await onRunKotlin(currentCode);
+      } finally {
+        setIsRunning(false);
+      }
+      return;
+    }
+    if (onRunCustom) {
+      setIsRunning(true);
+      setError(null);
+      setLogs([]);
+      setVerifyResult(null);
+      try {
+        const result = await Promise.resolve(onRunCustom(currentCode));
+        setLogs(result.logs ?? []);
+        if (result.error) setError(result.error);
+      } finally {
+        setIsRunning(false);
+      }
+      return;
+    }
     if (!isRunnable || isKotlin) return;
     setIsRunning(true);
     setError(null);
@@ -766,12 +839,24 @@ export function solution() {
     } finally {
       setIsRunning(false);
     }
-  }, [buildCombinedCode, isKotlin, isRunnable, isReactLike]);
+  }, [buildCombinedCode, isKotlin, isRunnable, isReactLike, onRunKotlin, onRunCustom, currentCode]);
 
   // When Run produces console output, auto-expand Console so user sees it without hunting
   useEffect(() => {
     if (logs.length > 0 || error) setConsoleCollapsed(false);
   }, [logs.length, error]);
+
+  const handleVerify = useCallback(async () => {
+    if (!onVerify) return;
+    setVerifyResult(null);
+    setIsVerifying(true);
+    try {
+      const result = await Promise.resolve(onVerify(currentCode, { logs }));
+      setVerifyResult(result);
+    } finally {
+      setIsVerifying(false);
+    }
+  }, [onVerify, currentCode, logs]);
 
   const handleReset = useCallback(() => {
     if (enableMultiFile) {
@@ -782,6 +867,7 @@ export function solution() {
     }
     setOutputHtml("");
     setLogs([]);
+    setVerifyResult(null);
     setError(null);
     if (onChange) onChange(initialCode);
   }, [initialCode, onChange, enableMultiFile, language]);
@@ -814,14 +900,15 @@ export function solution() {
   }, [readOnly]);
 
   useEffect(() => {
-    if (!isRunnable || isKotlin) return;
     const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isFullscreen) {
+        setIsFullscreen(false);
+        return;
+      }
+      if (!isRunnable || isKotlin) return;
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
         e.preventDefault();
         runCode();
-      }
-      if (e.key === "Escape" && isFullscreen) {
-        setIsFullscreen(false);
       }
     };
     window.addEventListener("keydown", handler);
@@ -937,8 +1024,8 @@ export function solution() {
     };
   }, []);
 
-  // Mobile: default to static read-only block; "Open editor" expands inline (contained, no fixed/sticky/portal)
-  const showStaticBlock = isMobile && !mobileEditorOpen;
+  // Mobile: default to static read-only block; "Open editor" expands inline. When already fullscreen (e.g. Reactor Flux), show editor only.
+  const showStaticBlock = isMobile && !mobileEditorOpen && !isFullscreen;
   const editorHeightNum = effectiveHeight;
   const mobileEditorHeight = 320;
 
@@ -958,8 +1045,7 @@ export function solution() {
             aria-label={copyDone ? "Copied" : "Copy code"}
             title={copyDone ? "Copied" : "Copy code"}
           >
-            {copyDone ? <Check className={`${styles.iconMd} ${styles.iconCyan}`} strokeWidth={2.5} /> : <Copy className={`${styles.iconMd} ${styles.iconCopyOpacity}`} strokeWidth={2} />}
-            <span className={styles.staticToolbarBtnLabel}>{copyDone ? "Copied!" : "Copy"}</span>
+            {copyDone ? <Check className={`${styles.iconSm} ${styles.iconCyan}`} strokeWidth={2.5} /> : <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />}
           </button>
           <button
             type="button"
@@ -971,8 +1057,7 @@ export function solution() {
             aria-label="Open editor fullscreen"
             title="Open editor"
           >
-            <Maximize2 className={styles.iconMd} strokeWidth={2} />
-            <span className={styles.staticToolbarBtnLabel}>Open editor</span>
+            <Maximize2 className={styles.iconSm} strokeWidth={2} />
           </button>
         </div>
       </div>
@@ -1024,6 +1109,7 @@ export function solution() {
                   onClick={() => setActiveFileIndex(idx)}
                   className={idx === activeFileIndex ? styles.toolbarFileActive : styles.toolbarFile}
                 >
+                  {isFullscreen && <FileCode2 className={styles.iconFileTab} strokeWidth={1.8} />}
                   <span>{file.name}</span>
                   {files.length > 1 && (
                     <button
@@ -1040,9 +1126,9 @@ export function solution() {
                   )}
                 </button>
               ))}
-              <button onClick={addFile} className={styles.toolbarFileAdd} aria-label="Add new file">
+              <button onClick={addFile} className={styles.toolbarFileAdd} aria-label="Add new file" title="New File">
                 <FilePlus className={styles.iconSm} />
-                <span>New File</span>
+                {!(isMobile && isFullscreen) && <span>New File</span>}
               </button>
             </div>
           ) : (
@@ -1071,11 +1157,12 @@ export function solution() {
                 setMobileEditorOpen(false);
                 if (isFullscreen) setIsFullscreen(false);
               }}
-              className={`${styles.btnClose} ${isFullscreen ? styles.btnCloseGhost : ""}`}
+              className={isFullscreen ? `${styles.btnMaximize} ${styles.btnCloseFullscreen}` : styles.btnClose}
               aria-label="Close editor"
+              title="Close"
             >
-              <X className={styles.iconMd} strokeWidth={2} />
-              <span className={styles.toolbarBtnLabel}>Close</span>
+              <X className={styles.iconSm} strokeWidth={2} />
+              {!isFullscreen && <span className={styles.toolbarBtnLabel}>Close</span>}
             </button>
           )}
           {!isMobile && !compactToolbar && (
@@ -1107,54 +1194,30 @@ export function solution() {
           {!isMobile && (
             <button
               onClick={handleCopy}
-              aria-label="Copy code"
+              aria-label={copyDone ? "Copied" : "Copy code"}
+              title={copyDone ? "Copied" : "Copy code"}
               className={`${styles.btnCopy} ${styles.btnCopyMinWidth}`}
             >
-              <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />
-              <span className={styles.toolbarBtnLabel}>{copyDone ? "Copied" : "Copy"}</span>
+              {copyDone ? <Check className={`${styles.iconSm} ${styles.iconCyan}`} strokeWidth={2.5} /> : <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />}
             </button>
           )}
-          {!isMobile && (
-            <button
-              type="button"
-              onClick={handleSelectAll}
-              aria-label="Select all"
-              className={styles.btn}
-              title="Select all"
-            >
-              <MousePointer2 className={styles.iconSm} strokeWidth={2} />
-              <span className={styles.toolbarBtnLabel}>Select all</span>
-            </button>
-          )}
-          {!isMobile && !readOnly && (
-            <button
-              type="button"
-              onClick={handlePaste}
-              aria-label="Paste"
-              className={styles.btn}
-              title="Paste"
-            >
-              <ClipboardPaste className={styles.iconSm} strokeWidth={2} />
-              <span className={styles.toolbarBtnLabel}>Paste</span>
-            </button>
-          )}
-          {/* Reset — desktop non-compact, always visible */}
+          {/* Reset — desktop non-compact, icon-only */}
           {!isMobile && !compactToolbar && (
-            <button type="button" onClick={handleReset} aria-label="Reset code" className={styles.btnReset}>
+            <button type="button" onClick={handleReset} aria-label="Reset code" title="Reset code" className={styles.btnReset}>
               <RotateCcw className={styles.iconSm} strokeWidth={2} />
-              Reset
             </button>
           )}
-          {/* Maximize — desktop compact, always visible */}
+          {/* Maximize — desktop compact, icon-only */}
+          {!isMobile && compactToolbar && isFullscreen && <span className={styles.toolbarDivider} aria-hidden />}
           {!isMobile && compactToolbar && (
             <button
               type="button"
               onClick={() => setIsFullscreen((v) => !v)}
               aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-              className={styles.btnMaximize}
+              title={isFullscreen ? "Exit fullscreen" : "Maximize"}
+              className={`${styles.btnMaximize} ${isFullscreen ? styles.btnCloseFullscreen : ""}`}
             >
               {isFullscreen ? <Minimize2 className={styles.iconSm} strokeWidth={2} /> : <Maximize2 className={styles.iconSm} strokeWidth={2} />}
-              {isFullscreen ? "Exit" : "Maximize"}
             </button>
           )}
           {/* Tertiary menu — desktop compact, always visible */}
@@ -1217,15 +1280,16 @@ export function solution() {
           {isMobile && (
             <div className={styles.mobileMenuWrap}>
               <button
+                ref={mobileMenuButtonRef}
                 type="button"
                 onClick={() => setMobileMenuOpen((v) => !v)}
-                className={styles.mobileMenuBtn}
+                className={isFullscreen ? styles.btnTertiary : styles.mobileMenuBtn}
                 aria-label="More options"
                 aria-expanded={mobileMenuOpen}
               >
                 <MoreVertical className={styles.iconMd} strokeWidth={2} />
               </button>
-              {mobileMenuOpen && (
+              {mobileMenuOpen && !isFullscreen && (
                 <>
                   <div className={styles.mobileMenuBackdrop} aria-hidden onClick={() => setMobileMenuOpen(false)} />
                   <div className={styles.mobileMenuDropdown}>
@@ -1271,10 +1335,10 @@ export function solution() {
               )}
             </div>
           )}
-          {/* Run buttons — editable only */}
-          {!readOnly && (
+          {/* Run buttons — editable only (JS/TS built-in run, or Kotlin when onRunKotlin provided) */}
+          {!readOnly && (isRunnable || (isKotlin && onRunKotlin)) && (
             <>
-              {!isMobile && !compactToolbar && !isKotlin && (
+              {!isMobile && !compactToolbar && (
                 <button
                   type="button"
                   onClick={runCode}
@@ -1284,32 +1348,61 @@ export function solution() {
                 >
                   <Play className={styles.iconSm} fill="currentColor" strokeWidth={2} />
                   <span className={styles.toolbarBtnLabel}>{isRunning ? "Running…" : "Run"}</span>
-                  <kbd className={styles.btnRunKbd}>⌘↵</kbd>
+                  {!isKotlin && !useCustomRun && <kbd className={styles.btnRunKbd}>⌘↵</kbd>}
                 </button>
               )}
-              {isMobile && !isKotlin && (
+              {isMobile && (
                 <button
                   type="button"
                   onClick={runCode}
                   disabled={isRunning}
                   aria-label={isRunning ? "Running" : "Run code"}
-                  className={styles.btnRunMobile}
+                  className={isFullscreen ? styles.btnRunIconOnly : styles.btnRunMobile}
                 >
-                  <Play className={styles.iconMd} fill="currentColor" strokeWidth={2} />
-                  <span>{isRunning ? "…" : "Run"}</span>
+                  <Play className={isFullscreen ? styles.iconSm : styles.iconMd} fill="currentColor" strokeWidth={2} />
+                  {!isFullscreen && <span>{isRunning ? "…" : "Run"}</span>}
                 </button>
               )}
             </>
           )}
+          {!readOnly && onVerify && (
+            <>
+              {!isMobile && !compactToolbar && (
+                <button
+                  type="button"
+                  onClick={handleVerify}
+                  disabled={isVerifying}
+                  aria-label={isVerifying ? "Verifying…" : verifyButtonLabel}
+                  className={styles.btnVerify}
+                >
+                  <Check className={styles.iconSm} strokeWidth={2.5} />
+                  <span className={styles.toolbarBtnLabel}>{isVerifying ? "…" : verifyButtonLabel}</span>
+                </button>
+              )}
+              {isMobile && (
+                <button
+                  type="button"
+                  onClick={handleVerify}
+                  disabled={isVerifying}
+                  aria-label={isVerifying ? "Verifying…" : verifyButtonLabel}
+                  className={isFullscreen ? styles.btnVerifyIconOnly : styles.btnVerifyMobile}
+                >
+                  <Check className={isFullscreen ? styles.iconSm : styles.iconMd} strokeWidth={2.5} />
+                  {!isFullscreen && <span>{isVerifying ? "…" : verifyButtonLabel}</span>}
+                </button>
+              )}
+            </>
+          )}
+          {!isMobile && !compactToolbar && isFullscreen && <span className={styles.toolbarDivider} aria-hidden />}
           {!isMobile && !compactToolbar && (
             <button
               type="button"
               onClick={() => setIsFullscreen((v) => !v)}
               aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-              className={styles.btnMaximize}
+              title={isFullscreen ? "Exit fullscreen" : "Maximize"}
+              className={`${styles.btnMaximize} ${isFullscreen ? styles.btnCloseFullscreen : ""}`}
             >
               {isFullscreen ? <Minimize2 className={styles.iconSm} strokeWidth={2} /> : <Maximize2 className={styles.iconSm} strokeWidth={2} />}
-              {isFullscreen ? "Exit" : "Maximize"}
             </button>
           )}
         </div>
@@ -1354,6 +1447,25 @@ export function solution() {
             theme="vs-dark"
           />
         </div>
+        {isKotlin && (kotlinRunOutput != null || kotlinRunError != null) && (
+          <div className={styles.kotlinRunOutput}>
+            {kotlinRunError != null && kotlinRunError !== "" && (
+              <pre className={styles.kotlinRunOutputError} aria-live="polite">{kotlinRunError}</pre>
+            )}
+            {kotlinRunOutput != null && kotlinRunOutput !== "" && (
+              <pre className={styles.kotlinRunOutputStdout} aria-live="polite">{kotlinRunOutput}</pre>
+            )}
+          </div>
+        )}
+        {onVerify && verifyResult != null && (
+          <div
+            className={`${styles.verifyResult} ${verifyResult.success ? styles.verifyResultSuccess : styles.verifyResultInfo}`}
+            aria-live="polite"
+          >
+            <Check className={styles.verifyResultIcon} strokeWidth={2} aria-hidden />
+            <span className={styles.verifyResultMessage}>{verifyResult.message}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1390,11 +1502,17 @@ export function solution() {
 
   const consoleColContent = (
     <div className={styles.previewBody}>
-      {logs.length === 0 ? (
+      {error && (
+        <div className={styles.previewError}>
+          <AlertCircle className={styles.previewErrorIcon} strokeWidth={2} />
+          <p className={styles.previewErrorText}>{error}</p>
+        </div>
+      )}
+      {logs.length === 0 && !error ? (
         <div className={styles.previewEmpty}>
           <Terminal className={`${styles.consoleEmptyIcon} ${styles.consoleEmptyIconLg}`} strokeWidth={1.5} />
-          <p className={styles.previewEmptyText}>Logs will appear here</p>
-          <p className={styles.previewEmptyHint}>console.log, warnings, errors</p>
+          <p className={styles.previewEmptyText}>{useCustomRun ? "Run the code to see output." : "Logs will appear here"}</p>
+          <p className={styles.previewEmptyHint}>{useCustomRun ? "Click Run above" : "console.log, warnings, errors"}</p>
         </div>
       ) : (
         <div className={styles.consoleLogs}>
@@ -1420,27 +1538,29 @@ export function solution() {
           className={isFullscreen ? styles.previewGridFullscreen : styles.previewGrid}
           style={isFullscreen && mobileBothCollapsed ? { flex: "0 0 auto" } : undefined}
         >
-          <div className={styles.previewCol} style={previewCollapsed ? { minHeight: 0 } : undefined}>
-            <div
-              className={styles.previewHeader}
-              style={{ cursor: "pointer" }}
-              onClick={() => setPreviewCollapsed((c) => !c)}
-              title={previewCollapsed ? "Expand Preview" : "Collapse Preview"}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPreviewCollapsed((c) => !c); } }}
-              aria-expanded={!previewCollapsed}
-            >
-              <Monitor className={`${styles.iconSm} ${styles.iconCyanMuted}`} strokeWidth={2} />
-              <span className={styles.previewHeaderLabel}>Preview</span>
-              {previewCollapsed ? (
-                <ChevronDown className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
-              ) : (
-                <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
-              )}
+          {!useCustomRun && (
+            <div className={styles.previewCol} style={previewCollapsed ? { minHeight: 0 } : undefined}>
+              <div
+                className={styles.previewHeader}
+                style={{ cursor: "pointer" }}
+                onClick={() => setPreviewCollapsed((c) => !c)}
+                title={previewCollapsed ? "Expand Preview" : "Collapse Preview"}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPreviewCollapsed((c) => !c); } }}
+                aria-expanded={!previewCollapsed}
+              >
+                <Monitor className={`${styles.iconSm} ${styles.iconCyanMuted}`} strokeWidth={2} />
+                <span className={styles.previewHeaderLabel}>Preview</span>
+                {previewCollapsed ? (
+                  <ChevronDown className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
+                ) : (
+                  <ChevronUp className={styles.iconSm} style={{ marginLeft: "auto" }} aria-hidden />
+                )}
+              </div>
+              {!previewCollapsed && previewColContent}
             </div>
-            {!previewCollapsed && previewColContent}
-          </div>
+          )}
           <div className={styles.previewColConsole} style={consoleCollapsed ? { minHeight: 0 } : undefined}>
             <div
               className={styles.previewHeader}
@@ -1598,7 +1718,7 @@ export function solution() {
     </div>
   );
 
-  const mobileFloatingActionBar = isMobile && isFullscreen && mobileEditorOpen && (
+  const mobileFloatingActionBar = isMobile && isFullscreen && (
     <>
       <div className={`${styles.floatingActionBar} ${mobileUiHidden ? styles.floatingActionBarHidden : ""}`}>
         <button
@@ -1675,34 +1795,34 @@ export function solution() {
           zIndex: 2147483647,
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#0b0f1a",
           isolation: "isolate",
           overflow: "hidden",
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: isFullscreen ? 1 : 0 }}
-        transition={{ duration: 0.15 }}
+        transition={{ duration: 0.2 }}
         onAnimationComplete={() => {
           if (!isFullscreen) setShowFullscreenPortal(false);
         }}
       >
-        {/* Full-screen editor: fills viewport; inner has explicit height so flex children get space */}
+        {/* Full-screen editor: horizontal stretch entrance like CTA buttons */}
         <motion.div
           className={`${styles.fullscreenInner} ${isMobile && mobileUiHidden ? styles.fullscreenUiHidden : ""}`}
           style={{
-            height: "100%",
+            flex: 1,
             minHeight: 0,
             padding: isMobile
               ? "env(safe-area-inset-top) 0 0 0"
               : "env(safe-area-inset-top) max(env(safe-area-inset-right), 12px) env(safe-area-inset-bottom) max(env(safe-area-inset-left), 12px)",
             position: "relative",
           }}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.15 }}
+          initial={{ opacity: 0, scaleX: 0.92, scaleY: 0.98 }}
+          animate={{ opacity: 1, scaleX: 1, scaleY: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 26, mass: 0.8 }}
         >
           {shell}
           {/* When fullscreen, render tertiary menu here so it appears above the editor (portal to body would be behind overlay z-index) */}
+          {/* Desktop tertiary menu in fullscreen */}
           {isFullscreen && tertiaryMenuOpen && tertiaryMenuRect && (
             <>
               <div className={styles.tertiaryMenuBackdropPortal} aria-hidden onClick={() => setTertiaryMenuOpen(false)} />
@@ -1739,6 +1859,38 @@ export function solution() {
                       </button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </>
+          )}
+          {/* Mobile menu in fullscreen — rendered here to escape overflow:hidden clipping */}
+          {isFullscreen && isMobile && mobileMenuOpen && mobileMenuRect && (
+            <>
+              <div className={styles.tertiaryMenuBackdropPortal} aria-hidden onClick={() => setMobileMenuOpen(false)} />
+              <div
+                className={styles.tertiaryMenuDropdownPortal}
+                style={{
+                  position: "fixed",
+                  top: mobileMenuRect.bottom + 4,
+                  right: window.innerWidth - mobileMenuRect.right,
+                  zIndex: 9999,
+                }}
+              >
+                <div className={styles.mobileMenuDropdown}>
+                  <button type="button" onClick={() => { handleCopy(); setMobileMenuOpen(false); }} className={styles.mobileMenuItem}>
+                    <Copy className={styles.iconMd} /> {copyDone ? "Copied" : "Copy All"}
+                  </button>
+                  <button type="button" onClick={() => { handleSelectAll(); setMobileMenuOpen(false); }} className={styles.mobileMenuItem}>
+                    <MousePointer2 className={styles.iconMd} /> Select all
+                  </button>
+                  {!readOnly && (
+                    <button type="button" onClick={() => { handlePaste(); setMobileMenuOpen(false); }} className={styles.mobileMenuItem}>
+                      <ClipboardPaste className={styles.iconMd} /> Paste
+                    </button>
+                  )}
+                  <button type="button" onClick={() => { setResetConfirmOpen(true); setMobileMenuOpen(false); }} className={styles.mobileMenuItem}>
+                    <RotateCcw className={styles.iconMd} /> Reset
+                  </button>
                 </div>
               </div>
             </>

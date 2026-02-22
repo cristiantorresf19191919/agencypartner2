@@ -9,9 +9,11 @@ import {
   Menu as MenuIcon,
   Close as CloseIcon,
   ChevronRight as ChevronRightIcon,
+  ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
+import { CodeEditor } from "@/components/ui";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDeveloperSectionFont } from "@/contexts/DeveloperSectionFontContext";
@@ -21,6 +23,7 @@ import {
   type ReactorTocItem,
   type ReactorBlock,
 } from "@/lib/reactorFluxData";
+import { MarbleDiagram } from "@/components/ReactorFlux/MarbleDiagram";
 import styles from "./ReactorFlux.module.css";
 
 const PISTON_EXECUTE_URL = "https://emkc.org/api/v2/piston/execute";
@@ -114,14 +117,19 @@ export default function ReactorFluxPage() {
   const [activeSectionId, setActiveSectionId] = useState(REACTOR_FLUX_TOC[0]?.id ?? "");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [mobileFabVisible, setMobileFabVisible] = useState(true);
+  const [expandedTocIds, setExpandedTocIds] = useState<Set<string>>(() =>
+    new Set(REACTOR_FLUX_TOC.filter((item) => item.children?.length).map((item) => item.id))
+  );
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [expandedCode, setExpandedCode] = useState<{ index: number; code: string } | null>(null);
-  const [expandedCodeFontSize, setExpandedCodeFontSize] = useState(16);
   const [snippetOutputs, setSnippetOutputs] = useState<Record<number, { output?: string; error?: string; running?: boolean }>>({});
+  const [failedImageIndices, setFailedImageIndices] = useState<Set<number>>(new Set());
 
   const contentRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const observedSet = useRef<Set<HTMLElement>>(new Set());
+  const lastScrollY = useRef(0);
 
   // Scroll spy – observe headings as they mount via ref callback
   useEffect(() => {
@@ -182,6 +190,43 @@ export default function ReactorFluxPage() {
     setMobileSidebarOpen(false);
   }, []);
 
+  const toggleTocCategory = useCallback((id: string) => {
+    setExpandedTocIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  // Hide global FABs when reactor-flux drawer is open so focus is on navigation
+  useEffect(() => {
+    if (mobileSidebarOpen) {
+      document.body.setAttribute("data-reactor-drawer-open", "true");
+    } else {
+      document.body.removeAttribute("data-reactor-drawer-open");
+    }
+    return () => document.body.removeAttribute("data-reactor-drawer-open");
+  }, [mobileSidebarOpen]);
+
+  // Hide mobile sidebar FAB on scroll down, show on scroll up (reading-mode pattern)
+  useEffect(() => {
+    const threshold = 60;
+    const handleScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      if (y < 80) {
+        setMobileFabVisible(true);
+      } else if (y > lastScrollY.current + threshold) {
+        setMobileFabVisible(false);
+      } else if (y < lastScrollY.current - threshold) {
+        setMobileFabVisible(true);
+      }
+      lastScrollY.current = y;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   let codeBlockIndex = 0;
 
   return (
@@ -193,9 +238,9 @@ export default function ReactorFluxPage() {
       />
 
       <div className={styles.pageWrap}>
-        {/* Mobile sidebar toggle */}
+        {/* Mobile sidebar toggle (hides on scroll down, reappears on scroll up) */}
         <button
-          className={styles.mobileSidebarToggle}
+          className={`${styles.mobileSidebarToggle} ${!mobileFabVisible ? styles.mobileSidebarToggleHidden : ""}`}
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
           aria-label="Toggle sidebar"
         >
@@ -238,27 +283,48 @@ export default function ReactorFluxPage() {
           <nav className={styles.sidebarNav}>
             {REACTOR_FLUX_TOC.map((item) => (
               <div key={item.id} className={styles.tocGroup}>
-                <a
-                  href={`#${item.id}`}
-                  className={`${styles.tocLink} ${activeSectionId === item.id ? styles.tocLinkActive : ""}`}
-                  onClick={handleTocClick}
-                >
-                  {item.label}
-                </a>
-                {item.children && item.children.length > 0 && (
-                  <ul className={styles.tocChildren}>
-                    {item.children.map((child) => (
-                      <li key={child.id}>
-                        <a
-                          href={`#${child.id}`}
-                          className={`${styles.tocLink} ${styles.tocLinkChild} ${activeSectionId === child.id ? styles.tocLinkActive : ""}`}
-                          onClick={handleTocClick}
-                        >
-                          {child.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                {item.children && item.children.length > 0 ? (
+                  <>
+                    <button
+                      type="button"
+                      className={styles.tocCategoryBtn}
+                      onClick={() => toggleTocCategory(item.id)}
+                      aria-expanded={expandedTocIds.has(item.id)}
+                      aria-controls={`toc-${item.id}`}
+                    >
+                      <span>{item.label}</span>
+                      <ExpandMoreIcon
+                        className={`${styles.tocCategoryChevron} ${expandedTocIds.has(item.id) ? styles.tocCategoryChevronOpen : ""}`}
+                        fontSize="small"
+                      />
+                    </button>
+                    <ul
+                      id={`toc-${item.id}`}
+                      className={`${styles.tocChildren} ${!expandedTocIds.has(item.id) ? styles.tocChildrenCollapsed : ""}`}
+                      role="region"
+                      aria-label={`${item.label} sections`}
+                    >
+                      {item.children.map((child) => (
+                        <li key={child.id} className={styles.tocChildItem}>
+                          <a
+                            href={`#${child.id}`}
+                            className={`${styles.tocLinkChild} ${activeSectionId === child.id ? styles.tocLinkActive : ""}`}
+                            onClick={handleTocClick}
+                          >
+                            {child.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <a
+                    href={`#${item.id}`}
+                    className={`${styles.tocLink} ${activeSectionId === item.id ? styles.tocLinkActive : ""}`}
+                    onClick={handleTocClick}
+                  >
+                    {item.label}
+                  </a>
                 )}
               </div>
             ))}
@@ -327,10 +393,27 @@ export default function ReactorFluxPage() {
             }
 
             if (block.type === "image") {
+              const imageFailed = failedImageIndices.has(i);
+              const diagramName = block.src.replace(/^.*\/([^/]+)\.(svg|png|jpg)$/i, "$1");
+              if (imageFailed) {
+                return (
+                  <MarbleDiagram
+                    key={i}
+                    name={diagramName}
+                    caption={block.alt}
+                    className={styles.marbleDiagramFigure}
+                  />
+                );
+              }
               return (
                 <figure key={i} className={styles.imageFigure}>
                   <div className={styles.imageWrap}>
-                    <img src={block.src} alt={block.alt} className={styles.image} />
+                    <img
+                      src={block.src}
+                      alt={block.alt}
+                      className={styles.image}
+                      onError={() => setFailedImageIndices((prev) => new Set(prev).add(i))}
+                    />
                     <button
                       type="button"
                       className={styles.imageMaximize}
@@ -450,50 +533,23 @@ export default function ReactorFluxPage() {
         )}
       </AnimatePresence>
 
-      {/* Code Expanded Lightbox */}
-      <AnimatePresence>
-        {expandedCode && (
-          <motion.div
-            className={styles.codeLightboxBackdrop}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setExpandedCode(null)}
-          >
-            <motion.div
-              className={styles.codeLightboxContent}
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 40, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className={styles.codeLightboxHeader}>
-                <span className={styles.codeLightboxTitle}>Kotlin Example</span>
-                <div className={styles.codeLightboxToolbar}>
-                  <button className={styles.fontSizeBtn} onClick={() => setExpandedCodeFontSize((s) => Math.max(12, s - 2))}>A−</button>
-                  <button className={styles.fontSizeBtn} onClick={() => setExpandedCodeFontSize((s) => Math.min(24, s + 2))}>A+</button>
-                  <button
-                    className={styles.runBtn}
-                    disabled={snippetOutputs[expandedCode.index]?.running}
-                    onClick={() => runSnippet(expandedCode.index, expandedCode.code)}
-                  >
-                    <PlayIcon fontSize="small" /> {snippetOutputs[expandedCode.index]?.running ? "Running…" : "Run"}
-                  </button>
-                  <button className={styles.codeLightboxClose} onClick={() => setExpandedCode(null)}>×</button>
-                </div>
-              </div>
-              <pre className={styles.codeLightboxPre} style={{ fontSize: expandedCodeFontSize }}>
-                <code><HighlightedCode code={expandedCode.code} /></code>
-              </pre>
-              {(snippetOutputs[expandedCode.index]?.output != null || snippetOutputs[expandedCode.index]?.error != null) && (
-                <div className={`${styles.snippetOutput} ${snippetOutputs[expandedCode.index]?.error ? styles.snippetOutputError : ""}`}>
-                  {snippetOutputs[expandedCode.index]?.error ?? snippetOutputs[expandedCode.index]?.output ?? ""}
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Code Expanded: same CodeEditor as rest of site (Copy all, Paste, Select all, Reset, Run, fullscreen) */}
+      {expandedCode && (
+        <CodeEditor
+          key={expandedCode.index}
+          code={expandedCode.code}
+          language="kotlin"
+          defaultFullscreen={true}
+          onFullscreenChange={(v) => {
+            if (!v) setExpandedCode(null);
+          }}
+          onRunKotlin={async (code) => {
+            await runSnippet(expandedCode.index, code);
+          }}
+          kotlinRunOutput={snippetOutputs[expandedCode.index]?.output}
+          kotlinRunError={snippetOutputs[expandedCode.index]?.error}
+        />
+      )}
 
       <Footer />
     </>

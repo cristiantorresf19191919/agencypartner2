@@ -25,6 +25,13 @@
   padding: 2rem 0 3rem 0;
 }
 
+/* Clearance so fixed FABs (chat, sidebar toggle) don't overlap article content */
+@media (max-width: 1024px) {
+  .container {
+    padding-bottom: max(3rem, calc(80px + env(safe-area-inset-bottom)));
+  }
+}
+
 @media (min-width: 768px) {
   .container {
     padding: 6rem 0 3rem 0;

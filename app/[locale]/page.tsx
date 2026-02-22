@@ -19,7 +19,7 @@ import AnimatedSection from '@/components/ui/AnimatedSection';
 
 export default function Home() {
   return (
-    <main>
+    <main className="homeMain">
       <Header />
       <Hero />
       <LogoMarquee />

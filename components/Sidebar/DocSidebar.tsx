@@ -35,7 +35,6 @@ import {
   LockOpen as LockOpenIcon,
   SwapHoriz as SwapHorizIcon,
   Menu as MenuIcon,
-  Close as CloseIcon,
   School as SchoolIcon,
 } from "@mui/icons-material";
 
@@ -1173,15 +1172,27 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
                 if (isControlled) onMobileClose?.();
                 else setInternalMobileOpen(false);
               }}
+              aria-label={t("sidebar-close") ?? "Close menu"}
               sx={{
                 position: "absolute",
-                top: 16,
-                right: 16,
+                top: 12,
+                right: 12,
                 zIndex: 1,
-                color: "#ffffff",
+                color: "rgba(255,255,255,0.9)",
+                bgcolor: alpha("#ffffff", 0.1),
+                border: `1px solid ${alpha("#ffffff", 0.15)}`,
+                width: 40,
+                height: 40,
+                "&:hover": {
+                  bgcolor: alpha("#ffffff", 0.18),
+                  borderColor: alpha("#ffffff", 0.25),
+                  color: "#fff",
+                },
               }}
             >
-              <CloseIcon />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
             </IconButton>
             {sidebarContent}
           </Box>
