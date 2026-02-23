@@ -40,6 +40,51 @@
   color: #61dafb;
 }
 
+/* TypeScript course: accent with TS blue (#3178C6) */
+.courseSidebarTypescript .courseSidebarIcon {
+  color: #3178c6;
+}
+
+.courseSidebarTypescript .courseNavItemActive {
+  background: linear-gradient(120deg, rgba(49, 120, 198, 0.18), rgba(49, 120, 198, 0.1));
+  border-color: rgba(49, 120, 198, 0.4);
+  box-shadow: 0 2px 12px rgba(49, 120, 198, 0.2);
+}
+
+.courseSidebarTypescript .courseNavItemActive .courseNavStep {
+  color: #3178c6;
+}
+
+/* CSS course: accent with CSS pink (#F5549B) */
+.courseSidebarCss .courseSidebarIcon {
+  color: #f5549b;
+}
+
+.courseSidebarCss .courseNavItemActive {
+  background: linear-gradient(120deg, rgba(245, 84, 155, 0.18), rgba(245, 84, 155, 0.1));
+  border-color: rgba(245, 84, 155, 0.4);
+  box-shadow: 0 2px 12px rgba(245, 84, 155, 0.2);
+}
+
+.courseSidebarCss .courseNavItemActive .courseNavStep {
+  color: #f5549b;
+}
+
+/* Kotlin-Java Interop: accent with Kotlin cyan (#7CF4FF) */
+.courseSidebarKotlinInterop .courseSidebarIcon {
+  color: #7cf4ff;
+}
+
+.courseSidebarKotlinInterop .courseNavItemActive {
+  background: linear-gradient(120deg, rgba(124, 244, 255, 0.18), rgba(124, 244, 255, 0.1));
+  border-color: rgba(124, 244, 255, 0.4);
+  box-shadow: 0 2px 12px rgba(124, 244, 255, 0.2);
+}
+
+.courseSidebarKotlinInterop .courseNavItemActive .courseNavStep {
+  color: #7cf4ff;
+}
+
 .courseSidebarHeader {
   display: flex;
   align-items: center;
