@@ -4,10 +4,12 @@ import { useCallback, useState } from "react";
 import { useParams } from "next/navigation";
 // @ts-ignore
 import * as Babel from "@babel/standalone";
+import { Code as CodeIcon } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
+import CourseSidebar from "@/components/Layout/CourseSidebar";
 import { useLocale } from "@/lib/useLocale";
-import { getTypeScriptLessonById } from "@/lib/typescriptCourseData";
+import { getTypeScriptLessonById, TYPESCRIPT_COURSE_LESSONS } from "@/lib/typescriptCourseData";
 import confetti from "canvas-confetti";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
@@ -50,6 +52,8 @@ export default function TypeScriptCourseLessonPage() {
   const lesson = getTypeScriptLessonById(slug);
   const { createLocalizedPath } = useLocale();
 
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+
   const onRunCustom = useCallback((code: string) => runTypeScriptInSandbox(code), []);
 
   const onVerify = useCallback(
@@ -87,64 +91,79 @@ export default function TypeScriptCourseLessonPage() {
       <div className={styles.backgroundGlow} />
       <div className={styles.backgroundGrid} />
 
-      <section className={playStyles.playSection}>
-        <div className={playStyles.layout}>
-          <div className={playStyles.description}>
-            <div className={playStyles.descHeader}>
-              <span className={styles.difficulty} style={{ background: "rgba(49, 120, 198, 0.2)", color: "#3178c6" }}>
-                Step {lesson.step}
-              </span>
+      <div className={playStyles.lessonLayoutWithSidebar}>
+        <CourseSidebar
+          lessons={TYPESCRIPT_COURSE_LESSONS}
+          coursePath="/developer-section/typescript-course"
+          courseTitle="TypeScript Course"
+          courseIcon={<CodeIcon className={playStyles.courseSidebarIcon} />}
+          accentClassName={playStyles.courseSidebarTypescript}
+          currentSlug={slug}
+          collapsed={sidebarCollapsed}
+          onToggle={setSidebarCollapsed}
+        />
+
+        <div className={`${playStyles.courseMain} ${!sidebarCollapsed ? playStyles.courseSidebarOpen : ""}`}>
+          <section className={`${playStyles.playSection} ${playStyles.playSectionFullWidth}`}>
+            <div className={playStyles.layoutFill}>
+              <div className={playStyles.description}>
+                <div className={playStyles.descHeader}>
+                  <span className={playStyles.stepPill}>
+                    STEP {lesson.step}
+                  </span>
+                </div>
+                <h1 className={playStyles.descTitle}>{lesson.title}</h1>
+                {lesson.content.map((paragraph, i) => (
+                  <p key={i} className={playStyles.descBody}>
+                    {paragraph}
+                  </p>
+                ))}
+                <div style={{ marginTop: "24px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                  {lesson.prevStep && (
+                    <Link
+                      href={createLocalizedPath(`/developer-section/typescript-course/${lesson.prevStep}`)}
+                      className={styles.secondaryLink}
+                    >
+                      ← Previous
+                    </Link>
+                  )}
+                  {lesson.nextStep && (
+                    <Link
+                      href={createLocalizedPath(`/developer-section/typescript-course/${lesson.nextStep}`)}
+                      className={styles.secondaryLink}
+                    >
+                      Next →
+                    </Link>
+                  )}
+                </div>
+              </div>
+
+              <div className={playStyles.editorColumnWrap}>
+                <CodeEditor
+                  key={lesson.id}
+                  code={lesson.defaultCode}
+                  language="typescript"
+                  onRunCustom={onRunCustom}
+                  onVerify={onVerify}
+                  verifyButtonLabel="Verify"
+                  collapsePanelsByDefault={false}
+                  compactToolbar
+                  enableMultiFile
+                />
+              </div>
             </div>
-            <h1 className={playStyles.descTitle}>{lesson.title}</h1>
-            {lesson.content.map((paragraph, i) => (
-              <p key={i} className={playStyles.descBody}>
-                {paragraph}
-              </p>
-            ))}
-            <div style={{ marginTop: "24px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
-              {lesson.prevStep && (
-                <Link
-                  href={createLocalizedPath(`/developer-section/typescript-course/${lesson.prevStep}`)}
-                  className={styles.secondaryLink}
-                >
-                  ← Previous
-                </Link>
-              )}
-              {lesson.nextStep && (
-                <Link
-                  href={createLocalizedPath(`/developer-section/typescript-course/${lesson.nextStep}`)}
-                  className={styles.secondaryLink}
-                >
-                  Next →
-                </Link>
-              )}
+          </section>
+
+          <div className={styles.footerActions}>
+            <div className={playStyles.footerRow}>
+              <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section/typescript-course")}>
+                Back to course
+              </Link>
+              <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
+                Developer Hub
+              </Link>
             </div>
           </div>
-
-          <div className={playStyles.editorColumnWrap}>
-            <CodeEditor
-              key={lesson.id}
-              code={lesson.defaultCode}
-              language="typescript"
-              onRunCustom={onRunCustom}
-              onVerify={onVerify}
-              verifyButtonLabel="Verify"
-              collapsePanelsByDefault={false}
-              compactToolbar
-              enableMultiFile
-            />
-          </div>
-        </div>
-      </section>
-
-      <div className={styles.footerActions}>
-        <div className={playStyles.footerRow}>
-          <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section/typescript-course")}>
-            Back to course
-          </Link>
-          <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Developer Hub
-          </Link>
         </div>
       </div>
 

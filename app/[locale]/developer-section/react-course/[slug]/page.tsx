@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useParams } from "next/navigation";
-import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  Extension as ExtensionIcon,
-} from "@mui/icons-material";
+import { Extension as ExtensionIcon } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
@@ -20,6 +16,7 @@ import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import Link from "next/link";
 import { HighlightedCode } from "@/components/ui/HighlightedCode";
 import { CodeEditor } from "@/components/ui/CodeEditor";
+import CourseSidebar from "@/components/Layout/CourseSidebar";
 
 /** Parse body text: **bold** and `code` into React nodes */
 function parseSectionBody(body: string, inlineCodeClass: string): React.ReactNode[] {
@@ -115,44 +112,7 @@ export default function ReactCourseLessonPage() {
   const { t } = useLanguage();
   // Ensure slug is valid and get lesson - if mismatch, fallback to slug-based lookup
   let lesson = getReactLessonForLocale(locale as "en" | "es", slug);
-  // #region agent log
-  if (typeof window !== "undefined") {
-    const urlPath = window.location.pathname;
-    const urlSlug = urlPath.split("/react-course/")[1]?.split("?")[0] || "";
-    console.log("[DEBUG] ReactCourseLessonPage render:", { slug, paramSlug: params?.slug, urlSlug, lessonId: lesson?.id, lessonStep: lesson?.step, url: urlPath });
-    if (lesson && lesson.id !== slug) {
-      console.warn("[DEBUG] Mismatch: lesson.id !== slug", { slug, lessonId: lesson.id, lessonStep: lesson.step });
-    }
-    if (typeof fetch !== "undefined") {
-      fetch("http://127.0.0.1:7244/ingest/df3e12ed-23e9-4e47-b8f7-5cf1f84b911a", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          location: "react-course/[slug]/page.tsx:render",
-          message: "slug and lesson resolution",
-          data: { slug, paramSlug: params?.slug, urlSlug, lessonId: lesson?.id, lessonStep: lesson?.step, lessonTitle: lesson?.title?.slice(0, 40), url: urlPath, mismatch: lesson ? lesson.id !== slug : false },
-          timestamp: Date.now(),
-          sessionId: "debug-session",
-          hypothesisId: "A",
-        }),
-      }).catch(() => { });
-    }
-  }
-  // #endregion
-  // Safeguard: if lesson doesn't match slug, try to get correct lesson from URL
-  if (lesson && lesson.id !== slug && typeof window !== "undefined") {
-    const urlPath = window.location.pathname;
-    const urlSlug = urlPath.split("/react-course/")[1]?.split("?")[0]?.split("#")[0] || "";
-    if (urlSlug && urlSlug !== slug) {
-      console.warn("[DEBUG] URL slug differs from params slug, trying urlSlug:", urlSlug);
-      const correctedLesson = getReactLessonForLocale(locale as "en" | "es", urlSlug);
-      if (correctedLesson && correctedLesson.id === urlSlug) {
-        lesson = correctedLesson;
-      }
-    }
-  }
-
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   const handleVerify = useCallback(
     (code: string) => {
@@ -168,23 +128,6 @@ export default function ReactCourseLessonPage() {
     },
     [lesson, t]
   );
-
-  // #region agent log
-  if (typeof fetch !== "undefined" && lesson && lesson.id !== slug) {
-    fetch("http://127.0.0.1:7244/ingest/df3e12ed-23e9-4e47-b8f7-5cf1f84b911a", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        location: "react-course/[slug]/page.tsx:lessonMismatch",
-        message: "lesson.id !== slug",
-        data: { slug, lessonId: lesson.id, lessonStep: lesson.step },
-        timestamp: Date.now(),
-        sessionId: "debug-session",
-        hypothesisId: "B",
-      }),
-    }).catch(() => {});
-  }
-  // #endregion
 
   if (!lesson) {
     return (
@@ -206,95 +149,22 @@ export default function ReactCourseLessonPage() {
       <div className={styles.backgroundGrid} />
 
       <div className={playStyles.lessonLayoutWithSidebar}>
-        <aside
-          className={`${playStyles.courseSidebar} ${playStyles.courseSidebarReact} ${sidebarCollapsed ? playStyles.courseSidebarCollapsed : ""}`}
-          aria-label="React course navigation"
-        >
-          <div className={playStyles.courseSidebarHeader}>
-            <button
-              type="button"
-              className={playStyles.courseSidebarToggle}
-              onClick={() => setSidebarCollapsed((c) => !c)}
-              aria-label={sidebarCollapsed ? t("sidebar-expand") : t("sidebar-collapse")}
-              title={sidebarCollapsed ? t("sidebar-expand") : t("sidebar-collapse")}
-            >
-              {sidebarCollapsed ? (
-                <ChevronRightIcon fontSize="small" />
-              ) : (
-                <ChevronLeftIcon fontSize="small" />
-              )}
-            </button>
-            {!sidebarCollapsed && (
-              <div className={playStyles.courseSidebarTitle}>
-                <ExtensionIcon className={playStyles.courseSidebarIcon} />
-                <span>{t("react-course-card-title")}</span>
-              </div>
-            )}
-          </div>
-          {!sidebarCollapsed && (
-            <nav className={playStyles.courseNav}>
-              <ul className={playStyles.courseNavList}>
-                {REACT_COURSE_LESSONS.map((l) => {
-                  const isActive = slug === l.id;
-                  // #region agent log
-                  if (typeof window !== "undefined") {
-                    if (isActive) {
-                      console.log("[DEBUG] Sidebar active item:", { slug, listItemId: l.id, listItemStep: l.step, isActive, comparison: `${slug} === ${l.id}` });
-                    }
-                    if (isActive && typeof fetch !== "undefined") {
-                      fetch("http://127.0.0.1:7244/ingest/df3e12ed-23e9-4e47-b8f7-5cf1f84b911a", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          location: "react-course/[slug]/page.tsx:sidebar",
-                          message: "sidebar active item",
-                          data: { slug, listItemId: l.id, listItemStep: l.step, isActive, url: window.location.pathname },
-                          timestamp: Date.now(),
-                          sessionId: "debug-session",
-                          hypothesisId: "C",
-                        }),
-                      }).catch(() => { });
-                    }
-                  }
-                  // #endregion
-                  const translated = getReactLessonForLocale(locale as "en" | "es", l.id);
-                  return (
-                    <li key={l.id} className={playStyles.courseNavItemWrap}>
-                      <Link
-                        href={createLocalizedPath(`/developer-section/react-course/${l.id}`)}
-                        className={`${playStyles.courseNavItem} ${isActive ? playStyles.courseNavItemActive : ""}`}
-                        aria-current={isActive ? "page" : undefined}
-                      >
-                        <span className={playStyles.courseNavStep}>{t("course-step")} {l.step}</span>
-                        <span className={playStyles.courseNavLabel}>{translated?.title ?? l.title}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-          )}
-        </aside>
+        <CourseSidebar
+          lessons={REACT_COURSE_LESSONS}
+          coursePath="/developer-section/react-course"
+          courseTitle={t("react-course-card-title")}
+          courseIcon={<ExtensionIcon className={playStyles.courseSidebarIcon} />}
+          accentClassName={playStyles.courseSidebarReact}
+          currentSlug={slug}
+          collapsed={sidebarCollapsed}
+          onToggle={setSidebarCollapsed}
+          getLessonTitle={(l) => getReactLessonForLocale(locale as "en" | "es", l.id)?.title ?? l.title}
+        />
 
         <div className={`${playStyles.courseMain} ${!sidebarCollapsed ? playStyles.courseSidebarOpen : ""}`}>
-          {!sidebarCollapsed && (
-            <div
-              className={playStyles.courseMainBackdrop}
-              aria-hidden
-              onClick={() => setSidebarCollapsed(true)}
-              onKeyDown={(e) => e.key === "Escape" && setSidebarCollapsed(true)}
-            />
-          )}
           <section className={`${playStyles.playSection} ${playStyles.playSectionFullWidth}`}>
             <div className={playStyles.layoutFill}>
               <div className={playStyles.description}>
-                {/* #region agent log */}
-                {lesson && lesson.id !== slug && typeof window !== "undefined" && (
-                  <div style={{ background: "rgba(255, 0, 0, 0.1)", padding: "8px", marginBottom: "12px", borderRadius: "4px", border: "1px solid rgba(255, 0, 0, 0.3)" }}>
-                    <strong style={{ color: "#ff6b6b" }}>⚠️ Mismatch detected:</strong> URL slug "{slug}" but lesson.id is "{lesson.id}". Step {lesson.step}.
-                  </div>
-                )}
-                {/* #endregion */}
                 <div className={playStyles.descHeader}>
                   <span className={playStyles.stepPill}>
                     {t("course-step").toUpperCase()} {lesson.step}
