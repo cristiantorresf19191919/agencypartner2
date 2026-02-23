@@ -22,7 +22,7 @@ import { useLocale } from "@/lib/useLocale";
 import styles from "../playground/PlaygroundPage.module.css";
 import type { OnMount } from "@monaco-editor/react";
 
-const PISTON_EXECUTE_URL = "https://emkc.org/api/v2/piston/execute";
+const PISTON_EXECUTE_URL = "/api/execute-code";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,

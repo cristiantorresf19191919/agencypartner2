@@ -26,7 +26,7 @@ import {
 import { MarbleDiagram } from "@/components/ReactorFlux/MarbleDiagram";
 import styles from "./ReactorFlux.module.css";
 
-const PISTON_EXECUTE_URL = "https://emkc.org/api/v2/piston/execute";
+const PISTON_EXECUTE_URL = "/api/execute-code";
 
 // ─── Kotlin syntax highlighting ─────────────────────────────────────────────────
 
