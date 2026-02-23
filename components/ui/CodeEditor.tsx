@@ -10,6 +10,7 @@ import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, 
 // @ts-ignore
 import * as Babel from "@babel/standalone";
 import { ensureEmmetJSX } from "@/lib/emmetMonaco";
+import { ensureKotlinLanguage } from "@/lib/kotlinMonaco";
 import { Highlight, themes } from "prism-react-renderer";
 import styles from "./CodeEditor.module.css";
 
@@ -905,7 +906,7 @@ export function solution() {
         setIsFullscreen(false);
         return;
       }
-      if (!isRunnable || isKotlin) return;
+      if (!isRunnable || (isKotlin && !useCustomRun)) return;
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
         e.preventDefault();
         runCode();
@@ -913,10 +914,11 @@ export function solution() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [isRunnable, isKotlin, runCode, isFullscreen]);
+  }, [isRunnable, isKotlin, useCustomRun, runCode, isFullscreen]);
 
   const handleBeforeMount = useCallback((monaco: any) => {
     ensureEmmetJSX(monaco);
+    if (isKotlin) ensureKotlinLanguage(monaco);
     // Custom theme: brighter keywords for readability on dark background (accessibility)
     monaco.editor.defineTheme("vs-dark-bright-keywords", {
       base: "vs-dark",
@@ -931,7 +933,7 @@ export function solution() {
         "editorLineNumber.activeForeground": "#9ca3af",
       },
     });
-  }, []);
+  }, [isKotlin]);
 
   const handleEditorMount = useCallback(
     (editor: any, monaco: any) => {
