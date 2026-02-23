@@ -38,7 +38,8 @@
       "Bash(/tmp/detailed_file_list.sh:*)",
       "Bash(bash /tmp/detailed_file_list.sh)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

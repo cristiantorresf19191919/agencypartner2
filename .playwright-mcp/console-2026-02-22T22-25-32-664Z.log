@@ -1,0 +1,124 @@
+[  228598ms] [ERROR] ./components/Header/MobileMenu.tsx:350:24
+Parsing ecmascript source code failed
+  348 |               <p className={styles.footerTagline}>Conectando el futuro digital</p>
+  349 |             </motion.div>
+> 350 |           </motion.div>
+      |                        ^
+> 351 |         </motion.div>
+      | ^^^^^^^^^
+  352 |       )}
+  353 |     </AnimatePresence>
+  354 |   );
+
+Expected '</', got 'jsx text (
+        )'
+
+Import traces:
+  Client Component Browser:
+    ./components/Header/MobileMenu.tsx [Client Component Browser]
+    ./components/Header/Header.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/Header/MobileMenu.tsx [Client Component SSR]
+    ./components/Header/Header.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:3117
+[  228834ms] [ERROR] ./components/Header/MobileMenu.tsx:350:24
+Parsing ecmascript source code failed
+  348 |               <p className={styles.footerTagline}>Conectando el futuro digital</p>
+  349 |             </motion.div>
+> 350 |           </motion.div>
+      |                        ^
+> 351 |         </motion.div>
+      | ^^^^^^^^^
+  352 |       )}
+  353 |     </AnimatePresence>
+  354 |   );
+
+Expected '</', got 'jsx text (
+        )'
+
+Import traces:
+  Client Component Browser:
+    ./components/Header/MobileMenu.tsx [Client Component Browser]
+    ./components/Header/Header.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/Header/MobileMenu.tsx [Client Component SSR]
+    ./components/Header/Header.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:3117
+[  229324ms] [ERROR] ./components/Header/MobileMenu.tsx:350:24
+Parsing ecmascript source code failed
+  348 |               <p className={styles.footerTagline}>Conectando el futuro digital</p>
+  349 |             </motion.div>
+> 350 |           </motion.div>
+      |                        ^
+> 351 |         </motion.div>
+      | ^^^^^^^^^
+  352 |       )}
+  353 |     </AnimatePresence>
+  354 |   );
+
+Expected '</', got 'jsx text (
+        )'
+
+Import traces:
+  Client Component Browser:
+    ./components/Header/MobileMenu.tsx [Client Component Browser]
+    ./components/Header/Header.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/Header/MobileMenu.tsx [Client Component SSR]
+    ./components/Header/Header.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:3117
+[  229454ms] [ERROR] ./components/Header/MobileMenu.tsx:350:24
+Parsing ecmascript source code failed
+  348 |               <p className={styles.footerTagline}>Conectando el futuro digital</p>
+  349 |             </motion.div>
+> 350 |           </motion.div>
+      |                        ^
+> 351 |         </motion.div>
+      | ^^^^^^^^^
+  352 |       )}
+  353 |     </AnimatePresence>
+  354 |   );
+
+Expected '</', got 'jsx text (
+        )'
+
+Import traces:
+  Client Component Browser:
+    ./components/Header/MobileMenu.tsx [Client Component Browser]
+    ./components/Header/Header.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Client Component Browser]
+    ./app/[locale]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/Header/MobileMenu.tsx [Client Component SSR]
+    ./components/Header/Header.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Client Component SSR]
+    ./app/[locale]/page.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:3117
+[  523307ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:2287
+[  524903ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:2287

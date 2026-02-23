@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Service Contract (VRC) - Pricing Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', /* Blue Theme for Contracts/Service */
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <aside class="w-72 bg-slate-900 text-slate-300 flex-shrink-0 hidden lg:flex flex-col">
+            <div class="p-6 border-b border-slate-800 bg-slate-950">
+                <h1 class="text-xl font-bold text-white flex items-center">
+                    <i class="fas fa-file-contract mr-3 text-brand-500"></i>VRC Guide
+                </h1>
+                <p class="text-xs text-slate-500 mt-1 uppercase tracking-wider">Pricing Logic & Architecture</p>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4">
+                <ul class="space-y-1 text-sm">
+                    <li><a href="#executive-summary"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Executive
+                            Summary</a></li>
+                    <li><a href="#quick-reference"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Quick
+                            Reference</a></li>
+                    <li><a href="#pricing-logic"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Pricing
+                            Logic</a></li>
+                    <li><a href="#flow-overview"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Flow
+                            Overview</a></li>
+                    <li><a href="#configuration"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Configuration</a>
+                    </li>
+                    <li><a href="#code-reference"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Code
+                            Reference</a></li>
+                    <li><a href="#admin-troubleshooting"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Admin
+                            & Debug</a></li>
+                    <li><a href="#summary"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Summary</a>
+                    </li>
+                    <li><a href="#related-docs"
+                            class="block px-6 py-2 hover:bg-slate-800 hover:text-white transition border-l-4 border-transparent hover:border-brand-500">Related
+                            Docs</a></li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-800 text-xs text-center text-slate-600">
+                Internal Documentation v4.0
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto relative scroll-smooth">
+            <div class="max-w-6xl mx-auto px-8 py-12">
+
+                <section id="executive-summary" class="mb-16">
+                    <div class="bg-gradient-to-r from-brand-600 to-brand-900 text-white p-8 rounded-xl shadow-lg mb-8">
+                        <h1 class="text-4xl font-extrabold mb-4">Vehicle Service Contract (VRC)</h1>
+                        <h2 class="text-2xl font-light mb-6 opacity-90">Pricing Guide</h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white/10 backdrop-blur-sm p-5 rounded-lg border border-white/20">
+                                <div class="flex items-center mb-2">
+                                    <span
+                                        class="bg-white text-brand-800 font-bold px-2 py-1 rounded text-xs uppercase mr-2">Override
+                                        States</span>
+                                    <span class="font-bold">Florida (FL)</span>
+                                </div>
+                                <p class="text-sm opacity-90">Price = <strong>PEN Retail Price</strong></p>
+                                <p class="text-xs opacity-70 mt-1">(No Driveway markup applied)</p>
+                            </div>
+
+                            <div class="bg-white/10 backdrop-blur-sm p-5 rounded-lg border border-white/20">
+                                <div class="flex items-center mb-2">
+                                    <span
+                                        class="bg-brand-400 text-brand-900 font-bold px-2 py-1 rounded text-xs uppercase mr-2">Standard
+                                        States</span>
+                                    <span class="font-bold">All Others</span>
+                                </div>
+                                <p class="text-sm opacity-90">Price = <strong>PEN Dealer Cost + Markup</strong></p>
+                                <p class="text-xs opacity-70 mt-1">(Markup defined in config)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="quick-reference" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Quick Reference</h2>
+
+                    <div class="bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <tbody class="divide-y divide-slate-200 text-sm">
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 font-bold text-slate-900 w-1/4">Price Source</td>
+                                    <td class="px-6 py-4 text-slate-700">PEN dealer cost + config markup (Standard)
+                                        <span class="text-slate-400 mx-2">|</span> PEN retail price (FL Override)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-bold text-slate-900">State Variation</td>
+                                    <td class="px-6 py-4 text-slate-700">Controlled by <code
+                                            class="bg-slate-100 px-1 rounded text-red-500">retail-price-override-for-states</code>
+                                    </td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 font-bold text-slate-900">Vehicle Factors</td>
+                                    <td class="px-6 py-4 text-slate-700">VIN, make/model, mileage, price, condition
+                                        (Affect PEN Cost/Retail)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-bold text-slate-900">Config Keys</td>
+                                    <td class="px-6 py-4 text-slate-700 font-mono">markup-amount,
+                                        retail-price-override-for-states</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 font-bold text-slate-900">Cache Location</td>
+                                    <td class="px-6 py-4 text-slate-700 font-mono">MongoDB products.fi-rate</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-bold text-slate-900">Admin Endpoint</td>
+                                    <td class="px-6 py-4 text-slate-700 font-mono">GET
+                                        /test/fi-Rate/update-cached-markup</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="pricing-logic" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Pricing Logic</h2>
+
+                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200 mb-6">
+                        <div class="mermaid">
+                            flowchart TD
+                            Vehicle["Vehicle data: VIN, make, model, mileage, state"]
+                            PEN["PEN GetRates: dealerCostInCents, retailPriceInCents, rateExist"]
+                            Config["application.yml: markup-amount, retail-price-override-for-states"]
+
+                            Vehicle --> PEN
+                            PEN -->|"rateExist = false"| NoOffer["No VRC price (rateExist = false)"]:::error
+                            PEN -->|"rateExist = true"| StateCheck{"State in override list?"}:::decision
+
+                            StateCheck -->|"Yes (e.g. FL)"| RetailPrice["totalInCents = retailPriceInCents (no
+                            markup)"]:::success
+                            StateCheck -->|No| Markup["totalInCents = dealerCostInCents + markupAmount"]:::standard
+                            Config --> StateCheck
+                            Config --> Markup
+
+                            RetailPrice --> CacheOrResponse["Persist / return price"]
+                            Markup --> CacheOrResponse
+                            NoOffer --> CacheOrResponse
+
+                            classDef error fill:#fee2e2,stroke:#ef4444,color:#991b1b
+                            classDef success fill:#dcfce7,stroke:#22c55e,color:#166534
+                            classDef standard fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+                            classDef decision fill:#fef3c7,stroke:#d97706,color:#92400e
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <h3 class="font-bold text-blue-800">Non-Override States</h3>
+                            <div class="font-mono text-sm mt-2 text-slate-700">total = dealerCost + markupAmount</div>
+                        </div>
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                            <h3 class="font-bold text-green-800">Override States (FL)</h3>
+                            <div class="font-mono text-sm mt-2 text-slate-700">total = retailPriceInCents</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="flow-overview" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Flow Overview</h2>
+
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg border border-slate-200 p-6 relative">
+                            <span
+                                class="absolute top-0 right-0 bg-slate-100 text-slate-500 text-xs font-bold px-2 py-1 rounded-bl">01</span>
+                            <h3 class="font-bold text-lg mb-2 text-slate-800"><i
+                                    class="fas fa-bolt text-brand-500 mr-2"></i>Inventory Delta / Initial Cache</h3>
+                            <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2">
+                                <li>Vehicle ADD/UPDATE message arrives (Azure Service Bus).</li>
+                                <li><code>VehicleInventoryTopicReceiver</code> calls
+                                    <code>PenMediator.getVehicleServiceContractRate()</code>.</li>
+                                <li>PEN returns <code>dealerCostInCents</code>, <code>retailPriceInCents</code>,
+                                    <code>rateExist</code>, etc.</li>
+                                <li>PenMediator applies the pricing rule (markup or override) and returns a
+                                    <code>PenFiProduct</code>.</li>
+                                <li>Result is written to MongoDB <code>fi-rate</code> as
+                                    <code>vehicleServiceContractRate</code>.</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-slate-200 p-6 relative">
+                            <span
+                                class="absolute top-0 right-0 bg-slate-100 text-slate-500 text-xs font-bold px-2 py-1 rounded-bl">02</span>
+                            <h3 class="font-bold text-lg mb-2 text-slate-800"><i
+                                    class="fas fa-clock text-brand-500 mr-2"></i>Scheduled Cron Refresh</h3>
+                            <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2">
+                                <li><code>FIRateRefresh</code> picks eligible cached documents (status ACTIVE,
+                                    <code>nextRefreshDate &lt;= now</code>).</li>
+                                <li><strong>Non-FL states:</strong> <code>FIRateService.updateCachedMarkup()</code>
+                                    reapplies markup to stored <code>dealerCostInCents</code>.</li>
+                                <li><strong>FL states:</strong> Cron leaves VRC unchanged (it already holds PEN retail);
+                                    refresh only updates T&W and VLP.</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-slate-200 p-6 relative">
+                            <span
+                                class="absolute top-0 right-0 bg-slate-100 text-slate-500 text-xs font-bold px-2 py-1 rounded-bl">03</span>
+                            <h3 class="font-bold text-lg mb-2 text-slate-800"><i
+                                    class="fas fa-globe text-brand-500 mr-2"></i>API Read Path</h3>
+                            <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2">
+                                <li><code>/estimator/fi-products</code> or <code>/productsAdmin/*</code> handlers fetch
+                                    cache via <code>FIService</code>.</li>
+                                <li><code>FIService.getVehicleServiceContractPenProduct()</code> mirrors the same rule
+                                    when mapping to responses, ensuring both cached and on-demand pricing remain
+                                    consistent.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="configuration" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Configuration</h2>
+
+                    <div class="code-block mb-4">
+                        # library/src/main/resources/application.yml
+                        products:
+                        cost:
+                        vehicle-service-contract:
+                        markup-amount: 150000 # $1,500 markup over PEN dealer cost
+                        retail-price-override-for-states:
+                        - "FL" # States that should use retail price only
+                    </div>
+                    <p class="text-sm text-slate-500">
+                        <code>ProductsMarkupConfig.VehicleServiceContract</code>
+                        (<code>library/.../services/Config.kt</code>) binds these values.
+                    </p>
+                </section>
+
+                <section id="code-reference" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Code Reference</h2>
+                    <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200">
+                        <table class="min-w-full divide-y divide-slate-200 text-sm">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Area</th>
+                                    <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">File / Function
+                                    </th>
+                                    <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr>
+                                    <td class="px-6 py-4 font-medium">PEN fetch + pricing</td>
+                                    <td class="px-6 py-4 font-mono text-xs">PenMediator.kt<br>getPENWarrantyRate()</td>
+                                    <td class="px-6 py-4 text-slate-600">Applies markup vs override before returning
+                                        product.</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 font-medium">API read path</td>
+                                    <td class="px-6 py-4 font-mono text-xs">
+                                        FIService.kt<br>getVehicleServiceContractPenProduct()</td>
+                                    <td class="px-6 py-4 text-slate-600">Ensures API responses match stored logic.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-medium">Cache refresh</td>
+                                    <td class="px-6 py-4 font-mono text-xs">FIRateService.kt<br>updateCachedMarkup()
+                                        &amp; fetchFloridaProducts()</td>
+                                    <td class="px-6 py-4 text-slate-600">Reapplies markup for non-FL states; respects FL
+                                        override.</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <td class="px-6 py-4 font-medium">Inventory cache fill</td>
+                                    <td class="px-6 py-4 font-mono text-xs">VehicleInventoryTopicReceiver.kt</td>
+                                    <td class="px-6 py-4 text-slate-600">Triggers PenMediator when new vehicle data
+                                        arrives.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-medium">Admin endpoint</td>
+                                    <td class="px-6 py-4 font-mono text-xs">FIRateService.kt / updateCachedMarkup()</td>
+                                    <td class="px-6 py-4 text-slate-600"><code>/test/fi-Rate/update-cached-markup</code>
+                                        reprocesses cached totals.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="admin-troubleshooting" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Admin & Troubleshooting</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold text-lg mb-4 text-slate-800">Admin Endpoints</h3>
+                            <div class="bg-white border border-slate-200 rounded p-4 mb-4 shadow-sm">
+                                <div class="text-xs font-bold text-slate-500 uppercase mb-2">Update Cached Markup</div>
+                                <div class="code-block">curl http://localhost:8096/test/fi-Rate/update-cached-markup
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2">Requires port-forwarding or cluster access.</p>
+                            </div>
+
+                            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded text-sm text-yellow-800">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                <strong>Florida caveat:</strong> The admin endpoint does <strong>not</strong> recompute
+                                VRC for FL; it already stores PEN retail. Changing <code>markup-amount</code> has no
+                                impact on FL until inventory events or manual adjustments occur.
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-lg mb-4 text-slate-800">Inspect Cache</h3>
+                            <div class="code-block mb-2">
+                                db.getCollection("fi-rate").findOne(
+                                { vin: "1HGCV1F34LA123456" },
+                                { vehicleServiceContractRate: 1 }
+                                )
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4">Check <code>totalInCents</code>,
+                                <code>dealerCostInCents</code>, and <code>retailPriceInCents</code>.
+                            </p>
+
+                            <h4 class="font-bold text-sm text-slate-800 mb-2">Common issue</h4>
+                            <p class="text-sm text-slate-600">
+                                <code>rateExist = false</code> → PEN does not offer VRC for that vehicle (state/mileage
+                                eligibility). No price is returned.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="summary" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Summary</h2>
+                    <ul class="space-y-3 text-slate-700">
+                        <li class="flex items-start"><i
+                                class="fas fa-check text-green-500 mt-1 mr-3 flex-shrink-0"></i>VRC pricing is
+                            <strong>PEN-driven</strong>, with Driveway markup layered on top.</li>
+                        <li class="flex items-start"><i
+                                class="fas fa-check text-green-500 mt-1 mr-3 flex-shrink-0"></i>Florida (or other
+                            configured states) bypass markup and use PEN retail to satisfy local regulations.</li>
+                        <li class="flex items-start"><i
+                                class="fas fa-check text-green-500 mt-1 mr-3 flex-shrink-0"></i>Configuration lives in
+                            <code>application.yml</code>; business logic in <code>PenMediator</code> and
+                            <code>FIService</code> keeps cache, cron, and API responses aligned.</li>
+                        <li class="flex items-start"><i
+                                class="fas fa-check text-green-500 mt-1 mr-3 flex-shrink-0"></i>Admin tooling
+                            (<code>update-cached-markup</code>, port-forward script) lets you reapply markups when
+                            config changes.</li>
+                    </ul>
+                </section>
+
+                <section id="related-docs" class="mb-16">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-2">Related Documentation</h2>
+                    <p class="text-sm text-slate-600">
+                        <code>documentation/FLORIDA_PEN_PRODUCT_INCREMENT_LOGIC.md</code> summarises all PEN product
+                        overrides.
+                    </p>
+                </section>
+
+                <footer class="border-t border-slate-200 py-8 text-center text-slate-500 text-sm">
+                    <p>&copy; 2026 Products Engineering Team. Internal Use Only.</p>
+                </footer>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#dbeafe',
+                primaryTextColor: '#0f172a',
+                primaryBorderColor: '#3b82f6',
+                lineColor: '#64748b',
+                secondaryColor: '#eff6ff',
+                tertiaryColor: '#fff'
+            }
+        });
+    </script>
+</body>
+
+</html>

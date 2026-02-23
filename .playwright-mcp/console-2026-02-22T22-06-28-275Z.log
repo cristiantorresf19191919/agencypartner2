@@ -1,0 +1,528 @@
+[  196448ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:2287
+[  198031ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/es" tree={[...]} params={{locale:"es"}} cacheNode={{lazyData:null, ...}} ...>
+          <SegmentViewNode type="page" pagePath="[locale]/p...">
+            <SegmentTrieNode>
+            <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
+              <Home params={Promise} searchParams={Promise}>
+                <main className="homeMain">
+                  <Header>
+                  <Hero>
+                    <section ref={{current:null}} className="Hero-modul..." ...>
+                      <div>
+                      <GridBackground>
+                      <FloatingOrbs>
+                        <div className="Hero-modul..." aria-hidden={true}>
+                          <motion.div className="Hero-modul..." style={{width:420, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 420
+-                               width: "420px"
++                               height: 420
+-                               height: "420px"
++                               left: "10%"
+-                               left: "10%"
++                               top: "15%"
+-                               top: "15%"
++                               background: "radial-gradient(circle, rgba(160,106,249,0.25) 0%, transparent 70%)"
++                               transform: "translateX(-3.9px) translateY(-8.44px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(160, 106, 249, 0.25) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:340, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 340
+-                               width: "340px"
++                               height: 340
+-                               height: "340px"
++                               left: "75%"
+-                               left: "75%"
++                               top: "20%"
+-                               top: "20%"
++                               background: "radial-gradient(circle, rgba(53,228,178,0.18) 0%, transparent 70%)"
++                               transform: "translateX(-5.46px) translateY(-11.816px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(53, 228, 178, 0.18) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:280, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 280
+-                               width: "280px"
++                               height: 280
+-                               height: "280px"
++                               left: "55%"
+-                               left: "55%"
++                               top: "65%"
+-                               top: "65%"
++                               background: "radial-gradient(circle, rgba(255,105,180,0.15) 0%, transparent 70%)"
++                               transform: "translateX(-7.0200000000000005px) translateY(-15.192000000000002px) rotate..."
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(255, 105, 180, 0.15) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:200, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 200
+-                               width: "200px"
++                               height: 200
+-                               height: "200px"
++                               left: "20%"
+-                               left: "20%"
++                               top: "75%"
+-                               top: "75%"
++                               background: "radial-gradient(circle, rgba(53,228,178,0.12) 0%, transparent 70%)"
++                               transform: "translateX(-8.58px) translateY(-18.567999999999998px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(53, 228, 178, 0.12) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:160, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 160
+-                               width: "160px"
++                               height: 160
+-                               height: "160px"
++                               left: "85%"
+-                               left: "85%"
++                               top: "70%"
+-                               top: "70%"
++                               background: "radial-gradient(circle, rgba(160,106,249,0.15) 0%, transparent 70%)"
++                               transform: "translateX(-10.14px) translateY(-21.944000000000003px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(160, 106, 249, 0.15) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                      ...
+                  ...
+          ...
+        ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:3117
+[  397545ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:2287
+[  399010ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/es" tree={[...]} params={{locale:"es"}} cacheNode={{lazyData:null, ...}} ...>
+          <SegmentViewNode type="page" pagePath="[locale]/p...">
+            <SegmentTrieNode>
+            <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
+              <Home params={Promise} searchParams={Promise}>
+                <main className="homeMain">
+                  <Header>
+                  <Hero>
+                    <section ref={{current:null}} className="Hero-modul..." ...>
+                      <div>
+                      <GridBackground>
+                      <FloatingOrbs>
+                        <div className="Hero-modul..." aria-hidden={true}>
+                          <motion.div className="Hero-modul..." style={{width:420, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 420
+-                               width: "420px"
++                               height: 420
+-                               height: "420px"
++                               left: "10%"
+-                               left: "10%"
++                               top: "15%"
+-                               top: "15%"
++                               background: "radial-gradient(circle, rgba(160,106,249,0.25) 0%, transparent 70%)"
++                               transform: "translateX(-3.9px) translateY(-8.44px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(160, 106, 249, 0.25) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:340, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 340
+-                               width: "340px"
++                               height: 340
+-                               height: "340px"
++                               left: "75%"
+-                               left: "75%"
++                               top: "20%"
+-                               top: "20%"
++                               background: "radial-gradient(circle, rgba(53,228,178,0.18) 0%, transparent 70%)"
++                               transform: "translateX(-5.46px) translateY(-11.816px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(53, 228, 178, 0.18) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:280, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 280
+-                               width: "280px"
++                               height: 280
+-                               height: "280px"
++                               left: "55%"
+-                               left: "55%"
++                               top: "65%"
+-                               top: "65%"
++                               background: "radial-gradient(circle, rgba(255,105,180,0.15) 0%, transparent 70%)"
++                               transform: "translateX(-7.0200000000000005px) translateY(-15.192000000000002px) rotate..."
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(255, 105, 180, 0.15) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:200, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 200
+-                               width: "200px"
++                               height: 200
+-                               height: "200px"
++                               left: "20%"
+-                               left: "20%"
++                               top: "75%"
+-                               top: "75%"
++                               background: "radial-gradient(circle, rgba(53,228,178,0.12) 0%, transparent 70%)"
++                               transform: "translateX(-8.58px) translateY(-18.567999999999998px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(53, 228, 178, 0.12) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:160, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 160
+-                               width: "160px"
++                               height: 160
+-                               height: "160px"
++                               left: "85%"
+-                               left: "85%"
++                               top: "70%"
+-                               top: "70%"
++                               background: "radial-gradient(circle, rgba(160,106,249,0.15) 0%, transparent 70%)"
++                               transform: "translateX(-10.14px) translateY(-21.944000000000003px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(160, 106, 249, 0.15) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                      ...
+                  ...
+          ...
+        ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:3117
+[  399238ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:2287
+[  400341ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/es" tree={[...]} params={{locale:"es"}} cacheNode={{lazyData:null, ...}} ...>
+          <SegmentViewNode type="page" pagePath="[locale]/p...">
+            <SegmentTrieNode>
+            <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
+              <Home params={Promise} searchParams={Promise}>
+                <main className="homeMain">
+                  <Header>
+                  <Hero>
+                    <section ref={{current:null}} className="Hero-modul..." ...>
+                      <div>
+                      <GridBackground>
+                      <FloatingOrbs>
+                        <div className="Hero-modul..." aria-hidden={true}>
+                          <motion.div className="Hero-modul..." style={{width:420, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 420
+-                               width: "420px"
++                               height: 420
+-                               height: "420px"
++                               left: "10%"
+-                               left: "10%"
++                               top: "15%"
+-                               top: "15%"
++                               background: "radial-gradient(circle, rgba(160,106,249,0.25) 0%, transparent 70%)"
++                               transform: "translateX(-3.9px) translateY(-8.44px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(160, 106, 249, 0.25) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:340, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 340
+-                               width: "340px"
++                               height: 340
+-                               height: "340px"
++                               left: "75%"
+-                               left: "75%"
++                               top: "20%"
+-                               top: "20%"
++                               background: "radial-gradient(circle, rgba(53,228,178,0.18) 0%, transparent 70%)"
++                               transform: "translateX(-5.46px) translateY(-11.816px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(53, 228, 178, 0.18) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:280, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 280
+-                               width: "280px"
++                               height: 280
+-                               height: "280px"
++                               left: "55%"
+-                               left: "55%"
++                               top: "65%"
+-                               top: "65%"
++                               background: "radial-gradient(circle, rgba(255,105,180,0.15) 0%, transparent 70%)"
++                               transform: "translateX(-7.0200000000000005px) translateY(-15.192000000000002px) rotate..."
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(255, 105, 180, 0.15) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:200, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 200
+-                               width: "200px"
++                               height: 200
+-                               height: "200px"
++                               left: "20%"
+-                               left: "20%"
++                               top: "75%"
+-                               top: "75%"
++                               background: "radial-gradient(circle, rgba(53,228,178,0.12) 0%, transparent 70%)"
++                               transform: "translateX(-8.58px) translateY(-18.567999999999998px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(53, 228, 178, 0.12) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                          <motion.div className="Hero-modul..." style={{width:160, ...}} animate={{scale:[...], ...}} ...>
+                            <div
+                              className="Hero-module__PgAKtG__orb"
+                              style={{
++                               width: 160
+-                               width: "160px"
++                               height: 160
+-                               height: "160px"
++                               left: "85%"
+-                               left: "85%"
++                               top: "70%"
+-                               top: "70%"
++                               background: "radial-gradient(circle, rgba(160,106,249,0.15) 0%, transparent 70%)"
++                               transform: "translateX(-10.14px) translateY(-21.944000000000003px) rotate(360deg)"
+-                               transform: "rotate(360deg)"
+-                               background-image: "radial-gradient(circle, rgba(160, 106, 249, 0.15) 0%, transparent 70%)"
+-                               background-position-x: "initial"
+-                               background-position-y: "initial"
+-                               background-size: "initial"
+-                               background-repeat: "initial"
+-                               background-attachment: "initial"
+-                               background-origin: "initial"
+-                               background-clip: "initial"
+-                               background-color: "initial"
+                              }}
+                              ref={function useMotionRef.useCallback}
+                            >
+                      ...
+                  ...
+          ...
+        ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_7a8122d0._.js:3117
