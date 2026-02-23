@@ -159,11 +159,11 @@ function GridBackground() {
 function AnimatedCounter({ end, suffix, duration = 2 }: { end: number; suffix: string; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!isInView || hasAnimated || !ref.current) return;
-    setHasAnimated(true);
+    if (!isInView || hasAnimated.current || !ref.current) return;
+    hasAnimated.current = true;
     const controls = animate(0, end, {
       duration,
       ease: [0.34, 1.56, 0.64, 1], // overshoot spring-like
@@ -172,7 +172,7 @@ function AnimatedCounter({ end, suffix, duration = 2 }: { end: number; suffix: s
       },
     });
     return () => controls.stop();
-  }, [isInView, end, suffix, duration, hasAnimated]);
+  }, [isInView, end, suffix, duration]);
 
   return <span ref={ref} className={styles.heroStatValue}>0</span>;
 }
