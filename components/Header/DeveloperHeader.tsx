@@ -258,10 +258,15 @@ const DeveloperHeader = ({ pageTitle, onOpenDrawer, drawerOpen = false }: Develo
           </Link>
         </div>
 
-        {/* Mobile: center — page title */}
-        <div className={styles.navCenter} title={pageTitle}>
-          {pageTitle ?? t('nav-blog')}
-        </div>
+        {/* Mobile: center — Developer Section entry (pill link) */}
+        <Link
+          href={createLocalizedPath('/developer-section')}
+          className={styles.navCenterLink}
+          title={t('nav-developer-section')}
+        >
+          <span className={styles.navCenterLinkIcon} aria-hidden>&lt;/&gt;</span>
+          <span className={styles.navCenterLinkLabel}>{t('nav-developer-section')}</span>
+        </Link>
 
         {/* Desktop: full logo */}
         <Link
