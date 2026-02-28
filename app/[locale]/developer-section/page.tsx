@@ -30,6 +30,8 @@ import {
   Close as CloseIcon,
   NewReleases as NewReleasesIcon,
   Keyboard as KeyboardIcon,
+  SportsEsports as GameIcon,
+  BugReport as BugIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -37,7 +39,7 @@ import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
 
 // Card data organized by content type
-type ContentCategory = "blog" | "playground" | "course" | "challenge" | "interview";
+type ContentCategory = "blog" | "playground" | "course" | "challenge" | "interview" | "game";
 type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 
 type TopicTag = "react" | "kotlin" | "typescript" | "css" | "interview" | "android" | "spring" | "general";
@@ -273,6 +275,34 @@ const contentGroups: Array<{
         ctaKey: "practice-backend",
         difficulty: "advanced",
         tags: ["kotlin", "spring", "interview"],
+      },
+    ],
+  },
+  {
+    id: "game",
+    sectionKey: "hub-section-games",
+    cards: [
+      {
+        id: "reactor-game",
+        category: "game",
+        href: "/developer-section/reactor-game",
+        icon: GameIcon,
+        titleKey: "reactor-game-card-title",
+        descKey: "reactor-game-card-desc",
+        ctaKey: "reactor-game-card-cta",
+        difficulty: "beginner",
+        tags: ["kotlin", "spring"],
+      },
+      {
+        id: "react19-game",
+        category: "game",
+        href: "/developer-section/react19-game",
+        icon: BugIcon,
+        titleKey: "react19-game-card-title",
+        descKey: "react19-game-card-desc",
+        ctaKey: "react19-game-card-cta",
+        difficulty: "beginner",
+        tags: ["react"],
       },
     ],
   },
