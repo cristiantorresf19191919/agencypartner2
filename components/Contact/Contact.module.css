@@ -36,19 +36,168 @@
 }
 
 .sectionSubtitle {
-  max-width: 700px;
-  margin: 0 auto 3rem auto;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
   color: var(--text-secondary);
   font-size: 1.1rem;
+  line-height: 1.6;
 }
 
+/* Step Indicator */
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2.5rem;
+}
+
+.stepDot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(160, 106, 249, 0.1);
+  border: 2px solid rgba(160, 106, 249, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  transition: all 0.4s ease;
+}
+
+.stepDot.stepActive {
+  background: linear-gradient(135deg, #a06af9 0%, #8e44ad 100%);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 4px 15px rgba(160, 106, 249, 0.4);
+}
+
+.stepLine {
+  width: 60px;
+  height: 3px;
+  background: rgba(160, 106, 249, 0.15);
+  border-radius: 2px;
+  transition: all 0.4s ease;
+}
+
+.stepLine.stepLineActive {
+  background: linear-gradient(90deg, #a06af9 0%, #35E4B2 100%);
+}
+
+/* Contact Container */
 .contactContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
   text-align: left;
+}
+
+.stepContent {
+  width: 100%;
+}
+
+/* Step 1: Project Type Grid */
+.stepTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.stepDesc {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.typeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  background: #f8f5ff;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(160, 106, 249, 0.08);
+}
+
+[data-theme="dark"] .typeCard {
+  background: #23243a;
+}
+
+.typeCard:hover {
+  border-color: rgba(160, 106, 249, 0.3);
+  box-shadow: 0 8px 30px rgba(160, 106, 249, 0.15);
+}
+
+.typeIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+}
+
+.typeLabel {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+/* Step 2: Contact Details */
+.selectedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: rgba(160, 106, 249, 0.08);
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.selectedBadgeIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+}
+
+.changeBadge {
+  background: none;
+  border: none;
+  color: #a06af9;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: underline;
+  padding: 0;
+  margin-left: 0.25rem;
+}
+
+.changeBadge:hover {
+  color: #8e44ad;
 }
 
 .contactForm {
@@ -66,7 +215,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .formGroup {
@@ -78,6 +227,13 @@
   margin-bottom: 0.5rem;
   color: var(--text-primary);
   font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.optional {
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-size: 0.85rem;
 }
 
 .formGroup input,
@@ -86,7 +242,7 @@
   width: 100%;
   padding: 0.75rem;
   border: 1px solid rgba(160, 106, 249, 0.2);
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--white);
   color: var(--text-primary);
   font-size: 1rem;
@@ -109,8 +265,35 @@
   box-shadow: 0 0 0 3px rgba(160, 106, 249, 0.1);
 }
 
+/* Form Actions */
+.formActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.backButton {
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(160, 106, 249, 0.2);
+  border-radius: 999px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.backButton:hover {
+  border-color: #a06af9;
+  color: #a06af9;
+}
+
 .ctaButton {
-  width: 100%;
+  flex: 1;
   padding: 14px 32px;
   background: linear-gradient(135deg, #a06af9 0%, #8e44ad 100%);
   color: white;
@@ -119,7 +302,11 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .ctaButton:hover {
@@ -127,12 +314,35 @@
   box-shadow: 0 8px 25px rgba(160, 106, 249, 0.4);
 }
 
-.contactInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.ctaButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
+/* Trust Signals */
+.trustSignals {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.trustItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.trustItem i {
+  color: #35E4B2;
+  font-size: 0.9rem;
+}
+
+/* Toast */
 .toast {
   position: fixed;
   left: 50%;
@@ -172,51 +382,48 @@
   font-weight: 500;
 }
 
-.infoBox {
-  background: #f8f5ff;
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(160, 106, 249, 0.1);
-}
-
-[data-theme="dark"] .infoBox {
-  background: #23243a;
-}
-
-.infoBox h4 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-}
-
-.infoBox ul {
-  list-style: none;
-  padding: 0;
-}
-
-.infoBox li {
-  padding: 0.75rem 0;
-  color: var(--text-secondary);
-  position: relative;
-  padding-left: 1.5rem;
-}
-
-.infoBox li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: #35E4B2;
-  font-weight: bold;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .contactContainer {
-    grid-template-columns: 1fr;
+  .typeGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .formRow {
     grid-template-columns: 1fr;
   }
+
+  .formActions {
+    flex-direction: column-reverse;
+  }
+
+  .backButton {
+    justify-content: center;
+  }
+
+  .trustSignals {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
 }
 
+@media (max-width: 480px) {
+  .typeGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .typeCard {
+    padding: 1rem 0.75rem;
+  }
+
+  .typeIcon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .contactForm {
+    padding: 1.5rem;
+  }
+}

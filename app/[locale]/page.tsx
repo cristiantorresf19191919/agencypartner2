@@ -6,15 +6,19 @@ import LogoMarquee from '@/components/LogoMarquee/LogoMarquee';
 import USBusinessSection from '@/components/USBusinessSection/USBusinessSection';
 import ServicesOverview from '@/components/Services/ServicesOverview';
 import HowItWorks from '@/components/HowItWorks/HowItWorks';
+import ROICalculator from '@/components/ROICalculator/ROICalculator';
 import Pricing from '@/components/Pricing/Pricing';
 import ResultsBanner from '@/components/ResultsBanner/ResultsBanner';
 import Testimonials from '@/components/Testimonials/Testimonials';
+import SiteConfigurator from '@/components/SiteConfigurator/SiteConfigurator';
 import CTABanner from '@/components/CTABanner/CTABanner';
 import FAQ from '@/components/FAQ/FAQ';
 import Portfolio from '@/components/Portfolio/Portfolio';
 import OurTeam from '@/components/OurTeam/OurTeam';
 import Contact from '@/components/Contact/Contact';
 import Footer from '@/components/Footer/Footer';
+import SmartCTA from '@/components/SmartCTA/SmartCTA';
+import ExitIntentModal from '@/components/ExitIntentModal/ExitIntentModal';
 import AnimatedSection from '@/components/ui/AnimatedSection';
 
 export default function Home() {
@@ -33,11 +37,17 @@ export default function Home() {
         <HowItWorks />
       </AnimatedSection>
       <AnimatedSection>
+        <ROICalculator />
+      </AnimatedSection>
+      <AnimatedSection>
         <Pricing />
       </AnimatedSection>
       <ResultsBanner />
       <AnimatedSection>
         <Testimonials />
+      </AnimatedSection>
+      <AnimatedSection>
+        <SiteConfigurator />
       </AnimatedSection>
       <CTABanner />
       <AnimatedSection>
@@ -53,6 +63,8 @@ export default function Home() {
         <Contact />
       </AnimatedSection>
       <Footer />
+      <SmartCTA />
+      <ExitIntentModal />
     </main>
   );
 }
