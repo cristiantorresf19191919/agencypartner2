@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Stack, Heading, Text } from "@/components/ui";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocale } from "@/lib/useLocale";
@@ -26,6 +26,10 @@ import {
   History as HistoryIcon,
   LocalFireDepartment as FireIcon,
   Route as RouteIcon,
+  KeyboardArrowUp as ArrowUpIcon,
+  Close as CloseIcon,
+  NewReleases as NewReleasesIcon,
+  Keyboard as KeyboardIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -36,6 +40,8 @@ import styles from "./DeveloperSection.module.css";
 type ContentCategory = "blog" | "playground" | "course" | "challenge" | "interview";
 type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 
+type TopicTag = "react" | "kotlin" | "typescript" | "css" | "interview" | "android" | "spring" | "general";
+
 interface ContentCard {
   id: string;
   category: ContentCategory;
@@ -45,7 +51,18 @@ interface ContentCard {
   descKey: string;
   ctaKey: string;
   difficulty: DifficultyLevel;
+  tags: TopicTag[];
 }
+
+// Filter chip definitions
+const filterChips: Array<{ id: TopicTag | "all"; labelKey: string }> = [
+  { id: "all", labelKey: "hub-filter-all" },
+  { id: "react", labelKey: "hub-filter-react" },
+  { id: "kotlin", labelKey: "hub-filter-kotlin" },
+  { id: "typescript", labelKey: "hub-filter-typescript" },
+  { id: "css", labelKey: "hub-filter-css" },
+  { id: "interview", labelKey: "hub-filter-interview" },
+];
 
 // Grouped content: Blog (articles) | Playgrounds | Courses | Challenges | Interview Prep
 const contentGroups: Array<{
@@ -66,6 +83,7 @@ const contentGroups: Array<{
         descKey: "nav-blog-desc",
         ctaKey: "explore-blog",
         difficulty: "beginner",
+        tags: ["general"],
       },
     ],
   },
@@ -82,6 +100,7 @@ const contentGroups: Array<{
         descKey: "live-code-lab-desc",
         ctaKey: "open-playground",
         difficulty: "beginner",
+        tags: ["react", "typescript"],
       },
       {
         id: "kotlin-playground",
@@ -92,6 +111,7 @@ const contentGroups: Array<{
         descKey: "kotlin-playground-desc",
         ctaKey: "open-kotlin",
         difficulty: "beginner",
+        tags: ["kotlin"],
       },
     ],
   },
@@ -108,6 +128,7 @@ const contentGroups: Array<{
         descKey: "kotlin-course-card-desc",
         ctaKey: "start-course",
         difficulty: "intermediate",
+        tags: ["kotlin"],
       },
       {
         id: "kotlin-java-interop",
@@ -118,6 +139,7 @@ const contentGroups: Array<{
         descKey: "kotlin-java-interop-card-desc",
         ctaKey: "start-course",
         difficulty: "intermediate",
+        tags: ["kotlin"],
       },
       {
         id: "react-course",
@@ -128,6 +150,7 @@ const contentGroups: Array<{
         descKey: "react-course-card-desc",
         ctaKey: "start-course",
         difficulty: "beginner",
+        tags: ["react"],
       },
       {
         id: "typescript-course",
@@ -138,6 +161,7 @@ const contentGroups: Array<{
         descKey: "typescript-course-card-desc",
         ctaKey: "start-course",
         difficulty: "beginner",
+        tags: ["typescript"],
       },
       {
         id: "css-course",
@@ -148,6 +172,7 @@ const contentGroups: Array<{
         descKey: "css-course-card-desc",
         ctaKey: "start-course",
         difficulty: "beginner",
+        tags: ["css"],
       },
       {
         id: "android-kotlin",
@@ -158,6 +183,7 @@ const contentGroups: Array<{
         descKey: "android-playbook-card-desc",
         ctaKey: "start-learning",
         difficulty: "intermediate",
+        tags: ["kotlin", "android"],
       },
       {
         id: "spring-reactive",
@@ -168,6 +194,7 @@ const contentGroups: Array<{
         descKey: "spring-reactive-card-desc",
         ctaKey: "start-course",
         difficulty: "advanced",
+        tags: ["kotlin", "spring"],
       },
       {
         id: "reactor-flux",
@@ -178,6 +205,7 @@ const contentGroups: Array<{
         descKey: "reactor-flux-card-desc",
         ctaKey: "start-course",
         difficulty: "advanced",
+        tags: ["kotlin", "spring"],
       },
     ],
   },
@@ -194,6 +222,7 @@ const contentGroups: Array<{
         descKey: "coding-challenges-card-desc",
         ctaKey: "start-challenges",
         difficulty: "intermediate",
+        tags: ["typescript", "react"],
       },
       {
         id: "react-challenges",
@@ -204,6 +233,7 @@ const contentGroups: Array<{
         descKey: "react-challenges-card-desc",
         ctaKey: "solve-react-challenges",
         difficulty: "advanced",
+        tags: ["react"],
       },
     ],
   },
@@ -220,6 +250,7 @@ const contentGroups: Array<{
         descKey: "react-interview-card-desc",
         ctaKey: "practice-interviews",
         difficulty: "intermediate",
+        tags: ["react", "interview"],
       },
       {
         id: "soft-skills-interview",
@@ -230,6 +261,7 @@ const contentGroups: Array<{
         descKey: "soft-skills-interview-card-desc",
         ctaKey: "practice-soft-skills",
         difficulty: "beginner",
+        tags: ["interview"],
       },
       {
         id: "backend-interview",
@@ -240,6 +272,7 @@ const contentGroups: Array<{
         descKey: "backend-interview-card-desc",
         ctaKey: "practice-backend",
         difficulty: "advanced",
+        tags: ["kotlin", "spring", "interview"],
       },
     ],
   },
@@ -276,9 +309,18 @@ const learningPaths = [
   },
 ];
 
+// Changelog data for "What's New" banner
+const CHANGELOG_VERSION = "2026-02-v2";
+const changelogItems = [
+  { emoji: "🎯", textKey: "hub-changelog-filters" },
+  { emoji: "⌨️", textKey: "hub-changelog-shortcuts" },
+  { emoji: "📊", textKey: "hub-changelog-stats" },
+];
+
 // localStorage helpers
 const RECENTLY_VISITED_KEY = "dev-hub-recent";
 const STREAK_KEY = "dev-hub-streak";
+const CHANGELOG_DISMISSED_KEY = "dev-hub-changelog-dismissed";
 const MAX_RECENT = 3;
 
 function getRecentlyVisited(): string[] {
@@ -322,10 +364,71 @@ export default function DeveloperSectionPage() {
   const { createLocalizedPath } = useLocale();
   const [recentIds, setRecentIds] = useState<string[]>([]);
   const [streak, setStreak] = useState(0);
+  const [activeFilter, setActiveFilter] = useState<TopicTag | "all">("all");
+  const [showChangelog, setShowChangelog] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setRecentIds(getRecentlyVisited().slice(0, MAX_RECENT));
     setStreak(getStreak());
+
+    // Check if changelog was dismissed
+    try {
+      const dismissed = localStorage.getItem(CHANGELOG_DISMISSED_KEY);
+      if (dismissed !== CHANGELOG_VERSION) {
+        setShowChangelog(true);
+      }
+    } catch { /* noop */ }
+  }, []);
+
+  // Scroll-to-top visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Keyboard shortcuts (? key to toggle overlay)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in input/textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === "?") {
+        setShowShortcuts((prev) => !prev);
+      }
+      if (e.key === "Escape") {
+        setShowShortcuts(false);
+      }
+      // Quick filters: 1-6 keys
+      if (e.key >= "1" && e.key <= "6" && !e.metaKey && !e.ctrlKey) {
+        const filterIndex = parseInt(e.key) - 1;
+        if (filterIndex < filterChips.length) {
+          setActiveFilter(filterChips[filterIndex].id);
+        }
+      }
+      // Home key: scroll to top
+      if (e.key === "Home" && !e.metaKey && !e.ctrlKey) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleDismissChangelog = useCallback(() => {
+    setShowChangelog(false);
+    try {
+      localStorage.setItem(CHANGELOG_DISMISSED_KEY, CHANGELOG_VERSION);
+    } catch { /* noop */ }
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   const handleCardClick = useCallback(
@@ -357,12 +460,27 @@ export default function DeveloperSectionPage() {
   const totalCourses = contentGroups.find((g) => g.id === "course")?.cards.length || 0;
   const totalChallenges = contentGroups.find((g) => g.id === "challenge")?.cards.length || 0;
 
+  // Filter logic — when a filter is active, only show cards matching the tag
+  const filteredGroups = contentGroups.map((group) => ({
+    ...group,
+    cards: activeFilter === "all"
+      ? group.cards
+      : group.cards.filter((card) => card.tags.includes(activeFilter as TopicTag)),
+  })).filter((group) => group.cards.length > 0);
+
   const difficultyKey = (level: DifficultyLevel) =>
     level === "beginner"
       ? "hub-level-beginner"
       : level === "intermediate"
       ? "hub-level-intermediate"
       : "hub-level-advanced";
+
+  const shortcutsList = [
+    { keys: "?", descKey: "hub-shortcut-toggle" },
+    { keys: "1–6", descKey: "hub-shortcut-filters" },
+    { keys: "Esc", descKey: "hub-shortcut-close" },
+    { keys: "Home", descKey: "hub-shortcut-top" },
+  ];
 
   return (
     <main>
@@ -432,6 +550,59 @@ export default function DeveloperSectionPage() {
             </div>
           </motion.div>
 
+          {/* What's New Changelog Banner */}
+          <AnimatePresence>
+            {showChangelog && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.35 }}
+                className={styles.changelogBanner}
+              >
+                <div className={styles.changelogContent}>
+                  <div className={styles.changelogLeft}>
+                    <NewReleasesIcon className={styles.changelogIcon} />
+                    <span className={styles.changelogTitle}>{t("hub-changelog-title")}</span>
+                  </div>
+                  <div className={styles.changelogItems}>
+                    {changelogItems.map((item) => (
+                      <span key={item.textKey} className={styles.changelogItem}>
+                        <span>{item.emoji}</span>
+                        <span>{t(item.textKey)}</span>
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    className={styles.changelogClose}
+                    onClick={handleDismissChangelog}
+                    aria-label="Dismiss"
+                  >
+                    <CloseIcon className={styles.changelogCloseIcon} />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Topic Filter Chips */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+            className={styles.filterBar}
+          >
+            {filterChips.map((chip) => (
+              <button
+                key={chip.id}
+                className={`${styles.filterChip} ${activeFilter === chip.id ? styles.filterChipActive : ""}`}
+                onClick={() => setActiveFilter(chip.id)}
+              >
+                {t(chip.labelKey)}
+              </button>
+            ))}
+          </motion.div>
+
           {/* Continue Learning */}
           <AnimatePresence>
             {recentCards.length > 0 && (
@@ -475,8 +646,8 @@ export default function DeveloperSectionPage() {
           </AnimatePresence>
 
           {/* Content Sections: Blog | Playgrounds | Courses | Challenges | Interview Prep */}
-          <div className={styles.contentSections}>
-            {contentGroups.map((group, groupIndex) => (
+          <div className={styles.contentSections} ref={contentRef}>
+            {filteredGroups.map((group, groupIndex) => (
               <motion.section
                 key={group.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -614,6 +785,75 @@ export default function DeveloperSectionPage() {
             </motion.a>
           </motion.div>
         </div>
+
+        {/* Keyboard Shortcuts Floating Button */}
+        <button
+          className={styles.shortcutsBtn}
+          onClick={() => setShowShortcuts((prev) => !prev)}
+          aria-label={t("hub-shortcuts-label")}
+          title={t("hub-shortcuts-label")}
+        >
+          <KeyboardIcon className={styles.shortcutsBtnIcon} />
+        </button>
+
+        {/* Scroll to Top Button */}
+        <AnimatePresence>
+          {showScrollTop && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.25 }}
+              className={styles.scrollTopBtn}
+              onClick={scrollToTop}
+              aria-label="Scroll to top"
+            >
+              <ArrowUpIcon className={styles.scrollTopIcon} />
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        {/* Keyboard Shortcuts Overlay */}
+        <AnimatePresence>
+          {showShortcuts && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className={styles.shortcutsOverlay}
+              onClick={() => setShowShortcuts(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className={styles.shortcutsModal}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.shortcutsHeader}>
+                  <KeyboardIcon className={styles.shortcutsHeaderIcon} />
+                  <h3 className={styles.shortcutsTitle}>{t("hub-shortcuts-title")}</h3>
+                  <button
+                    className={styles.shortcutsClose}
+                    onClick={() => setShowShortcuts(false)}
+                  >
+                    <CloseIcon className={styles.shortcutsCloseIcon} />
+                  </button>
+                </div>
+                <div className={styles.shortcutsList}>
+                  {shortcutsList.map((item) => (
+                    <div key={item.keys} className={styles.shortcutRow}>
+                      <kbd className={styles.shortcutKbd}>{item.keys}</kbd>
+                      <span className={styles.shortcutDesc}>{t(item.descKey)}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <Footer />
     </main>
