@@ -52,12 +52,24 @@ interface LevelProgress {
   bestScore: number;
 }
 
-/* ============ Operator Definitions ============ */
+/* ============ Helper: isPrime ============ */
+function isPrime(n: number): boolean {
+  if (n < 2) return false;
+  if (n === 2) return true;
+  if (n % 2 === 0) return false;
+  for (let i = 3; i <= Math.sqrt(n); i += 2) {
+    if (n % i === 0) return false;
+  }
+  return true;
+}
+
+/* ============ Operator Definitions (42 total) ============ */
 const OPERATORS: Record<string, Operator> = {
+  /* --- Transforming (10) --- */
   map_x2: {
     id: "map_x2",
-    label: "map(×2)",
-    emoji: "🔄",
+    label: "map(\u00d72)",
+    emoji: "\ud83d\udd04",
     color: "#818cf8",
     description: "Transforms each element by multiplying by 2",
     reactorCode: ".map(x -> x * 2)",
@@ -65,8 +77,8 @@ const OPERATORS: Record<string, Operator> = {
   },
   map_x3: {
     id: "map_x3",
-    label: "map(×3)",
-    emoji: "🔄",
+    label: "map(\u00d73)",
+    emoji: "\ud83d\udd04",
     color: "#818cf8",
     description: "Transforms each element by multiplying by 3",
     reactorCode: ".map(x -> x * 3)",
@@ -75,16 +87,81 @@ const OPERATORS: Record<string, Operator> = {
   map_add3: {
     id: "map_add3",
     label: "map(+3)",
-    emoji: "🔄",
+    emoji: "\ud83d\udd04",
     color: "#818cf8",
     description: "Adds 3 to each element in the stream",
     reactorCode: ".map(x -> x + 3)",
     apply: (input) => input.map((x) => x + 3),
   },
+  map_sub1: {
+    id: "map_sub1",
+    label: "map(-1)",
+    emoji: "\ud83d\udd04",
+    color: "#818cf8",
+    description: "Subtracts 1 from each element in the stream",
+    reactorCode: ".map(x -> x - 1)",
+    apply: (input) => input.map((x) => x - 1),
+  },
+  map_abs: {
+    id: "map_abs",
+    label: "map(abs)",
+    emoji: "\ud83d\udd04",
+    color: "#818cf8",
+    description: "Takes the absolute value of each element",
+    reactorCode: ".map(Math::abs)",
+    apply: (input) => input.map((x) => Math.abs(x)),
+  },
+  map_square: {
+    id: "map_square",
+    label: "map(x\u00b2)",
+    emoji: "\ud83d\udd04",
+    color: "#818cf8",
+    description: "Squares each element in the stream",
+    reactorCode: ".map(x -> x * x)",
+    apply: (input) => input.map((x) => x * x),
+  },
+  map_add10: {
+    id: "map_add10",
+    label: "map(+10)",
+    emoji: "\ud83d\udd04",
+    color: "#818cf8",
+    description: "Adds 10 to each element in the stream",
+    reactorCode: ".map(x -> x + 10)",
+    apply: (input) => input.map((x) => x + 10),
+  },
+  map_div2: {
+    id: "map_div2",
+    label: "map(\u00f72)",
+    emoji: "\ud83d\udd04",
+    color: "#818cf8",
+    description: "Floor divides each element by 2",
+    reactorCode: ".map(x -> x / 2)",
+    apply: (input) => input.map((x) => Math.floor(x / 2)),
+  },
+  map_neg: {
+    id: "map_neg",
+    label: "map(neg)",
+    emoji: "\ud83d\udd04",
+    color: "#818cf8",
+    description: "Negates each element in the stream",
+    reactorCode: ".map(x -> -x)",
+    apply: (input) => input.map((x) => -x),
+  },
+  map_mod3: {
+    id: "map_mod3",
+    label: "map(%3)",
+    emoji: "\ud83d\udd04",
+    color: "#818cf8",
+    description: "Applies modulo 3 to each element",
+    reactorCode: ".map(x -> x % 3)",
+    apply: (input) => input.map((x) => ((x % 3) + 3) % 3),
+  },
+
+  /* --- Filtering (8) --- */
   filter_even: {
     id: "filter_even",
     label: "filter(even)",
-    emoji: "🔍",
+    emoji: "\ud83d\udd0d",
     color: "#34d399",
     description: "Keeps only even numbers from the stream",
     reactorCode: ".filter(x -> x % 2 == 0)",
@@ -93,7 +170,7 @@ const OPERATORS: Record<string, Operator> = {
   filter_odd: {
     id: "filter_odd",
     label: "filter(odd)",
-    emoji: "🔍",
+    emoji: "\ud83d\udd0d",
     color: "#34d399",
     description: "Keeps only odd numbers from the stream",
     reactorCode: ".filter(x -> x % 2 != 0)",
@@ -102,34 +179,133 @@ const OPERATORS: Record<string, Operator> = {
   filter_gt5: {
     id: "filter_gt5",
     label: "filter(>5)",
-    emoji: "🔍",
+    emoji: "\ud83d\udd0d",
     color: "#34d399",
     description: "Keeps only elements greater than 5",
     reactorCode: ".filter(x -> x > 5)",
     apply: (input) => input.filter((x) => x > 5),
   },
+  filter_lt10: {
+    id: "filter_lt10",
+    label: "filter(<10)",
+    emoji: "\ud83d\udd0d",
+    color: "#34d399",
+    description: "Keeps only elements less than 10",
+    reactorCode: ".filter(x -> x < 10)",
+    apply: (input) => input.filter((x) => x < 10),
+  },
+  filter_positive: {
+    id: "filter_positive",
+    label: "filter(>0)",
+    emoji: "\ud83d\udd0d",
+    color: "#34d399",
+    description: "Keeps only positive numbers",
+    reactorCode: ".filter(x -> x > 0)",
+    apply: (input) => input.filter((x) => x > 0),
+  },
+  filter_nonzero: {
+    id: "filter_nonzero",
+    label: "filter(\u22600)",
+    emoji: "\ud83d\udd0d",
+    color: "#34d399",
+    description: "Removes all zero values from the stream",
+    reactorCode: ".filter(x -> x != 0)",
+    apply: (input) => input.filter((x) => x !== 0),
+  },
+  filter_prime: {
+    id: "filter_prime",
+    label: "filter(prime)",
+    emoji: "\ud83d\udd0d",
+    color: "#34d399",
+    description: "Keeps only prime numbers",
+    reactorCode: ".filter(MathUtils::isPrime)",
+    apply: (input) => input.filter((x) => isPrime(x)),
+  },
+  filter_lte20: {
+    id: "filter_lte20",
+    label: "filter(\u226420)",
+    emoji: "\ud83d\udd0d",
+    color: "#34d399",
+    description: "Keeps only elements less than or equal to 20",
+    reactorCode: ".filter(x -> x <= 20)",
+    apply: (input) => input.filter((x) => x <= 20),
+  },
+
+  /* --- Limiting (6) --- */
   take_3: {
     id: "take_3",
     label: "take(3)",
-    emoji: "✂️",
+    emoji: "\u2702\ufe0f",
     color: "#f472b6",
     description: "Takes only the first 3 elements from the stream",
     reactorCode: ".take(3)",
     apply: (input) => input.slice(0, 3),
   },
+  take_5: {
+    id: "take_5",
+    label: "take(5)",
+    emoji: "\u2702\ufe0f",
+    color: "#f472b6",
+    description: "Takes only the first 5 elements from the stream",
+    reactorCode: ".take(5)",
+    apply: (input) => input.slice(0, 5),
+  },
+  takeLast_2: {
+    id: "takeLast_2",
+    label: "takeLast(2)",
+    emoji: "\u2702\ufe0f",
+    color: "#f472b6",
+    description: "Takes only the last 2 elements from the stream",
+    reactorCode: ".takeLast(2)",
+    apply: (input) => input.slice(-2),
+  },
+  takeWhile_lt10: {
+    id: "takeWhile_lt10",
+    label: "takeWhile(<10)",
+    emoji: "\u2702\ufe0f",
+    color: "#f472b6",
+    description: "Takes elements while they are less than 10",
+    reactorCode: ".takeWhile(x -> x < 10)",
+    apply: (input) => {
+      const result: number[] = [];
+      for (const x of input) {
+        if (x >= 10) break;
+        result.push(x);
+      }
+      return result;
+    },
+  },
   skip_2: {
     id: "skip_2",
     label: "skip(2)",
-    emoji: "⏭️",
+    emoji: "\u23ed\ufe0f",
     color: "#fb923c",
     description: "Skips the first 2 elements of the stream",
     reactorCode: ".skip(2)",
     apply: (input) => input.slice(2),
   },
+  skipWhile_lt5: {
+    id: "skipWhile_lt5",
+    label: "skipWhile(<5)",
+    emoji: "\u23ed\ufe0f",
+    color: "#fb923c",
+    description: "Skips elements while they are less than 5",
+    reactorCode: ".skipWhile(x -> x < 5)",
+    apply: (input) => {
+      let skipping = true;
+      return input.filter((x) => {
+        if (skipping && x < 5) return false;
+        skipping = false;
+        return true;
+      });
+    },
+  },
+
+  /* --- Deduplication & Ordering (4) --- */
   distinct: {
     id: "distinct",
     label: "distinct()",
-    emoji: "💎",
+    emoji: "\ud83d\udc8e",
     color: "#22d3ee",
     description: "Removes duplicate elements, keeping first occurrence",
     reactorCode: ".distinct()",
@@ -138,25 +314,196 @@ const OPERATORS: Record<string, Operator> = {
   sort: {
     id: "sort",
     label: "sort()",
-    emoji: "📊",
+    emoji: "\ud83d\udcca",
     color: "#a78bfa",
-    description: "Sorts elements in ascending order using a Comparator",
+    description: "Sorts elements in ascending order",
     reactorCode: ".sort()",
     apply: (input) => [...input].sort((a, b) => a - b),
   },
+  sort_desc: {
+    id: "sort_desc",
+    label: "sort(desc)",
+    emoji: "\ud83d\udcca",
+    color: "#a78bfa",
+    description: "Sorts elements in descending order",
+    reactorCode: ".sort(Comparator.reverseOrder())",
+    apply: (input) => [...input].sort((a, b) => b - a),
+  },
+  distinctUntilChanged: {
+    id: "distinctUntilChanged",
+    label: "distinctUntilChanged()",
+    emoji: "\ud83d\udc8e",
+    color: "#22d3ee",
+    description: "Removes consecutive duplicate elements only",
+    reactorCode: ".distinctUntilChanged()",
+    apply: (input) => input.filter((x, i) => i === 0 || x !== input[i - 1]),
+  },
+
+  /* --- Aggregation (6) --- */
   reduce_sum: {
     id: "reduce_sum",
     label: "reduce(+)",
-    emoji: "🧮",
+    emoji: "\ud83e\uddee",
     color: "#fbbf24",
     description: "Reduces all elements to a single sum using Mono",
     reactorCode: ".reduce(Integer::sum)",
     apply: (input) => (input.length > 0 ? [input.reduce((a, b) => a + b, 0)] : []),
   },
+  reduce_mul: {
+    id: "reduce_mul",
+    label: "reduce(\u00d7)",
+    emoji: "\ud83e\uddee",
+    color: "#fbbf24",
+    description: "Multiplies all elements together into a single value",
+    reactorCode: ".reduce((a, b) -> a * b)",
+    apply: (input) => (input.length > 0 ? [input.reduce((a, b) => a * b, 1)] : []),
+  },
+  scan_sum: {
+    id: "scan_sum",
+    label: "scan(+)",
+    emoji: "\ud83d\udcc8",
+    color: "#10b981",
+    description: "Running sum \u2014 emits all intermediate accumulated values",
+    reactorCode: ".scan(Integer::sum)",
+    apply: (input) => {
+      let acc = 0;
+      return input.map((x) => {
+        acc += x;
+        return acc;
+      });
+    },
+  },
+  scan_mul: {
+    id: "scan_mul",
+    label: "scan(\u00d7)",
+    emoji: "\ud83d\udcc8",
+    color: "#10b981",
+    description: "Running product \u2014 emits all intermediate multiplied values",
+    reactorCode: ".scan((a, b) -> a * b)",
+    apply: (input) => {
+      if (input.length === 0) return [];
+      const result: number[] = [input[0]];
+      for (let i = 1; i < input.length; i++) {
+        result.push(result[i - 1] * input[i]);
+      }
+      return result;
+    },
+  },
+  count: {
+    id: "count",
+    label: "count()",
+    emoji: "\ud83d\udd22",
+    color: "#f87171",
+    description: "Returns the count of elements as a single value",
+    reactorCode: ".count()",
+    apply: (input) => [input.length],
+  },
+  collectList: {
+    id: "collectList",
+    label: "collectList()",
+    emoji: "\ud83d\udce6",
+    color: "#e879f9",
+    description: "Collects all elements into a single list (passthrough)",
+    reactorCode: ".collectList()",
+    apply: (input) => [...input],
+  },
+
+  /* --- Advanced (8) --- */
+  buffer_3: {
+    id: "buffer_3",
+    label: "buffer(3)",
+    emoji: "\ud83d\uddc2\ufe0f",
+    color: "#06b6d4",
+    description: "Groups into chunks of 3, sums each chunk",
+    reactorCode: ".buffer(3).map(list -> list.stream().reduce(0, Integer::sum))",
+    apply: (input) => {
+      const result: number[] = [];
+      for (let i = 0; i < input.length; i += 3) {
+        const chunk = input.slice(i, i + 3);
+        result.push(chunk.reduce((a, b) => a + b, 0));
+      }
+      return result;
+    },
+  },
+  window_2: {
+    id: "window_2",
+    label: "window(2)",
+    emoji: "\ud83e\ade9",
+    color: "#06b6d4",
+    description: "Sliding windows of 2, sums each window",
+    reactorCode: ".window(2).flatMap(w -> w.reduce(0, Integer::sum))",
+    apply: (input) => {
+      if (input.length < 2) return [...input];
+      const result: number[] = [];
+      for (let i = 0; i <= input.length - 2; i++) {
+        result.push(input[i] + input[i + 1]);
+      }
+      return result;
+    },
+  },
+  groupBy_evenodd: {
+    id: "groupBy_evenodd",
+    label: "groupBy(parity)",
+    emoji: "\ud83c\udff7\ufe0f",
+    color: "#06b6d4",
+    description: "Groups by parity \u2014 evens first, then odds",
+    reactorCode: ".groupBy(x -> x % 2).flatMap(g -> g)",
+    apply: (input) => {
+      const evens = input.filter((x) => x % 2 === 0);
+      const odds = input.filter((x) => x % 2 !== 0);
+      return [...evens, ...odds];
+    },
+  },
+  flatMap_dup: {
+    id: "flatMap_dup",
+    label: "flatMap(dup)",
+    emoji: "\ud83d\udd00",
+    color: "#f43f5e",
+    description: "Duplicates each element [x, x]",
+    reactorCode: ".flatMap(x -> Flux.just(x, x))",
+    apply: (input) => input.flatMap((x) => [x, x]),
+  },
+  defaultIfEmpty_0: {
+    id: "defaultIfEmpty_0",
+    label: "defaultIfEmpty(0)",
+    emoji: "\u26a0\ufe0f",
+    color: "#94a3b8",
+    description: "If stream is empty, emits [0]; otherwise passthrough",
+    reactorCode: ".defaultIfEmpty(0)",
+    apply: (input) => (input.length === 0 ? [0] : [...input]),
+  },
+  switchIfEmpty_1: {
+    id: "switchIfEmpty_1",
+    label: "switchIfEmpty([1])",
+    emoji: "\ud83d\udd04",
+    color: "#94a3b8",
+    description: "If stream is empty, emits [1]; otherwise passthrough",
+    reactorCode: ".switchIfEmpty(Mono.just(1))",
+    apply: (input) => (input.length === 0 ? [1] : [...input]),
+  },
+  repeat_2: {
+    id: "repeat_2",
+    label: "repeat(2)",
+    emoji: "\ud83d\udd01",
+    color: "#f59e0b",
+    description: "Repeats the entire sequence twice (concat with itself)",
+    reactorCode: ".repeat(1)",
+    apply: (input) => [...input, ...input],
+  },
+  any_gt10: {
+    id: "any_gt10",
+    label: "any(>10)",
+    emoji: "\u2753",
+    color: "#ec4899",
+    description: "Returns [1] if any element > 10, else [0]",
+    reactorCode: ".any(x -> x > 10).map(b -> b ? 1 : 0)",
+    apply: (input) => [input.some((x) => x > 10) ? 1 : 0],
+  },
 };
 
-/* ============ Level Definitions ============ */
+/* ============ Level Definitions (30 total) ============ */
 const LEVELS: Level[] = [
+  /* === Block 1 — Single Operators (1-10) === */
   {
     id: 1,
     name: "Transform",
@@ -243,6 +590,44 @@ const LEVELS: Level[] = [
   },
   {
     id: 8,
+    name: "Absolute Values",
+    description: "Convert all negative values to positive",
+    input: [-3, 2, -5, 4, -1],
+    target: [3, 2, 5, 4, 1],
+    availableOps: ["map_abs", "map_neg", "filter_positive"],
+    slots: 1,
+    par: 1,
+    hint: "map(abs) takes the absolute value of each element",
+    teaches: "Flux.map(Math::abs)",
+  },
+  {
+    id: 9,
+    name: "Running Total",
+    description: "Compute the running sum of all elements",
+    input: [1, 2, 3, 4],
+    target: [1, 3, 6, 10],
+    availableOps: ["scan_sum", "reduce_sum", "map_add3"],
+    slots: 1,
+    par: 1,
+    hint: "scan() is like reduce but emits every intermediate accumulated value",
+    teaches: "Flux.scan()",
+  },
+  {
+    id: 10,
+    name: "Count Elements",
+    description: "Count how many elements are in the stream",
+    input: [7, 3, 9, 1, 5],
+    target: [5],
+    availableOps: ["count", "reduce_sum", "take_3"],
+    slots: 1,
+    par: 1,
+    hint: "count() emits a single number representing the total element count",
+    teaches: "Flux.count()",
+  },
+
+  /* === Block 2 — Two Operators (11-18) === */
+  {
+    id: 11,
     name: "Double & Filter",
     description: "Double all values, then keep only those greater than 5",
     input: [1, 2, 3, 4, 5],
@@ -254,7 +639,7 @@ const LEVELS: Level[] = [
     teaches: "Operator chaining",
   },
   {
-    id: 9,
+    id: 12,
     name: "Triple & Take",
     description: "Triple all values, then take only the first 3",
     input: [1, 2, 3, 4, 5],
@@ -266,7 +651,7 @@ const LEVELS: Level[] = [
     teaches: "map() + take()",
   },
   {
-    id: 10,
+    id: 13,
     name: "Filter & Sort",
     description: "Keep only odd numbers, then sort them",
     input: [8, 3, 6, 1, 4, 7, 2, 9],
@@ -278,9 +663,71 @@ const LEVELS: Level[] = [
     teaches: "filter() + sort()",
   },
   {
-    id: 11,
-    name: "Three-Step Chain",
-    description: "Sort, filter odds, then take the first 3",
+    id: 14,
+    name: "Negate & Sum",
+    description: "Negate all values, then sum them up",
+    input: [3, 7, 2],
+    target: [-12],
+    availableOps: ["map_neg", "reduce_sum", "map_abs", "filter_positive"],
+    slots: 2,
+    par: 2,
+    hint: "First negate every element, then reduce to a single sum",
+    teaches: "map(neg) + reduce()",
+  },
+  {
+    id: 15,
+    name: "Square & Filter",
+    description: "Square all values, then keep only those less than 10",
+    input: [1, 2, 3, 4, 5],
+    target: [1, 4, 9],
+    availableOps: ["map_square", "filter_lt10", "filter_gt5", "sort"],
+    slots: 2,
+    par: 2,
+    hint: "Square first, then filter out large values",
+    teaches: "map(x\u00b2) + filter()",
+  },
+  {
+    id: 16,
+    name: "Dedupe & Count",
+    description: "Remove duplicates, then count unique elements",
+    input: [3, 1, 4, 1, 5, 9, 2, 6, 5, 3],
+    target: [7],
+    availableOps: ["distinct", "count", "reduce_sum", "sort"],
+    slots: 2,
+    par: 2,
+    hint: "First remove duplicates, then count what remains",
+    teaches: "distinct() + count()",
+  },
+  {
+    id: 17,
+    name: "Sort Desc & Take Top",
+    description: "Sort descending, then take the first 3 (top 3)",
+    input: [5, 2, 8, 1, 9, 3],
+    target: [9, 8, 5],
+    availableOps: ["sort_desc", "sort", "take_3", "takeLast_2"],
+    slots: 2,
+    par: 2,
+    hint: "Sort in descending order first, then take the top elements",
+    teaches: "sort(desc) + take()",
+  },
+  {
+    id: 18,
+    name: "Modulo & Unique",
+    description: "Apply modulo 3, then keep only unique results",
+    input: [7, 14, 3, 9, 6, 12],
+    target: [1, 2, 0],
+    availableOps: ["map_mod3", "distinct", "sort", "filter_nonzero"],
+    slots: 2,
+    par: 2,
+    hint: "First apply modulo 3 to each element, then remove duplicates",
+    teaches: "map(%3) + distinct()",
+  },
+
+  /* === Block 3 — Three Operators (19-24) === */
+  {
+    id: 19,
+    name: "Sort, Filter Odds, Take 3",
+    description: "Sort ascending, keep only odds, then take first 3",
     input: [5, 3, 8, 1, 7, 2, 4, 6],
     target: [1, 3, 5],
     availableOps: ["sort", "filter_odd", "filter_even", "take_3", "skip_2", "map_x2"],
@@ -290,8 +737,8 @@ const LEVELS: Level[] = [
     teaches: "Multi-operator pipelines",
   },
   {
-    id: 12,
-    name: "Master Pipeline",
+    id: 20,
+    name: "Distinct, Sort, Take 3",
     description: "Remove duplicates, sort, and take the first 3",
     input: [3, 1, 4, 1, 5, 9, 2, 6, 5, 3],
     target: [1, 2, 3],
@@ -300,6 +747,136 @@ const LEVELS: Level[] = [
     par: 3,
     hint: "Clean duplicates first, then sort, then take what you need",
     teaches: "Complete reactive pipeline",
+  },
+  {
+    id: 21,
+    name: "Abs, Filter, Sort",
+    description: "Take absolute values, filter >5, then sort",
+    input: [-5, 3, -8, 7, -9, 1],
+    target: [7, 8, 9],
+    availableOps: ["map_abs", "filter_gt5", "sort", "filter_lt10", "distinct"],
+    slots: 3,
+    par: 3,
+    hint: "Convert to absolute values first, then filter out small ones, then sort",
+    teaches: "map(abs) + filter() + sort()",
+  },
+  {
+    id: 22,
+    name: "Double, Running Sum, Take",
+    description: "Double each value, compute running sum, take first 3",
+    input: [1, 1, 1, 1, 1],
+    target: [2, 4, 6],
+    availableOps: ["map_x2", "scan_sum", "take_3", "reduce_sum", "filter_even"],
+    slots: 3,
+    par: 3,
+    hint: "Double first, then scan for running totals, then limit",
+    teaches: "map() + scan() + take()",
+  },
+  {
+    id: 23,
+    name: "Filter Primes, Sort, Reduce",
+    description: "Keep only primes, sort them, then sum",
+    input: [10, 7, 4, 11, 6, 3, 8, 2, 13],
+    target: [36],
+    availableOps: ["filter_prime", "sort", "reduce_sum", "filter_odd", "count"],
+    slots: 3,
+    par: 3,
+    hint: "Filter for primes first, then sort, then reduce to a sum",
+    teaches: "filter(prime) + sort() + reduce()",
+  },
+  {
+    id: 24,
+    name: "Skip, Square, Take 5",
+    description: "Skip first 2, square each, then take first 5",
+    input: [1, 2, 3, 4, 5, 6, 7, 8],
+    target: [9, 16, 25, 36, 49],
+    availableOps: ["skip_2", "map_square", "take_5", "take_3", "filter_gt5", "sort"],
+    slots: 3,
+    par: 3,
+    hint: "Skip the first elements, then square the rest, then limit to 5",
+    teaches: "skip() + map(x\u00b2) + take()",
+  },
+
+  /* === Block 4 — Four Operators (25-28) === */
+  {
+    id: 25,
+    name: "Full Pipeline",
+    description: "Dedupe, sort, filter <10, take first 5",
+    input: [8, 3, 1, 4, 1, 5, 9, 2, 6, 5, 3],
+    target: [1, 2, 3, 4, 5],
+    availableOps: ["distinct", "sort", "filter_lt10", "take_5", "map_x2", "filter_even", "skip_2"],
+    slots: 4,
+    par: 4,
+    hint: "Remove duplicates, sort ascending, filter small values, then limit",
+    teaches: "4-stage reactive pipeline",
+  },
+  {
+    id: 26,
+    name: "Advanced Transform",
+    description: "Double, filter >5, sort descending, running sum",
+    input: [1, 2, 3, 4, 5, 6],
+    target: [12, 22, 30, 36],
+    availableOps: ["map_x2", "filter_gt5", "sort_desc", "scan_sum", "take_3", "filter_even"],
+    slots: 4,
+    par: 4,
+    hint: "Double values first, filter out small ones, sort descending, then running sum",
+    teaches: "map() + filter() + sort(desc) + scan()",
+  },
+  {
+    id: 27,
+    name: "Duplicate & Process",
+    description: "Duplicate each element, sort, dedupe, triple",
+    input: [3, 1, 2],
+    target: [3, 6, 9],
+    availableOps: ["flatMap_dup", "sort", "distinct", "map_x3", "filter_odd", "take_3"],
+    slots: 4,
+    par: 4,
+    hint: "Duplicate elements, sort them, remove duplicates, then transform",
+    teaches: "flatMap(dup) + sort() + distinct() + map()",
+  },
+  {
+    id: 28,
+    name: "Statistics Pipeline",
+    description: "Sort, skip 2, take last 2, then sum",
+    input: [5, 2, 8, 1, 9, 3, 7],
+    target: [17],
+    availableOps: ["sort", "skip_2", "takeLast_2", "reduce_sum", "filter_odd", "distinct", "map_x2"],
+    slots: 4,
+    par: 4,
+    hint: "Sort first, skip the smallest, take the last two, then sum",
+    teaches: "sort() + skip() + takeLast() + reduce()",
+  },
+
+  /* === Block 5 — Master (29-30) === */
+  {
+    id: 29,
+    name: "Complex Pipeline",
+    description: "Abs, dedupe, sort, filter primes, running sum",
+    input: [-7, 3, -3, 7, -11, 2, 5, -5, 11],
+    target: [2, 5, 10, 17, 28],
+    availableOps: [
+      "map_abs", "distinct", "sort", "filter_prime", "scan_sum",
+      "filter_gt5", "take_5", "reduce_sum", "map_x2", "skip_2",
+    ],
+    slots: 5,
+    par: 5,
+    hint: "Convert negatives to absolute values, deduplicate, sort, keep primes, then compute a running sum",
+    teaches: "5-stage pipeline mastery",
+  },
+  {
+    id: 30,
+    name: "Grand Master",
+    description: "Skip, square, filter \u226420, sort desc, take first 3",
+    input: [1, 2, 3, 4, 5, 6, 7, 8],
+    target: [16, 9],
+    availableOps: [
+      "skip_2", "map_square", "filter_lte20", "sort_desc", "takeLast_2",
+      "map_x2", "filter_prime", "distinct", "reduce_sum", "scan_sum",
+    ],
+    slots: 5,
+    par: 5,
+    hint: "Skip leading elements, square the rest, filter out large values, sort descending, then take the last 2",
+    teaches: "Ultimate pipeline mastery",
   },
 ];
 
@@ -504,13 +1081,7 @@ export default function ReactorGamePage() {
     return code;
   }, [placedOps, level]);
 
-  const isLevelUnlocked = useCallback(
-    (levelId: number) => {
-      if (levelId === 1) return true;
-      return progress[levelId - 1]?.completed || false;
-    },
-    [progress]
-  );
+  const isLevelUnlocked = useCallback(() => true, []);
 
   const totalStars = Object.values(progress).reduce((sum, p) => sum + (p.stars || 0), 0);
   const maxStars = LEVELS.length * 3;
@@ -590,21 +1161,18 @@ export default function ReactorGamePage() {
             </div>
             <div className={styles.levelsGrid}>
               {LEVELS.map((lvl, i) => {
-                const unlocked = isLevelUnlocked(lvl.id);
                 const prog = progress[lvl.id];
                 return (
                   <motion.button
                     key={lvl.id}
-                    className={`${styles.levelCard} ${!unlocked ? styles.levelLocked : ""} ${prog?.completed ? styles.levelCompleted : ""}`}
+                    className={`${styles.levelCard} ${prog?.completed ? styles.levelCompleted : ""}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.04 }}
-                    whileHover={unlocked ? { scale: 1.04, y: -4 } : {}}
-                    whileTap={unlocked ? { scale: 0.96 } : {}}
-                    onClick={() => unlocked && startLevel(i)}
-                    disabled={!unlocked}
+                    whileHover={{ scale: 1.04, y: -4 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => startLevel(i)}
                   >
-                    {!unlocked && <LockIcon className={styles.lockIcon} />}
                     <span className={styles.levelNum}>{lvl.id}</span>
                     <span className={styles.levelName}>{lvl.name}</span>
                     <div className={styles.levelStars}>
@@ -658,6 +1226,7 @@ export default function ReactorGamePage() {
     .distinct()
     .sort()
     .take(3)
+    .scan(Integer::sum)
     .reduce(Integer::sum)
     .subscribe(System.out::println)`}
               </pre>

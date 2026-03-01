@@ -35,6 +35,7 @@ import {
   Spa as SpringIcon,
   Science as AlchemyIcon,
   Timeline as TimelineIcon,
+  Waves as FlowIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -337,6 +338,17 @@ const contentGroups: Array<{
         titleKey: "coroutines-game-card-title",
         descKey: "coroutines-game-card-desc",
         ctaKey: "coroutines-game-card-cta",
+        difficulty: "intermediate",
+        tags: ["kotlin", "spring"],
+      },
+      {
+        id: "reactor-flow-game",
+        category: "game",
+        href: "/developer-section/reactor-flow-game",
+        icon: FlowIcon,
+        titleKey: "reactor-flow-card-title",
+        descKey: "reactor-flow-card-desc",
+        ctaKey: "reactor-flow-card-cta",
         difficulty: "intermediate",
         tags: ["kotlin", "spring"],
       },
