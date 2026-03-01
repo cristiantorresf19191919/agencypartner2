@@ -1,0 +1,1074 @@
+/* ============ Container ============ */
+.container {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a12 100%);
+}
+
+.bgEffects {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bgGradient1 {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite;
+}
+
+.bgGradient2 {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 70%, rgba(8, 145, 178, 0.12) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite reverse;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* ============ Menu Screen ============ */
+.menuScreen {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 6rem 1.5rem 3rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.menuIcon {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.5));
+}
+
+.menuTitle {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #06b6d4, #0891b2, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+}
+
+.menuSubtitle {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1.05rem;
+  max-width: 440px;
+  line-height: 1.6;
+}
+
+.menuStats {
+  display: flex;
+  gap: 1.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.playBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2.5rem;
+  background: linear-gradient(135deg, #0891b2, #06b6d4);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+.playBtn:hover {
+  box-shadow: 0 6px 30px rgba(6, 182, 212, 0.5);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin-top: 0.5rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ============ Level Select ============ */
+.levelsScreen {
+  position: relative;
+  z-index: 10;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 7rem 1.5rem 3rem;
+}
+
+.levelsHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.levelsTitle {
+  flex: 1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.levelsStars {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.blockTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #06b6d4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.15);
+}
+
+.blockTitle:first-of-type {
+  margin-top: 0;
+}
+
+.levelsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .levelsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .levelsGrid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.levelCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 0.75rem;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.levelCard:hover:not(:disabled) {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 16px rgba(6, 182, 212, 0.08);
+}
+
+.levelLocked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.levelCompleted {
+  border-color: rgba(52, 211, 153, 0.2);
+}
+
+.lockIcon {
+  color: rgba(255, 255, 255, 0.3);
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.levelNum {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #06b6d4, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.levelName {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.levelStars {
+  display: flex;
+  gap: 2px;
+}
+
+.starFilled {
+  width: 1rem;
+  height: 1rem;
+  color: #fbbf24;
+}
+
+.starEmpty {
+  width: 1rem;
+  height: 1rem;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.levelTeaches {
+  font-size: 0.6rem;
+  color: rgba(6, 182, 212, 0.7);
+  font-weight: 500;
+}
+
+/* ============ Game Screen ============ */
+.gameScreen {
+  position: relative;
+  z-index: 10;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 7rem 1rem 3rem;
+}
+
+@media (min-width: 768px) {
+  .gameScreen {
+    padding: 8rem 2rem 4rem;
+  }
+}
+
+.gameHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iconBtn:hover {
+  border-color: rgba(6, 182, 212, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.gameHeaderInfo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gameLevelBadge {
+  padding: 0.2rem 0.6rem;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 0.375rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #06b6d4;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gameLevelName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.gameLevelStars {
+  display: flex;
+  gap: 2px;
+}
+
+.gameDesc {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+/* ============ Timeline ============ */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  overflow: hidden;
+  padding: 0;
+}
+
+.lane {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border-left: 4px solid;
+  padding: 0.5rem 0.75rem;
+  transition: background 0.3s ease;
+}
+
+.lane:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.laneMain {
+  border-left-color: #ef4444;
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.laneIO {
+  border-left-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.03);
+}
+
+.laneDefault {
+  border-left-color: #22c55e;
+  background: rgba(34, 197, 94, 0.03);
+}
+
+.laneUnconfined {
+  border-left-color: #eab308;
+  background: rgba(234, 179, 8, 0.03);
+}
+
+.laneLabel {
+  width: 90px;
+  min-width: 90px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.laneLabelDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.laneContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.taskBlock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  position: relative;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.taskBlockMain {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.taskBlockIO {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+.taskBlockDefault {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
+}
+
+.taskBlockUnconfined {
+  background: rgba(234, 179, 8, 0.12);
+  border-color: rgba(234, 179, 8, 0.3);
+  color: #fde68a;
+}
+
+.taskBlockError {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
+  animation: shake 0.4s ease;
+}
+
+.taskEmoji {
+  font-size: 0.8rem;
+}
+
+.suspendGap {
+  width: 18px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.3) 0px,
+    rgba(255, 255, 255, 0.3) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  flex-shrink: 0;
+}
+
+/* Thread switch line */
+.threadSwitch {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.threadSwitchLine {
+  stroke-dasharray: 6 4;
+  stroke-width: 1.5;
+  fill: none;
+  animation: drawLine 0.5s ease forwards;
+}
+
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Blocked warning */
+.blockWarning {
+  animation: blockPulse 0.6s ease-in-out infinite alternate;
+  background: rgba(239, 68, 68, 0.12) !important;
+}
+
+@keyframes blockPulse {
+  0% {
+    background: rgba(239, 68, 68, 0.08);
+    box-shadow: inset 0 0 0 rgba(239, 68, 68, 0);
+  }
+  100% {
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.15);
+  }
+}
+
+.blockWarningIcon {
+  position: absolute;
+  right: 0.75rem;
+  font-size: 1rem;
+  animation: warningBounce 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes warningBounce {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.2); }
+}
+
+/* ============ Pipeline Slots ============ */
+.pipeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  overflow-x: auto;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  scrollbar-width: none;
+}
+
+.pipeline::-webkit-scrollbar {
+  display: none;
+}
+
+.pipelineStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.pipelineArrow {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: rgba(6, 182, 212, 0.4);
+  margin-top: 1.75rem;
+  flex-shrink: 0;
+}
+
+.pipelineNode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.pipelineLabel {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pipelineSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  min-height: 50px;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.85rem;
+}
+
+.pipelineSlot:hover {
+  border-color: rgba(6, 182, 212, 0.3);
+  background: rgba(6, 182, 212, 0.05);
+}
+
+.pipelineSlotFilled {
+  border-style: solid;
+}
+
+.pipelineSlotActive {
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.3);
+  animation: glowPulse 0.6s ease;
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 0 rgba(6, 182, 212, 0); }
+  50% { box-shadow: 0 0 24px rgba(6, 182, 212, 0.5); }
+  100% { box-shadow: 0 0 16px rgba(6, 182, 212, 0.3); }
+}
+
+.slotPlaceholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+/* ============ Task Description Panel ============ */
+.taskPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  background: rgba(6, 182, 212, 0.04);
+  border: 1px solid rgba(6, 182, 212, 0.12);
+  border-radius: 0.75rem;
+}
+
+.taskPanelTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #06b6d4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.taskItemIcon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.taskItemDone {
+  color: #34d399;
+  text-decoration: line-through;
+  text-decoration-color: rgba(52, 211, 153, 0.4);
+}
+
+/* ============ Result Message ============ */
+.resultMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.resultSuccess {
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  color: #34d399;
+}
+
+.resultFail {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  color: #f87171;
+}
+
+.resultStars {
+  font-size: 1.2rem;
+}
+
+/* ============ Code Preview ============ */
+.codePreview {
+  margin-bottom: 1.5rem;
+}
+
+.codePreviewLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+.codeBlock {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  font-family: "SF Mono", "Fira Code", "Cascadia Mono", monospace;
+  font-size: 0.78rem;
+  color: #22d3ee;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ============ Operator Toolbox ============ */
+.toolbox {
+  margin-bottom: 1.25rem;
+}
+
+.toolboxLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.75rem;
+}
+
+.toolboxGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.625rem;
+}
+
+@media (min-width: 640px) {
+  .toolboxGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .toolboxGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.opCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border: 1px solid;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+}
+
+.opCard:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.opCardSelected {
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.2);
+  transform: translateY(-2px);
+}
+
+.opCardUsed {
+  opacity: 0.35;
+}
+
+.opEmoji {
+  font-size: 1.1rem;
+}
+
+.opLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.opDesc {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+}
+
+.opCode {
+  font-family: "SF Mono", "Fira Code", "Cascadia Mono", monospace;
+  font-size: 0.58rem;
+  color: rgba(6, 182, 212, 0.5);
+  margin-top: 0.15rem;
+}
+
+/* ============ Action Bar ============ */
+.actionBar {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.hintBtn,
+.resetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hintBtn:hover,
+.resetBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.runBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(135deg, #0891b2, #06b6d4);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35);
+}
+
+.runBtn:hover:not(:disabled) {
+  box-shadow: 0 6px 24px rgba(6, 182, 212, 0.5);
+}
+
+.runBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nextBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+  transition: all 0.3s ease;
+}
+
+.nextBtn:hover {
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.5);
+}
+
+/* ============ Hint Box ============ */
+.hintBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(251, 191, 36, 0.06);
+  border: 1px solid rgba(251, 191, 36, 0.15);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.hintIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #fbbf24;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.hintText {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+
+.hintTeaches {
+  font-size: 0.75rem;
+  color: rgba(251, 191, 36, 0.7);
+}
+
+/* ============ Complete Screen ============ */
+.completeScreen {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 6rem 1.5rem 3rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.completeTrophy {
+  width: 4rem;
+  height: 4rem;
+  color: #fbbf24;
+  filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.5));
+}
+
+.completeTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #fbbf24, #06b6d4, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.completeSubtitle {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1rem;
+  max-width: 440px;
+}
+
+.completeStats {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.completeCode {
+  width: 100%;
+  max-width: 540px;
+  text-align: left;
+}
+
+.completeCodeLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.completeBtns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* ============ Confetti ============ */
+.confettiContainer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  top: -10px;
+  border-radius: 2px;
+  animation: confettiFall 2s ease-out forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ============ Animation: Shake ============ */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+/* ============ Animation: Task Slide ============ */
+@keyframes taskSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.taskSlideIn {
+  animation: taskSlide 0.5s ease forwards;
+}
+
+/* ============ Timeline legend ============ */
+.timelineLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ============ Mobile responsive ============ */
+@media (max-width: 640px) {
+  .timeline {
+    font-size: 0.65rem;
+  }
+
+  .laneLabel {
+    width: 65px;
+    min-width: 65px;
+    font-size: 0.55rem;
+  }
+
+  .taskBlock {
+    font-size: 0.6rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .pipeline {
+    gap: 0;
+  }
+
+  .pipelineNode {
+    min-width: 85px;
+  }
+
+  .pipelineSlot {
+    min-width: 90px;
+    min-height: 44px;
+    font-size: 0.75rem;
+  }
+}
