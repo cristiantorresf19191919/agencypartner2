@@ -21,7 +21,8 @@ import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getReactorChallengeById, REACTOR_CHALLENGES } from "@/lib/reactorChallengesData";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import styles from "./ReactorPlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
@@ -67,6 +68,7 @@ export default function ReactorChallengePlayPage() {
   const challenge = getReactorChallengeById(slug);
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+  const { celebration, celebrate, onComplete } = useCelebration();
 
   const [code, setCode] = useState("");
   const [logs, setLogs] = useState<string[]>([]);
@@ -222,20 +224,7 @@ export default function ReactorChallengePlayPage() {
       setShowSuccess(true);
       resetAttemptCount(challenge.id);
       markCompleted(challenge.id);
-      // Multi-burst confetti celebration
-      try {
-        const duration = 2000;
-        const end = Date.now() + duration;
-        const colors = ["#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ff9800"];
-        (function frame() {
-          confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors });
-          confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors });
-          if (Date.now() < end) requestAnimationFrame(frame);
-        })();
-        setTimeout(() => {
-          confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors });
-        }, 300);
-      } catch (_) { }
+      celebrate("reactor");
     } else {
       const newCount = incrementAttemptCount(challenge.id);
       setAttemptCount(newCount);
@@ -546,6 +535,7 @@ export default function ReactorChallengePlayPage() {
       </section>
 
       <Footer />
+      <CelebrationOverlay celebration={celebration} onComplete={onComplete} />
     </main>
   );
 }

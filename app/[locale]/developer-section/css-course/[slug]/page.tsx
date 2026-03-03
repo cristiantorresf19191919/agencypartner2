@@ -8,7 +8,8 @@ import Footer from "@/components/Footer/Footer";
 import CourseSidebar from "@/components/Layout/CourseSidebar";
 import { useLocale } from "@/lib/useLocale";
 import { getCssLessonById, CSS_COURSE_LESSONS } from "@/lib/cssCourseData";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import Link from "next/link";
@@ -20,6 +21,7 @@ export default function CssCourseLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const lesson = getCssLessonById(slug);
   const { createLocalizedPath } = useLocale();
+  const { celebration, celebrate, onComplete } = useCelebration();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [previewHtml, setPreviewHtml] = useState("");
@@ -51,9 +53,7 @@ export default function CssCourseLessonPage() {
       if (!lesson) return { success: false, message: "" };
       const result = lesson.validationLogic(code, []);
       if (result.success) {
-        try {
-          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-        } catch (_) {}
+        celebrate("simple");
         return { success: true, message: result.message || "Correct!" };
       }
       return { success: false, message: result.message || "Not quite. Try again." };
@@ -175,6 +175,7 @@ export default function CssCourseLessonPage() {
       </div>
 
       <Footer />
+      <CelebrationOverlay celebration={celebration} onComplete={onComplete} />
     </main>
   );
 }

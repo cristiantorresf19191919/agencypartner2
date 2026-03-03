@@ -262,6 +262,7 @@ export default function FloatingChat() {
           },
         }}
       >
+        {/* @ts-expect-error MUI Box union type too complex for TS - pre-existing issue */}
         <Box className={styles.header}>
           <Box className={styles.headerContent}>
             <Avatar className={styles.headerAvatar}>

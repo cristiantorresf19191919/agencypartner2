@@ -18,7 +18,8 @@ import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getChallengeById } from "@/lib/challengesData";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../ChallengesPage.module.css";
 import playStyles from "./ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
@@ -57,6 +58,7 @@ export default function ChallengePlayPage() {
   const challenge = getChallengeById(slug);
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+  const { celebration, celebrate, onComplete } = useCelebration();
 
   const [lang, setLang] = useState<"typescript" | "kotlin">("typescript");
   const [code, setCode] = useState("");
@@ -233,7 +235,7 @@ export default function ChallengePlayPage() {
     setSubmitResult({ passed, total, success: passed === total });
     if (passed === total) {
       setShowSuccess(true);
-      try { confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }); } catch (_) { }
+      celebrate("simple");
     }
     setIsSubmitting(false);
   }, [challenge, lang, getEditorCode, runTS, runKotlin]);
@@ -415,6 +417,7 @@ export default function ChallengePlayPage() {
       </div>
 
       <Footer />
+      <CelebrationOverlay celebration={celebration} onComplete={onComplete} />
     </main>
   );
 }

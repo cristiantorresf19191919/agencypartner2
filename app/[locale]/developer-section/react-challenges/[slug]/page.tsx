@@ -19,7 +19,8 @@ import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getReactChallengeById } from "@/lib/reactChallengesData";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
@@ -64,6 +65,7 @@ export default function ReactChallengePage() {
   const challenge = getReactChallengeById(slug);
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+  const { celebration, celebrate, onComplete } = useCelebration();
 
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -346,9 +348,7 @@ export default function ReactChallengePage() {
 
       if (success) {
         setShowSuccess(true);
-        try {
-          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-        } catch (_) { }
+        celebrate("simple");
         resetAttemptCount(challenge.id);
       } else {
         const newCount = incrementAttemptCount(challenge.id);
@@ -1084,6 +1084,7 @@ export default function ReactChallengePage() {
       </div>
 
       <Footer />
+      <CelebrationOverlay celebration={celebration} onComplete={onComplete} />
     </main>
   );
 }

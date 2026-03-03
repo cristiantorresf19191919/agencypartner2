@@ -12,7 +12,8 @@ import {
   KOTLIN_JAVA_INTEROP_LESSONS,
   type KotlinInteropPracticeChallenge,
 } from "@/lib/kotlinJavaInteropData";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import Link from "next/link";
@@ -30,6 +31,7 @@ export default function KotlinJavaInteropLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const lesson = getKotlinInteropLessonById(slug);
   const { createLocalizedPath } = useLocale();
+  const { celebration, celebrate, onComplete } = useCelebration();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [activePractice, setActivePractice] = useState<KotlinInteropPracticeChallenge | null>(null);
@@ -103,9 +105,7 @@ export default function KotlinJavaInteropLessonPage() {
       }
       const success = passed === total;
       if (success) {
-        try {
-          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-        } catch (_) {}
+        celebrate("simple");
       }
       return {
         success,
@@ -259,6 +259,7 @@ export default function KotlinJavaInteropLessonPage() {
       </div>
 
       <Footer />
+      <CelebrationOverlay celebration={celebration} onComplete={onComplete} />
     </main>
   );
 }

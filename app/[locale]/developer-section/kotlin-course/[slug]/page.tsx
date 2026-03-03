@@ -17,7 +17,8 @@ import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDeveloperSectionFont } from "@/contexts/DeveloperSectionFontContext";
 import { KOTLIN_COURSE_LESSONS, type KotlinPracticeChallenge } from "@/lib/kotlinCourseData";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import Link from "next/link";
@@ -52,6 +53,7 @@ export default function KotlinCourseLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const { locale, createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+  const { celebration, celebrate, onComplete } = useCelebration();
   const lesson = getKotlinLessonForLocale(locale as "en" | "es", slug);
 
   const { contentFontSize } = useDeveloperSectionFont();
@@ -188,9 +190,7 @@ export default function KotlinCourseLessonPage() {
       }
       const success = passed === total;
       if (success) {
-        try {
-          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-        } catch (_) {}
+        celebrate("simple");
       }
       return {
         success,
@@ -456,6 +456,7 @@ export default function KotlinCourseLessonPage() {
       </div>
 
       <Footer />
+      <CelebrationOverlay celebration={celebration} onComplete={onComplete} />
     </main>
   );
 }

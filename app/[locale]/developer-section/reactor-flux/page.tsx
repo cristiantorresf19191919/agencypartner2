@@ -24,7 +24,13 @@ import {
   type ReactorBlock,
 } from "@/lib/reactorFluxData";
 import { MarbleDiagram } from "@/components/ReactorFlux/MarbleDiagram";
+import dynamic from "next/dynamic";
 import styles from "./ReactorFlux.module.css";
+
+const PixiMarbleDiagram = dynamic(
+  () => import("@/components/ReactorFlux/PixiMarbleDiagram").then((mod) => ({ default: mod.PixiMarbleDiagram })),
+  { ssr: false, loading: () => null }
+);
 
 const PISTON_EXECUTE_URL = "/api/execute-code";
 
@@ -397,12 +403,20 @@ export default function ReactorFluxPage() {
               const diagramName = block.src.replace(/^.*\/([^/]+)\.(svg|png|jpg)$/i, "$1");
               if (imageFailed) {
                 return (
-                  <MarbleDiagram
-                    key={i}
-                    name={diagramName}
-                    caption={block.alt}
-                    className={styles.marbleDiagramFigure}
-                  />
+                  <React.Fragment key={i}>
+                    <PixiMarbleDiagram
+                      name={diagramName}
+                      caption={block.alt}
+                      className={styles.marbleDiagramFigure}
+                    />
+                    <noscript>
+                      <MarbleDiagram
+                        name={diagramName}
+                        caption={block.alt}
+                        className={styles.marbleDiagramFigure}
+                      />
+                    </noscript>
+                  </React.Fragment>
                 );
               }
               return (

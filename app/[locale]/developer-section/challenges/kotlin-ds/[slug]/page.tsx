@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
+
 import { motion, AnimatePresence } from "framer-motion";
 import {
   PlayArrow as PlayIcon,
@@ -23,7 +24,8 @@ import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getDSChallengeById, getDSChallengesByTopic, getDSTopicById } from "@/lib/kotlinDSChallengesData";
 import type { KotlinDSChallenge } from "@/lib/kotlinDSChallengesData";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay as PixiCelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import landingStyles from "../../ChallengesLanding.module.css";
 import styles from "./KotlinDSPlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
@@ -39,6 +41,11 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
     </div>
   ),
 });
+
+const PixiDSVisualizer = dynamic(
+  () => import("@/components/DataStructures/PixiDataStructureVisualizer").then((mod) => ({ default: mod.PixiDataStructureVisualizer })),
+  { ssr: false }
+);
 
 function normalizeOutput(s: string): string {
   return (s || "").trim().replace(/\r\n/g, "\n");
@@ -308,6 +315,7 @@ export default function KotlinDSPlayPage() {
   const challenge = getDSChallengeById(slug);
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+  const { celebration, celebrate, onComplete: onCelebrationComplete } = useCelebration();
 
   const [code, setCode] = useState("");
   const [logs, setLogs] = useState<string[]>([]);
@@ -460,12 +468,8 @@ export default function KotlinDSPlayPage() {
         set.add(challenge.id);
         localStorage.setItem("kotlin-ds-completed", JSON.stringify([...set]));
       } catch {}
-      // Fire confetti
-      try {
-        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
-        setTimeout(() => confetti({ particleCount: 80, spread: 60, origin: { y: 0.5, x: 0.3 } }), 300);
-        setTimeout(() => confetti({ particleCount: 80, spread: 60, origin: { y: 0.5, x: 0.7 } }), 500);
-      } catch {}
+      // Fire celebration
+      celebrate("multi-burst");
       // Auto-dismiss celebration
       setTimeout(() => setShowCelebration(false), 4000);
     }
@@ -554,8 +558,13 @@ export default function KotlinDSPlayPage() {
 
             <h1 className={styles.descTitle}>{challenge.title}</h1>
 
-            {/* SVG Diagram */}
-            {DiagramComponent && (
+            {/* Interactive Diagram (PixiJS with SVG fallback) */}
+            {topic && (
+              <div className={styles.diagramWrap}>
+                <PixiDSVisualizer topicId={topic.id} width={400} height={160} />
+              </div>
+            )}
+            {DiagramComponent && !topic && (
               <div className={styles.diagramWrap}>
                 <DiagramComponent />
               </div>
@@ -754,6 +763,7 @@ export default function KotlinDSPlayPage() {
       </div>
 
       <Footer />
+      <PixiCelebrationOverlay celebration={celebration} onComplete={onCelebrationComplete} />
     </main>
   );
 }

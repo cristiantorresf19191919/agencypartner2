@@ -10,7 +10,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { getReactLessonForLocale } from "@/lib/courseTranslations";
 import { REACT_COURSE_LESSONS } from "@/lib/reactCourseData";
 import type { LessonSection, LessonSectionTag } from "@/lib/webCourseTypes";
-import confetti from "canvas-confetti";
+import { useCelebration } from "@/components/Celebration/useCelebration";
+import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import Link from "next/link";
@@ -110,6 +111,7 @@ export default function ReactCourseLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const { locale, createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+  const { celebration, celebrate, onComplete } = useCelebration();
   // Ensure slug is valid and get lesson - if mismatch, fallback to slug-based lookup
   let lesson = getReactLessonForLocale(locale as "en" | "es", slug);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -119,9 +121,7 @@ export default function ReactCourseLessonPage() {
       if (!lesson) return { success: false, message: "" };
       const result = lesson.validationLogic(code, []);
       if (result.success) {
-        try {
-          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-        } catch (_) {}
+        celebrate("simple");
         return { success: true, message: result.message ?? "Correct!" };
       }
       return { success: false, message: result.message ?? t("not-quite-try-again") };
@@ -254,6 +254,7 @@ export default function ReactCourseLessonPage() {
       </div>
 
       <Footer />
+      <CelebrationOverlay celebration={celebration} onComplete={onComplete} />
     </main>
   );
 }
