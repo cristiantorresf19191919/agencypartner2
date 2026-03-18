@@ -230,6 +230,22 @@ const blogTranslations: BlogTranslations = {
       categoriesDescription: 'Contents: 1. Introduction • 2. Architecture • 3. Installation • 4. kubectl • 5. Pods • 6. Deployments • 7. Services • 8. ConfigMaps & Secrets • 9. Volumes • 10. Networking • 11. K9s • 12. Helm • 13. RBAC • 14. Monitoring • 15. Best Practices • 16. Real-World Examples',
     },
   },
+  'serverless-applications': {
+    es: {
+      title: 'Aplicaciones Serverless: Guía Completa',
+      subtitle: 'Comprende la arquitectura serverless desde conceptos fundamentales hasta patrones de producción. Aprende FaaS, pipelines basados en eventos, workers asincrónicos, servicios gestionados, cold starts, principios de diseño y cuándo serverless es la elección correcta.',
+      breadcrumbLabel: 'Serverless',
+      introParagraph: 'Una aplicación serverless es aquella donde tu código sigue ejecutándose en servidores, pero tú no gestionas los servidores. El proveedor cloud se encarga del aprovisionamiento, escalado, parches y disponibilidad. Tú te enfocas en código + configuración.',
+      categoriesDescription: 'Contenido: 1. Fundamentos • 2. Bloques de Construcción • 3. API Request/Response • 4. Pipeline de Eventos • 5. Workers Asincrónicos • 6. Tareas Programadas • 7. Ventajas y Compromisos • 8. Principios de Diseño • 9. Cuándo Usar Serverless • 10. Desafíos',
+    },
+    en: {
+      title: 'Serverless Applications: Complete Guide',
+      subtitle: 'Understand serverless architecture from core concepts to production patterns. Learn FaaS, event-driven pipelines, async workers, managed services, cold starts, design principles, and when serverless is the right choice.',
+      breadcrumbLabel: 'Serverless',
+      introParagraph: 'A serverless application is one where your code still runs on servers, but you don\'t manage the servers. The cloud provider handles provisioning, scaling, patching, and availability. You focus on code + configuration.',
+      categoriesDescription: 'Contents: 1. Fundamentals • 2. Building Blocks • 3. Request/Response API • 4. Event-Driven Pipeline • 5. Async Queue Workers • 6. Scheduled Tasks • 7. Advantages & Tradeoffs • 8. Design Principles • 9. When to Use Serverless • 10. Challenges',
+    },
+  },
   'dsa-complete-guide': {
     es: {
       title: 'Estructuras de Datos y Algoritmos: Guía Completa',
@@ -260,6 +276,22 @@ const blogTranslations: BlogTranslations = {
       breadcrumbLabel: 'Frontend Patterns 2026',
       introParagraph: 'The frontend design patterns of 2026 will revolutionize user interactions with digital products. From component-driven development to AI-powered workflows, these patterns define the future of frontend web design.',
       categoriesDescription: 'Contents: 1. Atomic Design • 2. Signals vs Context API • 3. Grid & Flexbox • 4. Dark Mode & Theming • 5. Progressive Disclosure • 6. Container Queries • 7. Responsive Typography • 8. Touch UX • 9. Design Systems • 10. Accessibility • 11. AI in Frontend • 12. Lazy Loading • 13. BEM & CSS Modules • 14. Virtual DOM • 15. Tree Shaking',
+    },
+  },
+  'git-worktrees-claude-code': {
+    es: {
+      title: 'Git Worktrees y Claude Code: Guía Completa',
+      subtitle: 'Domina git worktrees para desarrollo paralelo con Claude Code. Aprende ciclo de vida de worktrees, aislamiento de subagentes, procesamiento por lotes y configuraciones de hooks para flujos de trabajo multi-rama asistidos por IA.',
+      breadcrumbLabel: 'Git Worktrees & Claude Code',
+      introParagraph: 'Los git worktrees permiten trabajar en múltiples ramas simultáneamente sin git stash ni cambios de contexto. Combinados con Claude Code, habilitan un flujo de desarrollo paralelo donde múltiples agentes IA trabajan en tareas independientes al mismo tiempo.',
+      categoriesDescription: 'Contenido: 1. Fundamentos de Worktrees • 2. Integración Claude Code • 3. Flujo de Trabajo Paralelo • 4. Aislamiento de Subagentes • 5. Gestión de Sesiones • 6. Ciclo de Vida • 7. Hooks para VCS • 8. Mejores Prácticas • 9. Solución de Problemas • 10. Desafíos',
+    },
+    en: {
+      title: 'Git Worktrees & Claude Code: Complete Guide',
+      subtitle: 'Master git worktrees for parallel development with Claude Code. Learn worktree lifecycle, subagent isolation, batch processing, and hook configurations for AI-assisted multi-branch workflows.',
+      breadcrumbLabel: 'Git Worktrees & Claude Code',
+      introParagraph: 'Git worktrees let you work on multiple branches simultaneously without git stash or context switching. Combined with Claude Code, they enable a parallel development workflow where multiple AI agents work on independent tasks at the same time.',
+      categoriesDescription: 'Contents: 1. Worktree Fundamentals • 2. Claude Code Integration • 3. Parallel Workflows • 4. Subagent Isolation • 5. Session Management • 6. Lifecycle • 7. VCS Hooks • 8. Best Practices • 9. Troubleshooting • 10. Challenges',
     },
   },
   'spring-reactive-programming': {
@@ -367,6 +399,10 @@ const CATEGORY_ES: Record<string, { title: string; description: string }> = {
   'design-systems': {
     title: 'Sistemas de diseño',
     description: 'Sistemas de diseño listos para producción. Storybook, documentación de componentes y sistemas de tokens.',
+  },
+  'developer-tools-workflow': {
+    title: 'Herramientas de desarrollo y flujo de trabajo',
+    description: 'Domina herramientas de desarrollo, flujos de trabajo Git, productividad CLI y patrones de desarrollo asistido por IA.',
   },
   'data-structures-algorithms': {
     title: 'Estructuras de datos y algoritmos',

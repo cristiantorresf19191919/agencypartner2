@@ -9,6 +9,7 @@ import Footer from "@/components/Footer/Footer";
 import SearchSection from "@/components/Search/SearchSection";
 import { blogCategories } from "@/lib/blogCategories";
 import { getBlogPostContent, getCategoryForLocale } from "@/lib/blogTranslations";
+import { blogPostDates, formatPostDate, groupPostsByMonth } from "@/lib/blogPostDates";
 import styles from "./BlogPage.module.css";
 
 function BlogPageContent() {
@@ -16,6 +17,7 @@ function BlogPageContent() {
   const { createLocalizedPath } = useLocale();
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<"category" | "timeline">("category");
 
   const DESC_COLLAPSE_THRESHOLD = 110;
 
@@ -82,8 +84,99 @@ function BlogPageContent() {
             <SearchSection />
           </div>
 
+          {/* View Toggle */}
+          <div className={styles.viewToggle}>
+            <button
+              type="button"
+              className={`${styles.viewToggleBtn} ${viewMode === "category" ? styles.viewToggleBtnActive : ""}`}
+              onClick={() => setViewMode("category")}
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" /><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" /><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" /><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" /></svg>
+              {language === "es" ? "Categorías" : "Categories"}
+            </button>
+            <button
+              type="button"
+              className={`${styles.viewToggleBtn} ${viewMode === "timeline" ? styles.viewToggleBtnActive : ""}`}
+              onClick={() => setViewMode("timeline")}
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M4 4h8M3 8h10M5 12h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+              {language === "es" ? "Cronología" : "Timeline"}
+            </button>
+          </div>
+
+          {/* Timeline View */}
+          {viewMode === "timeline" && (() => {
+            const allPosts = Object.entries(blogPostDates)
+              .map(([slug, dateStr]) => {
+                const date = new Date(dateStr);
+                const postData = blogCategories
+                  .flatMap((cat) => cat.posts.map((p) => ({ postSlug: p.slug, postTitle: p.title, postIcon: p.icon, categoryTitle: cat.title, categoryIcon: cat.icon })))
+                  .find((p) => p.postSlug === slug);
+                return postData ? { slug, date, title: postData.postTitle, icon: postData.postIcon, categoryTitle: postData.categoryTitle, categoryIcon: postData.categoryIcon } : null;
+              })
+              .filter(Boolean) as { slug: string; date: Date; title: string; icon: string; categoryTitle: string; categoryIcon: string }[];
+
+            allPosts.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+            const groups = groupPostsByMonth(allPosts, language);
+            const newest = allPosts[0];
+            const oldest = allPosts[allPosts.length - 1];
+
+            return (
+              <div className={styles.timelineView}>
+                {/* Stats */}
+                <div className={styles.timelineStats}>
+                  <div className={styles.timelineStat}>
+                    <span className={styles.timelineStatValue}>{allPosts.length}</span>
+                    <span className={styles.timelineStatLabel}>{language === "es" ? "Total posts" : "Total Posts"}</span>
+                  </div>
+                  {newest && (
+                    <div className={styles.timelineStat}>
+                      <span className={styles.timelineStatValue}>{formatPostDate(newest.date, language)}</span>
+                      <span className={styles.timelineStatLabel}>{language === "es" ? "Más reciente" : "Most Recent"}</span>
+                    </div>
+                  )}
+                  {oldest && (
+                    <div className={styles.timelineStat}>
+                      <span className={styles.timelineStatValue}>{formatPostDate(oldest.date, language)}</span>
+                      <span className={styles.timelineStatLabel}>{language === "es" ? "Más antiguo" : "Oldest"}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Grouped by month */}
+                {groups.map((group) => (
+                  <div key={group.label} className={styles.monthGroup}>
+                    <div className={styles.monthLabel}>{group.label}</div>
+                    <div className={styles.timelineList}>
+                      {group.posts.map((gp) => {
+                        const post = allPosts.find((p) => p.slug === gp.slug);
+                        if (!post) return null;
+                        const localizedTitle = getBlogPostContent(post.slug, language as "es" | "en")?.title ?? post.title;
+                        return (
+                          <a
+                            key={post.slug}
+                            href={createLocalizedPath(`/developer-section/blog/${post.slug}`)}
+                            className={styles.timelineCard}
+                          >
+                            <div className={styles.timelineIcon}>{post.icon}</div>
+                            <div className={styles.timelineInfo}>
+                              <div className={styles.timelineTitle}>{localizedTitle}</div>
+                              <div className={styles.timelineCategory}>{post.categoryTitle}</div>
+                            </div>
+                            <div className={styles.timelineDate}>{formatPostDate(post.date, language)}</div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+
           {/* Categories Grid */}
-          <div className={styles.sectionsGrid}>
+          {viewMode === "category" && <div className={styles.sectionsGrid}>
             {categories.map((category) => {
               const categoryDisplay = getCategoryForLocale(category.slug, language as 'es' | 'en', { title: category.title, description: category.description });
               return (
@@ -201,7 +294,7 @@ function BlogPageContent() {
                 </a>
               );
             })}
-          </div>
+          </div>}
 
           {/* Features Section */}
           <div className={styles.featuresSection}>
