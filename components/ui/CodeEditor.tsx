@@ -11,6 +11,7 @@ import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, 
 import * as Babel from "@babel/standalone";
 import { ensureEmmetJSX } from "@/lib/emmetMonaco";
 import { ensureKotlinLanguage } from "@/lib/kotlinMonaco";
+import { ensureBashLanguage, registerBashCompletions } from "@/lib/bashMonaco";
 import { Highlight, themes } from "prism-react-renderer";
 import styles from "./CodeEditor.module.css";
 
@@ -19,7 +20,7 @@ const HIGHLIGHT_LANGUAGES = new Set([
   "markup", "html", "xml", "svg", "mathml", "ssml", "atom", "rss",
   "css", "clike", "javascript", "js", "jsx", "typescript", "ts", "tsx",
   "kotlin", "python", "json", "yaml", "markdown", "go", "rust", "swift",
-  "objectivec", "graphql", "cpp", "reason",
+  "objectivec", "graphql", "cpp", "reason", "bash", "sh", "shell",
 ]);
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -916,9 +917,15 @@ export function solution() {
     return () => window.removeEventListener("keydown", handler);
   }, [isRunnable, isKotlin, useCustomRun, runCode, isFullscreen]);
 
+  const isBash = normalizedLang === "bash" || normalizedLang === "sh" || normalizedLang === "shell";
+
   const handleBeforeMount = useCallback((monaco: any) => {
     ensureEmmetJSX(monaco);
     if (isKotlin) ensureKotlinLanguage(monaco);
+    if (isBash) {
+      ensureBashLanguage(monaco);
+      registerBashCompletions(monaco);
+    }
     // Custom theme: brighter keywords for readability on dark background (accessibility)
     monaco.editor.defineTheme("vs-dark-bright-keywords", {
       base: "vs-dark",
@@ -926,14 +933,37 @@ export function solution() {
       rules: [
         { token: "keyword", foreground: "93c5fd", fontStyle: "" },
         { token: "type", foreground: "93c5fd" },
-        { token: "comment", foreground: "86efac" },
+        { token: "comment", foreground: "6b7280", fontStyle: "italic" },
+        // Bash/Shell token colors
+        { token: "comment.shebang", foreground: "fb923c", fontStyle: "bold" },
+        { token: "keyword.builtin", foreground: "67e8f9", fontStyle: "" },
+        { token: "keyword.git", foreground: "fb923c", fontStyle: "bold" },
+        { token: "keyword.git.subcommand", foreground: "fbbf24", fontStyle: "" },
+        { token: "keyword.claude", foreground: "c084fc", fontStyle: "bold" },
+        { token: "keyword.package", foreground: "a78bfa", fontStyle: "" },
+        { token: "keyword.devops", foreground: "38bdf8", fontStyle: "" },
+        { token: "variable.env", foreground: "86efac", fontStyle: "" },
+        { token: "variable.special", foreground: "86efac", fontStyle: "bold" },
+        { token: "variable.assignment", foreground: "86efac", fontStyle: "" },
+        { token: "parameter.flag", foreground: "fca5a5", fontStyle: "" },
+        { token: "parameter.flag.short", foreground: "fca5a5", fontStyle: "" },
+        { token: "operator.pipe", foreground: "fbbf24", fontStyle: "bold" },
+        { token: "operator.redirect", foreground: "f9a8d4", fontStyle: "" },
+        { token: "operator.logical", foreground: "fbbf24", fontStyle: "bold" },
+        { token: "operator.background", foreground: "fbbf24", fontStyle: "" },
+        { token: "string.double", foreground: "a5d6a7" },
+        { token: "string.single", foreground: "a5d6a7" },
+        { token: "string.backtick", foreground: "ce93d8" },
+        { token: "string.escape", foreground: "fbbf24" },
+        { token: "string.path", foreground: "93c5fd", fontStyle: "underline" },
+        { token: "number", foreground: "f9a8d4" },
       ],
       colors: {
         "editorLineNumber.foreground": "#6b7280",
         "editorLineNumber.activeForeground": "#9ca3af",
       },
     });
-  }, [isKotlin]);
+  }, [isKotlin, isBash]);
 
   const handleEditorMount = useCallback(
     (editor: any, monaco: any) => {
