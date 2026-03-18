@@ -355,9 +355,20 @@ export default function DeveloperBlogPage() {
       <main>
         <DeveloperHeader />
         <div className={styles.blogPage}>
-          <div className={styles.content}>
-            <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(255, 255, 255, 0.6)' }}>
-              Loading...
+          <div className={styles.content} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: "1.5rem" }}>
+            {/* Spinning code icon */}
+            <svg viewBox="0 0 80 80" width="56" height="56">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(139,92,246,0.15)" strokeWidth="2" strokeDasharray="8 6">
+                <animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="6s" repeatCount="indefinite" />
+              </circle>
+              <text x="40" y="47" textAnchor="middle" fill="rgba(139,92,246,0.5)" fontSize="22" fontWeight="700" fontFamily="monospace">&lt;/&gt;</text>
+            </svg>
+            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(255,255,255,0.3)", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+              Loading blog
+            </div>
+            {/* Slim progress */}
+            <div style={{ width: 200, height: 2, background: "rgba(255,255,255,0.06)", borderRadius: 1, overflow: "hidden" }}>
+              <div style={{ width: "60%", height: "100%", background: "linear-gradient(90deg, #8b5cf6, #06b6d4)", borderRadius: 1, animation: "loading-shimmer 1.5s infinite" }} />
             </div>
           </div>
         </div>
