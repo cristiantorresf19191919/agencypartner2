@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Stack, Heading, Text, ButtonLink, Card, CodeEditor } from "@/components/ui";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -16,75 +17,89 @@ import styles from "../BlogPostPage.module.css";
 
 function TraditionalVsWorktreesDiagram() {
   return (
-    <svg viewBox="0 0 800 300" className="w-full my-6" style={{ maxWidth: 800 }}>
+    <svg viewBox="0 0 800 340" className="w-full my-6" style={{ maxWidth: 800 }}>
       <defs>
-        <linearGradient id="wtg1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="#f97316" stopOpacity="0.8" />
+        <linearGradient id="wtbg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0f172a" stopOpacity="0.85" />
+          <stop offset="100%" stopColor="#1e1b4b" stopOpacity="0.7" />
         </linearGradient>
-        <linearGradient id="wtg2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#10b981" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.8" />
+        <linearGradient id="wtg-red" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#ef4444" stopOpacity="0.06" />
         </linearGradient>
-        <filter id="wtglow">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
+        <linearGradient id="wtg-green" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#10b981" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#10b981" stopOpacity="0.06" />
+        </linearGradient>
+        <filter id="wt-glow-g"><feGaussianBlur stdDeviation="4" result="b" /><feFlood floodColor="#10b981" floodOpacity="0.2" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
       </defs>
-      <rect width="800" height="300" rx="16" fill="rgba(15,23,42,0.6)" stroke="rgba(16,185,129,0.2)" strokeWidth="1" />
-      <text x="400" y="30" textAnchor="middle" fill="white" fontSize="15" fontWeight="700">Traditional Git vs Worktrees</text>
+      <rect width="800" height="340" rx="16" fill="url(#wtbg)" stroke="rgba(139,92,246,0.12)" strokeWidth="1" />
+      {/* Grid dots */}
+      {Array.from({ length: 20 }).map((_, xi) => Array.from({ length: 9 }).map((_, yi) => (
+        <circle key={`${xi}-${yi}`} cx={xi * 42 + 10} cy={yi * 42 + 10} r="0.5" fill="rgba(139,92,246,0.06)" />
+      )))}
+      <text x="400" y="32" textAnchor="middle" fill="white" fontSize="15" fontWeight="700" letterSpacing="0.5">Traditional Git vs Worktrees</text>
+      {/* Divider */}
+      <line x1="400" y1="48" x2="400" y2="320" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="4 4" />
 
       {/* Traditional side */}
-      <text x="200" y="60" textAnchor="middle" fill="rgba(239,68,68,0.9)" fontSize="13" fontWeight="600">Traditional: Sequential Switching</text>
+      <text x="200" y="62" textAnchor="middle" fill="#f87171" fontSize="12" fontWeight="600" letterSpacing="0.3">Sequential Switching</text>
       {["checkout feature-a", "git stash", "checkout bugfix", "checkout feature-a", "git stash pop"].map((cmd, i) => (
         <React.Fragment key={cmd + i}>
-          <rect x={60} y={75 + i * 42} width={280} height={32} rx="6" fill="url(#wtg1)" opacity={0.15 + i * 0.05} stroke="rgba(239,68,68,0.3)" strokeWidth="1" />
-          <text x={200} y={96 + i * 42} textAnchor="middle" fill="rgba(255,255,255,0.85)" fontSize="11" fontFamily="monospace">{cmd}</text>
+          <rect x={55} y={78 + i * 42} width={290} height={32} rx="8" fill="url(#wtg-red)" stroke="rgba(239,68,68,0.2)" strokeWidth="1" />
+          <text x={70} y={78 + i * 42 + 20} fill="rgba(255,255,255,0.8)" fontSize="11" fontFamily="ui-monospace, SFMono-Regular, monospace" dominantBaseline="central">
+            <tspan fill="rgba(239,68,68,0.5)">$</tspan>{" "}{cmd}
+          </text>
           {i < 4 && (
-            <polygon points={`200,${107 + i * 42} 195,${115 + i * 42} 205,${115 + i * 42}`} fill="rgba(239,68,68,0.4)" />
+            <g>
+              <line x1="200" y1={110 + i * 42} x2="200" y2={118 + i * 42} stroke="rgba(239,68,68,0.25)" strokeWidth="1.5" />
+              <polygon points={`197,${117 + i * 42} 203,${117 + i * 42} 200,${121 + i * 42}`} fill="rgba(239,68,68,0.3)" />
+            </g>
           )}
         </React.Fragment>
       ))}
+      <rect x={55} y={295} width={290} height={26} rx="8" fill="rgba(239,68,68,0.06)" stroke="rgba(239,68,68,0.12)" strokeWidth="1" />
+      <text x={200} y={312} textAnchor="middle" fill="rgba(239,68,68,0.6)" fontSize="10" dominantBaseline="central">Context switching, stashing, slow</text>
 
       {/* Worktrees side */}
-      <text x="600" y="60" textAnchor="middle" fill="rgba(16,185,129,0.9)" fontSize="13" fontWeight="600">Worktrees: Parallel Directories</text>
+      <text x="600" y="62" textAnchor="middle" fill="#34d399" fontSize="12" fontWeight="600" letterSpacing="0.3">Parallel Directories</text>
       {[
-        { path: "~/project/", branch: "main", y: 80 },
-        { path: "~/project-feature-a/", branch: "feature-a", y: 135 },
-        { path: "~/project-bugfix/", branch: "bugfix-123", y: 190 },
+        { path: "~/project/", branch: "main", y: 78, color: "#34d399" },
+        { path: "~/project-feature-a/", branch: "feature-a", y: 148, color: "#22d3ee" },
+        { path: "~/project-bugfix/", branch: "bugfix-123", y: 218, color: "#a78bfa" },
       ].map((wt) => (
         <React.Fragment key={wt.branch}>
-          <rect x={460} y={wt.y} width={280} height={42} rx="8" fill="url(#wtg2)" opacity="0.15" stroke="rgba(16,185,129,0.35)" strokeWidth="1.5" />
-          <text x={480} y={wt.y + 18} fill="rgba(16,185,129,0.95)" fontSize="11" fontFamily="monospace" fontWeight="600">{wt.path}</text>
-          <text x={480} y={wt.y + 33} fill="rgba(255,255,255,0.6)" fontSize="10">{wt.branch}</text>
-          <circle cx={725} cy={wt.y + 21} r="8" fill="rgba(16,185,129,0.2)" stroke="rgba(16,185,129,0.5)" strokeWidth="1.5" />
-          <text x={725} y={wt.y + 25} textAnchor="middle" fill="rgba(16,185,129,0.9)" fontSize="10">&#10003;</text>
+          <rect x={435} y={wt.y} width={310} height={52} rx="10" fill="url(#wtg-green)" stroke={`${wt.color}30`} strokeWidth="1.5" filter="url(#wt-glow-g)" />
+          <line x1={435 + 10} y1={wt.y + 1} x2={435 + 300} y2={wt.y + 1} stroke={`${wt.color}18`} strokeWidth="1" strokeLinecap="round" />
+          <text x={455} y={wt.y + 21} fill={wt.color} fontSize="12" fontFamily="ui-monospace, SFMono-Regular, monospace" fontWeight="600">{wt.path}</text>
+          <text x={455} y={wt.y + 39} fill="rgba(255,255,255,0.5)" fontSize="10">{wt.branch}</text>
+          <circle cx={725} cy={wt.y + 26} r="10" fill={`${wt.color}15`} stroke={`${wt.color}40`} strokeWidth="1.5" />
+          <text x={725} y={wt.y + 27} textAnchor="middle" fill={wt.color} fontSize="12" dominantBaseline="central" fontWeight="700">&#10003;</text>
         </React.Fragment>
       ))}
-
-      {/* Bottom labels */}
-      <rect x={60} y={288 - 20} width={280} height={22} rx="4" fill="rgba(239,68,68,0.08)" />
-      <text x={200} y={288 - 4} textAnchor="middle" fill="rgba(239,68,68,0.7)" fontSize="10">Context switching, stashing, slow</text>
-      <rect x={460} y={245} width={280} height={22} rx="4" fill="rgba(16,185,129,0.08)" />
-      <text x={600} y={261} textAnchor="middle" fill="rgba(16,185,129,0.7)" fontSize="10">All branches available simultaneously</text>
+      <rect x={435} y={295} width={310} height={26} rx="8" fill="rgba(16,185,129,0.06)" stroke="rgba(16,185,129,0.12)" strokeWidth="1" />
+      <text x={590} y={312} textAnchor="middle" fill="rgba(16,185,129,0.6)" fontSize="10" dominantBaseline="central">All branches available simultaneously</text>
     </svg>
   );
 }
 
-function DirectoryStructureDiagram() {
+function DirectoryStructureSVG({ fullscreen = false }: { fullscreen?: boolean }) {
+  const W = 720;
+  const H = 480;
+  // Centered layout with better spacing
   const folders = [
-    { name: "your-project/", x: 320, y: 45, w: 160, color: "#8b5cf6", level: 0 },
-    { name: ".claude/", x: 120, y: 110, w: 120, color: "#06b6d4", level: 1 },
-    { name: "src/", x: 340, y: 110, w: 80, color: "#64748b", level: 1 },
-    { name: "package.json", x: 470, y: 110, w: 130, color: "#64748b", level: 1 },
-    { name: "worktrees/", x: 60, y: 175, w: 120, color: "#10b981", level: 2 },
-    { name: "sessions/", x: 220, y: 175, w: 110, color: "#64748b", level: 2 },
-    { name: "feature-auth/", x: 30, y: 245, w: 140, color: "#f59e0b", level: 3 },
-    { name: "bugfix-crash/", x: 210, y: 245, w: 140, color: "#f59e0b", level: 3 },
-    { name: "refactor-db/", x: 390, y: 245, w: 130, color: "#f59e0b", level: 3 },
-    { name: "src/ package.json ...", x: 30, y: 310, w: 170, color: "#94a3b8", level: 4 },
-    { name: "src/ ...", x: 210, y: 310, w: 100, color: "#94a3b8", level: 4 },
-    { name: "src/ ...", x: 390, y: 310, w: 100, color: "#94a3b8", level: 4 },
+    { name: "your-project/", x: 280, y: 52, w: 170, h: 38, color: "#a78bfa", level: 0 },
+    { name: ".claude/", x: 100, y: 140, w: 140, h: 36, color: "#22d3ee", level: 1 },
+    { name: "src/", x: 310, y: 140, w: 100, h: 36, color: "#94a3b8", level: 1 },
+    { name: "package.json", x: 480, y: 140, w: 150, h: 36, color: "#94a3b8", level: 1 },
+    { name: "worktrees/", x: 48, y: 228, w: 140, h: 34, color: "#34d399", level: 2 },
+    { name: "sessions/", x: 230, y: 228, w: 120, h: 34, color: "#94a3b8", level: 2 },
+    { name: "feature-auth/", x: 28, y: 318, w: 155, h: 34, color: "#fbbf24", level: 3 },
+    { name: "bugfix-crash/", x: 225, y: 318, w: 155, h: 34, color: "#fbbf24", level: 3 },
+    { name: "refactor-db/", x: 422, y: 318, w: 148, h: 34, color: "#fbbf24", level: 3 },
+    { name: "src/  package.json  ...", x: 28, y: 393, w: 185, h: 30, color: "#64748b", level: 4 },
+    { name: "src/  ...", x: 255, y: 393, w: 95, h: 30, color: "#64748b", level: 4 },
+    { name: "src/  ...", x: 442, y: 393, w: 95, h: 30, color: "#64748b", level: 4 },
   ];
 
   const connections = [
@@ -94,309 +109,641 @@ function DirectoryStructureDiagram() {
     { from: 6, to: 9 }, { from: 7, to: 10 }, { from: 8, to: 11 },
   ];
 
-  return (
-    <svg viewBox="0 0 650 365" className="w-full my-6" style={{ maxWidth: 650 }}>
-      <defs>
-        <filter id="dsglow">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
-      <rect width="650" height="365" rx="16" fill="rgba(15,23,42,0.6)" stroke="rgba(139,92,246,0.2)" strokeWidth="1" />
-      <text x="325" y="28" textAnchor="middle" fill="white" fontSize="14" fontWeight="700">Directory Structure</text>
+  const badges = [
+    { x: 63, y: 430, label: "Worktree 1", color: "#fbbf24" },
+    { x: 260, y: 430, label: "Worktree 2", color: "#fbbf24" },
+    { x: 450, y: 430, label: "Worktree 3", color: "#fbbf24" },
+  ];
 
-      {/* Connection lines */}
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxWidth: fullscreen ? "none" : 720 }}>
+      <defs>
+        <filter id="ds-glow-purple">
+          <feGaussianBlur stdDeviation="6" result="b" />
+          <feFlood floodColor="#8b5cf6" floodOpacity="0.35" result="c" />
+          <feComposite in="c" in2="b" operator="in" result="g" />
+          <feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="ds-glow-cyan">
+          <feGaussianBlur stdDeviation="4" result="b" />
+          <feFlood floodColor="#06b6d4" floodOpacity="0.3" result="c" />
+          <feComposite in="c" in2="b" operator="in" result="g" />
+          <feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="ds-glow-green">
+          <feGaussianBlur stdDeviation="3" result="b" />
+          <feFlood floodColor="#10b981" floodOpacity="0.25" result="c" />
+          <feComposite in="c" in2="b" operator="in" result="g" />
+          <feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <linearGradient id="ds-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0f172a" stopOpacity="0.85" />
+          <stop offset="100%" stopColor="#1e1b4b" stopOpacity="0.7" />
+        </linearGradient>
+        <linearGradient id="ds-line-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.12" />
+        </linearGradient>
+      </defs>
+
+      {/* Background */}
+      <rect width={W} height={H} rx="16" fill="url(#ds-bg)" stroke="rgba(139,92,246,0.15)" strokeWidth="1" />
+      {/* Subtle grid dots */}
+      {Array.from({ length: 18 }).map((_, xi) =>
+        Array.from({ length: 12 }).map((_, yi) => (
+          <circle key={`${xi}-${yi}`} cx={xi * 42 + 20} cy={yi * 42 + 20} r="0.6" fill="rgba(139,92,246,0.08)" />
+        ))
+      )}
+
+      {/* Title */}
+      <text x={W / 2} y="32" textAnchor="middle" fill="white" fontSize="15" fontWeight="700" letterSpacing="0.5">Directory Structure</text>
+
+      {/* Connection lines — smooth bezier with gradient */}
       {connections.map((c, i) => {
         const f = folders[c.from];
         const t = folders[c.to];
         const fx = f.x + f.w / 2;
-        const fy = f.y + 28;
+        const fy = f.y + f.h;
         const tx = t.x + t.w / 2;
         const ty = t.y;
+        const my = (fy + ty) / 2;
+        const isDashed = folders[c.to].level >= 3;
         return (
           <path
             key={i}
-            d={`M${fx},${fy} C${fx},${(fy + ty) / 2} ${tx},${(fy + ty) / 2} ${tx},${ty}`}
+            d={`M${fx},${fy} C${fx},${my} ${tx},${my} ${tx},${ty}`}
             fill="none"
-            stroke="rgba(139,92,246,0.25)"
-            strokeWidth="1.5"
-            strokeDasharray={folders[c.to].level >= 3 ? "4 3" : "none"}
+            stroke={isDashed ? "rgba(251,191,36,0.2)" : "url(#ds-line-grad)"}
+            strokeWidth={isDashed ? "1.2" : "1.5"}
+            strokeDasharray={isDashed ? "5 4" : "none"}
           />
         );
       })}
 
       {/* Folder nodes */}
-      {folders.map((f, i) => (
-        <g key={i}>
-          <rect
-            x={f.x} y={f.y} width={f.w} height={28} rx="6"
-            fill={`${f.color}15`}
-            stroke={`${f.color}50`}
-            strokeWidth="1.5"
-            filter={f.level <= 1 ? "url(#dsglow)" : undefined}
-          />
-          <text x={f.x + 10} y={f.y + 18} fill={f.level <= 2 ? f.color : "rgba(255,255,255,0.5)"} fontSize={f.level >= 3 ? "10" : "11"} fontFamily="monospace" fontWeight={f.level <= 1 ? "600" : "400"}>
-            {f.level <= 2 ? "\uD83D\uDCC1 " : ""}{f.name}
-          </text>
-        </g>
-      ))}
+      {folders.map((f, i) => {
+        const glowFilter = f.level === 0 ? "url(#ds-glow-purple)"
+          : f.level === 1 && f.color === "#22d3ee" ? "url(#ds-glow-cyan)"
+          : f.level === 2 && f.color === "#34d399" ? "url(#ds-glow-green)"
+          : undefined;
+        const isLeaf = f.level >= 4;
+        const isWorktreeDir = f.level === 3;
+        const fillOpacity = f.level === 0 ? "25" : f.level <= 2 ? "18" : isWorktreeDir ? "12" : "08";
+        const strokeOpacity = f.level === 0 ? "60" : f.level <= 2 ? "45" : isWorktreeDir ? "40" : "20";
+        const textColor = isLeaf ? "rgba(255,255,255,0.4)" : f.color;
+        const fontWeight = f.level <= 1 ? 700 : f.level === 2 ? 600 : 400;
+        const fontSize = f.level >= 4 ? 10.5 : f.level === 3 ? 11.5 : 12.5;
+        const showIcon = f.level <= 2;
+        const rx = f.level === 0 ? 10 : f.level <= 2 ? 8 : 6;
 
-      {/* Worktree badges */}
-      {[
-        { x: 48, y: 335, label: "Worktree 1", color: "#f59e0b" },
-        { x: 228, y: 335, label: "Worktree 2", color: "#f59e0b" },
-        { x: 408, y: 335, label: "Worktree 3", color: "#f59e0b" },
-      ].map((b) => (
-        <React.Fragment key={b.label}>
-          <rect x={b.x} y={b.y} width={80} height={18} rx="9" fill={`${b.color}20`} stroke={`${b.color}40`} strokeWidth="1" />
-          <text x={b.x + 40} y={b.y + 13} textAnchor="middle" fill={b.color} fontSize="9" fontWeight="600">{b.label}</text>
-        </React.Fragment>
+        return (
+          <g key={i} filter={glowFilter}>
+            <rect
+              x={f.x} y={f.y} width={f.w} height={f.h} rx={rx}
+              fill={`${f.color}${fillOpacity}`}
+              stroke={`${f.color}${strokeOpacity}`}
+              strokeWidth={f.level === 0 ? 2 : 1.5}
+            />
+            {/* Inner highlight line at top of card */}
+            {f.level <= 2 && (
+              <line
+                x1={f.x + rx} y1={f.y + 1} x2={f.x + f.w - rx} y2={f.y + 1}
+                stroke={`${f.color}30`} strokeWidth="1" strokeLinecap="round"
+              />
+            )}
+            <text
+              x={f.x + (showIcon ? 28 : 12)}
+              y={f.y + f.h / 2 + 1}
+              fill={textColor}
+              fontSize={fontSize}
+              fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace"
+              fontWeight={fontWeight}
+              dominantBaseline="central"
+            >
+              {f.name}
+            </text>
+            {showIcon && (
+              <text x={f.x + 10} y={f.y + f.h / 2 + 1} fontSize="14" dominantBaseline="central">{"\uD83D\uDCC1"}</text>
+            )}
+          </g>
+        );
+      })}
+
+      {/* Worktree badges with pulsing dot */}
+      {badges.map((b) => (
+        <g key={b.label}>
+          <rect x={b.x} y={b.y} width={90} height={22} rx="11" fill={`${b.color}15`} stroke={`${b.color}35`} strokeWidth="1" />
+          <circle cx={b.x + 14} cy={b.y + 11} r="3" fill={b.color} opacity="0.7">
+            <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <text x={b.x + 50} y={b.y + 12} textAnchor="middle" fill={b.color} fontSize="10" fontWeight="600" dominantBaseline="central">{b.label}</text>
+        </g>
       ))}
     </svg>
   );
 }
 
-function WorkflowDiagram() {
+function DirectoryStructureText() {
+  const lines: { text: string; color: string; indent: number; comment?: string }[] = [
+    { text: "your-project/", color: "#8b5cf6", indent: 0 },
+    { text: ".claude/", color: "#06b6d4", indent: 1 },
+    { text: "worktrees/", color: "#10b981", indent: 2 },
+    { text: "feature-auth/", color: "#f59e0b", indent: 3, comment: "Worktree 1" },
+    { text: "src/", color: "#94a3b8", indent: 4 },
+    { text: "package.json", color: "#94a3b8", indent: 4 },
+    { text: "...", color: "#64748b", indent: 4 },
+    { text: "bugfix-crash/", color: "#f59e0b", indent: 3, comment: "Worktree 2" },
+    { text: "src/", color: "#94a3b8", indent: 4 },
+    { text: "...", color: "#64748b", indent: 4 },
+    { text: "refactor-db/", color: "#f59e0b", indent: 3, comment: "Worktree 3" },
+    { text: "src/", color: "#94a3b8", indent: 4 },
+    { text: "...", color: "#64748b", indent: 4 },
+    { text: "sessions/", color: "#64748b", indent: 2 },
+    { text: "src/", color: "#64748b", indent: 1, comment: "Main working directory" },
+    { text: "package.json", color: "#64748b", indent: 1 },
+    { text: "...", color: "#64748b", indent: 1 },
+  ];
+
+  // Build tree lines with proper box-drawing characters
+  const rendered: { prefix: string; name: string; color: string; comment?: string }[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.indent === 0) {
+      rendered.push({ prefix: "", name: line.text, color: line.color, comment: line.comment });
+      continue;
+    }
+    // Determine if this is the last sibling at its indent level
+    let isLast = true;
+    for (let j = i + 1; j < lines.length; j++) {
+      if (lines[j].indent < line.indent) break;
+      if (lines[j].indent === line.indent) { isLast = false; break; }
+    }
+    // Build prefix from parent levels
+    let prefix = "";
+    for (let lvl = 1; lvl < line.indent; lvl++) {
+      // Check if there's a continuing sibling at this level after current line
+      let hasMore = false;
+      for (let j = i + 1; j < lines.length; j++) {
+        if (lines[j].indent < lvl) break;
+        if (lines[j].indent === lvl) { hasMore = true; break; }
+      }
+      prefix += hasMore ? "\u2502   " : "    ";
+    }
+    prefix += isLast ? "\u2514\u2500\u2500 " : "\u251C\u2500\u2500 ";
+    rendered.push({ prefix, name: line.text, color: line.color, comment: line.comment });
+  }
+
   return (
-    <svg viewBox="0 0 800 450" className="w-full my-6" style={{ maxWidth: 800 }}>
+    <div style={{
+      background: "rgba(15,23,42,0.6)",
+      border: "1px solid rgba(139,92,246,0.2)",
+      borderRadius: 16,
+      padding: "20px 24px",
+      fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace",
+      fontSize: 13,
+      lineHeight: 1.8,
+      overflowX: "auto",
+    }}>
+      <div style={{ textAlign: "center", marginBottom: 12, fontWeight: 700, fontSize: 14, color: "white" }}>Directory Structure</div>
+      {rendered.map((r, i) => (
+        <div key={i} style={{ whiteSpace: "pre", display: "flex", gap: 16 }}>
+          <span>
+            <span style={{ color: "rgba(255,255,255,0.25)" }}>{r.prefix}</span>
+            <span style={{ color: r.color, fontWeight: r.color !== "#64748b" && r.color !== "#94a3b8" ? 600 : 400 }}>{r.name}</span>
+          </span>
+          {r.comment && <span style={{ color: "rgba(255,255,255,0.35)", fontStyle: "italic", fontSize: 11, alignSelf: "center" }}>{"# "}{r.comment}</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DirectoryStructureDiagram() {
+  const [view, setView] = useState<"graph" | "tree">("graph");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const handleEsc = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape" && isFullscreen) setIsFullscreen(false);
+  }, [isFullscreen]);
+
+  useEffect(() => {
+    if (isFullscreen) {
+      window.addEventListener("keydown", handleEsc);
+      document.body.style.overflow = "hidden";
+      return () => {
+        window.removeEventListener("keydown", handleEsc);
+        document.body.style.overflow = "";
+      };
+    }
+  }, [isFullscreen, handleEsc]);
+
+  const toolbar = (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      gap: 6,
+      marginBottom: isFullscreen ? 16 : 8,
+    }}>
+      {/* View toggle */}
+      <div style={{
+        display: "flex",
+        background: "rgba(255,255,255,0.06)",
+        borderRadius: 8,
+        padding: 2,
+        border: "1px solid rgba(255,255,255,0.1)",
+      }}>
+        <button
+          onClick={() => setView("graph")}
+          style={{
+            padding: "4px 10px",
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+            fontSize: 11,
+            fontWeight: 500,
+            color: view === "graph" ? "white" : "rgba(255,255,255,0.5)",
+            background: view === "graph" ? "rgba(139,92,246,0.4)" : "transparent",
+            transition: "all 0.2s",
+          }}
+          title="Graphical view"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle", marginRight: 4 }}>
+            <circle cx="12" cy="5" r="3" /><circle cx="5" cy="19" r="3" /><circle cx="19" cy="19" r="3" />
+            <line x1="12" y1="8" x2="5" y2="16" /><line x1="12" y1="8" x2="19" y2="16" />
+          </svg>
+          Graph
+        </button>
+        <button
+          onClick={() => setView("tree")}
+          style={{
+            padding: "4px 10px",
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+            fontSize: 11,
+            fontWeight: 500,
+            color: view === "tree" ? "white" : "rgba(255,255,255,0.5)",
+            background: view === "tree" ? "rgba(139,92,246,0.4)" : "transparent",
+            transition: "all 0.2s",
+          }}
+          title="Text tree view"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle", marginRight: 4 }}>
+            <line x1="3" y1="6" x2="21" y2="6" /><line x1="7" y1="12" x2="21" y2="12" /><line x1="11" y1="18" x2="21" y2="18" />
+          </svg>
+          Tree
+        </button>
+      </div>
+      {/* Maximize button */}
+      <button
+        onClick={() => setIsFullscreen(!isFullscreen)}
+        style={{
+          padding: "5px 8px",
+          borderRadius: 6,
+          border: "1px solid rgba(255,255,255,0.1)",
+          background: "rgba(255,255,255,0.06)",
+          color: "rgba(255,255,255,0.6)",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          transition: "all 0.2s",
+        }}
+        title={isFullscreen ? "Exit fullscreen (Esc)" : "Maximize"}
+      >
+        {isFullscreen ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="4 14 10 14 10 20" /><polyline points="20 10 14 10 14 4" />
+            <line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" />
+            <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+
+  const content = (
+    <>
+      {toolbar}
+      {view === "graph" ? <DirectoryStructureSVG fullscreen={isFullscreen} /> : <DirectoryStructureText />}
+    </>
+  );
+
+  const fullscreenOverlay = isFullscreen && typeof document !== "undefined" && createPortal(
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 99999,
+        background: "#0b0e1a",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "32px 48px",
+        overflow: "auto",
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) setIsFullscreen(false); }}
+    >
+      <div style={{ width: "100%", maxWidth: 900 }}>
+        {toolbar}
+        {view === "graph" ? <DirectoryStructureSVG fullscreen /> : <DirectoryStructureText />}
+      </div>
+    </div>,
+    document.body,
+  );
+
+  return (
+    <div className="my-6">
+      {content}
+      {fullscreenOverlay}
+    </div>
+  );
+}
+
+function WorkflowDiagram() {
+  const worktrees = [
+    { cx: 140, name: "Worktree A", branch: "feature-auth", color: "#22d3ee", prNum: "101" },
+    { cx: 400, name: "Worktree B", branch: "bugfix-crash", color: "#34d399", prNum: "102" },
+    { cx: 660, name: "Worktree C", branch: "refactor-db", color: "#fbbf24", prNum: "103" },
+  ];
+  const W = 800, H = 500;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full my-6" style={{ maxWidth: 800 }}>
       <defs>
-        <linearGradient id="wfg1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="#6366f1" stopOpacity="0.8" />
-        </linearGradient>
-        <linearGradient id="wfg2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
-        </linearGradient>
-        <linearGradient id="wfg3" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="#f97316" stopOpacity="0.8" />
-        </linearGradient>
-        <filter id="wfglow">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
+        <linearGradient id="wf-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#0f172a" stopOpacity="0.85" /><stop offset="100%" stopColor="#1e1b4b" stopOpacity="0.7" /></linearGradient>
+        <filter id="wf-glow-p"><feGaussianBlur stdDeviation="6" result="b" /><feFlood floodColor="#8b5cf6" floodOpacity="0.3" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        {worktrees.map((wt) => (
+          <filter key={`f-${wt.prNum}`} id={`wf-glow-${wt.prNum}`}><feGaussianBlur stdDeviation="4" result="b" /><feFlood floodColor={wt.color} floodOpacity="0.2" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        ))}
       </defs>
-      <rect width="800" height="450" rx="16" fill="rgba(15,23,42,0.6)" stroke="rgba(139,92,246,0.2)" strokeWidth="1" />
-      <text x="400" y="32" textAnchor="middle" fill="white" fontSize="16" fontWeight="700">Workflow Diagram</text>
+      <rect width={W} height={H} rx="16" fill="url(#wf-bg)" stroke="rgba(139,92,246,0.12)" strokeWidth="1" />
+      {Array.from({ length: 20 }).map((_, xi) => Array.from({ length: 13 }).map((_, yi) => (
+        <circle key={`${xi}-${yi}`} cx={xi * 42 + 10} cy={yi * 42 + 10} r="0.5" fill="rgba(139,92,246,0.06)" />
+      )))}
+      <text x={W / 2} y="34" textAnchor="middle" fill="white" fontSize="15" fontWeight="700" letterSpacing="0.5">Workflow Diagram</text>
 
       {/* Main Repository */}
-      <rect x="200" y="50" width="400" height="60" rx="12" fill="url(#wfg1)" opacity="0.2" stroke="rgba(139,92,246,0.5)" strokeWidth="2" filter="url(#wfglow)" />
-      <text x="400" y="77" textAnchor="middle" fill="white" fontSize="14" fontWeight="700">Main Repository</text>
-      <text x="400" y="97" textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11">(main branch)</text>
+      <g filter="url(#wf-glow-p)">
+        <rect x="220" y="54" width="360" height="68" rx="12" fill="rgba(139,92,246,0.12)" stroke="rgba(139,92,246,0.4)" strokeWidth="2" />
+        <line x1="232" y1="55" x2="568" y2="55" stroke="rgba(139,92,246,0.2)" strokeWidth="1" strokeLinecap="round" />
+      </g>
+      <text x={W / 2} y="84" textAnchor="middle" fill="white" fontSize="14" fontWeight="700">Main Repository</text>
+      <text x={W / 2} y="106" textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="11" fontFamily="ui-monospace, SFMono-Regular, monospace">(main branch)</text>
 
-      {/* Connecting lines from main to worktrees */}
-      {[200, 400, 600].map((x) => (
-        <React.Fragment key={x}>
-          <line x1="400" y1="110" x2={x} y2="170" stroke="rgba(139,92,246,0.3)" strokeWidth="2" strokeDasharray="6 4">
+      {/* Connecting lines main → worktrees */}
+      {worktrees.map((wt) => (
+        <g key={`line-${wt.prNum}`}>
+          <path d={`M400,122 C400,155 ${wt.cx},155 ${wt.cx},190`} fill="none" stroke="rgba(139,92,246,0.2)" strokeWidth="1.5" strokeDasharray="6 4">
             <animate attributeName="strokeDashoffset" from="10" to="0" dur="2s" repeatCount="indefinite" />
+          </path>
+          <polygon points={`${wt.cx - 4},186 ${wt.cx + 4},186 ${wt.cx},194`} fill="rgba(139,92,246,0.4)" />
+        </g>
+      ))}
+
+      {/* Worktree cards */}
+      {worktrees.map((wt) => {
+        const x = wt.cx - 110, y = 198, w = 220, h = 148;
+        return (
+          <g key={wt.name} filter={`url(#wf-glow-${wt.prNum})`}>
+            <rect x={x} y={y} width={w} height={h} rx="12" fill={`${wt.color}08`} stroke={`${wt.color}30`} strokeWidth="1.5" />
+            {/* Header band */}
+            <rect x={x} y={y} width={w} height={40} rx="12" fill={`${wt.color}12`} />
+            <rect x={x} y={y + 28} width={w} height={12} fill={`${wt.color}12`} />
+            <line x1={x + 12} y1={y + 1} x2={x + w - 12} y2={y + 1} stroke={`${wt.color}20`} strokeWidth="1" strokeLinecap="round" />
+            <text x={wt.cx} y={y + 22} textAnchor="middle" fill="white" fontSize="13" fontWeight="700">{wt.name}</text>
+            <text x={wt.cx} y={y + 50} textAnchor="middle" fill={wt.color} fontSize="11" fontFamily="ui-monospace, SFMono-Regular, monospace">({wt.branch})</text>
+            <line x1={x + 16} y1={y + 62} x2={x + w - 16} y2={y + 62} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+            <text x={wt.cx} y={y + 82} textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="11" fontWeight="500">Claude Session</text>
+            <text x={wt.cx} y={y + 102} textAnchor="middle" fill="rgba(255,255,255,0.35)" fontSize="10">editing files</text>
+            <text x={wt.cx} y={y + 118} textAnchor="middle" fill="rgba(255,255,255,0.35)" fontSize="10">making commits</text>
+            {/* Status dot */}
+            <circle cx={x + w - 16} cy={y + 16} r="5" fill={wt.color} opacity="0.6">
+              <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        );
+      })}
+
+      {/* Connecting lines worktrees → PRs */}
+      {worktrees.map((wt) => (
+        <g key={`pr-line-${wt.prNum}`}>
+          <line x1={wt.cx} y1="346" x2={wt.cx} y2="400" stroke={`${wt.color}25`} strokeWidth="1.5" strokeDasharray="5 4">
+            <animate attributeName="strokeDashoffset" from="9" to="0" dur="1.8s" repeatCount="indefinite" />
           </line>
-          <polygon points={`${x - 5},165 ${x + 5},165 ${x},175`} fill="rgba(139,92,246,0.5)" />
-        </React.Fragment>
+          <polygon points={`${wt.cx - 4},396 ${wt.cx + 4},396 ${wt.cx},404`} fill={`${wt.color}50`} />
+        </g>
       ))}
 
-      {/* Worktrees */}
-      {[
-        { x: 100, name: "Worktree A", branch: "(feature-auth)", color: "#06b6d4" },
-        { x: 300, name: "Worktree B", branch: "(bugfix-crash)", color: "#10b981" },
-        { x: 500, name: "Worktree C", branch: "(refactor-db)", color: "#f59e0b" },
-      ].map((wt) => (
-        <React.Fragment key={wt.name}>
-          <rect x={wt.x} y="180" width="200" height="130" rx="12" fill={`${wt.color}10`} stroke={`${wt.color}40`} strokeWidth="1.5" />
-          <text x={wt.x + 100} y="205" textAnchor="middle" fill="white" fontSize="13" fontWeight="700">{wt.name}</text>
-          <text x={wt.x + 100} y="222" textAnchor="middle" fill={`${wt.color}`} fontSize="11">{wt.branch}</text>
-          <line x1={wt.x + 20} y1="232" x2={wt.x + 180} y2="232" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <text x={wt.x + 100} y="252" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="11">Claude Session</text>
-          <text x={wt.x + 100} y="270" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10">editing files</text>
-          <text x={wt.x + 100} y="286" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10">making commits</text>
-          {/* Status dot */}
-          <circle cx={wt.x + 180} cy={195} r="5" fill={wt.color} opacity="0.7">
-            <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite" />
-          </circle>
-        </React.Fragment>
-      ))}
-
-      {/* Connecting lines from worktrees to PRs */}
-      {[200, 400, 600].map((x) => (
-        <React.Fragment key={`pr-${x}`}>
-          <line x1={x} y1="310" x2={x} y2="360" stroke="rgba(249,115,22,0.3)" strokeWidth="2" strokeDasharray="6 4">
-            <animate attributeName="strokeDashoffset" from="10" to="0" dur="2s" repeatCount="indefinite" />
-          </line>
-          <polygon points={`${x - 5},358 ${x + 5},358 ${x},368`} fill="rgba(249,115,22,0.5)" />
-        </React.Fragment>
-      ))}
-
-      {/* PRs */}
-      {[
-        { x: 120, label: "PR #101" },
-        { x: 320, label: "PR #102" },
-        { x: 520, label: "PR #103" },
-      ].map((pr) => (
-        <React.Fragment key={pr.label}>
-          <rect x={pr.x} y="375" width="160" height="45" rx="10" fill="url(#wfg3)" opacity="0.15" stroke="rgba(249,115,22,0.4)" strokeWidth="1.5" />
-          <text x={pr.x + 80} y="403" textAnchor="middle" fill="rgba(249,115,22,0.95)" fontSize="14" fontWeight="700">{pr.label}</text>
-        </React.Fragment>
-      ))}
+      {/* PR badges */}
+      {worktrees.map((wt) => {
+        const px = wt.cx - 80;
+        return (
+          <g key={`pr-${wt.prNum}`}>
+            <rect x={px} y="410" width="160" height="48" rx="10" fill={`${wt.color}08`} stroke={`${wt.color}25`} strokeWidth="1.5" />
+            <line x1={px + 10} y1="411" x2={px + 150} y2="411" stroke={`${wt.color}15`} strokeWidth="1" strokeLinecap="round" />
+            {/* Git merge icon */}
+            <circle cx={wt.cx - 40} cy="434" r="8" fill={`${wt.color}15`} stroke={`${wt.color}30`} strokeWidth="1" />
+            <text x={wt.cx - 40} y="435" textAnchor="middle" fill={wt.color} fontSize="9" dominantBaseline="central" fontFamily="ui-monospace, SFMono-Regular, monospace">PR</text>
+            <text x={wt.cx + 10} y="438" textAnchor="middle" fill={wt.color} fontSize="15" fontWeight="700" dominantBaseline="central">#{wt.prNum}</text>
+          </g>
+        );
+      })}
     </svg>
   );
 }
 
 function SequentialVsParallelDiagram() {
+  const W = 800, H = 360;
   return (
-    <svg viewBox="0 0 800 320" className="w-full my-6" style={{ maxWidth: 800 }}>
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full my-6" style={{ maxWidth: 800 }}>
       <defs>
-        <linearGradient id="svp1" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.7" />
-          <stop offset="100%" stopColor="#f97316" stopOpacity="0.7" />
-        </linearGradient>
-        <linearGradient id="svp2" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#10b981" stopOpacity="0.7" />
-          <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.7" />
-        </linearGradient>
+        <linearGradient id="svp-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#0f172a" stopOpacity="0.85" /><stop offset="100%" stopColor="#1e1b4b" stopOpacity="0.7" /></linearGradient>
+        <linearGradient id="svp-r" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#ef4444" stopOpacity="0.3" /><stop offset="100%" stopColor="#f97316" stopOpacity="0.12" /></linearGradient>
+        <linearGradient id="svp-g" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#10b981" stopOpacity="0.3" /><stop offset="100%" stopColor="#22d3ee" stopOpacity="0.12" /></linearGradient>
+        <filter id="svp-glow-g"><feGaussianBlur stdDeviation="4" result="b" /><feFlood floodColor="#10b981" floodOpacity="0.2" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
       </defs>
-      <rect width="800" height="320" rx="16" fill="rgba(15,23,42,0.6)" stroke="rgba(16,185,129,0.2)" strokeWidth="1" />
-      <text x="400" y="30" textAnchor="middle" fill="white" fontSize="15" fontWeight="700">Sequential vs Parallel Time</text>
+      <rect width={W} height={H} rx="16" fill="url(#svp-bg)" stroke="rgba(139,92,246,0.12)" strokeWidth="1" />
+      {Array.from({ length: 20 }).map((_, xi) => Array.from({ length: 9 }).map((_, yi) => (
+        <circle key={`${xi}-${yi}`} cx={xi * 42 + 10} cy={yi * 42 + 10} r="0.5" fill="rgba(139,92,246,0.06)" />
+      )))}
+      <text x={W / 2} y="34" textAnchor="middle" fill="white" fontSize="15" fontWeight="700" letterSpacing="0.5">Sequential vs Parallel Time</text>
 
-      {/* Sequential */}
-      <text x="60" y="70" fill="rgba(239,68,68,0.9)" fontSize="13" fontWeight="600">Sequential (without worktrees)</text>
-      {/* Task bars */}
-      <rect x="60" y="85" width="260" height="36" rx="6" fill="url(#svp1)" opacity="0.25" stroke="rgba(239,68,68,0.4)" strokeWidth="1" />
-      <text x="190" y="108" textAnchor="middle" fill="white" fontSize="11" fontWeight="500">Task A (2 hours)</text>
+      {/* ── Sequential ── */}
+      <text x="60" y="68" fill="#f87171" fontSize="12" fontWeight="600" letterSpacing="0.3">Sequential (without worktrees)</text>
+      {/* Timeline axis */}
+      <line x1="60" y1="136" x2="660" y2="136" stroke="rgba(239,68,68,0.15)" strokeWidth="1" />
+      {[
+        { label: "Task A (2 hours)", w: 268, x: 60 },
+        { label: "Task B (1h)", w: 134, x: 328 },
+        { label: "Task C (1.5h)", w: 198, x: 462 },
+      ].map((t, i) => (
+        <g key={t.label}>
+          <rect x={t.x} y="84" width={t.w} height="42" rx="8" fill="url(#svp-r)" stroke="rgba(239,68,68,0.25)" strokeWidth="1" />
+          <line x1={t.x + 8} y1="85" x2={t.x + t.w - 8} y2="85" stroke="rgba(239,68,68,0.12)" strokeWidth="1" strokeLinecap="round" />
+          <text x={t.x + t.w / 2} y="109" textAnchor="middle" fill="rgba(255,255,255,0.8)" fontSize="11" fontWeight="500" dominantBaseline="central">{t.label}</text>
+          {/* Separator tick */}
+          {i < 2 && <line x1={t.x + t.w} y1="88" x2={t.x + t.w} y2="132" stroke="rgba(239,68,68,0.12)" strokeWidth="1" strokeDasharray="2 2" />}
+        </g>
+      ))}
+      {/* Total time badge */}
+      <rect x="668" y="96" width="60" height="28" rx="14" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.2)" strokeWidth="1" />
+      <text x="698" y="114" textAnchor="middle" fill="#f87171" fontSize="13" fontWeight="700" dominantBaseline="central">4.5h</text>
 
-      <rect x="320" y="85" width="130" height="36" rx="6" fill="url(#svp1)" opacity="0.25" stroke="rgba(239,68,68,0.4)" strokeWidth="1" />
-      <text x="385" y="108" textAnchor="middle" fill="white" fontSize="11" fontWeight="500">Task B (1h)</text>
-
-      <rect x="450" y="85" width="195" height="36" rx="6" fill="url(#svp1)" opacity="0.25" stroke="rgba(239,68,68,0.4)" strokeWidth="1" />
-      <text x="548" y="108" textAnchor="middle" fill="white" fontSize="11" fontWeight="500">Task C (1.5h)</text>
-
-      {/* Arrow markers */}
-      <line x1="60" y1="130" x2="645" y2="130" stroke="rgba(239,68,68,0.3)" strokeWidth="1" />
-      <text x="660" y="134" fill="rgba(239,68,68,0.8)" fontSize="12" fontWeight="700">4.5h</text>
-
-      {/* Parallel */}
-      <text x="60" y="175" fill="rgba(16,185,129,0.9)" fontSize="13" fontWeight="600">Parallel (with worktrees)</text>
-
-      <rect x="60" y="190" width="260" height="30" rx="6" fill="url(#svp2)" opacity="0.25" stroke="rgba(16,185,129,0.4)" strokeWidth="1" />
-      <text x="190" y="210" textAnchor="middle" fill="white" fontSize="11" fontWeight="500">Task A (2 hours)</text>
-
-      <rect x="60" y="225" width="130" height="30" rx="6" fill="url(#svp2)" opacity="0.25" stroke="rgba(16,185,129,0.4)" strokeWidth="1" />
-      <text x="125" y="245" textAnchor="middle" fill="white" fontSize="11" fontWeight="500">Task B (1h)</text>
-
-      <rect x="60" y="260" width="195" height="30" rx="6" fill="url(#svp2)" opacity="0.25" stroke="rgba(16,185,129,0.4)" strokeWidth="1" />
-      <text x="158" y="280" textAnchor="middle" fill="white" fontSize="11" fontWeight="500">Task C (1.5h)</text>
-
-      {/* Parallel time marker */}
-      <line x1="320" y1="188" x2="320" y2="295" stroke="rgba(16,185,129,0.4)" strokeWidth="1.5" strokeDasharray="4 3" />
-      <text x="335" y="250" fill="rgba(16,185,129,0.8)" fontSize="12" fontWeight="700">2h total</text>
+      {/* ── Parallel ── */}
+      <text x="60" y="182" fill="#34d399" fontSize="12" fontWeight="600" letterSpacing="0.3">Parallel (with worktrees)</text>
+      {[
+        { label: "Task A (2 hours)", w: 268, y: 196 },
+        { label: "Task B (1h)", w: 134, y: 244 },
+        { label: "Task C (1.5h)", w: 198, y: 292 },
+      ].map((t) => (
+        <g key={t.label}>
+          <rect x="60" y={t.y} width={t.w} height="38" rx="8" fill="url(#svp-g)" stroke="rgba(16,185,129,0.25)" strokeWidth="1" />
+          <line x1="68" y1={t.y + 1} x2={60 + t.w - 8} y2={t.y + 1} stroke="rgba(16,185,129,0.12)" strokeWidth="1" strokeLinecap="round" />
+          <text x={60 + t.w / 2} y={t.y + 22} textAnchor="middle" fill="rgba(255,255,255,0.8)" fontSize="11" fontWeight="500" dominantBaseline="central">{t.label}</text>
+        </g>
+      ))}
+      {/* Time marker line */}
+      <line x1="328" y1="194" x2="328" y2="334" stroke="rgba(16,185,129,0.3)" strokeWidth="1.5" strokeDasharray="5 4" />
+      <text x="344" y="268" fill="#34d399" fontSize="12" fontWeight="600">2h total</text>
 
       {/* Savings badge */}
-      <rect x="550" y="220" width="190" height="55" rx="12" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.3)" strokeWidth="1.5" />
-      <text x="645" y="244" textAnchor="middle" fill="rgba(16,185,129,0.95)" fontSize="16" fontWeight="700">56% faster</text>
-      <text x="645" y="264" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10">Longest task determines total time</text>
+      <g filter="url(#svp-glow-g)">
+        <rect x="520" y="245" width="210" height="68" rx="14" fill="rgba(16,185,129,0.06)" stroke="rgba(16,185,129,0.25)" strokeWidth="1.5" />
+      </g>
+      <text x="625" y="274" textAnchor="middle" fill="#34d399" fontSize="20" fontWeight="700">56% faster</text>
+      <text x="625" y="298" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="10">Longest task determines total time</text>
     </svg>
   );
 }
 
 function SubagentIsolationDiagram() {
+  const agents = [
+    { cx: 100, name: "Agent 1", path: "worktree-batch-1", files: "Files 1-10", color: "#22d3ee" },
+    { cx: 300, name: "Agent 2", path: "worktree-batch-2", files: "Files 11-20", color: "#34d399" },
+    { cx: 500, name: "Agent 3", path: "worktree-batch-3", files: "Files 21-30", color: "#fbbf24" },
+    { cx: 700, name: "Agent 4", path: "worktree-batch-4", files: "Files 31-40", color: "#f472b6" },
+  ];
+  const W = 800, H = 360;
   return (
-    <svg viewBox="0 0 800 320" className="w-full my-6" style={{ maxWidth: 800 }}>
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full my-6" style={{ maxWidth: 800 }}>
       <defs>
-        <linearGradient id="sag1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="#a855f7" stopOpacity="0.8" />
-        </linearGradient>
-        <filter id="saglow">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
+        <linearGradient id="sa-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#0f172a" stopOpacity="0.85" /><stop offset="100%" stopColor="#1e1b4b" stopOpacity="0.7" /></linearGradient>
+        <filter id="sa-glow-p"><feGaussianBlur stdDeviation="6" result="b" /><feFlood floodColor="#8b5cf6" floodOpacity="0.3" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        {agents.map((a, i) => (
+          <filter key={i} id={`sa-glow-${i}`}><feGaussianBlur stdDeviation="4" result="b" /><feFlood floodColor={a.color} floodOpacity="0.15" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        ))}
       </defs>
-      <rect width="800" height="320" rx="16" fill="rgba(15,23,42,0.6)" stroke="rgba(139,92,246,0.2)" strokeWidth="1" />
-      <text x="400" y="30" textAnchor="middle" fill="white" fontSize="15" fontWeight="700">Subagent Isolation: Batch Processing</text>
+      <rect width={W} height={H} rx="16" fill="url(#sa-bg)" stroke="rgba(139,92,246,0.12)" strokeWidth="1" />
+      {Array.from({ length: 20 }).map((_, xi) => Array.from({ length: 9 }).map((_, yi) => (
+        <circle key={`${xi}-${yi}`} cx={xi * 42 + 10} cy={yi * 42 + 10} r="0.5" fill="rgba(139,92,246,0.06)" />
+      )))}
+      <text x={W / 2} y="34" textAnchor="middle" fill="white" fontSize="15" fontWeight="700" letterSpacing="0.5">Subagent Isolation: Batch Processing</text>
 
       {/* Main Session */}
-      <rect x="290" y="50" width="220" height="50" rx="10" fill="url(#sag1)" opacity="0.2" stroke="rgba(139,92,246,0.5)" strokeWidth="2" filter="url(#saglow)" />
-      <text x="400" y="72" textAnchor="middle" fill="white" fontSize="13" fontWeight="700">Main Session</text>
-      <text x="400" y="90" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10">Orchestrator</text>
+      <g filter="url(#sa-glow-p)">
+        <rect x="280" y="52" width="240" height="58" rx="12" fill="rgba(139,92,246,0.12)" stroke="rgba(139,92,246,0.4)" strokeWidth="2" />
+        <line x1="292" y1="53" x2="508" y2="53" stroke="rgba(139,92,246,0.2)" strokeWidth="1" strokeLinecap="round" />
+      </g>
+      <text x={W / 2} y="78" textAnchor="middle" fill="white" fontSize="13" fontWeight="700">Main Session</text>
+      <text x={W / 2} y="98" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="10" fontFamily="ui-monospace, SFMono-Regular, monospace">Orchestrator</text>
 
       {/* Connecting lines */}
-      {[100, 300, 500, 700].map((x, i) => (
-        <React.Fragment key={x}>
-          <path d={`M400,100 C400,130 ${x},130 ${x},155`} fill="none" stroke="rgba(139,92,246,0.3)" strokeWidth="1.5" strokeDasharray="5 3">
-            <animate attributeName="strokeDashoffset" from="8" to="0" dur={`${1.5 + i * 0.3}s`} repeatCount="indefinite" />
+      {agents.map((a, i) => (
+        <g key={`line-${i}`}>
+          <path d={`M400,110 C400,140 ${a.cx},140 ${a.cx},168`} fill="none" stroke="rgba(139,92,246,0.2)" strokeWidth="1.5" strokeDasharray="5 4">
+            <animate attributeName="strokeDashoffset" from="9" to="0" dur={`${1.5 + i * 0.2}s`} repeatCount="indefinite" />
           </path>
-          <polygon points={`${x - 4},152 ${x + 4},152 ${x},160`} fill="rgba(139,92,246,0.5)" />
-        </React.Fragment>
+          <polygon points={`${a.cx - 4},164 ${a.cx + 4},164 ${a.cx},172`} fill="rgba(139,92,246,0.4)" />
+        </g>
       ))}
 
-      {/* Agent worktrees */}
-      {[
-        { x: 20, name: "Agent 1", path: "worktree-batch-1", files: "Files 1-10", color: "#06b6d4" },
-        { x: 220, name: "Agent 2", path: "worktree-batch-2", files: "Files 11-20", color: "#10b981" },
-        { x: 420, name: "Agent 3", path: "worktree-batch-3", files: "Files 21-30", color: "#f59e0b" },
-        { x: 620, name: "Agent 4", path: "worktree-batch-4", files: "Files 31-40", color: "#ec4899" },
-      ].map((agent) => (
-        <React.Fragment key={agent.name}>
-          <rect x={agent.x} y="165" width="160" height="100" rx="10" fill={`${agent.color}08`} stroke={`${agent.color}30`} strokeWidth="1.5" />
-          {/* Agent header */}
-          <rect x={agent.x} y="165" width="160" height="28" rx="10" fill={`${agent.color}15`} />
-          <rect x={agent.x} y="183" width="160" height="10" fill={`${agent.color}15`} />
-          <text x={agent.x + 80} y="184" textAnchor="middle" fill={agent.color} fontSize="12" fontWeight="700">{agent.name}</text>
-          <text x={agent.x + 80} y="215" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="9" fontFamily="monospace">{agent.path}</text>
-          {/* File range */}
-          <rect x={agent.x + 25} y="230" width="110" height="22" rx="11" fill={`${agent.color}12`} stroke={`${agent.color}25`} strokeWidth="1" />
-          <text x={agent.x + 80} y="245" textAnchor="middle" fill={agent.color} fontSize="10" fontWeight="600">{agent.files}</text>
-          {/* Activity indicator */}
-          <circle cx={agent.x + 145} cy={177} r="4" fill={agent.color} opacity="0.6">
-            <animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.4;0.8;0.4" dur="1.5s" repeatCount="indefinite" />
-          </circle>
-        </React.Fragment>
-      ))}
+      {/* Agent cards */}
+      {agents.map((a, i) => {
+        const x = a.cx - 80, y = 176, w = 160, h = 118;
+        return (
+          <g key={a.name} filter={`url(#sa-glow-${i})`}>
+            <rect x={x} y={y} width={w} height={h} rx="10" fill={`${a.color}06`} stroke={`${a.color}28`} strokeWidth="1.5" />
+            {/* Header */}
+            <rect x={x} y={y} width={w} height={34} rx="10" fill={`${a.color}10`} />
+            <rect x={x} y={y + 22} width={w} height={12} fill={`${a.color}10`} />
+            <line x1={x + 10} y1={y + 1} x2={x + w - 10} y2={y + 1} stroke={`${a.color}18`} strokeWidth="1" strokeLinecap="round" />
+            <text x={a.cx} y={y + 20} textAnchor="middle" fill={a.color} fontSize="12" fontWeight="700">{a.name}</text>
+            <text x={a.cx} y={y + 52} textAnchor="middle" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="ui-monospace, SFMono-Regular, monospace">{a.path}</text>
+            {/* File range badge */}
+            <rect x={x + 20} y={y + 68} width={w - 40} height={24} rx="12" fill={`${a.color}0c`} stroke={`${a.color}22`} strokeWidth="1" />
+            <text x={a.cx} y={y + 83} textAnchor="middle" fill={a.color} fontSize="10" fontWeight="600" dominantBaseline="central">{a.files}</text>
+            {/* Activity dot */}
+            <circle cx={x + w - 14} cy={y + 14} r="4" fill={a.color} opacity="0.6">
+              <animate attributeName="opacity" values="0.3;0.8;0.3" dur="1.5s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        );
+      })}
 
       {/* Bottom label */}
-      <rect x="200" y="280" width="400" height="28" rx="8" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-      <text x="400" y="299" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="11">Each agent works in its own isolated worktree — no conflicts</text>
+      <rect x="180" y="310" width="440" height="32" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+      <text x={W / 2} y="330" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="11" dominantBaseline="central">Each agent works in its own isolated worktree — no conflicts</text>
     </svg>
   );
 }
 
 function LifecycleDiagram() {
   const stages = [
-    { x: 40, label: "Create", sub: "git worktree add", color: "#10b981", icon: "+" },
-    { x: 200, label: "Branch", sub: "worktree-<name>", color: "#06b6d4", icon: "\u2387" },
-    { x: 360, label: "Work", sub: "Claude session", color: "#8b5cf6", icon: "\u270E" },
-    { x: 520, label: "Commit", sub: "git push + PR", color: "#f59e0b", icon: "\u2713" },
-    { x: 680, label: "Cleanup", sub: "remove or keep", color: "#ef4444", icon: "\u2715" },
+    { x: 40, label: "Create", sub: "git worktree add", color: "#34d399", icon: "+" },
+    { x: 200, label: "Branch", sub: "worktree-<name>", color: "#22d3ee", icon: "\u2387" },
+    { x: 360, label: "Work", sub: "Claude session", color: "#a78bfa", icon: "\u270E" },
+    { x: 520, label: "Commit", sub: "git push + PR", color: "#fbbf24", icon: "\u2713" },
+    { x: 680, label: "Cleanup", sub: "remove or keep", color: "#f87171", icon: "\u2715" },
   ];
+  const W = 800, H = 200;
 
   return (
-    <svg viewBox="0 0 800 180" className="w-full my-6" style={{ maxWidth: 800 }}>
-      <rect width="800" height="180" rx="16" fill="rgba(15,23,42,0.6)" stroke="rgba(139,92,246,0.2)" strokeWidth="1" />
-      <text x="400" y="28" textAnchor="middle" fill="white" fontSize="14" fontWeight="700">Worktree Lifecycle</text>
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full my-6" style={{ maxWidth: 800 }}>
+      <defs>
+        <linearGradient id="lc-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#0f172a" stopOpacity="0.85" /><stop offset="100%" stopColor="#1e1b4b" stopOpacity="0.7" /></linearGradient>
+        {stages.map((s, i) => (
+          <filter key={i} id={`lc-glow-${i}`}><feGaussianBlur stdDeviation="5" result="b" /><feFlood floodColor={s.color} floodOpacity="0.2" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        ))}
+      </defs>
+      <rect width={W} height={H} rx="16" fill="url(#lc-bg)" stroke="rgba(139,92,246,0.12)" strokeWidth="1" />
+      {Array.from({ length: 20 }).map((_, xi) => Array.from({ length: 5 }).map((_, yi) => (
+        <circle key={`${xi}-${yi}`} cx={xi * 42 + 10} cy={yi * 42 + 10} r="0.5" fill="rgba(139,92,246,0.06)" />
+      )))}
+      <text x={W / 2} y="30" textAnchor="middle" fill="white" fontSize="14" fontWeight="700" letterSpacing="0.5">Worktree Lifecycle</text>
 
       {/* Connection arrows */}
       {stages.slice(0, -1).map((s, i) => {
         const next = stages[i + 1];
         return (
-          <React.Fragment key={`arrow-${i}`}>
-            <line x1={s.x + 90} y1={85} x2={next.x + 10} y2={85} stroke="rgba(255,255,255,0.15)" strokeWidth="2">
-              <animate attributeName="strokeDashoffset" from="6" to="0" dur="1.5s" repeatCount="indefinite" />
-            </line>
-            <polygon points={`${next.x + 6},80 ${next.x + 14},85 ${next.x + 6},90`} fill="rgba(255,255,255,0.2)" />
-          </React.Fragment>
+          <g key={`arrow-${i}`}>
+            <line x1={s.x + 86} y1={90} x2={next.x + 16} y2={90} stroke="rgba(255,255,255,0.08)" strokeWidth="2" />
+            {/* Animated flowing dots */}
+            <circle r="2" fill="rgba(255,255,255,0.3)">
+              <animateMotion dur="2s" repeatCount="indefinite" begin={`${i * 0.4}s`} path={`M${s.x + 86},90 L${next.x + 16},90`} />
+            </circle>
+            <polygon points={`${next.x + 12},86 ${next.x + 18},90 ${next.x + 12},94`} fill="rgba(255,255,255,0.15)" />
+          </g>
         );
       })}
 
       {/* Stage nodes */}
-      {stages.map((s) => (
-        <React.Fragment key={s.label}>
-          {/* Circle */}
-          <circle cx={s.x + 50} cy={85} r="28" fill={`${s.color}15`} stroke={`${s.color}50`} strokeWidth="2" />
-          <text x={s.x + 50} y={90} textAnchor="middle" fill={s.color} fontSize="18" fontWeight="700">{s.icon}</text>
+      {stages.map((s, i) => (
+        <g key={s.label} filter={`url(#lc-glow-${i})`}>
+          {/* Outer ring */}
+          <circle cx={s.x + 50} cy={90} r="30" fill="none" stroke={`${s.color}20`} strokeWidth="1.5" />
+          {/* Inner filled circle */}
+          <circle cx={s.x + 50} cy={90} r="24" fill={`${s.color}10`} stroke={`${s.color}40`} strokeWidth="2" />
+          {/* Icon */}
+          <text x={s.x + 50} y={91} textAnchor="middle" fill={s.color} fontSize="18" fontWeight="700" dominantBaseline="central">{s.icon}</text>
           {/* Label */}
-          <text x={s.x + 50} y={132} textAnchor="middle" fill="white" fontSize="12" fontWeight="600">{s.label}</text>
-          <text x={s.x + 50} y={148} textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="9" fontFamily="monospace">{s.sub}</text>
-        </React.Fragment>
+          <text x={s.x + 50} y={140} textAnchor="middle" fill="white" fontSize="12" fontWeight="600">{s.label}</text>
+          <text x={s.x + 50} y={158} textAnchor="middle" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="ui-monospace, SFMono-Regular, monospace">{s.sub}</text>
+        </g>
       ))}
     </svg>
   );
@@ -601,99 +948,74 @@ function HeroBranchTree() {
    ═══════════════════════════════════════════════════════ */
 
 function ChallengeTrophySVG() {
+  const W = 800, H = 260;
+  const badges = [
+    { x: 130, label: "BEGINNER", color: "#34d399", num: "1" },
+    { x: 400, label: "INTERMEDIATE", color: "#60a5fa", num: "2" },
+    { x: 670, label: "ADVANCED", color: "#f87171", num: "3" },
+  ];
   return (
-    <svg viewBox="0 0 800 280" className="w-full my-6" style={{ maxWidth: 800 }}>
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full my-6" style={{ maxWidth: 800 }}>
       <defs>
-        <linearGradient id="ctg1" x1="0.5" y1="0" x2="0.5" y2="1">
-          <stop offset="0%" stopColor="#fbbf24" />
-          <stop offset="100%" stopColor="#f59e0b" />
-        </linearGradient>
-        <linearGradient id="ctg2" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="ctg-bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#1e1b4b" />
-          <stop offset="100%" stopColor="#0f172a" />
-        </linearGradient>
-        <filter id="ct-glow">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-        <radialGradient id="ct-sparkle" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#fbbf24" stopOpacity="1" />
-          <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
-        </radialGradient>
+        <linearGradient id="ct-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#1e1b4b" stopOpacity="0.9" /><stop offset="100%" stopColor="#0f172a" stopOpacity="0.85" /></linearGradient>
+        <linearGradient id="ct-cup" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stopColor="#fcd34d" /><stop offset="60%" stopColor="#f59e0b" /><stop offset="100%" stopColor="#d97706" /></linearGradient>
+        <radialGradient id="ct-aura" cx="50%" cy="45%" r="40%"><stop offset="0%" stopColor="#fbbf24" stopOpacity="0.18" /><stop offset="100%" stopColor="#fbbf24" stopOpacity="0" /></radialGradient>
+        <filter id="ct-bloom"><feGaussianBlur stdDeviation="8" result="b" /><feFlood floodColor="#fbbf24" floodOpacity="0.35" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        <filter id="ct-soft"><feGaussianBlur stdDeviation="3" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
       </defs>
 
-      <rect width="800" height="280" rx="20" fill="url(#ctg-bg)" />
+      <rect width={W} height={H} rx="16" fill="url(#ct-bg)" stroke="rgba(139,92,246,0.12)" strokeWidth="1" />
+      {/* Grid dots */}
+      {Array.from({ length: 20 }).map((_, xi) => Array.from({ length: 7 }).map((_, yi) => (
+        <circle key={`${xi}-${yi}`} cx={xi * 42 + 10} cy={yi * 42 + 10} r="0.5" fill="rgba(139,92,246,0.05)" />
+      )))}
 
-      {/* Radial glow behind trophy */}
-      <circle cx="400" cy="140" r="100" fill="url(#ctg2)" />
+      {/* Aura glow */}
+      <ellipse cx={W / 2} cy="115" rx="160" ry="100" fill="url(#ct-aura)" />
 
-      {/* Trophy cup body */}
-      <g filter="url(#ct-glow)">
-        <path d="M360,90 L360,160 C360,185 380,200 400,200 C420,200 440,185 440,160 L440,90 Z" fill="url(#ctg1)" opacity="0.9">
-          <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite" />
+      {/* Trophy — centered, compact */}
+      <g transform="translate(400,108)" filter="url(#ct-bloom)">
+        {/* Cup body */}
+        <path d="M-32,-45 L-28,15 C-28,35 -8,48 0,48 C8,48 28,35 28,15 L32,-45 Z" fill="url(#ct-cup)" opacity="0.95">
+          <animate attributeName="opacity" values="0.9;1;0.9" dur="3s" repeatCount="indefinite" />
         </path>
+        {/* Rim highlight */}
+        <ellipse cx="0" cy="-45" rx="34" ry="7" fill="#fef3c7" opacity="0.5" />
+        {/* Handles */}
+        <path d="M-32,-30 C-50,-30 -58,-12 -58,5 C-58,18 -48,25 -35,22" fill="none" stroke="#f59e0b" strokeWidth="3.5" strokeLinecap="round" opacity="0.8" />
+        <path d="M32,-30 C50,-30 58,-12 58,5 C58,18 48,25 35,22" fill="none" stroke="#f59e0b" strokeWidth="3.5" strokeLinecap="round" opacity="0.8" />
+        {/* Stem + base */}
+        <rect x="-6" y="48" width="12" height="14" rx="2" fill="#b45309" />
+        <ellipse cx="0" cy="66" rx="22" ry="5" fill="#92400e" opacity="0.7" />
+        {/* Star */}
+        <polygon points="0,-25 5,-12 18,-10 8,0 11,14 0,8 -11,14 -8,0 -18,-10 -5,-12" fill="#fef3c7" opacity="0.85">
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
+        </polygon>
       </g>
-      {/* Cup rim */}
-      <ellipse cx="400" cy="90" rx="42" ry="8" fill="#fcd34d" opacity="0.8" />
-      {/* Cup handles */}
-      <path d="M360,105 C340,105 325,120 325,140 C325,155 340,165 355,160" fill="none" stroke="#f59e0b" strokeWidth="4" strokeLinecap="round" />
-      <path d="M440,105 C460,105 475,120 475,140 C475,155 460,165 445,160" fill="none" stroke="#f59e0b" strokeWidth="4" strokeLinecap="round" />
-      {/* Cup base */}
-      <rect x="385" y="200" width="30" height="20" rx="3" fill="#d97706" />
-      <ellipse cx="400" cy="225" rx="35" ry="7" fill="#b45309" />
-      {/* Star on cup */}
-      <polygon points="400,115 406,130 422,132 410,143 413,158 400,150 387,158 390,143 378,132 394,130" fill="#fef3c7" opacity="0.9">
-        <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
-      </polygon>
 
-      {/* Sparkle particles around trophy */}
+      {/* Sparkles */}
       {[
-        { x: 300, y: 80, d: "5s", del: "0s" },
-        { x: 500, y: 90, d: "6s", del: "1s" },
-        { x: 280, y: 150, d: "4s", del: "0.5s" },
-        { x: 520, y: 160, d: "5.5s", del: "1.5s" },
-        { x: 340, y: 60, d: "7s", del: "2s" },
-        { x: 460, y: 70, d: "6s", del: "2.5s" },
-        { x: 310, y: 200, d: "5s", del: "3s" },
-        { x: 490, y: 210, d: "6s", del: "0.8s" },
+        { x: 280, y: 60 }, { x: 520, y: 70 }, { x: 260, y: 130 }, { x: 540, y: 140 },
+        { x: 310, y: 45 }, { x: 490, y: 50 }, { x: 330, y: 170 }, { x: 470, y: 175 },
       ].map((s, i) => (
-        <g key={`sp${i}`}>
-          {/* 4-point star sparkle */}
-          <path d={`M${s.x},${s.y - 6} L${s.x + 2},${s.y - 2} L${s.x + 6},${s.y} L${s.x + 2},${s.y + 2} L${s.x},${s.y + 6} L${s.x - 2},${s.y + 2} L${s.x - 6},${s.y} L${s.x - 2},${s.y - 2} Z`}
-            fill="#fbbf24" opacity="0">
-            <animate attributeName="opacity" values="0;0.9;0" dur={s.d} begin={s.del} repeatCount="indefinite" />
-            <animateTransform attributeName="transform" type="scale" values="0.5;1.2;0.5" dur={s.d} begin={s.del} repeatCount="indefinite" additive="sum" />
-          </path>
-        </g>
+        <path key={`sp${i}`}
+          d={`M${s.x},${s.y - 5} L${s.x + 1.5},${s.y - 1.5} L${s.x + 5},${s.y} L${s.x + 1.5},${s.y + 1.5} L${s.x},${s.y + 5} L${s.x - 1.5},${s.y + 1.5} L${s.x - 5},${s.y} L${s.x - 1.5},${s.y - 1.5} Z`}
+          fill="#fbbf24" opacity="0">
+          <animate attributeName="opacity" values="0;0.8;0" dur={`${4 + i * 0.7}s`} begin={`${i * 0.5}s`} repeatCount="indefinite" />
+        </path>
       ))}
 
       {/* Text */}
-      <text x="400" y="258" textAnchor="middle" fill="white" fontSize="18" fontWeight="700" letterSpacing="2" opacity="0">
-        CHALLENGE TIME
-        <animate attributeName="opacity" values="0;1" dur="0.8s" begin="0.5s" fill="freeze" />
-      </text>
-      <text x="400" y="275" textAnchor="middle" fill="rgba(251,191,36,0.7)" fontSize="10" letterSpacing="4" opacity="0">
-        TEST YOUR WORKTREE KNOWLEDGE
-        <animate attributeName="opacity" values="0;1" dur="0.8s" begin="1s" fill="freeze" />
-      </text>
+      <text x={W / 2} y="208" textAnchor="middle" fill="white" fontSize="16" fontWeight="700" letterSpacing="3">CHALLENGE TIME</text>
+      <text x={W / 2} y="226" textAnchor="middle" fill="rgba(251,191,36,0.6)" fontSize="9" letterSpacing="4">TEST YOUR WORKTREE KNOWLEDGE</text>
 
-      {/* Difficulty badges */}
-      {[
-        { x: 160, label: "BEGINNER", color: "#10b981", num: "1" },
-        { x: 400, label: "INTERMEDIATE", color: "#3b82f6", num: "2" },
-        { x: 640, label: "ADVANCED", color: "#ef4444", num: "3" },
-      ].map((badge) => (
-        <g key={badge.label}>
-          <rect x={badge.x - 55} y="40" width="110" height="30" rx="15" fill={`${badge.color}15`} stroke={`${badge.color}40`} strokeWidth="1.5">
-            <animate attributeName="strokeOpacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" />
-          </rect>
-          <circle cx={badge.x - 35} cy="55" r="9" fill={`${badge.color}30`} stroke={badge.color} strokeWidth="1.5" />
-          <text x={badge.x - 35} y="59" textAnchor="middle" fill={badge.color} fontSize="10" fontWeight="700">{badge.num}</text>
-          <text x={badge.x + 5} y="59" textAnchor="middle" fill={badge.color} fontSize="9" fontWeight="600" letterSpacing="1">{badge.label}</text>
+      {/* Difficulty badges — bottom row */}
+      {badges.map((b) => (
+        <g key={b.label}>
+          <rect x={b.x - 58} y="238" width="116" height="16" rx="8" fill={`${b.color}0c`} stroke={`${b.color}25`} strokeWidth="1" />
+          <circle cx={b.x - 40} cy="246" r="5" fill={`${b.color}20`} stroke={`${b.color}50`} strokeWidth="1" />
+          <text x={b.x - 40} y="247" textAnchor="middle" fill={b.color} fontSize="7" fontWeight="700" dominantBaseline="central">{b.num}</text>
+          <text x={b.x + 5} y="247" textAnchor="middle" fill={b.color} fontSize="8" fontWeight="600" letterSpacing="1" dominantBaseline="central">{b.label}</text>
         </g>
       ))}
     </svg>
@@ -703,32 +1025,30 @@ function ChallengeTrophySVG() {
 function ChallengeProgressSVG({ completed }: { completed: number }) {
   const total = 3;
   const challenges = [
-    { label: "Basic Ops", color: "#10b981", icon: "1" },
-    { label: "Parallel Dev", color: "#3b82f6", icon: "2" },
-    { label: "Batch Agent", color: "#ef4444", icon: "3" },
+    { label: "Basic Ops", color: "#34d399", icon: "1" },
+    { label: "Parallel Dev", color: "#60a5fa", icon: "2" },
+    { label: "Batch Agent", color: "#f87171", icon: "3" },
   ];
 
   return (
-    <svg viewBox="0 0 700 70" className="w-full my-4" style={{ maxWidth: 700 }}>
+    <svg viewBox="0 0 700 80" className="w-full my-4" style={{ maxWidth: 700 }}>
       <defs>
-        <linearGradient id="cpg-track" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
-          <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#ef4444" stopOpacity="0.3" />
-        </linearGradient>
         <linearGradient id="cpg-fill" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#10b981" />
-          <stop offset="50%" stopColor="#3b82f6" />
-          <stop offset="100%" stopColor="#ef4444" />
+          <stop offset="0%" stopColor="#34d399" /><stop offset="50%" stopColor="#60a5fa" /><stop offset="100%" stopColor="#f87171" />
         </linearGradient>
+        <filter id="cpg-glow"><feGaussianBlur stdDeviation="3" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
       </defs>
 
-      {/* Track */}
-      <rect x="80" y="30" width="540" height="8" rx="4" fill="rgba(255,255,255,0.06)" />
-      {/* Fill */}
-      <rect x="80" y="30" width={540 * (completed / total)} height="8" rx="4" fill="url(#cpg-fill)" opacity="0.8">
-        <animate attributeName="width" from="0" to={540 * (completed / total)} dur="0.6s" fill="freeze" />
-      </rect>
+      {/* Track background */}
+      <rect x="80" y="32" width="540" height="6" rx="3" fill="rgba(255,255,255,0.05)" />
+      {/* Track segments (subtle tick marks) */}
+      {[1, 2].map((i) => <line key={i} x1={80 + i * 180} y1="28" x2={80 + i * 180} y2="42" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />)}
+      {/* Fill bar */}
+      {completed > 0 && (
+        <rect x="80" y="32" width={540 * (completed / total)} height="6" rx="3" fill="url(#cpg-fill)" opacity="0.75" filter="url(#cpg-glow)">
+          <animate attributeName="width" from="0" to={540 * (completed / total)} dur="0.8s" fill="freeze" />
+        </rect>
+      )}
 
       {/* Nodes */}
       {challenges.map((ch, i) => {
@@ -736,15 +1056,16 @@ function ChallengeProgressSVG({ completed }: { completed: number }) {
         const done = i < completed;
         return (
           <g key={ch.label}>
-            <circle cx={x} cy="34" r="18" fill={done ? `${ch.color}30` : "rgba(255,255,255,0.04)"} stroke={done ? ch.color : "rgba(255,255,255,0.15)"} strokeWidth={done ? "2.5" : "1.5"}>
-              {done && <animate attributeName="r" values="18;20;18" dur="2s" repeatCount="indefinite" />}
-            </circle>
+            {/* Outer ring */}
+            <circle cx={x} cy="35" r="20" fill="none" stroke={done ? `${ch.color}30` : "rgba(255,255,255,0.06)"} strokeWidth="1.5" />
+            {/* Inner circle */}
+            <circle cx={x} cy="35" r="15" fill={done ? `${ch.color}18` : "rgba(255,255,255,0.03)"} stroke={done ? `${ch.color}60` : "rgba(255,255,255,0.12)"} strokeWidth={done ? 2 : 1.5} />
             {done ? (
-              <text x={x} y="39" textAnchor="middle" fill={ch.color} fontSize="14" fontWeight="700">&#10003;</text>
+              <text x={x} y="36" textAnchor="middle" fill={ch.color} fontSize="14" fontWeight="700" dominantBaseline="central">&#10003;</text>
             ) : (
-              <text x={x} y="38" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="11" fontWeight="600">{ch.icon}</text>
+              <text x={x} y="36" textAnchor="middle" fill="rgba(255,255,255,0.35)" fontSize="11" fontWeight="600" dominantBaseline="central">{ch.icon}</text>
             )}
-            <text x={x} y="64" textAnchor="middle" fill={done ? ch.color : "rgba(255,255,255,0.35)"} fontSize="9" fontWeight="500">{ch.label}</text>
+            <text x={x} y="68" textAnchor="middle" fill={done ? ch.color : "rgba(255,255,255,0.3)"} fontSize="9" fontWeight="500">{ch.label}</text>
           </g>
         );
       })}
@@ -754,32 +1075,24 @@ function ChallengeProgressSVG({ completed }: { completed: number }) {
 
 function ChallengeLevelBadge({ level, difficulty, color }: { level: number; difficulty: string; color: string }) {
   return (
-    <svg viewBox="0 0 220 50" className="inline-block" style={{ width: 220, height: 50, verticalAlign: "middle" }}>
+    <svg viewBox="0 0 240 48" className="inline-block" style={{ width: 240, height: 48, verticalAlign: "middle" }}>
       <defs>
-        <linearGradient id={`clb-${level}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.2" />
-          <stop offset="100%" stopColor={color} stopOpacity="0.05" />
+        <linearGradient id={`clb-${level}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="0.15" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.04" />
         </linearGradient>
-        <filter id={`clb-glow-${level}`}>
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
+        <filter id={`clb-glow-${level}`}><feGaussianBlur stdDeviation="3" result="b" /><feFlood floodColor={color} floodOpacity="0.2" result="c" /><feComposite in="c" in2="b" operator="in" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
       </defs>
-      <rect x="2" y="2" width="216" height="46" rx="23" fill={`url(#clb-${level})`} stroke={`${color}60`} strokeWidth="1.5">
-        <animate attributeName="strokeOpacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" />
-      </rect>
-      {/* Orbiting dot */}
-      <circle r="3" fill={color} opacity="0.6" filter={`url(#clb-glow-${level})`}>
-        <animateMotion dur={`${4 + level}s`} repeatCount="indefinite" path="M110,25 m-90,0 a90,20 0 1,0 180,0 a90,20 0 1,0 -180,0" />
-      </circle>
-      {/* Shield icon */}
-      <g transform="translate(20,10)">
-        <path d={`M15,0 L25,5 L25,18 C25,25 15,30 15,30 C15,30 5,25 5,18 L5,5 Z`} fill={`${color}30`} stroke={color} strokeWidth="1.5" />
-        <text x="15" y="20" textAnchor="middle" fill={color} fontSize="12" fontWeight="800">{level}</text>
+      <rect x="1" y="1" width="238" height="46" rx="23" fill={`url(#clb-${level})`} stroke={`${color}40`} strokeWidth="1.5" />
+      <line x1="24" y1="2" x2="216" y2="2" stroke={`${color}15`} strokeWidth="1" strokeLinecap="round" />
+      {/* Shield icon with glow */}
+      <g transform="translate(16,8)" filter={`url(#clb-glow-${level})`}>
+        <path d="M16,0 L28,6 L28,20 C28,28 16,34 16,34 C16,34 4,28 4,20 L4,6 Z" fill={`${color}20`} stroke={`${color}60`} strokeWidth="1.5" />
+        <text x="16" y="21" textAnchor="middle" fill={color} fontSize="13" fontWeight="800" dominantBaseline="central">{level}</text>
       </g>
       {/* Text */}
-      <text x="55" y="22" fill="white" fontSize="13" fontWeight="700">Challenge {level}</text>
-      <text x="55" y="38" fill={color} fontSize="9" fontWeight="600" letterSpacing="1.5">{difficulty}</text>
+      <text x="58" y="20" fill="white" fontSize="13" fontWeight="700">Challenge {level}</text>
+      <text x="58" y="36" fill={color} fontSize="8" fontWeight="600" letterSpacing="1.5">{difficulty}</text>
     </svg>
   );
 }
@@ -1600,7 +1913,7 @@ export default function GitWorktreesClaudeCodePage() {
 
             {/* ─── Challenge 1 ─── */}
             <div className="mt-4 mb-2">
-              <ChallengeLevelBadge level={1} difficulty="BEGINNER" color="#10b981" />
+              <ChallengeLevelBadge level={1} difficulty="BEGINNER" color="#34d399" />
             </div>
             <CodeEditor
               code={challenge1Starter}
@@ -1629,7 +1942,7 @@ export default function GitWorktreesClaudeCodePage() {
 
             {/* ─── Challenge 2 ─── */}
             <div className="mt-8 mb-2">
-              <ChallengeLevelBadge level={2} difficulty="INTERMEDIATE" color="#3b82f6" />
+              <ChallengeLevelBadge level={2} difficulty="INTERMEDIATE" color="#60a5fa" />
             </div>
             <CodeEditor
               code={challenge2Starter}
@@ -1658,7 +1971,7 @@ export default function GitWorktreesClaudeCodePage() {
 
             {/* ─── Challenge 3 ─── */}
             <div className="mt-8 mb-2">
-              <ChallengeLevelBadge level={3} difficulty="ADVANCED" color="#ef4444" />
+              <ChallengeLevelBadge level={3} difficulty="ADVANCED" color="#f87171" />
             </div>
             <CodeEditor
               code={challenge3Starter}

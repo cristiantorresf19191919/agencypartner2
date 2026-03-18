@@ -1476,7 +1476,7 @@ export function solution() {
             options={editorOptions}
             beforeMount={handleBeforeMount}
             onMount={handleEditorMount}
-            theme="vs-dark"
+            theme="vs-dark-bright-keywords"
           />
         </div>
         {isKotlin && (kotlinRunOutput != null || kotlinRunError != null) && (
