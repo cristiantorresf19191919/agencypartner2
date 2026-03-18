@@ -67,15 +67,15 @@
 /* Account for fixed sidebar on large screens - always reserve space for sidebar */
 @media (min-width: 1024px) {
   .mainContent {
-    margin-left: 320px;
+    margin-left: 300px;
     /* Sidebar open width - ensures consistent spacing */
-    width: calc(100% - 320px);
+    width: calc(100% - 300px);
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .contentWrapper.sidebarCollapsed .mainContent {
-    margin-left: 80px;
-    width: calc(100% - 80px);
+    margin-left: 56px;
+    width: calc(100% - 56px);
   }
 }
 

@@ -683,42 +683,77 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
 
   const usePageToc = Boolean(tableOfContents?.length);
 
+  /* Reading progress — track how far user has scrolled through the page */
+  const [readProgress, setReadProgress] = useState(0);
+  useEffect(() => {
+    const handleProgress = () => {
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      if (docH > 0) setReadProgress(Math.min(100, (window.scrollY / docH) * 100));
+    };
+    window.addEventListener("scroll", handleProgress, { passive: true });
+    return () => window.removeEventListener("scroll", handleProgress);
+  }, []);
+
+  /* Current active index for collapsed dot indicator */
+  const activeIndex = (tableOfContents ?? []).findIndex((e) => e.id === activeId);
+
   const sidebarContent = (
     <Box
       sx={{
-        width: sidebarOpen ? 320 : 80,
+        width: sidebarOpen ? 300 : 56,
         height: "100%",
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        bgcolor: alpha("#1a1a2e", 0.95),
-        backdropFilter: "blur(20px)",
-        borderRight: `1px solid ${alpha("#ffffff", 0.1)}`,
+        bgcolor: alpha("#0f0c29", 0.97),
+        backdropFilter: "blur(24px) saturate(180%)",
+        borderRight: `1px solid ${alpha("#ffffff", 0.06)}`,
         transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         overflow: "hidden",
       }}
     >
-      {/* Toggle Button — visible header row so expand/collapse is easy to find */}
+      {/* Reading progress bar — thin gradient line at top */}
+      <Box
+        sx={{
+          height: 2,
+          flexShrink: 0,
+          bgcolor: alpha("#ffffff", 0.03),
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            height: "100%",
+            width: `${readProgress}%`,
+            background: "linear-gradient(90deg, #8b5cf6, #06b6d4)",
+            transition: "width 0.15s ease-out",
+            borderRadius: "0 1px 1px 0",
+          }}
+        />
+      </Box>
+
+      {/* Header row */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: sidebarOpen ? "space-between" : "center",
-          p: 1.5,
-          minHeight: 56,
+          px: sidebarOpen ? 1.5 : 0.5,
+          py: 1,
+          minHeight: 48,
           flexShrink: 0,
-          borderBottom: `1px solid ${alpha("#ffffff", 0.1)}`,
-          bgcolor: alpha("#000000", 0.2),
+          borderBottom: `1px solid ${alpha("#ffffff", 0.06)}`,
         }}
       >
         {sidebarOpen && (
           <Typography
-            variant="h6"
+            variant="subtitle2"
             sx={{
-              color: "#ffffff",
-              fontWeight: 700,
-              fontSize: "1rem",
-              letterSpacing: "0.5px",
+              color: alpha("#ffffff", 0.5),
+              fontWeight: 600,
+              fontSize: "0.6875rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
             }}
           >
             {usePageToc ? (t("sidebar-on-this-page") || "On this page") : (t("nav-blog") || "Documentation")}
@@ -732,17 +767,18 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
           }}
           aria-label={sidebarOpen ? (t("sidebar-collapse") || "Collapse sidebar") : (t("sidebar-expand") || "Expand sidebar")}
           title={sidebarOpen ? (t("sidebar-collapse") || "Collapse sidebar") : (t("sidebar-expand") || "Expand sidebar")}
+          size="small"
           sx={{
-            color: "#ffffff",
-            bgcolor: alpha("#ffffff", 0.08),
-            border: `1px solid ${alpha("#ffffff", 0.15)}`,
+            color: alpha("#ffffff", 0.5),
+            width: 30,
+            height: 30,
             "&:hover": {
-              bgcolor: alpha("#ffffff", 0.15),
-              borderColor: alpha("#ffffff", 0.25),
+              bgcolor: alpha("#ffffff", 0.08),
+              color: "#ffffff",
             },
           }}
         >
-          {sidebarOpen ? <ChevronRightIcon /> : <MenuIcon />}
+          {sidebarOpen ? <ChevronRightIcon sx={{ fontSize: 18 }} /> : <MenuIcon sx={{ fontSize: 18 }} />}
         </IconButton>
       </Box>
 
@@ -753,56 +789,72 @@ function DocSidebar({ mobileOpen: controlledMobileOpen, onMobileClose, hideMobil
           minHeight: 0,
           overflowY: "auto",
           overflowX: "hidden",
-          px: sidebarOpen ? 2 : 1,
-          py: 3,
+          px: sidebarOpen ? 1 : 0.5,
+          py: 1.5,
           display: "flex",
           flexDirection: "column",
-          "&::-webkit-scrollbar": { width: "8px" },
+          "&::-webkit-scrollbar": { width: "4px" },
           "&::-webkit-scrollbar-track": { background: "transparent" },
           "&::-webkit-scrollbar-thumb": {
-            background: alpha("#ffffff", 0.2),
-            borderRadius: "4px",
-            "&:hover": { background: alpha("#ffffff", 0.3) },
+            background: alpha("#ffffff", 0.1),
+            borderRadius: "2px",
+            "&:hover": { background: alpha("#ffffff", 0.2) },
           },
         }}
       >
         {usePageToc ? (
           <>
             {/* Page table of contents — scroll-spy + click to scroll */}
-            <List sx={{ p: 0, display: "flex", flexDirection: "column", gap: 0.25 }}>
-              {(tableOfContents ?? []).map((entry) => {
+            <List sx={{ p: 0, display: "flex", flexDirection: "column", gap: 0 }}>
+              {(tableOfContents ?? []).map((entry, idx) => {
                 const isActive = activeId === entry.id;
-                const pl = sidebarOpen ? (entry.level === 1 ? 1.5 : 1.5 + (entry.level - 1) * 2) : 1;
+                const isPast = activeIndex > idx;
+                const pl = sidebarOpen ? (entry.level === 1 ? 1.25 : 1.25 + (entry.level - 1) * 1.5) : 0.75;
                 return (
                   <ListItemButton
                     key={entry.id}
                     onClick={() => scrollToSection(entry.id)}
                     sx={{
-                      py: 1.5,
+                      py: 0.75,
                       px: pl,
-                      borderRadius: 2,
-                      borderLeft: "3px solid",
-                      borderLeftColor: isActive ? "#a78bfa" : "transparent",
-                      bgcolor: isActive ? alpha("#a78bfa", 0.15) : "transparent",
+                      borderRadius: 1.5,
+                      minHeight: sidebarOpen ? 36 : 28,
+                      borderLeft: sidebarOpen ? "2px solid" : "none",
+                      borderLeftColor: isActive ? "#a78bfa" : isPast ? alpha("#a78bfa", 0.2) : alpha("#ffffff", 0.04),
+                      bgcolor: isActive ? alpha("#a78bfa", 0.1) : "transparent",
                       "&:hover": {
-                        bgcolor: isActive ? alpha("#a78bfa", 0.2) : alpha("#ffffff", 0.06),
-                        borderLeftColor: isActive ? "#a78bfa" : alpha("#ffffff", 0.2),
+                        bgcolor: isActive ? alpha("#a78bfa", 0.15) : alpha("#ffffff", 0.04),
+                        borderLeftColor: isActive ? "#a78bfa" : alpha("#a78bfa", 0.4),
                       },
                       transition: "all 0.2s ease",
                     }}
                   >
-                    {sidebarOpen && (
+                    {sidebarOpen ? (
                       <Typography
                         variant="body2"
                         sx={{
-                          fontWeight: isActive ? 600 : 500,
-                          color: isActive ? "#c4b5fd" : alpha("#ffffff", 0.85),
-                          fontSize: entry.level === 1 ? "0.875rem" : "0.8125rem",
-                          lineHeight: 1.4,
+                          fontWeight: isActive ? 600 : 400,
+                          color: isActive ? "#c4b5fd" : isPast ? alpha("#ffffff", 0.5) : alpha("#ffffff", 0.7),
+                          fontSize: entry.level === 1 ? "0.8125rem" : "0.75rem",
+                          lineHeight: 1.35,
+                          letterSpacing: "0.01em",
                         }}
                       >
                         {entry.label}
                       </Typography>
+                    ) : (
+                      /* Collapsed: show a small dot indicator */
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          bgcolor: isActive ? "#a78bfa" : isPast ? alpha("#a78bfa", 0.3) : alpha("#ffffff", 0.12),
+                          mx: "auto",
+                          transition: "all 0.2s ease",
+                          boxShadow: isActive ? `0 0 8px ${alpha("#a78bfa", 0.5)}` : "none",
+                        }}
+                      />
                     )}
                   </ListItemButton>
                 );
