@@ -3,6 +3,7 @@
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { REACT19_LESSONS } from "@/lib/react19InterviewData";
+import { getReact19LessonForLocale } from "@/lib/reactInterviewTranslations";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { motion } from "framer-motion";
@@ -10,24 +11,24 @@ import { Code as CodeIcon, ArrowForward as ArrowRight, School as SchoolIcon } fr
 import Link from "next/link";
 import styles from "../challenges/ChallengesPage.module.css";
 
-function React19FeaturesShowcase() {
+function React19FeaturesShowcase({ t }: { t: (key: string) => string }) {
   return (
     <div className={styles.react19Showcase}>
       <h2 className={styles.showcaseTitle}>
-        React 19: The <span className={styles.gradient}>Async Revolution</span>
+        {t("react-interview-showcase-title-pre")} <span className={styles.gradient}>{t("react-interview-showcase-title-gradient")}</span>
       </h2>
       <p className={styles.showcaseSubtitle}>
-        A crash course on the new primitives designed for speed, concurrency, and effortless state management.
+        {t("react-interview-showcase-subtitle")}
       </p>
 
       <div className={styles.featuresGrid}>
         <div className={styles.featureCard}>
           <div className={styles.featureHeader}>
             <span className={`${styles.featureIcon} ${styles.lightning}`}>&#9889;</span>
-            <h3 className={styles.featureTitle}>1. The use() Hook</h3>
+            <h3 className={styles.featureTitle}>{t("react-interview-feature-1-title")}</h3>
           </div>
           <p className={styles.featureDesc}>
-            Unwrap promises directly in render. React automatically suspends the component until data is ready.
+            {t("react-interview-feature-1-desc")}
           </p>
           <div className={styles.codeBlock}>
             <span className={styles.keyword}>function</span>{" "}
@@ -45,10 +46,10 @@ function React19FeaturesShowcase() {
         <div className={styles.featureCard}>
           <div className={styles.featureHeader}>
             <span className={`${styles.featureIcon} ${styles.check}`}>&#10003;</span>
-            <h3 className={styles.featureTitle}>2. Action Hooks</h3>
+            <h3 className={styles.featureTitle}>{t("react-interview-feature-2-title")}</h3>
           </div>
           <p className={styles.featureDesc}>
-            Automate form lifecycles. <code>useActionState</code> tracks pending status &amp; errors automatically.
+            {t("react-interview-feature-2-desc")}
           </p>
           <div className={styles.codeBlock}>
             <span className={styles.keyword}>const</span> [<span className={styles.variable}>state</span>,{" "}
@@ -64,10 +65,10 @@ function React19FeaturesShowcase() {
         <div className={styles.featureCard}>
           <div className={styles.featureHeader}>
             <span className={`${styles.featureIcon} ${styles.eye}`}>&#9737;</span>
-            <h3 className={styles.featureTitle}>3. &lt;Activity&gt;</h3>
+            <h3 className={styles.featureTitle}>{t("react-interview-feature-3-title")}</h3>
           </div>
           <p className={styles.featureDesc}>
-            Mark trees as hidden to preserve scroll position and state without active resource consumption.
+            {t("react-interview-feature-3-desc")}
           </p>
           <div className={styles.codeBlock}>
             {"<"}<span className={styles.component}>Activity</span>{" "}
@@ -82,10 +83,10 @@ function React19FeaturesShowcase() {
         <div className={styles.featureCard}>
           <div className={styles.featureHeader}>
             <span className={`${styles.featureIcon} ${styles.bolt}`}>&#8635;</span>
-            <h3 className={styles.featureTitle}>4. useEffectEvent</h3>
+            <h3 className={styles.featureTitle}>{t("react-interview-feature-4-title")}</h3>
           </div>
           <p className={styles.featureDesc}>
-            Extract non-reactive logic. Ensure your effect only re-runs when specific dependencies change.
+            {t("react-interview-feature-4-desc")}
           </p>
           <div className={styles.codeBlock}>
             <span className={styles.keyword}>const</span> <span className={styles.variable}>onVisit</span> ={" "}
@@ -103,15 +104,15 @@ function React19FeaturesShowcase() {
       <div className={styles.stepsRow}>
         <div className={styles.stepCard}>
           <span className={styles.stepLabel}>Step 1</span>
-          <p className={styles.stepText}>Refactor complex forms first.</p>
+          <p className={styles.stepText}>{t("react-interview-step-1")}</p>
         </div>
         <div className={styles.stepCard}>
           <span className={styles.stepLabel}>Step 2</span>
-          <p className={styles.stepText}>Embrace Suspense boundaries.</p>
+          <p className={styles.stepText}>{t("react-interview-step-2")}</p>
         </div>
         <div className={styles.stepCard}>
           <span className={styles.stepLabel}>Step 3</span>
-          <p className={styles.stepText}>Keep existing code; use for new features.</p>
+          <p className={styles.stepText}>{t("react-interview-step-3")}</p>
         </div>
       </div>
     </div>
@@ -119,8 +120,13 @@ function React19FeaturesShowcase() {
 }
 
 export default function ReactInterviewLandingPage() {
-  const { createLocalizedPath } = useLocale();
+  const { locale, createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+
+  const localizedLessons = REACT19_LESSONS.map((lesson) => {
+    const translated = getReact19LessonForLocale(locale, lesson.id);
+    return translated ?? lesson;
+  });
 
   return (
     <main className={styles.page}>
@@ -131,7 +137,7 @@ export default function ReactInterviewLandingPage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <SchoolIcon fontSize="small" />
-          <span>React 19 Interview Prep</span>
+          <span>{t("react-interview-pill")}</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -139,7 +145,7 @@ export default function ReactInterviewLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Master React 19 Features
+          {t("react-interview-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -147,33 +153,32 @@ export default function ReactInterviewLandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Learn React 19's revolutionary features through interactive lessons with live code editors,
-          previews, and real-world examples. Perfect for interview preparation.
+          {t("react-interview-subtitle")}
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
             <CodeIcon fontSize="small" />
             React 19
           </span>
-          <span className={styles.badge}>Interactive Lessons</span>
-          <span className={styles.badge}>{REACT19_LESSONS.length} Lessons</span>
+          <span className={styles.badge}>{t("react-interview-badge-lessons")}</span>
+          <span className={styles.badge}>{REACT19_LESSONS.length} {t("react-interview-lessons-count")}</span>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.4 }}
         >
-          <React19FeaturesShowcase />
+          <React19FeaturesShowcase t={t} />
         </motion.div>
       </section>
 
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>All Lessons</span>
-          <span className={styles.count}>{REACT19_LESSONS.length} lessons</span>
+          <span className={styles.filterLabel}>{t("react-interview-all-lessons")}</span>
+          <span className={styles.count}>{REACT19_LESSONS.length} {t("react-interview-lessons-count").toLowerCase()}</span>
         </div>
         <ul className={styles.grid}>
-          {REACT19_LESSONS.map((lesson, i) => (
+          {localizedLessons.map((lesson, i) => (
             <motion.li
               key={lesson.id}
               initial={{ opacity: 0, y: 16 }}
@@ -186,7 +191,7 @@ export default function ReactInterviewLandingPage() {
               >
                 <div className={styles.cardTop}>
                   <span className={styles.difficulty} style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}>
-                    Lesson {lesson.lessonNumber}
+                    {t("react-interview-lesson-label")} {lesson.lessonNumber}
                   </span>
                 </div>
                 <h3 className={styles.cardTitle}>{lesson.title}</h3>
@@ -197,7 +202,7 @@ export default function ReactInterviewLandingPage() {
                   {lesson.description.substring(0, 120)}...
                 </p>
                 <div className={styles.cardCta}>
-                  <span>Start Lesson</span>
+                  <span>{t("react-interview-start-lesson")}</span>
                   <ArrowRight className={styles.ctaArrow} />
                 </div>
               </Link>
@@ -209,13 +214,13 @@ export default function ReactInterviewLandingPage() {
       <div className={styles.footerActions}>
         <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/challenges")}>
-            Algorithm Challenges
+            {t("algorithm-challenges-link")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/react-challenges")}>
-            React Challenges
+            {t("react-challenges-link")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </a>
         </div>
       </div>

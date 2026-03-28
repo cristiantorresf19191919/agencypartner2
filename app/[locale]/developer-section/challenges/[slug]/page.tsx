@@ -272,7 +272,7 @@ export default function ChallengePlayPage() {
         module: monaco.languages.typescript.ModuleKind.None,
         noEmit: true,
       });
-      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false, noSyntaxValidation: false });
+      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true, noSyntaxValidation: false });
     }
   };
 

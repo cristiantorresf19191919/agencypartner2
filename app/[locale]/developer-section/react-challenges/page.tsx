@@ -3,6 +3,7 @@
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { REACT_CHALLENGES } from "@/lib/reactChallengesData";
+import { getReactChallengeForLocale } from "@/lib/reactChallengesTranslations";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { motion } from "framer-motion";
@@ -11,8 +12,13 @@ import Link from "next/link";
 import styles from "../challenges/ChallengesPage.module.css";
 
 export default function ReactChallengesListPage() {
-  const { createLocalizedPath } = useLocale();
+  const { locale, createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+
+  const localizedChallenges = REACT_CHALLENGES.map((c) => {
+    const translated = getReactChallengeForLocale(locale, c.id);
+    return translated ?? c;
+  });
 
   return (
     <main className={styles.page}>
@@ -57,7 +63,7 @@ export default function ReactChallengesListPage() {
           <span className={styles.count}>{REACT_CHALLENGES.length} {t("react-challenges-count-label")}</span>
         </div>
         <ul className={styles.grid}>
-          {REACT_CHALLENGES.map((c, i) => (
+          {localizedChallenges.map((c, i) => (
             <motion.li
               key={c.id}
               initial={{ opacity: 0, y: 16 }}

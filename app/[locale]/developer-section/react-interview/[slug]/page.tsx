@@ -19,25 +19,20 @@ import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getReact19LessonById } from "@/lib/react19InterviewData";
+import { getReact19LessonForLocale } from "@/lib/reactInterviewTranslations";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
 import type { OnMount } from "@monaco-editor/react";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
-  loading: () => (
-    <div className={playStyles.editorLoading}>
-      <div className={playStyles.loadingSpinner} />
-      <p>Loading editor…</p>
-    </div>
-  ),
 });
 
 export default function React19LessonPage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
-  const lesson = getReact19LessonById(slug);
-  const { createLocalizedPath } = useLocale();
+  const { locale, createLocalizedPath } = useLocale();
+  const lesson = getReact19LessonForLocale(locale, slug);
   const { t } = useLanguage();
 
   const [code, setCode] = useState("");
@@ -304,9 +299,8 @@ export default function React19LessonPage() {
     });
     
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
+      noSemanticValidation: true,
       noSyntaxValidation: false,
-      diagnosticCodesToIgnore: [1375],
     });
 
     // Add React 19 types
@@ -353,8 +347,8 @@ export default function React19LessonPage() {
       <main className={styles.page}>
         <DeveloperHeader />
         <div className={playStyles.notFound}>
-          <p>Lesson not found</p>
-          <a href={createLocalizedPath("/developer-section/react-interview")}>Back to lessons</a>
+          <p>{t("react-interview-not-found")}</p>
+          <a href={createLocalizedPath("/developer-section/react-interview")}>{t("react-interview-back-to-lessons")}</a>
         </div>
         <Footer />
       </main>
@@ -373,7 +367,7 @@ export default function React19LessonPage() {
           <div className={playStyles.description}>
             <div className={playStyles.descHeader}>
               <span className={styles.difficulty} style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}>
-                Lesson {lesson.lessonNumber}
+                {t("react-interview-lesson-label")} {lesson.lessonNumber}
               </span>
             </div>
             <h1 className={playStyles.descTitle}>{lesson.title}</h1>
@@ -397,7 +391,7 @@ export default function React19LessonPage() {
                     marginRight: "8px",
                   }}
                 >
-                  {showOldWay ? "Hide" : "Show"} Old Way (React 18)
+                  {showOldWay ? t("react-interview-hide-old-way") : t("react-interview-show-old-way")}
                 </button>
                 <button
                   onClick={() => setShowNewWay(!showNewWay)}
@@ -411,14 +405,14 @@ export default function React19LessonPage() {
                     fontSize: "14px",
                   }}
                 >
-                  {showNewWay ? "Hide" : "Show"} New Way (React 19)
+                  {showNewWay ? t("react-interview-hide-new-way") : t("react-interview-show-new-way")}
                 </button>
               </div>
 
               {showOldWay && (
                 <div style={{ marginBottom: "16px" }}>
                   <h4 className={playStyles.descSub} style={{ color: "#ef4444" }}>
-                    ❌ Old Way (React 18)
+                    ❌ {t("react-interview-old-way-label")}
                   </h4>
                   <HighlightedCode code={lesson.oldWayCode} language="tsx" className={playStyles.sample} style={{ borderColor: "rgba(239, 68, 68, 0.3)" }} />
                 </div>
@@ -427,21 +421,21 @@ export default function React19LessonPage() {
               {showNewWay && (
                 <div style={{ marginBottom: "16px" }}>
                   <h4 className={playStyles.descSub} style={{ color: "#10b981" }}>
-                    ✅ New Way (React 19)
+                    ✅ {t("react-interview-new-way-label")}
                   </h4>
                   <HighlightedCode code={lesson.newWayCode} language="tsx" className={playStyles.sample} style={{ borderColor: "rgba(16, 185, 129, 0.3)" }} />
                 </div>
               )}
 
               <h4 className={playStyles.descSub} style={{ marginTop: "24px" }}>
-                👀 Preview
+                👀 {t("react-interview-preview-label")}
               </h4>
               <p style={{ fontSize: "13px", color: "#c6d5ff", fontStyle: "italic", marginBottom: "12px" }}>
                 {lesson.previewDescription}
               </p>
 
               <h4 className={playStyles.descSub} style={{ marginTop: "24px" }}>
-                📚 Explanation
+                📚 {t("react-interview-explanation-label")}
               </h4>
               <p style={{ fontSize: "14px", color: "#c6d5ff", lineHeight: "1.6" }}>
                 {lesson.explanation}
@@ -466,14 +460,14 @@ export default function React19LessonPage() {
 
             <div className={playStyles.toolbar}>
               <button className={playStyles.iconBtn} onClick={resetToStarter}>
-                <ResetIcon fontSize="small" /> Reset
+                <ResetIcon fontSize="small" /> {t("react-interview-reset")}
               </button>
               <button
                 className={playStyles.runBtn}
                 onClick={runPreview}
                 disabled={isRunningPreview}
               >
-                <PlayIcon fontSize="small" /> {isRunningPreview ? "Running..." : "Run Preview"}
+                <PlayIcon fontSize="small" /> {isRunningPreview ? t("react-interview-running") : t("react-interview-run-preview")}
               </button>
             </div>
 
@@ -481,7 +475,7 @@ export default function React19LessonPage() {
             {previewHtml && (
               <div className={playStyles.outputPanel} style={{ marginBottom: "16px" }}>
                 <div className={playStyles.outputHead}>
-                  <PreviewIcon fontSize="small" /> Live Preview
+                  <PreviewIcon fontSize="small" /> {t("react-interview-live-preview")}
                 </div>
                 <div style={{ 
                   padding: "12px", 
@@ -523,13 +517,13 @@ export default function React19LessonPage() {
             {!previewHtml && (
               <div className={playStyles.outputPanel}>
                 <div className={playStyles.outputHead}>
-                  <CodeIcon fontSize="small" /> Code Editor
+                  <CodeIcon fontSize="small" /> {t("react-interview-code-editor")}
                 </div>
                 <p className={playStyles.emptyLog}>
-                  Edit the code above and click "Run Preview" to see the result.
+                  {t("react-interview-edit-hint")}
                   <br />
                   <span style={{ fontSize: "12px", color: "#7cf4ff" }}>
-                    Press Cmd/Ctrl + Enter to run
+                    {t("react-interview-shortcut-hint")}
                   </span>
                 </p>
               </div>
@@ -541,10 +535,10 @@ export default function React19LessonPage() {
       <div className={styles.footerActions}>
         <div className={playStyles.footerRow}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/react-interview")}>
-            Back to React 19 Lessons
+            {t("react-interview-back")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </a>
         </div>
       </div>

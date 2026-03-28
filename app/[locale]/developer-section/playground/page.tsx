@@ -124,9 +124,8 @@ export default function PlaygroundPage() {
     monaco.editor.setTheme("vs-dark");
     monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
+      noSemanticValidation: true,
       noSyntaxValidation: false,
-      diagnosticCodesToIgnore: [1375], // allow top-level await
     });
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ES2020,

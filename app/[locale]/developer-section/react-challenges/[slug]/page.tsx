@@ -19,6 +19,7 @@ import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getReactChallengeById } from "@/lib/reactChallengesData";
+import { getReactChallengeForLocale } from "@/lib/reactChallengesTranslations";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
@@ -29,12 +30,6 @@ import { HighlightedCode } from "@/components/ui/HighlightedCode";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
-  loading: () => (
-    <div className={playStyles.editorLoading}>
-      <div className={playStyles.loadingSpinner} />
-      <p>Loading editor…</p>
-    </div>
-  ),
 });
 
 const MAX_ATTEMPTS = 10;
@@ -62,8 +57,8 @@ function resetAttemptCount(challengeId: string): void {
 export default function ReactChallengePage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
-  const challenge = getReactChallengeById(slug);
-  const { createLocalizedPath } = useLocale();
+  const { locale, createLocalizedPath } = useLocale();
+  const challenge = getReactChallengeForLocale(locale, slug);
   const { t } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
 
@@ -400,9 +395,8 @@ export default function ReactChallengePage() {
     });
 
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
+      noSemanticValidation: true,
       noSyntaxValidation: false,
-      diagnosticCodesToIgnore: [1375], // Allow top-level await
     });
 
     // Add React type definitions - make React hooks available globally
@@ -815,8 +809,8 @@ export default function ReactChallengePage() {
       <main className={styles.page}>
         <DeveloperHeader />
         <div className={playStyles.notFound}>
-          <p>Challenge not found</p>
-          <a href={createLocalizedPath("/developer-section/react-challenges")}>Back to challenges</a>
+          <p>{t("react-challenge-not-found")}</p>
+          <a href={createLocalizedPath("/developer-section/react-challenges")}>{t("react-challenge-back-to-list")}</a>
         </div>
         <Footer />
       </main>
@@ -858,7 +852,7 @@ export default function ReactChallengePage() {
                 }}>
                   <WarningIcon fontSize="small" style={{ color: "#ffc107" }} />
                   <span style={{ fontSize: "14px", color: "#ffc107" }}>
-                    {remainingAttempts} attempt{remainingAttempts !== 1 ? "s" : ""} remaining
+                    {remainingAttempts} {remainingAttempts !== 1 ? t("react-challenge-attempts-remaining-plural") : t("react-challenge-attempts-remaining-singular")}
                   </span>
                 </div>
               )}
@@ -876,12 +870,12 @@ export default function ReactChallengePage() {
                 }}>
                   <SolutionIcon fontSize="small" style={{ color: "#ff9800" }} />
                   <span style={{ fontSize: "14px", color: "#ff9800" }}>
-                    Solution unlocked after {MAX_ATTEMPTS} attempts
+                    {t("react-challenge-solution-unlocked").replace("{n}", String(MAX_ATTEMPTS))}
                   </span>
                 </div>
               )}
 
-              <h4 className={playStyles.descSub}>Problem Code</h4>
+              <h4 className={playStyles.descSub}>{t("react-challenge-problem-code")}</h4>
               <HighlightedCode code={challenge.problemCode} language="tsx" className={playStyles.sample} />
 
               {challenge.hints.length > 0 && (
@@ -903,7 +897,7 @@ export default function ReactChallengePage() {
                     }}
                   >
                     <HintIcon fontSize="small" />
-                    {showHints ? "Hide Hints" : "Show Hints"}
+                    {showHints ? t("react-challenge-hide-hints") : t("react-challenge-show-hints")}
                   </button>
                   {showHints && (
                     <ul style={{ marginTop: "12px", paddingLeft: "20px", color: "#c6d5ff" }}>
@@ -920,7 +914,7 @@ export default function ReactChallengePage() {
               {showSolution && (
                 <>
                   <h4 className={playStyles.descSub} style={{ marginTop: "24px", color: "#ff9800" }}>
-                    Solution
+                    {t("react-challenge-solution")}
                   </h4>
                   <HighlightedCode code={challenge.solution} language="tsx" className={playStyles.sample} style={{ borderColor: "rgba(255, 152, 0, 0.3)" }} />
                   <p style={{ marginTop: "12px", fontSize: "13px", color: "#c6d5ff", fontStyle: "italic" }}>
@@ -949,7 +943,7 @@ export default function ReactChallengePage() {
 
             <div className={playStyles.toolbar}>
               <button className={playStyles.iconBtn} onClick={resetToProblem}>
-                <ResetIcon fontSize="small" /> Reset
+                <ResetIcon fontSize="small" /> {t("react-challenge-reset")}
               </button>
               <button
                 className={playStyles.iconBtn}
@@ -957,14 +951,14 @@ export default function ReactChallengePage() {
                 disabled={isRunningPreview}
                 style={{ marginRight: "8px" }}
               >
-                <PlayIcon fontSize="small" /> {isRunningPreview ? "Running..." : "Preview"}
+                <PlayIcon fontSize="small" /> {isRunningPreview ? t("react-challenge-running") : t("react-challenge-preview")}
               </button>
               <button
                 className={`${playStyles.submitBtn} ${isSubmitting ? playStyles.disabled : ""}`}
                 onClick={submitCode}
                 disabled={isSubmitting}
               >
-                <CheckIcon fontSize="small" /> Submit Solution
+                <CheckIcon fontSize="small" /> {t("react-challenge-submit")}
               </button>
             </div>
 
@@ -972,7 +966,7 @@ export default function ReactChallengePage() {
             {previewHtml && (
               <div className={playStyles.outputPanel} style={{ marginBottom: "16px" }}>
                 <div className={playStyles.outputHead}>
-                  Preview
+                  {t("react-challenge-preview")}
                 </div>
                 <div style={{
                   padding: "12px",
@@ -1013,10 +1007,10 @@ export default function ReactChallengePage() {
 
             <div className={playStyles.outputPanel}>
               <div className={playStyles.outputHead}>
-                Result
+                {t("react-challenge-result")}
                 {submitResult != null && (
                   <span className={submitResult.success ? playStyles.passLabel : playStyles.failLabel}>
-                    {submitResult.passed}/{submitResult.total} Tests Passed
+                    {submitResult.passed}/{submitResult.total} {t("react-challenge-tests-passed")}
                   </span>
                 )}
               </div>
@@ -1029,7 +1023,7 @@ export default function ReactChallengePage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <CheckIcon className={playStyles.successIcon} /> Challenge Completed! 🎉
+                    <CheckIcon className={playStyles.successIcon} /> {t("react-challenge-completed")} 🎉
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -1037,7 +1031,7 @@ export default function ReactChallengePage() {
               {submitResult && !submitResult.success && (
                 <div className={playStyles.logList}>
                   <p style={{ color: "#ff6b6b", fontSize: "14px", marginBottom: "8px" }}>
-                    Some tests failed. Try again!
+                    {t("react-challenge-some-failed")}
                   </p>
                   {challenge.testCases.map((tc, i) => {
                     const passed = tc.validate(getEditorCode());
@@ -1061,11 +1055,11 @@ export default function ReactChallengePage() {
               )}
               {submitResult && submitResult.success && (
                 <div style={{ padding: "16px", color: "#4caf50", fontSize: "14px" }}>
-                  ✓ All tests passed! Great job!
+                  ✓ {t("react-challenge-all-passed")}
                 </div>
               )}
               {!submitResult && !error && (
-                <p className={playStyles.emptyLog}>Submit your solution to see results</p>
+                <p className={playStyles.emptyLog}>{t("react-challenge-submit-prompt")}</p>
               )}
             </div>
           </div>
@@ -1075,10 +1069,10 @@ export default function ReactChallengePage() {
       <div className={styles.footerActions}>
         <div className={playStyles.footerRow}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/react-challenges")}>
-            Back to React Challenges
+            {t("react-challenge-back")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("back-to-dev-hub")}
           </a>
         </div>
       </div>
