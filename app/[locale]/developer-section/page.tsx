@@ -41,6 +41,13 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
+import {
+  getRecentVisits,
+  trackVisit,
+  getStreak,
+  isChangelogDismissed,
+  dismissChangelog,
+} from "@/lib/devHubStore";
 
 // Card data organized by content type
 type ContentCategory = "blog" | "playground" | "course" | "challenge" | "interview" | "game";
@@ -395,47 +402,6 @@ const changelogItems = [
   { emoji: "📊", textKey: "hub-changelog-stats" },
 ];
 
-// localStorage helpers
-const RECENTLY_VISITED_KEY = "dev-hub-recent";
-const STREAK_KEY = "dev-hub-streak";
-const CHANGELOG_DISMISSED_KEY = "dev-hub-changelog-dismissed";
-const MAX_RECENT = 3;
-
-function getRecentlyVisited(): string[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem(RECENTLY_VISITED_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function trackVisit(cardId: string) {
-  const recent = getRecentlyVisited().filter((id) => id !== cardId);
-  recent.unshift(cardId);
-  localStorage.setItem(RECENTLY_VISITED_KEY, JSON.stringify(recent.slice(0, 10)));
-}
-
-function getStreak(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const data = JSON.parse(localStorage.getItem(STREAK_KEY) || "{}");
-    const today = new Date().toISOString().slice(0, 10);
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-
-    if (data.lastDate === today) return data.count || 1;
-    if (data.lastDate === yesterday) {
-      const newCount = (data.count || 0) + 1;
-      localStorage.setItem(STREAK_KEY, JSON.stringify({ lastDate: today, count: newCount }));
-      return newCount;
-    }
-    // Streak broken
-    localStorage.setItem(STREAK_KEY, JSON.stringify({ lastDate: today, count: 1 }));
-    return 1;
-  } catch {
-    return 1;
-  }
-}
 
 export default function DeveloperSectionPage() {
   const { t } = useLanguage();
@@ -449,16 +415,13 @@ export default function DeveloperSectionPage() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setRecentIds(getRecentlyVisited().slice(0, MAX_RECENT));
+    setRecentIds(getRecentVisits(3));
     setStreak(getStreak());
 
     // Check if changelog was dismissed
-    try {
-      const dismissed = localStorage.getItem(CHANGELOG_DISMISSED_KEY);
-      if (dismissed !== CHANGELOG_VERSION) {
-        setShowChangelog(true);
-      }
-    } catch { /* noop */ }
+    if (!isChangelogDismissed(CHANGELOG_VERSION)) {
+      setShowChangelog(true);
+    }
   }, []);
 
   // Scroll-to-top visibility
@@ -500,9 +463,7 @@ export default function DeveloperSectionPage() {
 
   const handleDismissChangelog = useCallback(() => {
     setShowChangelog(false);
-    try {
-      localStorage.setItem(CHANGELOG_DISMISSED_KEY, CHANGELOG_VERSION);
-    } catch { /* noop */ }
+    dismissChangelog(CHANGELOG_VERSION);
   }, []);
 
   const scrollToTop = useCallback(() => {
