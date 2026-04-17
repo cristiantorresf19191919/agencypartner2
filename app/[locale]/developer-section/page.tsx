@@ -36,6 +36,8 @@ import {
   Science as AlchemyIcon,
   Timeline as TimelineIcon,
   Waves as FlowIcon,
+  FavoriteBorder as HeartOutline,
+  Favorite as HeartFilled,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -47,6 +49,9 @@ import {
   getStreak,
   isChangelogDismissed,
   dismissChangelog,
+  getBookmarks,
+  toggleBookmark,
+  isBookmarked,
 } from "@/lib/devHubStore";
 
 // Card data organized by content type
@@ -407,6 +412,7 @@ export default function DeveloperSectionPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
   const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
   const [streak, setStreak] = useState(0);
   const [activeFilter, setActiveFilter] = useState<TopicTag | "all">("all");
   const [showChangelog, setShowChangelog] = useState(false);
@@ -416,6 +422,7 @@ export default function DeveloperSectionPage() {
 
   useEffect(() => {
     setRecentIds(getRecentVisits(3));
+    setBookmarkedIds(new Set(getBookmarks()));
     setStreak(getStreak());
 
     // Check if changelog was dismissed
@@ -459,6 +466,18 @@ export default function DeveloperSectionPage() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleToggleBookmark = useCallback((e: React.MouseEvent, cardId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const added = toggleBookmark(cardId);
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (added) next.add(cardId);
+      else next.delete(cardId);
+      return next;
+    });
   }, []);
 
   const handleDismissChangelog = useCallback(() => {
@@ -684,6 +703,58 @@ export default function DeveloperSectionPage() {
             )}
           </AnimatePresence>
 
+          {/* Your Saved Items */}
+          <AnimatePresence>
+            {bookmarkedIds.size > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4 }}
+                className={styles.savedSection}
+              >
+                <div className={styles.savedHeader}>
+                  <HeartFilled className={styles.savedIcon} />
+                  <h2 className={styles.savedTitle}>{t("hub-saved-title")}</h2>
+                  <span className={styles.savedCount}>{bookmarkedIds.size}</span>
+                </div>
+                <div className={styles.continueGrid}>
+                  {Array.from(bookmarkedIds)
+                    .map((id) => allCards.find((c) => c.id === id))
+                    .filter(Boolean)
+                    .map((card) => {
+                      const Icon = card!.icon;
+                      return (
+                        <motion.a
+                          key={card!.id}
+                          href={createLocalizedPath(card!.href)}
+                          className={styles.continueCard}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleCardClick(card!.id)}
+                        >
+                          <div className={styles.continueCardIcon}>
+                            <Icon />
+                          </div>
+                          <div className={styles.continueCardInfo}>
+                            <div className={styles.continueCardTitle}>{t(card!.titleKey)}</div>
+                            <div className={styles.continueCardSub}>{t("hub-saved-label")}</div>
+                          </div>
+                          <button
+                            className={`${styles.bookmarkBtn} ${styles.bookmarkBtnActive} ${styles.bookmarkBtnInline}`}
+                            onClick={(e) => handleToggleBookmark(e, card!.id)}
+                            aria-label={t("hub-bookmark-remove")}
+                          >
+                            <HeartFilled className={styles.bookmarkIcon} />
+                          </button>
+                        </motion.a>
+                      );
+                    })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Content Sections: Blog | Playgrounds | Courses | Challenges | Interview Prep */}
           <div className={styles.contentSections} ref={contentRef}>
             {filteredGroups.map((group, groupIndex) => (
@@ -716,6 +787,18 @@ export default function DeveloperSectionPage() {
                         onClick={() => handleCardClick(card.id)}
                       >
                         <div className={styles.glowEffect} />
+
+                        <button
+                          className={`${styles.bookmarkBtn} ${bookmarkedIds.has(card.id) ? styles.bookmarkBtnActive : ""}`}
+                          onClick={(e) => handleToggleBookmark(e, card.id)}
+                          aria-label={bookmarkedIds.has(card.id) ? t("hub-bookmark-remove") : t("hub-bookmark-add")}
+                        >
+                          {bookmarkedIds.has(card.id) ? (
+                            <HeartFilled className={styles.bookmarkIcon} />
+                          ) : (
+                            <HeartOutline className={styles.bookmarkIcon} />
+                          )}
+                        </button>
 
                         {/* Difficulty Badge */}
                         <span
