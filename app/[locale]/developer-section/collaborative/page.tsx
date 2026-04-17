@@ -13,6 +13,8 @@ import {
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 import styles from "./CollaborativePage.module.css";
 
 const CollaborativeEditor = dynamic(
@@ -22,12 +24,13 @@ const CollaborativeEditor = dynamic(
 
 function CollaborativePageContent() {
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [roomId, setRoomId] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [copied, setCopied] = useState(false);
-  const [language, setLanguage] = useState("typescript");
+  const [codeLang, setCodeLang] = useState("typescript");
 
   useEffect(() => {
     // Get room ID from URL or generate new one
@@ -64,8 +67,8 @@ function CollaborativePageContent() {
   const shareRoom = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join my collaborative coding session",
-        text: "Let's code together!",
+        title: t("collab-share-title"),
+        text: t("collab-share-text"),
         url: `${window.location.origin}${window.location.pathname}?room=${roomId}`,
       });
     } else {
@@ -76,7 +79,10 @@ function CollaborativePageContent() {
   if (!roomId || !userName) {
     return (
       <main className={styles.page}>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.loading}>
+          <Skeleton width={200} height={24} />
+          <Skeleton width={300} height={16} />
+        </div>
       </main>
     );
   }
@@ -94,7 +100,7 @@ function CollaborativePageContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Real-Time Collaborative Editor
+          {t("collab-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -102,16 +108,16 @@ function CollaborativePageContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Code together in real-time. Share the link and collaborate instantly. Works on Netlify! 🚀
+          {t("collab-subtitle")}
         </motion.p>
 
         <div className={styles.roomControls}>
           <div className={styles.roomInfo}>
             <PeopleIcon fontSize="small" />
-            <span>Room: {roomId}</span>
+            <span>{t("collab-room")}: {roomId}</span>
           </div>
           <div className={styles.userInput}>
-            <label>Your name:</label>
+            <label>{t("collab-your-name")}:</label>
             <input
               type="text"
               value={userName}
@@ -120,12 +126,12 @@ function CollaborativePageContent() {
                 setUserName(newName);
                 localStorage.setItem("collab-user-name", newName);
               }}
-              placeholder="Enter your name"
+              placeholder={t("collab-enter-name")}
             />
           </div>
           <div className={styles.languageSelect}>
-            <label>Language:</label>
-            <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+            <label>{t("collab-language")}:</label>
+            <select value={codeLang} onChange={(e) => setCodeLang(e.target.value)}>
               <option value="typescript">TypeScript</option>
               <option value="javascript">JavaScript</option>
               <option value="python">Python</option>
@@ -135,7 +141,7 @@ function CollaborativePageContent() {
           </div>
           <button onClick={shareRoom} className={styles.shareButton}>
             {copied ? <CheckIcon fontSize="small" /> : <LinkIcon fontSize="small" />}
-            {copied ? "Copied!" : "Share Room"}
+            {copied ? t("collab-copied") : t("collab-share-room")}
           </button>
         </div>
       </section>
@@ -145,7 +151,7 @@ function CollaborativePageContent() {
           <CollaborativeEditor
             roomId={roomId}
             userName={userName}
-            language={language}
+            language={codeLang}
             initialCode={`// Welcome to collaborative coding! 🎉
 // Share this room link with your friend to code together in real-time.
 // You'll see each other's changes instantly via Firebase Firestore.
@@ -172,7 +178,10 @@ export default function CollaborativePage() {
   return (
     <Suspense fallback={
       <main className={styles.page}>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.loading}>
+          <Skeleton width={200} height={24} />
+          <Skeleton width={300} height={16} />
+        </div>
       </main>
     }>
       <CollaborativePageContent />

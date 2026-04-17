@@ -21,22 +21,17 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 import styles from "./PlaygroundPage.module.css";
 import type { OnMount } from "@monaco-editor/react";
 
-function PlaygroundEditorLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className={styles.editorLoading}>
-      <div className={styles.loadingSpinner} />
-      <p>{t("loading-editor")}</p>
-    </div>
-  );
-}
-
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
-  loading: () => <PlaygroundEditorLoading />,
+  loading: () => (
+    <div className={styles.editorLoading}>
+      <Skeleton height={300} borderRadius={8} />
+    </div>
+  ),
 });
 
 type PlaygroundFile = { name: string; code: string; uri?: string };

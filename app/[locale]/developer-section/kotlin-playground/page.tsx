@@ -19,6 +19,8 @@ import {
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 import styles from "../playground/PlaygroundPage.module.css";
 import type { OnMount } from "@monaco-editor/react";
 
@@ -28,8 +30,7 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
   loading: () => (
     <div className={styles.editorLoading}>
-      <div className={styles.loadingSpinner} />
-      <p>Spinning up the Kotlin editor…</p>
+      <Skeleton height={300} borderRadius={8} />
     </div>
   ),
 });
@@ -62,11 +63,12 @@ fun main() {
 
 export default function KotlinPlaygroundPage() {
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
   const [files, setFiles] = useState<PlaygroundFile[]>(() =>
     defaultFiles.map((f) => ({ ...f, uri: `file:///src/${f.name}` }))
   );
   const [activeFile, setActiveFile] = useState<string>(defaultFiles[0].name);
-  const [output, setOutput] = useState<string>("Ready. Press Run to execute via Piston.");
+  const [output, setOutput] = useState<string>("");
   const [logs, setLogs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -109,22 +111,22 @@ export default function KotlinPlaygroundPage() {
   const runCode = useCallback(async () => {
     setIsRunning(true);
     setError(null);
-    setOutput("Running…");
+    setOutput(t("kotlin-pg-running"));
     setLogs([]);
 
     try {
       const monaco = monacoRef.current;
       if (!monaco) {
-        setError("Editor not ready. Please wait and try again.");
-        setOutput("Execution stopped.");
+        setError(t("kotlin-pg-editor-not-ready"));
+        setOutput(t("kotlin-pg-exec-stopped"));
         setIsRunning(false);
         return;
       }
 
       const ktFiles = files.filter((f) => f.name.endsWith(".kt"));
       if (ktFiles.length === 0) {
-        setError("Add at least one .kt file with fun main().");
-        setOutput("Execution stopped.");
+        setError(t("kotlin-pg-add-kt-file"));
+        setOutput(t("kotlin-pg-exec-stopped"));
         setIsRunning(false);
         return;
       }
@@ -148,8 +150,8 @@ export default function KotlinPlaygroundPage() {
       }).filter((f): f is { name: string; content: string } => f !== null);
 
       if (fileContents.length === 0) {
-        setError("All Kotlin files are empty. Add some code to run.");
-        setOutput("Execution stopped.");
+        setError(t("kotlin-pg-empty-files"));
+        setOutput(t("kotlin-pg-exec-stopped"));
         setIsRunning(false);
         return;
       }
@@ -157,8 +159,8 @@ export default function KotlinPlaygroundPage() {
       // Check if there's a main function
       const hasMain = fileContents.some(f => /fun\s+main\s*\(/.test(f.content));
       if (!hasMain) {
-        setError("No 'fun main()' found. Add a main function to run your code.");
-        setOutput("Execution stopped.");
+        setError(t("kotlin-pg-no-main"));
+        setOutput(t("kotlin-pg-exec-stopped"));
         setIsRunning(false);
         return;
       }
@@ -208,8 +210,8 @@ export default function KotlinPlaygroundPage() {
         const errorDisplay = errorLines.length > 5 
           ? errorLines.slice(0, 5).join("\n") + "\n..." 
           : errorLines.join("\n");
-        setError(errorDisplay || "Compilation failed.");
-        setOutput("Compilation failed.");
+        setError(errorDisplay || t("kotlin-pg-compilation-failed"));
+        setOutput(t("kotlin-pg-compilation-failed"));
         setLogs(errorLines.map((l) => `❌ ${l}`));
         setIsRunning(false);
         return;
@@ -221,12 +223,12 @@ export default function KotlinPlaygroundPage() {
       if (out) entries.push(...out.split("\n").map((l) => l || " "));
       if (err) entries.push(...err.split("\n").filter(Boolean).map((l) => `⚠️ ${l}`));
       setLogs(entries.slice(-50));
-      setOutput(run.code === 0 ? "Done." : `Exit code: ${run.code ?? "—"}`);
+      setOutput(run.code === 0 ? t("kotlin-pg-done") : `Exit code: ${run.code ?? "—"}`);
       if (run.code !== 0 && err) setError(err);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);
-      setOutput("Execution stopped.");
+      setOutput(t("kotlin-pg-exec-stopped"));
       setLogs((p) => [...p.slice(-48), `❌ ${msg}`]);
     } finally {
       setIsRunning(false);
@@ -264,7 +266,7 @@ export default function KotlinPlaygroundPage() {
     setActiveFile(defaultFiles[0].name);
     setLogs([]);
     setError(null);
-    setOutput("Reset. Press Run to execute again.");
+    setOutput(t("kotlin-pg-reset-msg"));
     const monaco = monacoRef.current;
     if (monaco) {
       defaultFiles.forEach((file) => {
@@ -313,7 +315,7 @@ export default function KotlinPlaygroundPage() {
       <section className={styles.heroSection}>
         <div className={styles.pill}>
           <SparklesIcon fontSize="small" />
-          <span>Kotlin Playground</span>
+          <span>{t("kotlin-pg-pill")}</span>
         </div>
         <motion.h1
           className={styles.title}
@@ -321,7 +323,7 @@ export default function KotlinPlaygroundPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          Run Kotlin in the browser with multi-file, syntax highlighting, and autocomplete.
+          {t("kotlin-pg-title")}
         </motion.h1>
         <motion.p
           className={styles.subtitle}
@@ -329,20 +331,20 @@ export default function KotlinPlaygroundPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.4 }}
         >
-          Monaco-powered Kotlin editor. Add .kt files, use println() for output, and run via Piston.
+          {t("kotlin-pg-subtitle")}
         </motion.p>
         <div className={styles.heroBadges}>
           <span className={styles.badge}>
             <BoltIcon fontSize="small" />
-            Run Kotlin
+            {t("kotlin-pg-badge-run")}
           </span>
           <span className={styles.badge}>
             <TerminalIcon fontSize="small" />
-            Output / console
+            {t("kotlin-pg-badge-output")}
           </span>
           <span className={styles.badge}>
             <FullscreenIcon fontSize="small" />
-            Multi-file
+            {t("kotlin-pg-badge-multifile")}
           </span>
         </div>
       </section>
@@ -352,14 +354,14 @@ export default function KotlinPlaygroundPage() {
           <div className={styles.toolbar}>
             <div className={styles.toolbarLeft}>
               <div className={styles.statusDot} />
-              <span className={styles.toolbarLabel} title="Kotlin · Monaco with syntax highlighting & autocomplete">
-                Kotlin · Monaco with syntax highlighting &amp; autocomplete
+              <span className={styles.toolbarLabel} title={t("kotlin-pg-toolbar-label")}>
+                {t("kotlin-pg-toolbar-label")}
               </span>
             </div>
             <div className={styles.toolbarActions}>
-              <button className={styles.iconButton} onClick={resetEditor} aria-label="Reset editor">
+              <button className={styles.iconButton} onClick={resetEditor} aria-label={t("kotlin-pg-reset")}>
                 <ResetIcon fontSize="small" />
-                <span>Reset</span>
+                <span>{t("kotlin-pg-reset")}</span>
               </button>
               <button
                 className={`${styles.primaryButton} ${isRunning ? styles.isRunning : ""}`}
@@ -367,7 +369,7 @@ export default function KotlinPlaygroundPage() {
                 aria-label="Run code"
               >
                 <PlayIcon fontSize="small" />
-                <span className={styles.runLabel}>{isRunning ? "Running…" : "Run"}</span>
+                <span className={styles.runLabel}>{isRunning ? t("kotlin-pg-running") : t("kotlin-pg-run")}</span>
                 <span className={styles.shortcutOnly}> (⌘/Ctrl + Enter)</span>
               </button>
               <button
@@ -376,7 +378,7 @@ export default function KotlinPlaygroundPage() {
                 aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
               >
                 {isFullscreen ? <FullscreenExitIcon fontSize="small" /> : <FullscreenIcon fontSize="small" />}
-                <span>{isFullscreen ? "Exit" : "Maximize"}</span>
+                <span>{isFullscreen ? t("kotlin-pg-exit") : t("kotlin-pg-maximize")}</span>
               </button>
             </div>
           </div>
@@ -410,7 +412,7 @@ export default function KotlinPlaygroundPage() {
                     }
                   }}
                 >
-                  + New File
+                  {t("kotlin-pg-new-file")}
                 </button>
               </div>
             </div>
@@ -438,23 +440,23 @@ export default function KotlinPlaygroundPage() {
                   <div className={styles.panelHeader}>
                     <div className={styles.panelTitle}>
                       <TerminalIcon fontSize="small" />
-                      Result
+                      {t("kotlin-pg-result")}
                     </div>
                   </div>
-                  <pre className={styles.panelBody}>{output}</pre>
+                  <pre className={styles.panelBody}>{output || t("kotlin-pg-ready")}</pre>
                   {error != null && <div className={styles.errorBox}><pre style={{ margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>⚠️ {error}</pre></div>}
                 </div>
                 <div className={styles.panel}>
                   <div className={styles.panelHeader}>
                     <div className={styles.panelTitle}>
                       <BoltIcon fontSize="small" />
-                      Output
+                      {t("kotlin-pg-output")}
                     </div>
                     <span className={styles.panelMeta}>{logs.length ? `${logs.length}` : ""}</span>
                   </div>
                   <div className={styles.logList}>
                     {logs.length === 0 ? (
-                      <p className={styles.emptyState}>println() output appears here.</p>
+                      <p className={styles.emptyState}>{t("kotlin-pg-empty-output")}</p>
                     ) : (
                       logs.map((line, i) => (
                         <div key={`fs-${i}-${line}`} className={styles.logLine}>{line}</div>
@@ -466,23 +468,23 @@ export default function KotlinPlaygroundPage() {
               <div className={styles.floatingBar}>
                 <button type="button" onClick={runCode} disabled={isRunning} className={styles.floatingBtn}>
                   <PlayIcon fontSize="small" />
-                  <span>{isRunning ? "Running" : "Run"}</span>
+                  <span>{isRunning ? t("kotlin-pg-running") : t("kotlin-pg-run")}</span>
                 </button>
                 <button type="button" onClick={handleCopy} className={`${styles.floatingBtn} ${copyDone ? styles.floatingBtnActive : ""}`}>
                   {copyDone ? <CheckIcon fontSize="small" /> : <CopyIcon fontSize="small" />}
-                  <span>{copyDone ? "Copied!" : "Copy All"}</span>
+                  <span>{copyDone ? t("kotlin-pg-copied") : t("kotlin-pg-copy-all")}</span>
                 </button>
                 <button type="button" onClick={handlePaste} className={styles.floatingBtn}>
                   <PasteIcon fontSize="small" />
-                  <span>Paste</span>
+                  <span>{t("kotlin-pg-paste")}</span>
                 </button>
                 <button type="button" onClick={handleSelectAll} className={styles.floatingBtn}>
                   <SelectAllIcon fontSize="small" />
-                  <span>Select All</span>
+                  <span>{t("kotlin-pg-select-all")}</span>
                 </button>
                 <button type="button" onClick={() => setIsFullscreen(false)} className={`${styles.floatingBtn} ${styles.floatingBtnExit}`}>
                   <FullscreenExitIcon fontSize="small" />
-                  <span>Exit</span>
+                  <span>{t("kotlin-pg-exit")}</span>
                 </button>
               </div>
             </>
@@ -494,11 +496,11 @@ export default function KotlinPlaygroundPage() {
             <div className={styles.panelHeader}>
               <div className={styles.panelTitle}>
                 <TerminalIcon fontSize="small" />
-                Result
+                {t("kotlin-pg-result")}
               </div>
-              <span className={styles.panelMeta}>Run status</span>
+              <span className={styles.panelMeta}>{t("kotlin-pg-run-status")}</span>
             </div>
-            <pre className={styles.panelBody}>{output}</pre>
+            <pre className={styles.panelBody}>{output || t("kotlin-pg-ready")}</pre>
             {error != null && (
               <div className={styles.errorBox}>
                 <pre style={{ margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>⚠️ {error}</pre>
@@ -510,13 +512,13 @@ export default function KotlinPlaygroundPage() {
             <div className={styles.panelHeader}>
               <div className={styles.panelTitle}>
                 <BoltIcon fontSize="small" />
-                Output
+                {t("kotlin-pg-output")}
               </div>
-              <span className={styles.panelMeta}>{logs.length ? `${logs.length} lines` : "Clean"}</span>
+              <span className={styles.panelMeta}>{logs.length ? `${logs.length} ${t("kotlin-pg-lines")}` : t("kotlin-pg-clean")}</span>
             </div>
             <div className={styles.logList}>
               {logs.length === 0 ? (
-                <p className={styles.emptyState}>println() output and errors appear here.</p>
+                <p className={styles.emptyState}>{t("kotlin-pg-empty-output-long")}</p>
               ) : (
                 logs.map((line, i) => (
                   <div key={`${i}-${line}`} className={styles.logLine}>
@@ -530,7 +532,7 @@ export default function KotlinPlaygroundPage() {
 
         <div className={styles.footerActions}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            ← Back to Developer Hub
+            {t("kotlin-pg-back")}
           </a>
           <div className={styles.hotkeys}>
             <span className={styles.hotkey}>⌘/Ctrl + Enter</span>
