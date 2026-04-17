@@ -439,6 +439,7 @@ export default function DeveloperSectionPage() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
+  const [focusedCardIndex, setFocusedCardIndex] = useState(-1);
   const contentRef = useRef<HTMLDivElement>(null);
   const srDueCount = getDueCount(getStore().interviewSR);
 
@@ -467,7 +468,7 @@ export default function DeveloperSectionPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Keyboard shortcuts (? key to toggle overlay)
+  // Keyboard shortcuts (? key to toggle overlay) — basic shortcuts without card dependencies
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if typing in input/textarea
@@ -558,6 +559,46 @@ export default function DeveloperSectionPage() {
       : group.cards.filter((card) => card.tags.includes(activeFilter as TopicTag)),
   })).filter((group) => group.cards.length > 0);
 
+  const visibleCards = filteredGroups.flatMap((g) => g.cards);
+
+  useEffect(() => { setFocusedCardIndex(-1); }, [activeFilter]);
+
+  // Keyboard shortcuts for card navigation (j/k/Enter/b)
+  useEffect(() => {
+    const handleCardKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      // j/k: navigate cards
+      if (e.key === "j" || e.key === "J") {
+        e.preventDefault();
+        setFocusedCardIndex((prev) => Math.min(prev + 1, visibleCards.length - 1));
+      }
+      if (e.key === "k" || e.key === "K") {
+        e.preventDefault();
+        setFocusedCardIndex((prev) => Math.max(prev - 1, 0));
+      }
+      // Enter: open focused card
+      if (e.key === "Enter" && focusedCardIndex >= 0 && focusedCardIndex < visibleCards.length) {
+        const card = visibleCards[focusedCardIndex];
+        handleCardClick(card.id);
+        window.location.href = createLocalizedPath(card.href);
+      }
+      // b: toggle bookmark on focused card
+      if ((e.key === "b" || e.key === "B") && focusedCardIndex >= 0 && focusedCardIndex < visibleCards.length) {
+        const card = visibleCards[focusedCardIndex];
+        const added = toggleBookmark(card.id);
+        setBookmarkedIds((prev) => {
+          const next = new Set(prev);
+          if (added) next.add(card.id);
+          else next.delete(card.id);
+          return next;
+        });
+      }
+    };
+    window.addEventListener("keydown", handleCardKeyDown);
+    return () => window.removeEventListener("keydown", handleCardKeyDown);
+  }, [visibleCards, focusedCardIndex, handleCardClick, createLocalizedPath]);
+
   const difficultyKey = (level: DifficultyLevel) =>
     level === "beginner"
       ? "hub-level-beginner"
@@ -568,6 +609,9 @@ export default function DeveloperSectionPage() {
   const shortcutsList = [
     { keys: "?", descKey: "hub-shortcut-toggle" },
     { keys: "1–6", descKey: "hub-shortcut-filters" },
+    { keys: "j / k", descKey: "hub-shortcut-navigate" },
+    { keys: "Enter", descKey: "hub-shortcut-open" },
+    { keys: "b", descKey: "hub-shortcut-bookmark" },
     { keys: "Esc", descKey: "hub-shortcut-close" },
     { keys: "Home", descKey: "hub-shortcut-top" },
   ];
@@ -892,7 +936,7 @@ export default function DeveloperSectionPage() {
                       <motion.a
                         key={card.id}
                         href={createLocalizedPath(card.href)}
-                        className={styles.blogCard}
+                        className={`${styles.blogCard} ${visibleCards[focusedCardIndex]?.id === card.id ? styles.cardFocused : ""}`}
                         data-category={card.category}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

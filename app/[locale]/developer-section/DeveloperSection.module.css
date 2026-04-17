@@ -1856,3 +1856,9 @@
 .shareStatsIcon {
   font-size: 16px !important;
 }
+
+.cardFocused {
+  outline: 2px solid rgba(160, 106, 249, 0.6);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(160, 106, 249, 0.1);
+}
