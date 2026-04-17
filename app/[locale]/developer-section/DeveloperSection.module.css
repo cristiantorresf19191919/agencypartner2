@@ -1669,3 +1669,107 @@
   padding: 2px 8px;
   border-radius: 10px;
 }
+
+/* Weekly Challenge Banner */
+.weeklyBanner {
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.weeklyContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.weeklyLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weeklyIcon {
+  font-size: 24px !important;
+  color: #fbbf24;
+}
+
+.weeklyLabel {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fbbf24;
+}
+
+.weeklyTitle {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+}
+
+.weeklyRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weeklyDifficulty {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+.weeklyEasy {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.weeklyMedium {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+}
+
+.weeklyCta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fbbf24;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.weeklyCta:hover {
+  opacity: 0.8;
+}
+
+.weeklyCtaArrow {
+  font-size: 16px !important;
+}
+
+.weeklyClose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.2s;
+}
+
+.weeklyClose:hover {
+  color: white;
+}
+
+.weeklyCloseIcon {
+  font-size: 18px !important;
+}

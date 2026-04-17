@@ -13,6 +13,7 @@ import {
   Terminal as TerminalIcon,
   IntegrationInstructions as KotlinIcon,
   EmojiEvents as ChallengesIcon,
+  EmojiEvents as TrophyIcon,
   Psychology as ReactIcon,
   PhoneAndroid as AndroidIcon,
   School as SchoolIcon,
@@ -52,7 +53,10 @@ import {
   getBookmarks,
   toggleBookmark,
   isBookmarked,
+  isWeeklyChallengeDismissed,
+  dismissWeeklyChallenge,
 } from "@/lib/devHubStore";
+import { CHALLENGES } from "@/lib/challengesData";
 
 // Card data organized by content type
 type ContentCategory = "blog" | "playground" | "course" | "challenge" | "interview" | "game";
@@ -408,6 +412,12 @@ const changelogItems = [
 ];
 
 
+function getWeeklyChallenge() {
+  const weekNumber = Math.floor(Date.now() / 604800000);
+  const index = weekNumber % CHALLENGES.length;
+  return { challenge: CHALLENGES[index], weekNumber };
+}
+
 export default function DeveloperSectionPage() {
   const { t } = useLanguage();
   const { createLocalizedPath } = useLocale();
@@ -416,6 +426,8 @@ export default function DeveloperSectionPage() {
   const [streak, setStreak] = useState(0);
   const [activeFilter, setActiveFilter] = useState<TopicTag | "all">("all");
   const [showChangelog, setShowChangelog] = useState(false);
+  const [showWeeklyChallenge, setShowWeeklyChallenge] = useState(false);
+  const weekly = getWeeklyChallenge();
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -428,6 +440,10 @@ export default function DeveloperSectionPage() {
     // Check if changelog was dismissed
     if (!isChangelogDismissed(CHANGELOG_VERSION)) {
       setShowChangelog(true);
+    }
+
+    if (!isWeeklyChallengeDismissed(weekly.weekNumber)) {
+      setShowWeeklyChallenge(true);
     }
   }, []);
 
@@ -484,6 +500,11 @@ export default function DeveloperSectionPage() {
     setShowChangelog(false);
     dismissChangelog(CHANGELOG_VERSION);
   }, []);
+
+  const handleDismissWeekly = useCallback(() => {
+    setShowWeeklyChallenge(false);
+    dismissWeeklyChallenge(weekly.weekNumber);
+  }, [weekly.weekNumber]);
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -638,6 +659,45 @@ export default function DeveloperSectionPage() {
                   >
                     <CloseIcon className={styles.changelogCloseIcon} />
                   </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Weekly Featured Challenge */}
+          <AnimatePresence>
+            {showWeeklyChallenge && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.35 }}
+                className={styles.weeklyBanner}
+              >
+                <div className={styles.weeklyContent}>
+                  <div className={styles.weeklyLeft}>
+                    <TrophyIcon className={styles.weeklyIcon} />
+                    <div>
+                      <span className={styles.weeklyLabel}>{t("hub-weekly-label")}</span>
+                      <span className={styles.weeklyTitle}>{weekly.challenge.title}</span>
+                    </div>
+                  </div>
+                  <div className={styles.weeklyRight}>
+                    <span className={`${styles.weeklyDifficulty} ${styles[`weekly${weekly.challenge.difficulty}`]}`}>
+                      {weekly.challenge.difficulty}
+                    </span>
+                    <a
+                      href={createLocalizedPath(`/developer-section/challenges/${weekly.challenge.id}`)}
+                      className={styles.weeklyCta}
+                      onClick={() => handleCardClick("challenges")}
+                    >
+                      {t("hub-weekly-cta")}
+                      <ArrowRight className={styles.weeklyCtaArrow} />
+                    </a>
+                    <button className={styles.weeklyClose} onClick={handleDismissWeekly} aria-label="Dismiss">
+                      <CloseIcon className={styles.weeklyCloseIcon} />
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             )}
