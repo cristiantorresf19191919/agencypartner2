@@ -1,9 +1,13 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SOFT_SKILLS_QUESTIONS, type SoftSkillCategory } from "@/lib/softSkillsInterviewData";
+import { getStore, updateStore } from "@/lib/devHubStore";
+import { SR_RATINGS, reviewCard, newCard } from "@/lib/spacedRepetition";
+import type { SRQuality } from "@/lib/spacedRepetition";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { motion } from "framer-motion";
@@ -32,8 +36,20 @@ const CATEGORY_COLORS: Record<SoftSkillCategory, { bg: string; color: string }> 
 export default function SoftSkillQuestionPage() {
   const params = useParams();
   const { createLocalizedPath } = useLocale();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const slug = params?.slug as string;
+  const [srRated, setSrRated] = useState(false);
+
+  const handleSRRate = useCallback((quality: SRQuality) => {
+    const store = getStore();
+    const questionId = `soft-skills-${slug}`;
+    const current = store.interviewSR[questionId] || newCard();
+    const updated = reviewCard(current, quality);
+    updateStore({
+      interviewSR: { ...store.interviewSR, [questionId]: updated },
+    });
+    setSrRated(true);
+  }, [slug]);
 
   const question = SOFT_SKILLS_QUESTIONS.find((q) => q.id === slug);
   const questionIndex = SOFT_SKILLS_QUESTIONS.findIndex((q) => q.id === slug);
@@ -322,6 +338,26 @@ export default function SoftSkillQuestionPage() {
             ))}
           </ul>
         </motion.div>
+
+        {/* Spaced Repetition Rating */}
+        {!srRated ? (
+          <div style={{ marginTop: "24px", padding: "16px", background: "rgba(167, 107, 249, 0.08)", border: "1px solid rgba(167, 107, 249, 0.2)", borderRadius: "12px", textAlign: "center" }}>
+            <p style={{ fontSize: "0.9rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "12px" }}>{t("sr-how-well")}</p>
+            <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+              {SR_RATINGS.map((r) => (
+                <button
+                  key={r.quality}
+                  style={{ padding: "8px 18px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.15)", background: "rgba(255, 255, 255, 0.06)", color: "white", fontSize: "0.85rem", cursor: "pointer" }}
+                  onClick={() => handleSRRate(r.quality)}
+                >
+                  {t(r.labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{ marginTop: "16px", textAlign: "center", color: "#34d399", fontSize: "0.85rem" }}>{t("sr-rated-thanks")}</div>
+        )}
 
         {/* Navigation */}
         <motion.div

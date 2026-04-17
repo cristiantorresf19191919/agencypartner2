@@ -4,6 +4,8 @@ import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { REACT19_LESSONS } from "@/lib/react19InterviewData";
 import { getReact19LessonForLocale } from "@/lib/reactInterviewTranslations";
+import { getStore } from "@/lib/devHubStore";
+import { getDueIds } from "@/lib/spacedRepetition";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { motion } from "framer-motion";
@@ -128,6 +130,12 @@ export default function ReactInterviewLandingPage() {
     return translated ?? lesson;
   });
 
+  const store = getStore();
+  const dueIds = getDueIds(store.interviewSR)
+    .filter((id) => id.startsWith("react-interview-"))
+    .map((id) => id.replace("react-interview-", ""));
+  const dueLessons = localizedLessons.filter((l) => dueIds.includes(l.id));
+
   return (
     <main className={styles.page}>
       <DeveloperHeader />
@@ -177,6 +185,26 @@ export default function ReactInterviewLandingPage() {
           <span className={styles.filterLabel}>{t("react-interview-all-lessons")}</span>
           <span className={styles.count}>{REACT19_LESSONS.length} {t("react-interview-lessons-count").toLowerCase()}</span>
         </div>
+
+        {dueLessons.length > 0 && (
+          <div style={{ marginBottom: "2rem" }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#fbbf24", marginBottom: "12px" }}>
+              🔄 {t("sr-due-title")} ({dueLessons.length})
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "10px" }}>
+              {dueLessons.map((l) => (
+                <Link
+                  key={l.id}
+                  href={createLocalizedPath(`/developer-section/react-interview/${l.id}`)}
+                  style={{ padding: "12px 16px", background: "rgba(251, 191, 36, 0.08)", border: "1px solid rgba(251, 191, 36, 0.2)", borderRadius: "8px", color: "white", fontSize: "0.85rem", textDecoration: "none" }}
+                >
+                  {l.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <ul className={styles.grid}>
           {localizedLessons.map((lesson, i) => (
             <motion.li

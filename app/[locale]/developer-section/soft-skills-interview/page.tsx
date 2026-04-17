@@ -4,6 +4,8 @@ import { useState, useMemo } from "react";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SOFT_SKILLS_QUESTIONS, type SoftSkillCategory } from "@/lib/softSkillsInterviewData";
+import { getStore } from "@/lib/devHubStore";
+import { getDueIds } from "@/lib/spacedRepetition";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { motion } from "framer-motion";
@@ -41,6 +43,12 @@ export default function SoftSkillsInterviewPage() {
   const { createLocalizedPath } = useLocale();
   const { t, language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<SoftSkillCategory | "all">("all");
+
+  const store = getStore();
+  const dueIds = getDueIds(store.interviewSR)
+    .filter((id) => id.startsWith("soft-skills-"))
+    .map((id) => id.replace("soft-skills-", ""));
+  const dueQuestions = SOFT_SKILLS_QUESTIONS.filter((q) => dueIds.includes(q.id));
 
   const filteredQuestions = useMemo(() => {
     if (selectedCategory === "all") return SOFT_SKILLS_QUESTIONS;
@@ -151,6 +159,25 @@ export default function SoftSkillsInterviewPage() {
             ? `Mostrando ${filteredQuestions.length} de ${SOFT_SKILLS_QUESTIONS.length} preguntas`
             : `Showing ${filteredQuestions.length} of ${SOFT_SKILLS_QUESTIONS.length} questions`}
         </div>
+
+        {dueQuestions.length > 0 && (
+          <div style={{ marginBottom: "2rem" }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#fbbf24", marginBottom: "12px" }}>
+              🔄 {t("sr-due-title")} ({dueQuestions.length})
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "10px" }}>
+              {dueQuestions.map((q) => (
+                <Link
+                  key={q.id}
+                  href={createLocalizedPath(`/developer-section/soft-skills-interview/${q.id}`)}
+                  style={{ padding: "12px 16px", background: "rgba(251, 191, 36, 0.08)", border: "1px solid rgba(251, 191, 36, 0.2)", borderRadius: "8px", color: "white", fontSize: "0.85rem", textDecoration: "none" }}
+                >
+                  {q.question}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         <ul className={styles.grid}>
           {filteredQuestions.map((question, i) => {

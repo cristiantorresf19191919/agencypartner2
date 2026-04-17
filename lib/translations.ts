@@ -775,6 +775,15 @@ const translations = {
     'kotlin-java-interop-link': 'Interoperabilidad Kotlin-Java',
     'algorithm-challenges-link': 'Retos de algoritmos',
     'back-to-dev-hub': 'Volver al Developer Hub',
+    /* Spaced Repetition */
+    'sr-how-well': '¿Qué tan bien recordaste esto?',
+    'sr-again': 'De nuevo',
+    'sr-hard': 'Difícil',
+    'sr-good': 'Bien',
+    'sr-easy': 'Fácil',
+    'sr-rated-thanks': '¡Registrado! Volverá a aparecer según tu progreso.',
+    'sr-due-title': 'Repaso pendiente',
+    'sr-due-short': 'pendientes',
     /* Header / UI */
     'header-text-size': 'Texto',
     'header-decrease-size': 'Reducir tamaño de texto',
@@ -1690,6 +1699,15 @@ const translations = {
     'kotlin-java-interop-link': 'Kotlin Java InterOp',
     'algorithm-challenges-link': 'Algorithm Challenges',
     'back-to-dev-hub': 'Back to Developer Hub',
+    /* Spaced Repetition */
+    'sr-how-well': 'How well did you remember this?',
+    'sr-again': 'Again',
+    'sr-hard': 'Hard',
+    'sr-good': 'Good',
+    'sr-easy': 'Easy',
+    'sr-rated-thanks': 'Recorded! This will resurface based on your progress.',
+    'sr-due-title': 'Due for Review',
+    'sr-due-short': 'due',
     /* Header / UI */
     'header-text-size': 'Text',
     'header-decrease-size': 'Decrease text size',

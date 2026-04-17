@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getStore, updateStore } from "@/lib/devHubStore";
+import { SR_RATINGS, reviewCard, newCard } from "@/lib/spacedRepetition";
+import type { SRQuality } from "@/lib/spacedRepetition";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -41,6 +44,7 @@ export default function React19LessonPage() {
   const [isRunningPreview, setIsRunningPreview] = useState(false);
   const [showOldWay, setShowOldWay] = useState(false);
   const [showNewWay, setShowNewWay] = useState(false);
+  const [srRated, setSrRated] = useState(false);
   const previewIframeRef = useRef<HTMLIFrameElement | null>(null);
   const monacoRef = useRef<{ editor: any; monaco: any } | null>(null);
 
@@ -55,6 +59,17 @@ export default function React19LessonPage() {
       setShowNewWay(false);
     }
   }, [lesson?.id]);
+
+  const handleSRRate = useCallback((quality: SRQuality) => {
+    const store = getStore();
+    const questionId = `react-interview-${slug}`;
+    const current = store.interviewSR[questionId] || newCard();
+    const updated = reviewCard(current, quality);
+    updateStore({
+      interviewSR: { ...store.interviewSR, [questionId]: updated },
+    });
+    setSrRated(true);
+  }, [slug]);
 
   const resetToStarter = useCallback(() => {
     if (lesson) {
@@ -531,6 +546,28 @@ export default function React19LessonPage() {
           </div>
         </div>
       </section>
+
+      {/* Spaced Repetition Rating */}
+      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "0 1.5rem" }}>
+        {!srRated ? (
+          <div style={{ marginTop: "24px", padding: "16px", background: "rgba(167, 107, 249, 0.08)", border: "1px solid rgba(167, 107, 249, 0.2)", borderRadius: "12px", textAlign: "center" }}>
+            <p style={{ fontSize: "0.9rem", color: "rgba(255, 255, 255, 0.7)", marginBottom: "12px" }}>{t("sr-how-well")}</p>
+            <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+              {SR_RATINGS.map((r) => (
+                <button
+                  key={r.quality}
+                  style={{ padding: "8px 18px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.15)", background: "rgba(255, 255, 255, 0.06)", color: "white", fontSize: "0.85rem", cursor: "pointer" }}
+                  onClick={() => handleSRRate(r.quality)}
+                >
+                  {t(r.labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{ marginTop: "16px", textAlign: "center", color: "#34d399", fontSize: "0.85rem" }}>{t("sr-rated-thanks")}</div>
+        )}
+      </div>
 
       <div className={styles.footerActions}>
         <div className={playStyles.footerRow}>

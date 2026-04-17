@@ -55,7 +55,9 @@ import {
   isBookmarked,
   isWeeklyChallengeDismissed,
   dismissWeeklyChallenge,
+  getStore,
 } from "@/lib/devHubStore";
+import { getDueCount } from "@/lib/spacedRepetition";
 import { CHALLENGES } from "@/lib/challengesData";
 
 // Card data organized by content type
@@ -431,6 +433,7 @@ export default function DeveloperSectionPage() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const srDueCount = getDueCount(getStore().interviewSR);
 
   useEffect(() => {
     setRecentIds(getRecentVisits(3));
@@ -866,6 +869,12 @@ export default function DeveloperSectionPage() {
                         >
                           {t(difficultyKey(card.difficulty))}
                         </span>
+
+                        {card.category === "interview" && srDueCount > 0 && (
+                          <span className={styles.srDueBadge}>
+                            {srDueCount} {t("sr-due-short")}
+                          </span>
+                        )}
 
                         <div className={styles.cardContent}>
                           <div className={styles.iconContainer}>
