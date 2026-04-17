@@ -722,3 +722,50 @@
     font-size: 0.875rem;
     color: #9bb3d9;
 }
+
+/* ========== AI Review Panel ========== */
+.aiPanel {
+    margin-top: 12px;
+    background: rgba(160, 106, 249, 0.06);
+    border: 1px solid rgba(160, 106, 249, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.aiPanelHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(160, 106, 249, 0.1);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #c4a6ff;
+}
+
+.aiPanelClose {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.aiPanelClose:hover {
+    color: white;
+}
+
+.aiPanelBody {
+    padding: 14px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    white-space: pre-wrap;
+}
+
+.iconButtonDisabled {
+    opacity: 0.4;
+    pointer-events: none;
+}

@@ -100,6 +100,9 @@ export default function KotlinPlaygroundPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copyDone, setCopyDone] = useState(false);
+  const [aiReview, setAiReview] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiCooldown, setAiCooldown] = useState(false);
   const monacoRef = useRef<typeof import("monaco-editor") | null>(null);
   const editorRef = useRef<import("monaco-editor").editor.IStandaloneCodeEditor | null>(null);
 
@@ -330,6 +333,28 @@ export default function KotlinPlaygroundPage() {
     }
   }, []);
 
+  const requestAiReview = useCallback(async () => {
+    if (aiCooldown || aiLoading) return;
+    setAiLoading(true);
+    setAiReview(null);
+    try {
+      const code = files.map((f) => `// ${f.name}\n${f.code}`).join("\n\n");
+      const res = await fetch("/api/code-review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, language: "kotlin" }),
+      });
+      const data = await res.json();
+      setAiReview(data.review || data.error || t("ai-review-error"));
+    } catch {
+      setAiReview(t("ai-review-error"));
+    } finally {
+      setAiLoading(false);
+      setAiCooldown(true);
+      setTimeout(() => setAiCooldown(false), 10000);
+    }
+  }, [files, aiCooldown, aiLoading, t]);
+
   const loadTemplate = useCallback((tpl: typeof KT_TEMPLATES[number]) => {
     const newFiles = tpl.files.map((f) => ({ ...f, uri: `file:///src/${f.name}` }));
     setFiles(newFiles);
@@ -406,6 +431,15 @@ export default function KotlinPlaygroundPage() {
               <button className={styles.iconButton} onClick={resetEditor} aria-label={t("kotlin-pg-reset")}>
                 <ResetIcon fontSize="small" />
                 <span>{t("kotlin-pg-reset")}</span>
+              </button>
+              <button
+                className={`${styles.iconButton} ${aiCooldown ? styles.iconButtonDisabled : ""}`}
+                onClick={requestAiReview}
+                disabled={aiCooldown || aiLoading}
+                aria-label={t("ai-review-btn")}
+              >
+                <SparklesIcon fontSize="small" />
+                <span>{aiLoading ? "…" : t("ai-review-btn")}</span>
               </button>
               <button
                 className={`${styles.primaryButton} ${isRunning ? styles.isRunning : ""}`}
@@ -605,6 +639,17 @@ export default function KotlinPlaygroundPage() {
             </div>
           </div>
         </div>}
+
+        {aiReview && (
+          <div className={styles.aiPanel}>
+            <div className={styles.aiPanelHeader}>
+              <SparklesIcon style={{ fontSize: 16 }} />
+              <span>{t("ai-review-title")}</span>
+              <button className={styles.aiPanelClose} onClick={() => setAiReview(null)}>×</button>
+            </div>
+            <div className={styles.aiPanelBody}>{aiReview}</div>
+          </div>
+        )}
 
         <div className={styles.footerActions}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>

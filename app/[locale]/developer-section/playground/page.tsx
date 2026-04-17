@@ -118,6 +118,9 @@ export default function PlaygroundPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copyDone, setCopyDone] = useState(false);
+  const [aiReview, setAiReview] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiCooldown, setAiCooldown] = useState(false);
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
 
@@ -434,6 +437,28 @@ export default function PlaygroundPage() {
     }
   }, []);
 
+  const requestAiReview = useCallback(async () => {
+    if (aiCooldown || aiLoading) return;
+    setAiLoading(true);
+    setAiReview(null);
+    try {
+      const code = files.map((f) => `// ${f.name}\n${f.code}`).join("\n\n");
+      const res = await fetch("/api/code-review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, language: "typescript" }),
+      });
+      const data = await res.json();
+      setAiReview(data.review || data.error || t("ai-review-error"));
+    } catch {
+      setAiReview(t("ai-review-error"));
+    } finally {
+      setAiLoading(false);
+      setAiCooldown(true);
+      setTimeout(() => setAiCooldown(false), 10000);
+    }
+  }, [files, aiCooldown, aiLoading, t]);
+
   const loadTemplate = useCallback((tpl: typeof TS_TEMPLATES[number]) => {
     const newFiles = tpl.files.map((f) => ({ ...f, uri: `file:///src/${f.name}` }));
     setFiles(newFiles);
@@ -512,6 +537,15 @@ export default function PlaygroundPage() {
               <button className={styles.iconButton} onClick={resetEditor} aria-label="Reset editor">
                 <ResetIcon fontSize="small" />
                 <span>Reset</span>
+              </button>
+              <button
+                className={`${styles.iconButton} ${aiCooldown ? styles.iconButtonDisabled : ""}`}
+                onClick={requestAiReview}
+                disabled={aiCooldown || aiLoading}
+                aria-label={t("ai-review-btn")}
+              >
+                <SparklesIcon fontSize="small" />
+                <span>{aiLoading ? "…" : t("ai-review-btn")}</span>
               </button>
               <button
                 className={`${styles.primaryButton} ${isRunning ? styles.isRunning : ""}`}
@@ -707,6 +741,17 @@ export default function PlaygroundPage() {
             </div>
           </div>
         </div>}
+
+        {aiReview && (
+          <div className={styles.aiPanel}>
+            <div className={styles.aiPanelHeader}>
+              <SparklesIcon style={{ fontSize: 16 }} />
+              <span>{t("ai-review-title")}</span>
+              <button className={styles.aiPanelClose} onClick={() => setAiReview(null)}>×</button>
+            </div>
+            <div className={styles.aiPanelBody}>{aiReview}</div>
+          </div>
+        )}
 
         <div className={styles.footerActions}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
