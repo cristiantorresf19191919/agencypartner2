@@ -956,6 +956,7 @@ const translations = {
     'react-challenge-back': 'Volver a Retos de React',
     'react-challenge-result': 'Resultado',
     'react-challenge-loading-editor': 'Cargando editor…',
+    'offline-banner': 'Estás sin conexión — el contenido en caché está disponible',
   },
   en: {
     'hero-title':
@@ -1913,6 +1914,7 @@ const translations = {
     'react-challenge-back': 'Back to React Challenges',
     'react-challenge-result': 'Result',
     'react-challenge-loading-editor': 'Loading editor…',
+    'offline-banner': "You're offline — cached content is available",
   },
 } as const;
 
