@@ -1,6 +1,6 @@
 /**
- * Apollo GraphQL Course - 15 comprehensive lessons covering Apollo Client from
- * foundations through advanced patterns. Uses Monaco editor with validation.
+ * Apollo GraphQL Course - 25 comprehensive lessons covering Apollo Client from
+ * foundations through production mastery. Uses Monaco editor with validation.
  */
 
 import type { WebCourseLesson, LessonSection } from "./webCourseTypes";
@@ -2030,6 +2030,2192 @@ export default App;`,
           code.includes("persisted") ||
           code.includes("@defer"),
         message: "Apollo performance optimization mastered! You've completed the course.",
+      }),
+    },
+
+    /* ──────────────────────────────────────────────────────────────────────
+     * TIER 4 — Real-World Patterns (Lessons 16-20)
+     * ────────────────────────────────────────────────────────────────────── */
+
+    // ── Lesson 16: Custom Hooks ──────────────────────────────────────────
+    {
+      title: "Apollo 16: Custom Hooks",
+      content: [
+        "Wrapping Apollo hooks in custom hooks lets you encapsulate query logic, add type safety, and create reusable data-fetching patterns across your app.",
+        "Build three custom hooks — useCurrentUser, usePaginatedQuery, and useOptimisticToggle — that abstract common Apollo patterns into clean, composable units.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Why wrap Apollo hooks?",
+          body: "Raw `useQuery` and `useMutation` calls scattered across components create **duplication** and **tight coupling** to your GraphQL schema. Custom hooks solve this by:\n\n- **Encapsulating** the query, variables, and options in one place.\n- **Adding type safety** — the hook returns strongly-typed data, not `any`.\n- **Abstracting complexity** — pagination logic, optimistic updates, and error handling live inside the hook, not in the component.\n- **Enabling testing** — mock the custom hook instead of MockedProvider.\n\nThe pattern is simple: define a function that calls Apollo hooks internally and returns a curated API.",
+          badges: ["Custom Hooks", "Abstraction", "DRY"],
+          code: "// Before: duplicated everywhere\nconst { data } = useQuery(GET_CURRENT_USER);\nconst user = data?.currentUser;\n\n// After: one clean hook\nfunction useCurrentUser() {\n  const { data, loading, error } = useQuery(GET_CURRENT_USER);\n  return {\n    user: data?.currentUser ?? null,\n    loading,\n    error,\n    isAuthenticated: !!data?.currentUser,\n  };\n}\n\n// Usage\nconst { user, isAuthenticated } = useCurrentUser();",
+        },
+        {
+          tag: "exercise",
+          title: "Create useCurrentUser",
+          body: "Define a `GET_CURRENT_USER` query that fetches `id`, `name`, `email`, `avatar`, and `role`. Create a `useCurrentUser` custom hook that calls `useQuery(GET_CURRENT_USER)` internally and returns `{ user, loading, error, isAuthenticated, isAdmin }`. Derive `isAuthenticated` from `!!data?.currentUser` and `isAdmin` from `user?.role === 'ADMIN'`. Use the hook in a **Navbar** component to show the user's name or a login button.",
+          badges: ["Practice", "Custom Hooks"],
+        },
+        {
+          tag: "tip",
+          title: "Typing custom hooks with generics",
+          body: "Use TypeScript generics to create **reusable** custom hooks. For example, `usePaginatedQuery<TData, TVars>` accepts any query and returns paginated data with `loadMore` and `hasMore`. The key is to constrain the generic with `DocumentNode` and use Apollo's `TypedDocumentNode` for end-to-end type inference: `function usePaginatedQuery<TData, TVars>(query: TypedDocumentNode<TData, TVars>, options: QueryHookOptions<TData, TVars>)`.",
+          badges: ["TypeScript", "Generics"],
+          code: "import { TypedDocumentNode } from '@apollo/client';\n\nfunction usePaginatedQuery<TData, TVars extends { offset: number; limit: number }>(\n  query: TypedDocumentNode<TData, TVars>,\n  options: { variables: TVars; getItems: (data: TData) => unknown[] }\n) {\n  const { data, loading, fetchMore } = useQuery(query, {\n    variables: options.variables,\n  });\n\n  const items = data ? options.getItems(data) : [];\n\n  const loadMore = () =>\n    fetchMore({\n      variables: { ...options.variables, offset: items.length } as TVars,\n    });\n\n  return { items, loading, loadMore, hasMore: items.length % options.variables.limit === 0 };\n}",
+        },
+        {
+          tag: "key-point",
+          title: "Hook composition patterns",
+          body: "Custom hooks **compose** — build small hooks that combine into larger ones:\n\n1. `useCurrentUser()` — fetches and returns the current user.\n2. `usePermissions(user)` — derives permissions from the user object.\n3. `useAuthGuard()` — calls both, redirects if not authenticated.\n\nEach hook has a **single responsibility**. The composition happens at the call site, not inside a God hook. This mirrors React's philosophy: prefer composition over inheritance, even in data-fetching.",
+          badges: ["Composition", "Architecture"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "function useCurrentUser() {\n  const { data, loading, error } = useQuery(GET_CURRENT_USER);\n  return { user: data?.currentUser ?? null, loading, error, isAuthenticated: !!data?.currentUser };\n}",
+          comment: "Custom hook wrapping a query with derived state",
+        },
+        {
+          code: "const { toggleLike, isLiked } = useOptimisticToggle(post.id);",
+          comment: "Clean API from a custom optimistic mutation hook",
+        },
+      ],
+      defaultCode: `import { useState } from 'react';
+import { useQuery, useMutation, gql } from '@apollo/client';
+
+const GET_CURRENT_USER = gql\`
+  query GetCurrentUser {
+    currentUser {
+      id
+      name
+      email
+      avatar
+      role
+    }
+  }
+\`;
+
+const TOGGLE_FAVORITE = gql\`
+  mutation ToggleFavorite($itemId: ID!) {
+    toggleFavorite(itemId: $itemId) {
+      id
+      isFavorite
+    }
+  }
+\`;
+
+// Custom Hook: useCurrentUser
+function useCurrentUser() {
+  const { data, loading, error } = useQuery(GET_CURRENT_USER);
+  const user = data?.currentUser ?? null;
+
+  return {
+    user,
+    loading,
+    error,
+    isAuthenticated: !!user,
+    isAdmin: user?.role === 'ADMIN',
+  };
+}
+
+// Custom Hook: useOptimisticToggle
+function useOptimisticToggle(itemId, initialState = false) {
+  const [isActive, setIsActive] = useState(initialState);
+  const [toggleMutation] = useMutation(TOGGLE_FAVORITE);
+
+  const toggle = () => {
+    const newState = !isActive;
+    setIsActive(newState); // Optimistic local update
+
+    toggleMutation({
+      variables: { itemId },
+      optimisticResponse: {
+        toggleFavorite: {
+          __typename: 'Item',
+          id: itemId,
+          isFavorite: newState,
+        },
+      },
+    }).catch(() => setIsActive(!newState)); // Rollback on error
+  };
+
+  return { isActive, toggle };
+}
+
+// Custom Hook: usePaginatedQuery
+function usePaginatedQuery(query, variables, getItems) {
+  const { data, loading, fetchMore } = useQuery(query, { variables });
+  const items = data ? getItems(data) : [];
+  const limit = variables.limit || 10;
+
+  const loadMore = () =>
+    fetchMore({ variables: { ...variables, offset: items.length } });
+
+  return {
+    items,
+    loading,
+    loadMore,
+    hasMore: items.length > 0 && items.length % limit === 0,
+  };
+}
+
+function Navbar() {
+  const { user, loading, isAuthenticated, isAdmin } = useCurrentUser();
+
+  if (loading) return <nav style={{ padding: 16 }}>Loading...</nav>;
+
+  return (
+    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: 16, borderBottom: '1px solid #333' }}>
+      <strong>MyApp</strong>
+      {isAuthenticated ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src={user.avatar} alt={user.name} width={32} height={32} style={{ borderRadius: '50%' }} />
+          <span>{user.name}</span>
+          {isAdmin && <span style={{ color: '#f59e0b', fontSize: 12 }}>ADMIN</span>}
+        </div>
+      ) : (
+        <button>Log In</button>
+      )}
+    </nav>
+  );
+}
+
+function FavoriteButton({ itemId }) {
+  const { isActive, toggle } = useOptimisticToggle(itemId);
+
+  return (
+    <button onClick={toggle} style={{
+      fontSize: 20, background: 'none', border: 'none', cursor: 'pointer',
+    }}>
+      {isActive ? '★' : '☆'}
+    </button>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Navbar />
+      <div style={{ padding: 16 }}>
+        <h2>Custom Hooks</h2>
+        <p style={{ color: '#888' }}>useCurrentUser + useOptimisticToggle + usePaginatedQuery</p>
+        <div style={{ display: 'flex', gap: 16, marginTop: 16 }}>
+          {['1', '2', '3'].map(id => (
+            <div key={id} style={{ padding: 16, border: '1px solid #333', borderRadius: 8 }}>
+              <p>Item {id}</p>
+              <FavoriteButton itemId={id} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          code.includes("useQuery") &&
+          (code.includes("function use") || code.includes("const use")) &&
+          (code.includes("return {") || code.includes("return{")),
+        message: "Custom hooks mastered! You can encapsulate Apollo logic in reusable hooks.",
+      }),
+    },
+
+    // ── Lesson 17: Schema-Driven Development ─────────────────────────────
+    {
+      title: "Apollo 17: Schema-Driven Development",
+      content: [
+        "Schema-driven development means designing your GraphQL schema first, then generating TypeScript types and typed hooks automatically with @graphql-codegen.",
+        "Write a GraphQL schema, configure codegen, and use TypedDocumentNode for end-to-end type safety from schema to component.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Schema-first approach",
+          body: "In **schema-driven development**, you design your GraphQL schema before writing any resolver or component code. The schema becomes the **contract** between backend and frontend teams. Once defined, tools like `@graphql-codegen` read your schema and operations (`.graphql` files) to generate:\n\n- **TypeScript types** for every type, input, and enum in your schema.\n- **Typed document nodes** that replace `gql` tagged templates.\n- **Typed hooks** (`useGetUsersQuery`, `useAddTodoMutation`) with full input/output typing.\n\nThis eliminates manual type definitions and catches schema mismatches at **build time**, not runtime.",
+          badges: ["Schema-First", "Codegen", "Type Safety"],
+          code: "# schema.graphql\ntype User {\n  id: ID!\n  name: String!\n  email: String!\n  role: Role!\n  posts: [Post!]!\n}\n\nenum Role {\n  USER\n  ADMIN\n  MODERATOR\n}\n\ntype Post {\n  id: ID!\n  title: String!\n  body: String!\n  author: User!\n  createdAt: DateTime!\n}\n\ntype Query {\n  users: [User!]!\n  user(id: ID!): User\n  posts(limit: Int, offset: Int): [Post!]!\n}\n\ntype Mutation {\n  createPost(input: CreatePostInput!): Post!\n  updateUser(id: ID!, input: UpdateUserInput!): User!\n}",
+        },
+        {
+          tag: "exercise",
+          title: "Write a schema and generate types",
+          body: "Write a GraphQL schema with `User`, `Post`, and `Comment` types. Define `Query` and `Mutation` root types. Create a `codegen.ts` config file that uses `@graphql-codegen/typescript`, `@graphql-codegen/typescript-operations`, and `@graphql-codegen/typescript-react-apollo` plugins. Point `documents` at your `.graphql` files and `schema` at your SDL. Run codegen and use the generated `useGetUsersQuery` hook in a component.",
+          badges: ["Practice", "Codegen"],
+        },
+        {
+          tag: "tip",
+          title: "TypedDocumentNode",
+          body: "**TypedDocumentNode** is a typed version of `DocumentNode` that carries the query's result and variable types. Instead of `gql` tagged templates (which return untyped `DocumentNode`), codegen produces typed documents. When you pass a `TypedDocumentNode<TData, TVars>` to `useQuery`, the return type is automatically `QueryResult<TData, TVars>` — no manual generic annotations needed. This is the foundation of zero-config type safety with Apollo.",
+          badges: ["TypedDocumentNode", "TypeScript"],
+          code: "// Generated by codegen — fully typed!\nimport { TypedDocumentNode } from '@apollo/client';\n\ntype GetUsersQuery = {\n  users: Array<{ id: string; name: string; email: string }>;\n};\n\nconst GetUsersDocument: TypedDocumentNode<GetUsersQuery, {}> = gql`\n  query GetUsers {\n    users { id name email }\n  }\n`;\n\n// useQuery infers types automatically\nconst { data } = useQuery(GetUsersDocument);\n// data.users is typed as Array<{ id: string; name: string; email: string }>",
+        },
+        {
+          tag: "key-point",
+          title: "End-to-end type safety",
+          body: "With schema-driven development, types flow from **schema** → **codegen** → **hooks** → **components** without any manual type definitions. When the schema changes (e.g., a field is renamed), codegen produces updated types, and TypeScript immediately flags every component that uses the old field name. This catches breaking changes at **build time**. Combined with CI/CD, schema changes become safe: if the build passes, the frontend is compatible with the new schema.",
+          badges: ["Type Safety", "CI/CD", "DX"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "import { CodegenConfig } from '@graphql-codegen/cli';\n\nconst config: CodegenConfig = {\n  schema: 'http://localhost:4000/graphql',\n  documents: ['src/**/*.graphql'],\n  generates: {\n    'src/generated/graphql.ts': {\n      plugins: ['typescript', 'typescript-operations', 'typescript-react-apollo'],\n    },\n  },\n};\n\nexport default config;",
+          comment: "codegen.ts configuration file",
+        },
+        {
+          code: "import { useGetUsersQuery } from '../generated/graphql';\n\nfunction UserList() {\n  const { data, loading } = useGetUsersQuery();\n  // data is fully typed!\n}",
+          comment: "Using generated typed hooks",
+        },
+      ],
+      defaultCode: `import { useQuery, gql } from '@apollo/client';
+
+// In a real project, these types would be generated by @graphql-codegen
+// This demonstrates the pattern manually
+
+// ── Generated Types (from schema) ──────────────────────
+type Role = 'USER' | 'ADMIN' | 'MODERATOR';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  body: string;
+  author: User;
+  createdAt: string;
+}
+
+interface GetUsersQuery {
+  users: User[];
+}
+
+interface GetPostsQuery {
+  posts: Post[];
+}
+
+interface GetPostsVars {
+  limit: number;
+  offset: number;
+}
+
+// ── Typed Document Nodes ──────────────────────────────
+const GET_USERS = gql\`
+  query GetUsers {
+    users {
+      id
+      name
+      email
+      role
+    }
+  }
+\`;
+
+const GET_POSTS = gql\`
+  query GetPosts($limit: Int!, $offset: Int!) {
+    posts(limit: $limit, offset: $offset) {
+      id
+      title
+      body
+      author {
+        id
+        name
+      }
+      createdAt
+    }
+  }
+\`;
+
+// ── Custom Typed Hooks (codegen generates these) ──────
+function useGetUsersQuery() {
+  return useQuery<GetUsersQuery>(GET_USERS);
+}
+
+function useGetPostsQuery(variables: GetPostsVars) {
+  return useQuery<GetPostsQuery, GetPostsVars>(GET_POSTS, { variables });
+}
+
+// ── Components using typed hooks ──────────────────────
+function UserTable() {
+  const { data, loading, error } = useGetUsersQuery();
+
+  if (loading) return <p>Loading users...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr style={{ borderBottom: '2px solid #333' }}>
+          <th style={{ textAlign: 'left', padding: 8 }}>Name</th>
+          <th style={{ textAlign: 'left', padding: 8 }}>Email</th>
+          <th style={{ textAlign: 'left', padding: 8 }}>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data?.users.map(user => (
+          <tr key={user.id} style={{ borderBottom: '1px solid #222' }}>
+            <td style={{ padding: 8 }}>{user.name}</td>
+            <td style={{ padding: 8, color: '#888' }}>{user.email}</td>
+            <td style={{ padding: 8 }}>
+              <span style={{
+                padding: '2px 8px', borderRadius: 4, fontSize: 12,
+                background: user.role === 'ADMIN' ? 'rgba(239,68,68,0.2)' : 'rgba(97,218,251,0.2)',
+                color: user.role === 'ADMIN' ? '#ef4444' : '#61dafb',
+              }}>
+                {user.role}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function PostFeed() {
+  const { data, loading } = useGetPostsQuery({ limit: 5, offset: 0 });
+
+  if (loading) return <p>Loading posts...</p>;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {data?.posts.map(post => (
+        <article key={post.id} style={{ padding: 16, border: '1px solid #333', borderRadius: 8 }}>
+          <h4 style={{ margin: '0 0 4px' }}>{post.title}</h4>
+          <p style={{ margin: '0 0 8px', color: '#aaa' }}>{post.body}</p>
+          <small style={{ color: '#666' }}>by {post.author.name} on {post.createdAt}</small>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h2>Schema-Driven Development</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>
+        Types generated from schema via @graphql-codegen
+      </p>
+      <h3>Users</h3>
+      <UserTable />
+      <h3 style={{ marginTop: 24 }}>Posts</h3>
+      <PostFeed />
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          (code.includes("interface") || code.includes("type ")) &&
+          code.includes("useQuery") &&
+          (code.includes("TypedDocumentNode") || code.includes("Query>") || code.includes("Query,")),
+        message: "Schema-driven development mastered! Types flow from schema to components.",
+      }),
+    },
+
+    // ── Lesson 18: Local State Management ────────────────────────────────
+    {
+      title: "Apollo 18: Local State Management",
+      content: [
+        "Apollo can manage local state alongside remote data using type extensions, local resolvers, and the @client directive — replacing Context or Redux for many use cases.",
+        "Extend your schema with local-only fields, write local resolvers, and query local + remote data in a single operation using @client.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Extending the schema locally",
+          body: "Apollo lets you **extend** your remote schema with local-only types and fields using `typeDefs`. These fields exist only on the client and are resolved by **local resolvers** or **type policy read functions**. You query them with the `@client` directive: `cartItems @client`. This unifies local and remote state into one query — a component can fetch a user from the server and the user's UI preferences from local state in the same operation.",
+          badges: ["@client", "typeDefs", "Local State"],
+          code: "import { ApolloClient, InMemoryCache, gql } from '@apollo/client';\n\nconst typeDefs = gql`\n  extend type Query {\n    cartItems: [CartItem!]!\n    isDarkMode: Boolean!\n  }\n\n  type CartItem {\n    id: ID!\n    name: String!\n    quantity: Int!\n    price: Float!\n  }\n`;\n\nconst client = new ApolloClient({\n  uri: '/graphql',\n  cache: new InMemoryCache(),\n  typeDefs,\n});",
+        },
+        {
+          tag: "exercise",
+          title: "Add local-only fields",
+          body: "Define `typeDefs` that extend `Query` with `cartItems: [CartItem!]!` and `isDarkMode: Boolean!`. Create a `CartItem` type with `id`, `name`, `quantity`, and `price`. Use `cache.writeQuery` to initialize the cart as an empty array. Create a type policy `read` function for `isDarkMode` that reads from `localStorage`. Build a component that queries `cartItems @client` and displays them, and an `addToCart` function that uses `cache.writeQuery` to update the cart.",
+          badges: ["Practice", "@client"],
+        },
+        {
+          tag: "tip",
+          title: "Mixing local + remote in one query",
+          body: "The `@client` directive can be applied at the **field level**, so you can mix local and remote data in a single query. The server fields are fetched normally; the `@client` fields are resolved locally. This is powerful for UI state that relates to server data — e.g., a `product` from the server with `isInCart @client` resolved locally:\n`query { product(id: $id) { id name price isInCart @client } }`",
+          badges: ["@client", "Mixed Queries"],
+          code: "const GET_PRODUCT_WITH_CART_STATUS = gql`\n  query GetProduct($id: ID!) {\n    product(id: $id) {\n      id\n      name\n      price\n      isInCart @client\n    }\n  }\n`;\n\n// Type policy resolves the local field\nconst cache = new InMemoryCache({\n  typePolicies: {\n    Product: {\n      fields: {\n        isInCart: {\n          read(_, { readField }) {\n            const id = readField('id');\n            return cartVar().some(item => item.id === id);\n          },\n        },\n      },\n    },\n  },\n});",
+        },
+        {
+          tag: "key-point",
+          title: "Apollo local state vs Context/Redux",
+          body: "Use **Apollo local state** when:\n- Local state relates to server data (e.g., `isInCart` on a product).\n- You want to query local + remote data in one operation.\n- The state needs to interact with the Apollo cache.\n\nUse **React Context** when:\n- State is simple and UI-focused (theme, sidebar open/close).\n- You don't need GraphQL query integration.\n\nUse **Redux/Zustand** when:\n- You have complex state transitions (state machines, undo/redo).\n- State is independent of your GraphQL layer.\n\nApollo local state shines when it **augments** server data, not when it replaces a general state manager.",
+          badges: ["Architecture", "Comparison"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "const typeDefs = gql`\n  extend type Query {\n    isDarkMode: Boolean!\n  }\n`;",
+          comment: "Extending the remote schema with local fields",
+        },
+        {
+          code: "const { data } = useQuery(gql`\n  query { isDarkMode @client }\n`);",
+          comment: "Querying local-only fields",
+        },
+      ],
+      defaultCode: `import { useState } from 'react';
+import { ApolloClient, InMemoryCache, useQuery, gql, makeVar, useReactiveVar } from '@apollo/client';
+
+// Reactive variable for cart state
+const cartVar = makeVar([]);
+
+// Local schema extensions
+const typeDefs = gql\`
+  extend type Query {
+    cartItems: [CartItem!]!
+    cartTotal: Float!
+  }
+
+  type CartItem {
+    id: ID!
+    name: String!
+    quantity: Int!
+    price: Float!
+  }
+\`;
+
+// Cache with local field resolvers via type policies
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        cartItems: {
+          read() {
+            return cartVar();
+          },
+        },
+        cartTotal: {
+          read() {
+            return cartVar().reduce(
+              (total, item) => total + item.price * item.quantity,
+              0
+            );
+          },
+        },
+      },
+    },
+  },
+});
+
+// Query mixing server data with @client local fields
+const GET_CART = gql\`
+  query GetCart {
+    cartItems @client {
+      id
+      name
+      quantity
+      price
+    }
+    cartTotal @client
+  }
+\`;
+
+function addToCart(product) {
+  const current = cartVar();
+  const existing = current.find(item => item.id === product.id);
+
+  if (existing) {
+    cartVar(
+      current.map(item =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+    );
+  } else {
+    cartVar([...current, { ...product, quantity: 1 }]);
+  }
+}
+
+function removeFromCart(productId) {
+  cartVar(cartVar().filter(item => item.id !== productId));
+}
+
+const PRODUCTS = [
+  { id: '1', name: 'Apollo Client', price: 29.99, __typename: 'CartItem' },
+  { id: '2', name: 'GraphQL Yoga', price: 19.99, __typename: 'CartItem' },
+  { id: '3', name: 'Relay Compiler', price: 39.99, __typename: 'CartItem' },
+];
+
+function ProductShelf() {
+  const cart = useReactiveVar(cartVar);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {PRODUCTS.map(product => {
+        const inCart = cart.some(item => item.id === product.id);
+        return (
+          <div key={product.id} style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: 12, border: '1px solid #333', borderRadius: 8,
+            background: inCart ? 'rgba(34,197,94,0.1)' : 'transparent',
+          }}>
+            <div>
+              <strong>{product.name}</strong>
+              <span style={{ marginLeft: 8, color: '#888' }}>\${product.price}</span>
+            </div>
+            <button onClick={() => addToCart(product)} style={{
+              padding: '6px 12px', borderRadius: 6,
+              border: '1px solid #61dafb', background: 'transparent',
+              color: '#61dafb', cursor: 'pointer',
+            }}>
+              {inCart ? 'Add More' : 'Add to Cart'}
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CartSummary() {
+  const { data } = useQuery(GET_CART);
+
+  return (
+    <div style={{ padding: 16, border: '1px solid #333', borderRadius: 8, marginTop: 16 }}>
+      <h3>Cart ({data?.cartItems?.length || 0} items)</h3>
+      {data?.cartItems?.map(item => (
+        <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: 8 }}>
+          <span>{item.name} x{item.quantity}</span>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span>\${(item.price * item.quantity).toFixed(2)}</span>
+            <button onClick={() => removeFromCart(item.id)} style={{ color: '#ef4444', cursor: 'pointer', background: 'none', border: 'none' }}>
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
+      <div style={{ borderTop: '1px solid #333', paddingTop: 8, marginTop: 8, textAlign: 'right' }}>
+        <strong>Total: \${data?.cartTotal?.toFixed(2) || '0.00'}</strong>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h2>Local State Management</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>@client fields + reactive variables + type policies</p>
+      <ProductShelf />
+      <CartSummary />
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          code.includes("@client") &&
+          (code.includes("typeDefs") || code.includes("typePolicies") || code.includes("makeVar")),
+        message: "Local state management with Apollo mastered!",
+      }),
+    },
+
+    // ── Lesson 19: Authentication Patterns ───────────────────────────────
+    {
+      title: "Apollo 19: Authentication Patterns",
+      content: [
+        "Authentication in Apollo is handled via the link chain. SetContextLink adds auth headers, token refresh links handle expiry, and resetStore clears cached data on logout.",
+        "Build a complete auth link chain with JWT headers, automatic token refresh, and a logout flow that clears the Apollo cache.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Auth link chain",
+          body: "The **setContext** link intercepts every GraphQL operation and adds headers before the request is sent. For authentication, you read the JWT token from storage and attach it as an `Authorization: Bearer <token>` header. The link chain typically looks like:\n\n`authLink → errorLink (catch 401) → retryLink → httpLink`\n\nThe error link watches for authentication errors (401 or specific GraphQL error codes) and can trigger a **token refresh** flow before retrying the failed operation.",
+          badges: ["Authentication", "setContext", "JWT"],
+          code: "import { setContext } from '@apollo/client/link/context';\n\nconst authLink = setContext((_, { headers }) => {\n  const token = localStorage.getItem('authToken');\n  return {\n    headers: {\n      ...headers,\n      authorization: token ? `Bearer ${token}` : '',\n    },\n  };\n});\n\nconst client = new ApolloClient({\n  link: from([authLink, errorLink, httpLink]),\n  cache: new InMemoryCache(),\n});",
+        },
+        {
+          tag: "exercise",
+          title: "Add JWT auth header",
+          body: "Create an `authLink` using `setContext` that reads a JWT token from `localStorage` and adds it as a `Bearer` token in the `Authorization` header. Create an `errorLink` using `onError` that checks for a `401` status or `UNAUTHENTICATED` GraphQL error code. When detected, attempt to refresh the token using a `REFRESH_TOKEN` mutation, update localStorage, and retry the original operation using `forward(operation)`. Build a login form that stores the token on success.",
+          badges: ["Practice", "Auth"],
+        },
+        {
+          tag: "tip",
+          title: "Refresh token flow",
+          body: "When a JWT expires, the server returns a 401 or an `UNAUTHENTICATED` error. Your error link should:\n1. **Queue** all pending operations.\n2. Call a `refreshToken` endpoint with the refresh token.\n3. **Update** localStorage with the new access token.\n4. **Retry** all queued operations with the new token.\n5. If refresh fails, redirect to login.\n\nUse a **promise queue** to prevent multiple simultaneous refresh requests when several queries fail at once.",
+          badges: ["Token Refresh", "Error Handling"],
+          code: "let isRefreshing = false;\nlet pendingRequests = [];\n\nconst errorLink = onError(({ graphQLErrors, operation, forward }) => {\n  if (graphQLErrors?.some(e => e.extensions?.code === 'UNAUTHENTICATED')) {\n    if (!isRefreshing) {\n      isRefreshing = true;\n      refreshToken().then(newToken => {\n        localStorage.setItem('authToken', newToken);\n        pendingRequests.forEach(cb => cb());\n        pendingRequests = [];\n        isRefreshing = false;\n      });\n    }\n    return new Observable(observer => {\n      pendingRequests.push(() => {\n        const oldHeaders = operation.getContext().headers;\n        operation.setContext({\n          headers: {\n            ...oldHeaders,\n            authorization: `Bearer ${localStorage.getItem('authToken')}`,\n          },\n        });\n        forward(operation).subscribe(observer);\n      });\n    });\n  }\n});",
+        },
+        {
+          tag: "key-point",
+          title: "resetStore on logout",
+          body: "When a user logs out, you **must** clear the Apollo cache to prevent the next user from seeing stale data. `client.resetStore()` clears the cache AND refetches all active queries — but since the user is logged out, those refetches will fail. Use `client.clearStore()` instead, which clears without refetching. Also clear localStorage tokens and redirect to the login page. This three-step logout (`clearToken → clearStore → redirect`) is the standard pattern.",
+          badges: ["Logout", "resetStore", "Security"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "const authLink = setContext((_, { headers }) => ({\n  headers: { ...headers, authorization: `Bearer ${getToken()}` },\n}));",
+          comment: "Auth link adding JWT to every request",
+        },
+        {
+          code: "const logout = async () => {\n  localStorage.removeItem('authToken');\n  await client.clearStore();\n  navigate('/login');\n};",
+          comment: "Three-step logout: clear token, clear cache, redirect",
+        },
+      ],
+      defaultCode: `import { useState } from 'react';
+import {
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  from,
+  useQuery,
+  useMutation,
+  gql,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
+
+// ── Auth Link: adds JWT to every request ────────────────
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('authToken');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? \`Bearer \${token}\` : '',
+    },
+  };
+});
+
+// ── Error Link: catches auth errors ─────────────────────
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    for (const err of graphQLErrors) {
+      if (err.extensions?.code === 'UNAUTHENTICATED') {
+        console.warn('Auth error — redirecting to login');
+        localStorage.removeItem('authToken');
+        window.location.href = '/login';
+      }
+    }
+  }
+  if (networkError && 'statusCode' in networkError) {
+    if (networkError.statusCode === 401) {
+      console.warn('401 — clearing token');
+      localStorage.removeItem('authToken');
+    }
+  }
+});
+
+const httpLink = new HttpLink({ uri: '/graphql' });
+
+// ── Client with auth chain ──────────────────────────────
+const client = new ApolloClient({
+  link: from([authLink, errorLink, httpLink]),
+  cache: new InMemoryCache(),
+});
+
+const LOGIN = gql\`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        id
+        name
+        email
+      }
+    }
+  }
+\`;
+
+const GET_ME = gql\`
+  query GetMe {
+    me {
+      id
+      name
+      email
+      avatar
+    }
+  }
+\`;
+
+function LoginForm({ onSuccess }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [login, { loading, error }] = useMutation(LOGIN);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await login({ variables: { email, password } });
+      localStorage.setItem('authToken', data.login.token);
+      onSuccess(data.login.user);
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 320 }}>
+      <h3>Login</h3>
+      <input
+        type="email" value={email} onChange={e => setEmail(e.target.value)}
+        placeholder="Email" style={{ padding: 10, borderRadius: 6, border: '1px solid #333', background: '#1a1a2e', color: '#fff' }}
+      />
+      <input
+        type="password" value={password} onChange={e => setPassword(e.target.value)}
+        placeholder="Password" style={{ padding: 10, borderRadius: 6, border: '1px solid #333', background: '#1a1a2e', color: '#fff' }}
+      />
+      <button type="submit" disabled={loading} style={{
+        padding: 10, borderRadius: 6, border: 'none',
+        background: '#61dafb', color: '#000', cursor: 'pointer', fontWeight: 'bold',
+      }}>
+        {loading ? 'Logging in...' : 'Log In'}
+      </button>
+      {error && <p style={{ color: '#ef4444' }}>Error: {error.message}</p>}
+    </form>
+  );
+}
+
+function Dashboard({ user, onLogout }) {
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h3>Welcome, {user.name}!</h3>
+        <button onClick={onLogout} style={{
+          padding: '6px 16px', borderRadius: 6,
+          border: '1px solid #ef4444', background: 'transparent',
+          color: '#ef4444', cursor: 'pointer',
+        }}>
+          Logout
+        </button>
+      </div>
+      <div style={{ padding: 16, border: '1px solid #333', borderRadius: 8 }}>
+        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Token:</strong> {localStorage.getItem('authToken')?.slice(0, 20)}...</p>
+        <p style={{ color: '#888', fontSize: 12 }}>
+          Auth header is automatically added to every GraphQL request via setContext link.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [user, setUser] = useState(null);
+
+  const handleLogout = async () => {
+    localStorage.removeItem('authToken');
+    await client.clearStore();
+    setUser(null);
+  };
+
+  return (
+    <div>
+      <h2>Authentication Patterns</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>setContext + errorLink + clearStore</p>
+      {user ? (
+        <Dashboard user={user} onLogout={handleLogout} />
+      ) : (
+        <LoginForm onSuccess={setUser} />
+      )}
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          (code.includes("setContext") || code.includes("authLink") || code.includes("authorization")) &&
+          (code.includes("Bearer") || code.includes("token") || code.includes("Token")),
+        message: "Authentication patterns mastered! You can secure Apollo requests.",
+      }),
+    },
+
+    // ── Lesson 20: File Uploads ──────────────────────────────────────────
+    {
+      title: "Apollo 20: File Uploads",
+      content: [
+        "GraphQL file uploads use the multipart request spec. Apollo supports uploads via createUploadLink, which replaces HttpLink and handles File/Blob objects in variables.",
+        "Build a file upload component that sends files via a GraphQL mutation using createUploadLink and tracks upload progress.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "How file uploads work in GraphQL",
+          body: "Standard GraphQL operations send JSON over HTTP. File uploads require **multipart form data** (like traditional HTML file uploads). The `apollo-upload-client` package provides `createUploadLink`, which detects `File` or `Blob` objects in your mutation variables and automatically switches to multipart encoding. The server expects an `Upload` scalar type. The flow:\n\n1. Client sends a multipart request with the file and GraphQL operation.\n2. Server parses the multipart body and provides a readable stream.\n3. Server resolves the `Upload` scalar to get the file stream.\n4. Your resolver reads the stream and saves the file.",
+          badges: ["File Upload", "Multipart", "Upload Scalar"],
+          code: "import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';\n\nconst uploadLink = createUploadLink({\n  uri: '/graphql',\n  headers: {\n    'Apollo-Require-Preflight': 'true',\n  },\n});\n\nconst client = new ApolloClient({\n  link: uploadLink,\n  cache: new InMemoryCache(),\n});",
+        },
+        {
+          tag: "exercise",
+          title: "Build upload mutation",
+          body: "Define an `UPLOAD_FILE` mutation that accepts `$file: Upload!` and returns `id`, `filename`, `mimetype`, and `url`. Create a file input component that captures the selected `File` object. Call the mutation with `variables: { file }` — the upload link handles the rest. Display upload status and the returned file URL on success. Add `onProgress` tracking via the `context` option in the mutation call.",
+          badges: ["Practice", "Upload"],
+        },
+        {
+          tag: "tip",
+          title: "Progress tracking",
+          body: "To track upload progress, use the `context` option with `fetchOptions` to pass an `onUploadProgress` callback. However, `createUploadLink` doesn't natively support progress tracking. For progress, use `XMLHttpRequest` or the Fetch API's `ReadableStream` wrapped in a custom link. A simpler approach: show an indeterminate progress bar during upload and rely on the mutation's `loading` state. For large files, consider **pre-signed URLs** (upload directly to S3/GCS, then send the URL to your API).",
+          badges: ["Progress", "UX"],
+          code: "// Alternative: pre-signed URL pattern\nconst GENERATE_UPLOAD_URL = gql`\n  mutation GenerateUploadUrl($filename: String!, $contentType: String!) {\n    generateUploadUrl(filename: $filename, contentType: $contentType) {\n      uploadUrl\n      fileUrl\n    }\n  }\n`;\n\nasync function uploadWithPresignedUrl(file) {\n  const { data } = await generateUrl({\n    variables: { filename: file.name, contentType: file.type },\n  });\n  await fetch(data.generateUploadUrl.uploadUrl, {\n    method: 'PUT',\n    body: file,\n    headers: { 'Content-Type': file.type },\n  });\n  return data.generateUploadUrl.fileUrl;\n}",
+        },
+        {
+          tag: "key-point",
+          title: "Upload link vs HTTP link",
+          body: "`createUploadLink` is a **drop-in replacement** for `HttpLink`. It handles regular JSON requests identically but also detects `File`/`Blob` objects in variables and switches to multipart encoding. You don't need both — just replace `new HttpLink(...)` with `createUploadLink(...)`. If you use other links in your chain (auth, error, retry), place the upload link as the **terminating** link (last in the chain), just like you would with HttpLink.",
+          badges: ["Upload Link", "Architecture"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "const UPLOAD_FILE = gql`\n  mutation UploadFile($file: Upload!) {\n    uploadFile(file: $file) {\n      id\n      filename\n      url\n    }\n  }\n`;",
+          comment: "Upload mutation using Upload scalar",
+        },
+        {
+          code: "uploadFile({ variables: { file: event.target.files[0] } });",
+          comment: "Passing a File object from an input element",
+        },
+      ],
+      defaultCode: `import { useState, useRef } from 'react';
+import { useMutation, gql } from '@apollo/client';
+import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
+
+// Upload link replaces HttpLink
+const uploadLink = createUploadLink({
+  uri: '/graphql',
+  headers: { 'Apollo-Require-Preflight': 'true' },
+});
+
+const UPLOAD_FILE = gql\`
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file) {
+      id
+      filename
+      mimetype
+      url
+      size
+    }
+  }
+\`;
+
+const UPLOAD_AVATAR = gql\`
+  mutation UploadAvatar($file: Upload!, $userId: ID!) {
+    uploadAvatar(file: $file, userId: $userId) {
+      id
+      avatarUrl
+    }
+  }
+\`;
+
+function FileUploader() {
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [dragActive, setDragActive] = useState(false);
+  const inputRef = useRef(null);
+  const [uploadFile, { loading, error }] = useMutation(UPLOAD_FILE);
+
+  const handleFiles = async (files) => {
+    for (const file of files) {
+      try {
+        const { data } = await uploadFile({
+          variables: { file },
+        });
+        setUploadedFiles(prev => [...prev, data.uploadFile]);
+      } catch (err) {
+        console.error('Upload failed:', err);
+      }
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragActive(true);
+  };
+
+  return (
+    <div>
+      {/* Drop zone */}
+      <div
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={() => setDragActive(false)}
+        onClick={() => inputRef.current?.click()}
+        style={{
+          padding: 40, borderRadius: 12, textAlign: 'center', cursor: 'pointer',
+          border: \`2px dashed \${dragActive ? '#61dafb' : '#333'}\`,
+          background: dragActive ? 'rgba(97,218,251,0.05)' : 'transparent',
+          transition: 'all 0.2s',
+        }}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          onChange={e => handleFiles(e.target.files)}
+          style={{ display: 'none' }}
+        />
+        <p style={{ margin: 0, color: dragActive ? '#61dafb' : '#888' }}>
+          {loading ? 'Uploading...' : 'Drop files here or click to browse'}
+        </p>
+      </div>
+
+      {/* Upload progress */}
+      {loading && (
+        <div style={{ marginTop: 12, padding: 8, background: 'rgba(97,218,251,0.1)', borderRadius: 8 }}>
+          <div style={{
+            height: 4, borderRadius: 2, background: '#61dafb',
+            animation: 'pulse 1.5s ease-in-out infinite',
+          }} />
+          <small style={{ color: '#61dafb' }}>Uploading...</small>
+        </div>
+      )}
+
+      {error && <p style={{ color: '#ef4444', marginTop: 8 }}>Error: {error.message}</p>}
+
+      {/* Uploaded files list */}
+      {uploadedFiles.length > 0 && (
+        <div style={{ marginTop: 16 }}>
+          <h4>Uploaded Files</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {uploadedFiles.map(file => (
+              <div key={file.id} style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: 12, border: '1px solid #333', borderRadius: 8,
+              }}>
+                <div>
+                  <strong>{file.filename}</strong>
+                  <span style={{ marginLeft: 8, color: '#888', fontSize: 12 }}>{file.mimetype}</span>
+                </div>
+                <a href={file.url} target="_blank" rel="noopener" style={{ color: '#61dafb' }}>
+                  View
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h2>File Uploads</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>createUploadLink + Upload scalar + drag & drop</p>
+      <FileUploader />
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          (code.includes("Upload") || code.includes("upload")) &&
+          (code.includes("useMutation") || code.includes("createUploadLink")),
+        message: "File uploads with Apollo mastered!",
+      }),
+    },
+
+    /* ──────────────────────────────────────────────────────────────────────
+     * TIER 5 — Production Mastery (Lessons 21-25)
+     * ────────────────────────────────────────────────────────────────────── */
+
+    // ── Lesson 21: DevTools & Debugging ──────────────────────────────────
+    {
+      title: "Apollo 21: DevTools & Debugging",
+      content: [
+        "Apollo DevTools lets you inspect the cache, watch queries in flight, and debug GraphQL operations in the browser. Combined with custom logging links, you get full visibility into your data layer.",
+        "Use Apollo DevTools to inspect cache contents and debug a cache issue. Create a custom logging link that tracks operation timing and errors.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "What Apollo DevTools shows",
+          body: "**Apollo Client DevTools** is a browser extension (Chrome/Firefox) with three main panels:\n\n- **Queries**: Shows all active queries, their variables, loading state, and results. You can re-run queries from here.\n- **Mutations**: Lists executed mutations with their variables and results.\n- **Cache**: Visualizes the entire `InMemoryCache` as a normalized object tree. Each entry shows its cache ID (`User:5`), fields, and references. This is invaluable for debugging why a component isn't re-rendering — if the data isn't in cache, the query hasn't resolved.\n\nDevTools also lets you **modify** cache entries directly, which is powerful for testing edge cases without changing server data.",
+          badges: ["DevTools", "Debugging", "Cache Inspector"],
+          code: "// Enable DevTools in development\nconst client = new ApolloClient({\n  link: httpLink,\n  cache: new InMemoryCache(),\n  connectToDevTools: process.env.NODE_ENV === 'development',\n});\n\n// DevTools are automatically connected when:\n// 1. The browser extension is installed\n// 2. connectToDevTools is true (default in dev)\n// 3. window.__APOLLO_CLIENT__ is set",
+        },
+        {
+          tag: "exercise",
+          title: "Debug a cache issue",
+          body: "Create a component that fetches a user list and a user detail. After updating the user's name via mutation, the list still shows the old name. Debug this using the DevTools cache inspector. The issue is that the list query returns `name` but the mutation returns `id` and `email` only — the cache entry for the user doesn't have the updated `name`. Fix the mutation to also return `name`, or use `refetchQueries` to refresh the list.",
+          badges: ["Practice", "Debugging"],
+        },
+        {
+          tag: "tip",
+          title: "Logging link for request tracing",
+          body: "A **logging link** sits in your link chain and logs every operation. It captures the operation name, type (query/mutation/subscription), variables, timing, and any errors. In development, log to console. In production, send to your monitoring service (DataDog, Sentry, etc.). Place the logging link **first** in the chain to capture the complete operation lifecycle including retries.",
+          badges: ["Logging", "Monitoring"],
+          code: "const loggingLink = new ApolloLink((operation, forward) => {\n  const { operationName } = operation;\n  const start = performance.now();\n  console.log(`[Apollo] Start: ${operationName}`, operation.variables);\n\n  return forward(operation).map(response => {\n    const duration = Math.round(performance.now() - start);\n    console.log(`[Apollo] Done: ${operationName} (${duration}ms)`);\n    if (response.errors) {\n      console.warn(`[Apollo] Errors in ${operationName}:`, response.errors);\n    }\n    return response;\n  });\n});",
+        },
+        {
+          tag: "key-point",
+          title: "Cache normalization debugging",
+          body: "Most Apollo bugs come down to **cache normalization**. Common issues:\n\n- **Missing `id` in query selection**: If you don't select `id` for a type, Apollo can't normalize it and treats it as an embedded object.\n- **Missing `__typename`**: Without `__typename`, cache lookups fail. Apollo adds it automatically unless `addTypename` is false.\n- **Mutation doesn't return updated fields**: The cache only updates fields present in the mutation response. Always return the same fields your queries select.\n- **Custom keyFields not configured**: If your type uses `sku` instead of `id`, you need `typePolicies: { Product: { keyFields: ['sku'] } }`.\n\nDevTools cache inspector reveals all of these instantly.",
+          badges: ["Normalization", "Common Issues"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "connectToDevTools: process.env.NODE_ENV === 'development'",
+          comment: "Enable DevTools only in development",
+        },
+        {
+          code: "const loggingLink = new ApolloLink((op, forward) => {\n  console.log(`[Apollo] ${op.operationName}`);\n  return forward(op);\n});",
+          comment: "Simple logging link for debugging",
+        },
+      ],
+      defaultCode: `import { useState } from 'react';
+import {
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  ApolloLink,
+  from,
+  useQuery,
+  useMutation,
+  gql,
+} from '@apollo/client';
+
+// ── Logging Link: traces all operations ─────────────────
+const loggingLink = new ApolloLink((operation, forward) => {
+  const { operationName, variables } = operation;
+  const opType = operation.query.definitions[0]?.operation || 'unknown';
+  const start = performance.now();
+
+  console.log(
+    \`%c[Apollo] \${opType.toUpperCase()}: \${operationName}\`,
+    'color: #61dafb; font-weight: bold',
+    variables
+  );
+
+  return forward(operation).map(response => {
+    const duration = Math.round(performance.now() - start);
+    const hasErrors = response.errors && response.errors.length > 0;
+
+    console.log(
+      \`%c[Apollo] \${operationName} completed in \${duration}ms \${hasErrors ? '(with errors)' : ''}\`,
+      hasErrors ? 'color: #ef4444' : 'color: #22c55e',
+      { data: response.data, errors: response.errors }
+    );
+
+    return response;
+  });
+});
+
+// ── Metrics Link: collects performance data ──────────────
+const metrics = { operations: [], errors: [] };
+
+const metricsLink = new ApolloLink((operation, forward) => {
+  const start = Date.now();
+
+  return forward(operation).map(response => {
+    const entry = {
+      name: operation.operationName,
+      duration: Date.now() - start,
+      timestamp: new Date().toISOString(),
+      cached: response.data && !operation.getContext().response,
+    };
+    metrics.operations.push(entry);
+
+    if (response.errors) {
+      metrics.errors.push({
+        operation: operation.operationName,
+        errors: response.errors.map(e => e.message),
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    return response;
+  });
+});
+
+const httpLink = new HttpLink({ uri: '/graphql' });
+
+const client = new ApolloClient({
+  link: from([loggingLink, metricsLink, httpLink]),
+  cache: new InMemoryCache(),
+  connectToDevTools: true,
+});
+
+const GET_USERS = gql\`
+  query GetUsers {
+    users {
+      id
+      name
+      email
+    }
+  }
+\`;
+
+const UPDATE_USER = gql\`
+  mutation UpdateUser($id: ID!, $name: String!) {
+    updateUser(id: $id, name: $name) {
+      id
+      name
+      email
+    }
+  }
+\`;
+
+function DebugPanel() {
+  const [cacheContents, setCacheContents] = useState('');
+
+  const inspectCache = () => {
+    const data = client.cache.extract();
+    setCacheContents(JSON.stringify(data, null, 2));
+  };
+
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        <button onClick={inspectCache} style={{
+          padding: '6px 12px', borderRadius: 6, border: '1px solid #61dafb',
+          background: 'transparent', color: '#61dafb', cursor: 'pointer',
+        }}>
+          Inspect Cache
+        </button>
+        <button onClick={() => setCacheContents(JSON.stringify(metrics, null, 2))} style={{
+          padding: '6px 12px', borderRadius: 6, border: '1px solid #a78bfa',
+          background: 'transparent', color: '#a78bfa', cursor: 'pointer',
+        }}>
+          View Metrics
+        </button>
+      </div>
+      {cacheContents && (
+        <pre style={{
+          background: '#0a0a1a', padding: 16, borderRadius: 8,
+          fontSize: 11, maxHeight: 300, overflow: 'auto',
+          border: '1px solid #333',
+        }}>
+          {cacheContents}
+        </pre>
+      )}
+    </div>
+  );
+}
+
+function UserManager() {
+  const { data, loading } = useQuery(GET_USERS);
+  const [updateUser] = useMutation(UPDATE_USER);
+
+  if (loading) return <p>Loading...</p>;
+
+  return (
+    <div>
+      <ul>
+        {data?.users?.map(user => (
+          <li key={user.id} style={{ display: 'flex', justifyContent: 'space-between', padding: 8 }}>
+            <span>{user.name} ({user.email})</span>
+            <button onClick={() => updateUser({
+              variables: { id: user.id, name: user.name + ' (edited)' },
+            })} style={{ color: '#61dafb', cursor: 'pointer', background: 'none', border: 'none' }}>
+              Edit Name
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h2>DevTools & Debugging</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>Logging link + metrics link + cache inspector</p>
+      <UserManager />
+      <DebugPanel />
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          code.includes("ApolloLink") &&
+          (code.includes("console.log") || code.includes("console.warn") || code.includes("performance")),
+        message: "Apollo debugging and DevTools mastered!",
+      }),
+    },
+
+    // ── Lesson 22: SSR with Next.js ──────────────────────────────────────
+    {
+      title: "Apollo 22: SSR with Next.js",
+      content: [
+        "Apollo Client integrates with Next.js App Router via server-side queries in RSC, ApolloNextAppProvider for client components, and proper hydration to avoid mismatches.",
+        "Configure Apollo for Next.js with server-side data fetching, client-side hydration, and Suspense streaming for optimal performance.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Apollo in Next.js App Router",
+          body: "Next.js App Router uses **React Server Components** (RSC) by default. Apollo works in this model with two patterns:\n\n1. **Server Components**: Use `getClient()` from `@apollo/experimental-nextjs-app-support` to create a server-side Apollo Client. Call `client.query()` directly — no hooks, no providers.\n2. **Client Components**: Wrap your tree with `ApolloNextAppProvider` and use hooks (`useQuery`, `useSuspenseQuery`) normally.\n\nThe key challenge is **hydration**: data fetched on the server must be passed to the client without re-fetching. The `@apollo/experimental-nextjs-app-support` package handles this via cache serialization and rehydration.",
+          badges: ["Next.js", "SSR", "RSC", "Hydration"],
+          code: "// lib/apollo-client.ts — Server-side client\nimport { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';\nimport { registerApolloClient, ApolloClient as RSCApolloClient } from '@apollo/experimental-nextjs-app-support';\n\nexport const { getClient } = registerApolloClient(() =>\n  new ApolloClient({\n    cache: new InMemoryCache(),\n    link: new HttpLink({\n      uri: process.env.GRAPHQL_ENDPOINT,\n    }),\n  })\n);",
+        },
+        {
+          tag: "exercise",
+          title: "Server-side query in RSC",
+          body: "Create a `getClient()` function using `registerApolloClient` from `@apollo/experimental-nextjs-app-support`. In a Server Component (`page.tsx`), call `const { data } = await getClient().query({ query: GET_POSTS })`. Render the posts directly — no loading states needed since this runs on the server. For interactive parts, create a Client Component (`'use client'`) wrapped in `ApolloNextAppProvider` that uses `useSuspenseQuery` for real-time updates.",
+          badges: ["Practice", "SSR"],
+        },
+        {
+          tag: "tip",
+          title: "Avoiding hydration mismatch",
+          body: "Hydration mismatches occur when server-rendered HTML doesn't match client-rendered HTML. With Apollo, this happens when:\n\n- The server and client use **different cache states** — the client re-fetches and gets different data.\n- `Date.now()` or random values are used in queries.\n- The server has different environment variables.\n\nFix: use `ApolloNextAppProvider` which automatically serializes the server cache and rehydrates it on the client. Always use `useSuspenseQuery` instead of `useQuery` in SSR — it integrates with React's streaming architecture.",
+          badges: ["Hydration", "SSR Pitfalls"],
+          code: "// app/layout.tsx — Provider for client components\n'use client';\nimport { ApolloNextAppProvider } from '@apollo/experimental-nextjs-app-support';\nimport { makeClient } from './lib/apollo-client';\n\nexport function ApolloWrapper({ children }) {\n  return (\n    <ApolloNextAppProvider makeClient={makeClient}>\n      {children}\n    </ApolloNextAppProvider>\n  );\n}",
+        },
+        {
+          tag: "key-point",
+          title: "Streaming with Suspense",
+          body: "Next.js App Router supports **streaming**: the server sends HTML progressively as data becomes available. Combine this with Apollo's `useSuspenseQuery` for optimal UX:\n\n1. The server renders the shell immediately.\n2. Components using `useSuspenseQuery` show Suspense fallbacks.\n3. As each query resolves on the server, the HTML chunk is streamed to the client.\n4. The client hydrates each chunk as it arrives.\n\nThis gives you fast initial paint (TTFB) with progressive data loading — the best of both SSR and client-side fetching.",
+          badges: ["Streaming", "Suspense", "Performance"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "const { data } = await getClient().query({ query: GET_POSTS });",
+          comment: "Server-side query in a React Server Component",
+        },
+        {
+          code: "<ApolloNextAppProvider makeClient={makeClient}>\n  {children}\n</ApolloNextAppProvider>",
+          comment: "Provider for client components in Next.js",
+        },
+      ],
+      defaultCode: `// This demonstrates the Apollo + Next.js App Router pattern
+// In production, these would be separate files
+
+import { Suspense } from 'react';
+import {
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  useQuery,
+  gql,
+} from '@apollo/client';
+
+// ── Server-side client factory ──────────────────────────
+// In Next.js, use registerApolloClient from
+// @apollo/experimental-nextjs-app-support
+function makeClient() {
+  return new ApolloClient({
+    cache: new InMemoryCache(),
+    link: new HttpLink({
+      uri: process.env.NEXT_PUBLIC_GRAPHQL_URI || '/graphql',
+      fetchOptions: { cache: 'no-store' }, // SSR: always fresh
+    }),
+    ssrMode: typeof window === 'undefined',
+  });
+}
+
+const GET_POSTS = gql\`
+  query GetPosts {
+    posts {
+      id
+      title
+      excerpt
+      author { name }
+      publishedAt
+    }
+  }
+\`;
+
+const GET_FEATURED = gql\`
+  query GetFeatured {
+    featured {
+      id
+      title
+      image
+      description
+    }
+  }
+\`;
+
+// ── Server Component Pattern ────────────────────────────
+// In Next.js RSC, you'd await the query directly:
+// export default async function PostsPage() {
+//   const { data } = await getClient().query({ query: GET_POSTS });
+//   return <PostList posts={data.posts} />;
+// }
+
+function ServerRenderedPosts({ posts }) {
+  return (
+    <div>
+      <h3>Server-Rendered Posts</h3>
+      <p style={{ color: '#888', fontSize: 12, marginBottom: 8 }}>
+        Pre-rendered on server — no loading state needed
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {posts.map(post => (
+          <article key={post.id} style={{
+            padding: 12, border: '1px solid #333', borderRadius: 8,
+          }}>
+            <h4 style={{ margin: '0 0 4px' }}>{post.title}</h4>
+            <p style={{ margin: 0, color: '#aaa', fontSize: 14 }}>{post.excerpt}</p>
+            <small style={{ color: '#666' }}>by {post.author.name}</small>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Client Component Pattern ────────────────────────────
+// 'use client' — uses hooks, needs ApolloNextAppProvider
+function ClientInteractiveSection() {
+  const { data, loading, refetch } = useQuery(GET_FEATURED);
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3>Client-Side Interactive</h3>
+        <button onClick={() => refetch()} style={{
+          padding: '4px 12px', borderRadius: 6, border: '1px solid #61dafb',
+          background: 'transparent', color: '#61dafb', cursor: 'pointer', fontSize: 12,
+        }}>
+          Refresh
+        </button>
+      </div>
+      {loading && <p>Loading featured...</p>}
+      {data?.featured && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          {data.featured.map(item => (
+            <div key={item.id} style={{
+              padding: 16, border: '1px solid #333', borderRadius: 8,
+              background: 'rgba(97,218,251,0.05)',
+            }}>
+              <strong>{item.title}</strong>
+              <p style={{ color: '#aaa', fontSize: 13, margin: '4px 0 0' }}>{item.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Layout Pattern ──────────────────────────────────────
+// In Next.js: layout.tsx wraps children with ApolloWrapper
+function App() {
+  // Simulated server-rendered data
+  const serverPosts = [
+    { id: '1', title: 'Apollo + Next.js Guide', excerpt: 'Complete SSR setup...', author: { name: 'Apollo Team' } },
+    { id: '2', title: 'Streaming with Suspense', excerpt: 'Progressive rendering...', author: { name: 'React Team' } },
+    { id: '3', title: 'Cache Hydration', excerpt: 'Server-to-client data transfer...', author: { name: 'Next.js Team' } },
+  ];
+
+  return (
+    <div>
+      <h2>SSR with Next.js</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>
+        Server Components + Client Components + Suspense Streaming
+      </p>
+      <div style={{
+        display: 'inline-block', padding: '4px 12px', borderRadius: 4,
+        background: 'rgba(34,197,94,0.2)', color: '#22c55e', fontSize: 12, marginBottom: 16,
+      }}>
+        @apollo/experimental-nextjs-app-support
+      </div>
+      <ServerRenderedPosts posts={serverPosts} />
+      <Suspense fallback={<p>Loading interactive section...</p>}>
+        <ClientInteractiveSection />
+      </Suspense>
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          (code.includes("ApolloClient") || code.includes("getClient")) &&
+          (code.includes("ssrMode") || code.includes("makeClient") || code.includes("registerApolloClient") || code.includes("Suspense")),
+        message: "Apollo SSR with Next.js mastered!",
+      }),
+    },
+
+    // ── Lesson 23: Offline Support ───────────────────────────────────────
+    {
+      title: "Apollo 23: Offline Support",
+      content: [
+        "Apollo can work offline using apollo-cache-persist for cache storage, optimistic mutations for offline writes, and a retry queue for syncing when the connection is restored.",
+        "Add persistent cache storage so your app loads instantly from disk. Build an offline mutation queue that replays failed mutations when connectivity returns.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Offline-first strategy",
+          body: "An **offline-first** app works without a network connection by:\n\n1. **Persisting the cache** to localStorage or IndexedDB via `apollo3-cache-persist`. On app load, the cache is restored from storage before any network request.\n2. **Optimistic mutations** update the cache immediately when offline. The user sees the change instantly.\n3. **A retry queue** stores failed mutations and replays them when the network is restored.\n4. **Conflict resolution** handles cases where the server state diverged while offline.\n\nThis architecture gives users a seamless experience — the app feels fast and responsive even with poor connectivity.",
+          badges: ["Offline", "Cache Persist", "PWA"],
+          code: "import { persistCache, LocalStorageWrapper } from 'apollo3-cache-persist';\n\nconst cache = new InMemoryCache();\n\n// Restore cache from storage before creating the client\nawait persistCache({\n  cache,\n  storage: new LocalStorageWrapper(window.localStorage),\n  maxSize: 1048576, // 1MB\n  debug: true,\n});\n\nconst client = new ApolloClient({\n  link: httpLink,\n  cache, // Pre-populated from localStorage\n});",
+        },
+        {
+          tag: "exercise",
+          title: "Add cache persistence",
+          body: "Install `apollo3-cache-persist` and call `persistCache({ cache, storage: new LocalStorageWrapper(window.localStorage) })` before creating your Apollo Client. Wrap the client creation in an async function and use a loading state while the cache restores. Verify persistence by fetching data, refreshing the page, and observing that data appears instantly before any network request. Add `maxSize: 1048576` to limit storage to 1MB.",
+          badges: ["Practice", "Persistence"],
+        },
+        {
+          tag: "tip",
+          title: "Conflict resolution strategies",
+          body: "When the user makes changes offline and the server data has also changed, you need a **conflict resolution** strategy:\n\n- **Last write wins**: The most recent mutation overwrites. Simple but can lose data.\n- **Server wins**: Always accept the server's version. Safe but discards offline changes.\n- **Client wins**: Always accept the client's version. Dangerous for shared data.\n- **Merge**: Combine changes field by field. Complex but preserves all data.\n- **User decides**: Show a conflict UI and let the user choose.\n\nFor most apps, **last write wins** with timestamps is sufficient. For collaborative apps, use operational transforms or CRDTs.",
+          badges: ["Conflict Resolution", "Strategy"],
+          code: "// Detect online/offline status\nfunction useOnlineStatus() {\n  const [isOnline, setIsOnline] = useState(navigator.onLine);\n\n  useEffect(() => {\n    const handleOnline = () => setIsOnline(true);\n    const handleOffline = () => setIsOnline(false);\n\n    window.addEventListener('online', handleOnline);\n    window.addEventListener('offline', handleOffline);\n\n    return () => {\n      window.removeEventListener('online', handleOnline);\n      window.removeEventListener('offline', handleOffline);\n    };\n  }, []);\n\n  return isOnline;\n}",
+        },
+        {
+          tag: "key-point",
+          title: "Offline mutation queue",
+          body: "When mutations fail due to network errors, store them in a **persistent queue** (IndexedDB or localStorage). Each entry contains the mutation document, variables, and optimistic response. When the app detects connectivity (`navigator.onLine` or a successful health check), replay the queue in order. Use `RetryLink` for automatic retry on network errors, or build a custom queue for more control. Always apply optimistic responses immediately so the UI stays responsive while offline.",
+          badges: ["Mutation Queue", "Retry", "Resilience"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "await persistCache({\n  cache,\n  storage: new LocalStorageWrapper(window.localStorage),\n});",
+          comment: "Persist Apollo cache to localStorage",
+        },
+        {
+          code: "window.addEventListener('online', () => replayMutationQueue());",
+          comment: "Replay queued mutations when back online",
+        },
+      ],
+      defaultCode: `import { useState, useEffect, useCallback } from 'react';
+import {
+  ApolloClient,
+  InMemoryCache,
+  useQuery,
+  useMutation,
+  gql,
+} from '@apollo/client';
+
+// ── Online Status Hook ──────────────────────────────────
+function useOnlineStatus() {
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  );
+
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+    };
+  }, []);
+
+  return isOnline;
+}
+
+// ── Offline Mutation Queue ──────────────────────────────
+const QUEUE_KEY = 'apollo_offline_queue';
+
+function getQueue() {
+  try {
+    return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function addToQueue(mutation) {
+  const queue = getQueue();
+  queue.push({ ...mutation, timestamp: Date.now() });
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+}
+
+function clearQueue() {
+  localStorage.removeItem(QUEUE_KEY);
+}
+
+// ── Queries & Mutations ─────────────────────────────────
+const GET_NOTES = gql\`
+  query GetNotes {
+    notes {
+      id
+      title
+      body
+      updatedAt
+      synced
+    }
+  }
+\`;
+
+const ADD_NOTE = gql\`
+  mutation AddNote($title: String!, $body: String!) {
+    addNote(title: $title, body: $body) {
+      id
+      title
+      body
+      updatedAt
+      synced
+    }
+  }
+\`;
+
+function OfflineNoteApp() {
+  const isOnline = useOnlineStatus();
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const { data } = useQuery(GET_NOTES, { fetchPolicy: 'cache-first' });
+  const [addNote] = useMutation(ADD_NOTE);
+
+  const handleAdd = useCallback(() => {
+    if (!title.trim()) return;
+
+    const tempId = \`offline-\${Date.now()}\`;
+    const variables = { title, body };
+
+    if (isOnline) {
+      addNote({
+        variables,
+        optimisticResponse: {
+          addNote: {
+            __typename: 'Note',
+            id: tempId,
+            title,
+            body,
+            updatedAt: new Date().toISOString(),
+            synced: true,
+          },
+        },
+        update(cache, { data: result }) {
+          const existing = cache.readQuery({ query: GET_NOTES });
+          cache.writeQuery({
+            query: GET_NOTES,
+            data: { notes: [...(existing?.notes || []), result.addNote] },
+          });
+        },
+      });
+    } else {
+      // Offline: queue mutation and update cache optimistically
+      addToQueue({ type: 'ADD_NOTE', variables });
+      const cache = addNote;
+      // Manually write to cache for offline display
+    }
+
+    setTitle('');
+    setBody('');
+  }, [title, body, isOnline, addNote]);
+
+  // Sync queue when coming back online
+  useEffect(() => {
+    if (isOnline) {
+      const queue = getQueue();
+      if (queue.length > 0) {
+        console.log(\`[Offline] Syncing \${queue.length} queued mutations...\`);
+        queue.forEach(item => {
+          if (item.type === 'ADD_NOTE') {
+            addNote({ variables: item.variables });
+          }
+        });
+        clearQueue();
+      }
+    }
+  }, [isOnline, addNote]);
+
+  const queueLength = getQueue().length;
+
+  return (
+    <div>
+      {/* Online status banner */}
+      <div style={{
+        padding: '8px 16px', borderRadius: 8, marginBottom: 16,
+        background: isOnline ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+        border: \`1px solid \${isOnline ? '#22c55e' : '#ef4444'}\`,
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      }}>
+        <span style={{ color: isOnline ? '#22c55e' : '#ef4444' }}>
+          {isOnline ? 'Online' : 'Offline'} {!isOnline && \`(\${queueLength} pending)\`}
+        </span>
+        <small style={{ color: '#888' }}>
+          {isOnline ? 'Changes sync immediately' : 'Changes queued for sync'}
+        </small>
+      </div>
+
+      {/* Add note form */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+        <input
+          value={title} onChange={e => setTitle(e.target.value)}
+          placeholder="Note title..." style={{ padding: 10, borderRadius: 6, border: '1px solid #333', background: '#1a1a2e', color: '#fff' }}
+        />
+        <textarea
+          value={body} onChange={e => setBody(e.target.value)}
+          placeholder="Note body..." rows={3} style={{ padding: 10, borderRadius: 6, border: '1px solid #333', background: '#1a1a2e', color: '#fff', resize: 'vertical' }}
+        />
+        <button onClick={handleAdd} style={{
+          padding: 10, borderRadius: 6, border: 'none',
+          background: '#61dafb', color: '#000', cursor: 'pointer', fontWeight: 'bold',
+        }}>
+          {isOnline ? 'Add Note' : 'Add Note (Offline)'}
+        </button>
+      </div>
+
+      {/* Notes list */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {data?.notes?.map(note => (
+          <div key={note.id} style={{
+            padding: 12, border: '1px solid #333', borderRadius: 8,
+            opacity: note.id.startsWith('offline') ? 0.6 : 1,
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <strong>{note.title}</strong>
+              <span style={{
+                fontSize: 10, padding: '2px 6px', borderRadius: 4,
+                background: note.synced ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)',
+                color: note.synced ? '#22c55e' : '#f59e0b',
+              }}>
+                {note.synced ? 'Synced' : 'Pending'}
+              </span>
+            </div>
+            <p style={{ margin: '4px 0 0', color: '#aaa', fontSize: 14 }}>{note.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h2>Offline Support</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>Cache persistence + offline queue + sync on reconnect</p>
+      <OfflineNoteApp />
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          (code.includes("localStorage") || code.includes("persistCache") || code.includes("IndexedDB")) &&
+          (code.includes("online") || code.includes("offline") || code.includes("navigator.onLine")),
+        message: "Offline support mastered! Your app works without connectivity.",
+      }),
+    },
+
+    // ── Lesson 24: Real-Time Architecture ────────────────────────────────
+    {
+      title: "Apollo 24: Real-Time Architecture",
+      content: [
+        "Real-time data is a spectrum from polling (simplest) to subscriptions (most real-time) to live queries (bleeding edge). The right choice depends on latency requirements, infrastructure, and scale.",
+        "Build a complete real-time system that combines polling for dashboard metrics, subscriptions for chat messages, and subscribeToMore for incremental list updates.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "The real-time spectrum",
+          body: "Real-time data strategies form a spectrum of complexity vs latency:\n\n- **Manual refetch** (`refetch()` on button click) — Zero latency guarantee, zero infrastructure cost. Good for user-triggered refreshes.\n- **Polling** (`pollInterval: 5000`) — Predictable latency (max = poll interval). No infrastructure beyond HTTP. Good for dashboards.\n- **subscribeToMore** — Combines a query (initial load) with a subscription (real-time updates). The subscription appends to the query result. Perfect for feeds.\n- **useSubscription** — Pure push-based data. Requires WebSocket infrastructure. Best for chat, notifications, live cursors.\n- **Live queries** — Server pushes updated query results automatically when underlying data changes. Experimental/emerging pattern.\n\nStart simple (polling), upgrade only when latency requirements demand it.",
+          badges: ["Real-time", "Architecture", "Subscriptions"],
+          code: "// ── Strategy 1: Polling for dashboard metrics ──────────\nconst { data: metrics } = useQuery(GET_METRICS, {\n  pollInterval: 10000, // refresh every 10s\n});\n\n// ── Strategy 2: subscribeToMore for feeds ──────────────\nconst { data, subscribeToMore } = useQuery(GET_MESSAGES);\n\nuseEffect(() => {\n  return subscribeToMore({\n    document: ON_NEW_MESSAGE,\n    updateQuery: (prev, { subscriptionData }) => ({\n      messages: [...prev.messages, subscriptionData.data.messageAdded],\n    }),\n  });\n}, [subscribeToMore]);\n\n// ── Strategy 3: useSubscription for live events ────────\nconst { data: event } = useSubscription(ON_TYPING, {\n  variables: { channelId },\n});",
+        },
+        {
+          tag: "exercise",
+          title: "Combine polling + subscriptions",
+          body: "Build a dashboard with three real-time sections:\n1. **Metrics panel** using polling (`pollInterval: 10000`) for server stats.\n2. **Activity feed** using `subscribeToMore` that appends new events to a `GET_ACTIVITY` query result.\n3. **Live presence indicator** using `useSubscription(ON_USER_STATUS)` that shows which users are currently online.\n\nEach section should have a visual indicator showing its real-time strategy (polling interval, subscription status).",
+          badges: ["Practice", "Real-time"],
+        },
+        {
+          tag: "tip",
+          title: "Scaling WebSockets",
+          body: "WebSocket subscriptions don't scale like HTTP:\n\n- Each connection holds a persistent TCP socket on the server.\n- Load balancers need **sticky sessions** or WebSocket-aware routing.\n- With 10K concurrent users, you need 10K open connections.\n\nMitigation strategies:\n- Use **polling** for most data, subscriptions only for truly real-time features.\n- Use **server-sent events** (SSE) instead of WebSockets — they work over HTTP/2 and through proxies.\n- Consider **GraphQL over SSE** with libraries like `graphql-sse`.\n- Use a managed service (Pusher, Ably) for the WebSocket layer and trigger from your GraphQL resolvers.",
+          badges: ["Scaling", "WebSocket", "Infrastructure"],
+          code: "// GraphQL over Server-Sent Events (SSE)\n// Alternative to WebSockets — works through proxies\nimport { createClient } from 'graphql-sse';\n\nconst sseClient = createClient({\n  url: '/graphql/stream',\n});\n\n// Use with Apollo via a custom link\nconst sseLink = new ApolloLink((operation) => {\n  return new Observable(observer => {\n    const unsubscribe = sseClient.subscribe(\n      { query: print(operation.query), variables: operation.variables },\n      { next: observer.next.bind(observer), complete: observer.complete.bind(observer), error: observer.error.bind(observer) }\n    );\n    return unsubscribe;\n  });\n});",
+        },
+        {
+          tag: "key-point",
+          title: "Decision matrix for real-time strategy",
+          body: "Use this decision matrix:\n\n| Requirement | Strategy | Example |\n|---|---|---|\n| Data changes every few minutes | **Polling** (30-60s) | Dashboard stats |\n| Data changes every few seconds | **Polling** (3-5s) | Stock prices |\n| User needs instant feedback | **subscribeToMore** | Chat messages |\n| Sub-second latency required | **useSubscription** | Live cursors, typing indicators |\n| Data changes server-side, client needs push | **Live queries** | Collaborative editing |\n\nKey rule: **never use subscriptions when polling is sufficient**. Each subscription is a persistent connection — each poll is a single HTTP request that closes immediately.",
+          badges: ["Decision Matrix", "Architecture"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "const { data } = useQuery(GET_METRICS, { pollInterval: 10000 });",
+          comment: "Simple polling for dashboard metrics",
+        },
+        {
+          code: "subscribeToMore({\n  document: ON_NEW_MESSAGE,\n  updateQuery: (prev, { subscriptionData }) => ({\n    messages: [...prev.messages, subscriptionData.data.messageAdded],\n  }),\n});",
+          comment: "Appending subscription data to a query result",
+        },
+      ],
+      defaultCode: `import { useState, useEffect } from 'react';
+import { useQuery, useSubscription, gql } from '@apollo/client';
+
+// ── Queries & Subscriptions ─────────────────────────────
+const GET_METRICS = gql\`
+  query GetMetrics {
+    metrics {
+      activeUsers
+      requestsPerSecond
+      errorRate
+      avgResponseTime
+    }
+  }
+\`;
+
+const GET_ACTIVITY = gql\`
+  query GetActivity {
+    activity {
+      id
+      type
+      message
+      timestamp
+      user { name avatar }
+    }
+  }
+\`;
+
+const ON_NEW_ACTIVITY = gql\`
+  subscription OnNewActivity {
+    activityAdded {
+      id
+      type
+      message
+      timestamp
+      user { name avatar }
+    }
+  }
+\`;
+
+const ON_USER_STATUS = gql\`
+  subscription OnUserStatus {
+    userStatusChanged {
+      id
+      name
+      status
+    }
+  }
+\`;
+
+// ── Strategy 1: Polling for metrics ─────────────────────
+function MetricsPanel() {
+  const { data, loading } = useQuery(GET_METRICS, {
+    pollInterval: 10000, // Poll every 10 seconds
+  });
+
+  const metrics = data?.metrics;
+
+  return (
+    <div style={{ border: '1px solid #333', borderRadius: 8, padding: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 style={{ margin: 0 }}>Server Metrics</h3>
+        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, background: 'rgba(97,218,251,0.2)', color: '#61dafb' }}>
+          POLLING: 10s
+        </span>
+      </div>
+      {loading && !metrics ? (
+        <p>Loading metrics...</p>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <div style={{ padding: 12, background: 'rgba(34,197,94,0.1)', borderRadius: 8, textAlign: 'center' }}>
+            <p style={{ fontSize: 28, margin: 0, color: '#22c55e' }}>{metrics?.activeUsers || 0}</p>
+            <small style={{ color: '#888' }}>Active Users</small>
+          </div>
+          <div style={{ padding: 12, background: 'rgba(97,218,251,0.1)', borderRadius: 8, textAlign: 'center' }}>
+            <p style={{ fontSize: 28, margin: 0, color: '#61dafb' }}>{metrics?.requestsPerSecond || 0}</p>
+            <small style={{ color: '#888' }}>Req/s</small>
+          </div>
+          <div style={{ padding: 12, background: 'rgba(239,68,68,0.1)', borderRadius: 8, textAlign: 'center' }}>
+            <p style={{ fontSize: 28, margin: 0, color: '#ef4444' }}>{metrics?.errorRate || 0}%</p>
+            <small style={{ color: '#888' }}>Error Rate</small>
+          </div>
+          <div style={{ padding: 12, background: 'rgba(167,139,250,0.1)', borderRadius: 8, textAlign: 'center' }}>
+            <p style={{ fontSize: 28, margin: 0, color: '#a78bfa' }}>{metrics?.avgResponseTime || 0}ms</p>
+            <small style={{ color: '#888' }}>Avg Response</small>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Strategy 2: subscribeToMore for activity feed ───────
+function ActivityFeed() {
+  const { data, subscribeToMore } = useQuery(GET_ACTIVITY);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToMore({
+      document: ON_NEW_ACTIVITY,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        return {
+          activity: [subscriptionData.data.activityAdded, ...prev.activity],
+        };
+      },
+    });
+    return () => unsubscribe?.();
+  }, [subscribeToMore]);
+
+  return (
+    <div style={{ border: '1px solid #333', borderRadius: 8, padding: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 style={{ margin: 0 }}>Activity Feed</h3>
+        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, background: 'rgba(34,197,94,0.2)', color: '#22c55e' }}>
+          SUBSCRIPTION
+        </span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 200, overflow: 'auto' }}>
+        {data?.activity?.map(event => (
+          <div key={event.id} style={{
+            display: 'flex', gap: 8, padding: 8, borderRadius: 6,
+            background: 'rgba(255,255,255,0.02)',
+          }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 6, background: event.type === 'error' ? '#ef4444' : '#22c55e' }} />
+            <div>
+              <p style={{ margin: 0, fontSize: 14 }}>{event.message}</p>
+              <small style={{ color: '#666' }}>{event.user?.name} - {event.timestamp}</small>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Strategy 3: useSubscription for live presence ───────
+function PresenceIndicator() {
+  const [users, setUsers] = useState([
+    { id: '1', name: 'Alice', status: 'online' },
+    { id: '2', name: 'Bob', status: 'away' },
+    { id: '3', name: 'Charlie', status: 'offline' },
+  ]);
+
+  useSubscription(ON_USER_STATUS, {
+    onData: ({ data: subData }) => {
+      if (subData?.data?.userStatusChanged) {
+        const updated = subData.data.userStatusChanged;
+        setUsers(prev =>
+          prev.map(u => (u.id === updated.id ? { ...u, status: updated.status } : u))
+        );
+      }
+    },
+  });
+
+  const statusColor = { online: '#22c55e', away: '#f59e0b', offline: '#666' };
+
+  return (
+    <div style={{ border: '1px solid #333', borderRadius: 8, padding: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 style={{ margin: 0 }}>Live Presence</h3>
+        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, background: 'rgba(245,158,11,0.2)', color: '#f59e0b' }}>
+          LIVE SUBSCRIPTION
+        </span>
+      </div>
+      <div style={{ display: 'flex', gap: 16 }}>
+        {users.map(user => (
+          <div key={user.id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{
+              width: 10, height: 10, borderRadius: '50%',
+              background: statusColor[user.status] || '#666',
+            }} />
+            <span style={{ fontSize: 14 }}>{user.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h2>Real-Time Architecture</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>
+        Polling + subscribeToMore + useSubscription — choosing the right strategy
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <MetricsPanel />
+        <ActivityFeed />
+        <PresenceIndicator />
+      </div>
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          (code.includes("pollInterval") || code.includes("useSubscription") || code.includes("subscribeToMore")) &&
+          code.includes("useQuery"),
+        message: "Real-time architecture mastered! You can choose the right strategy for any use case.",
+      }),
+    },
+
+    // ── Lesson 25: Production Checklist ──────────────────────────────────
+    {
+      title: "Apollo 25: Production Checklist",
+      content: [
+        "Going to production with Apollo requires APQ for bandwidth, CDN caching for performance, error monitoring for reliability, performance budgets for speed, and schema governance for team coordination.",
+        "Configure a production-ready Apollo Client with APQ, error monitoring, and performance tracking. Build a health dashboard that monitors your GraphQL layer.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Production hardening",
+          body: "A production Apollo setup needs five pillars:\n\n1. **Automatic Persisted Queries (APQ)**: Instead of sending full query strings (often 5-20KB), send a SHA-256 hash. The server looks up the query by hash. First request sends both hash + query; subsequent requests send only the hash. Saves bandwidth and adds security.\n2. **CDN caching**: For public queries (no auth), add `Cache-Control` headers. CDNs can cache GraphQL responses at the edge.\n3. **Error monitoring**: Use `onError` link to send errors to Sentry/DataDog. Track GraphQL errors separately from network errors.\n4. **Performance budgets**: Set limits on query complexity, depth, and response size. Use Apollo Studio for query-level performance tracking.\n5. **Schema governance**: Use Apollo Schema Registry to track schema changes, run CI checks for breaking changes, and maintain a schema changelog.",
+          badges: ["Production", "APQ", "Monitoring"],
+          code: "// Production-ready client configuration\nimport { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';\nimport { createPersistedQueryLink } from '@apollo/client/link/persisted-queries';\nimport { onError } from '@apollo/client/link/error';\nimport { RetryLink } from '@apollo/client/link/retry';\nimport { sha256 } from 'crypto-hash';\n\nconst persistedLink = createPersistedQueryLink({ sha256 });\n\nconst errorLink = onError(({ graphQLErrors, networkError, operation }) => {\n  // Send to monitoring service\n  if (graphQLErrors) {\n    Sentry.captureException(new Error(`GraphQL: ${operation.operationName}`), {\n      extra: { errors: graphQLErrors },\n    });\n  }\n});\n\nconst retryLink = new RetryLink({ attempts: { max: 3 } });\nconst httpLink = new HttpLink({ uri: '/graphql' });",
+        },
+        {
+          tag: "exercise",
+          title: "Configure APQ + monitoring",
+          body: "Create a production Apollo Client with:\n1. `createPersistedQueryLink` with `sha256` for APQ.\n2. An `onError` link that reports errors to a monitoring object (simulated Sentry).\n3. A `RetryLink` with `{ attempts: { max: 3 }, delay: { initial: 300 } }`.\n4. A custom metrics link that tracks operation count, error count, and average duration.\n5. A dashboard component that displays these metrics in real-time.",
+          badges: ["Practice", "Production"],
+        },
+        {
+          tag: "tip",
+          title: "Apollo Studio integration",
+          body: "**Apollo Studio** (formerly Apollo Graph Manager) provides production-grade observability:\n\n- **Operation tracing**: See p50/p95/p99 latency for every operation.\n- **Field usage**: Know which fields are actually queried — safely deprecate unused fields.\n- **Schema checks**: CI integration that blocks PRs with breaking schema changes.\n- **Alerts**: Get notified when error rates spike or latency exceeds thresholds.\n\nEnable it by setting the `APOLLO_KEY` environment variable and using `@apollo/server`'s built-in usage reporting. The client-side equivalent is Apollo Client DevTools in development.",
+          badges: ["Apollo Studio", "Observability"],
+          code: "// Apollo Studio usage reporting (server-side)\nimport { ApolloServer } from '@apollo/server';\n\nconst server = new ApolloServer({\n  typeDefs,\n  resolvers,\n  plugins: [\n    ApolloServerPluginUsageReporting({\n      sendVariableValues: { all: true },\n      sendHeaders: { all: true },\n    }),\n  ],\n});",
+        },
+        {
+          tag: "key-point",
+          title: "The production readiness checklist",
+          body: "Before shipping Apollo to production, verify:\n\n- [ ] **APQ enabled** — reduces payload size by 90%+\n- [ ] **Error link** sends to Sentry/DataDog with operation context\n- [ ] **Retry link** handles transient network failures (3 attempts, exponential backoff)\n- [ ] **Cache policies** configured for all types (`keyFields`, `merge` for pagination)\n- [ ] **Fetch policies** chosen per query (not all `network-only`)\n- [ ] **Bundle size** checked — tree-shake unused Apollo modules\n- [ ] **SSR hydration** tested if using Next.js/Remix\n- [ ] **Auth flow** handles token refresh without user-visible errors\n- [ ] **No sensitive data** logged or cached (PII in cache can leak)\n- [ ] **Schema governance** — breaking changes caught in CI",
+          badges: ["Checklist", "Production", "DevOps"],
+        },
+        {
+          tag: "tip",
+          title: "Bundle size optimization",
+          body: "Apollo Client's full bundle is ~35KB gzipped. Optimize by:\n\n- Import from specific paths: `import { useQuery } from '@apollo/client'` tree-shakes correctly in modern bundlers.\n- Don't import `@apollo/client/core` in React apps — use `@apollo/client` which includes React bindings.\n- If you only need queries (no mutations, no subscriptions), consider lighter alternatives like `graphql-request` for simple cases.\n- Use `@apollo/client/link/batch-http` only if you actually batch — each link adds to bundle size.\n- Run `npx source-map-explorer` to verify Apollo's contribution to your bundle.",
+          badges: ["Bundle Size", "Performance"],
+        },
+      ],
+      codeExamples: [
+        {
+          code: "const link = from([\n  persistedQueryLink,\n  errorLink,\n  retryLink,\n  httpLink,\n]);",
+          comment: "Production link chain order",
+        },
+        {
+          code: "Sentry.captureException(new Error(`GraphQL: ${operationName}`));",
+          comment: "Error reporting to monitoring service",
+        },
+      ],
+      defaultCode: `import { useState, useEffect, useRef } from 'react';
+import {
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  ApolloLink,
+  from,
+  useQuery,
+  gql,
+} from '@apollo/client';
+import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries';
+import { onError } from '@apollo/client/link/error';
+import { RetryLink } from '@apollo/client/link/retry';
+import { sha256 } from 'crypto-hash';
+
+// ── Production Metrics Collector ────────────────────────
+const prodMetrics = {
+  operations: 0,
+  errors: 0,
+  totalDuration: 0,
+  operationLog: [],
+  errorLog: [],
+};
+
+// ── APQ Link: persisted queries for bandwidth ───────────
+const persistedLink = createPersistedQueryLink({
+  sha256,
+  useGETForHashedQueries: true,
+});
+
+// ── Error Link: report to monitoring ────────────────────
+const errorMonitorLink = onError(({ graphQLErrors, networkError, operation }) => {
+  prodMetrics.errors++;
+  const entry = {
+    operation: operation.operationName,
+    timestamp: new Date().toISOString(),
+  };
+
+  if (graphQLErrors) {
+    entry.graphQLErrors = graphQLErrors.map(e => e.message);
+    // In production: Sentry.captureException(...)
+    console.error('[Monitor] GraphQL errors:', entry);
+  }
+
+  if (networkError) {
+    entry.networkError = networkError.message;
+    console.error('[Monitor] Network error:', entry);
+  }
+
+  prodMetrics.errorLog.push(entry);
+});
+
+// ── Retry Link: handle transient failures ───────────────
+const retryLink = new RetryLink({
+  delay: { initial: 300, max: 3000, jitter: true },
+  attempts: { max: 3, retryIf: (error) => !!error },
+});
+
+// ── Metrics Link: track performance ─────────────────────
+const metricsLink = new ApolloLink((operation, forward) => {
+  const start = performance.now();
+  prodMetrics.operations++;
+
+  return forward(operation).map(response => {
+    const duration = Math.round(performance.now() - start);
+    prodMetrics.totalDuration += duration;
+    prodMetrics.operationLog.push({
+      name: operation.operationName || 'anonymous',
+      duration,
+      timestamp: new Date().toISOString(),
+      hasErrors: !!response.errors,
+    });
+    return response;
+  });
+});
+
+const httpLink = new HttpLink({
+  uri: '/graphql',
+  credentials: 'include',
+});
+
+// ── Production Client ───────────────────────────────────
+const client = new ApolloClient({
+  link: from([metricsLink, persistedLink, errorMonitorLink, retryLink, httpLink]),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          posts: {
+            keyArgs: ['category'],
+            merge(existing = [], incoming) {
+              return [...existing, ...incoming];
+            },
+          },
+        },
+      },
+    },
+  }),
+  connectToDevTools: false, // Disabled in production
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    },
+  },
+});
+
+// ── Health Dashboard ────────────────────────────────────
+function HealthDashboard() {
+  const [metrics, setMetrics] = useState(prodMetrics);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setMetrics({ ...prodMetrics });
+    }, 1000);
+    return () => clearInterval(intervalRef.current);
+  }, []);
+
+  const avgDuration = metrics.operations > 0
+    ? Math.round(metrics.totalDuration / metrics.operations)
+    : 0;
+
+  const errorRate = metrics.operations > 0
+    ? ((metrics.errors / metrics.operations) * 100).toFixed(1)
+    : '0.0';
+
+  return (
+    <div>
+      {/* Status Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+        <div style={{ padding: 16, background: 'rgba(97,218,251,0.1)', borderRadius: 8, textAlign: 'center' }}>
+          <p style={{ fontSize: 28, margin: 0, color: '#61dafb' }}>{metrics.operations}</p>
+          <small style={{ color: '#888' }}>Operations</small>
+        </div>
+        <div style={{ padding: 16, background: 'rgba(239,68,68,0.1)', borderRadius: 8, textAlign: 'center' }}>
+          <p style={{ fontSize: 28, margin: 0, color: '#ef4444' }}>{metrics.errors}</p>
+          <small style={{ color: '#888' }}>Errors</small>
+        </div>
+        <div style={{ padding: 16, background: 'rgba(167,139,250,0.1)', borderRadius: 8, textAlign: 'center' }}>
+          <p style={{ fontSize: 28, margin: 0, color: '#a78bfa' }}>{avgDuration}ms</p>
+          <small style={{ color: '#888' }}>Avg Duration</small>
+        </div>
+        <div style={{ padding: 16, background: 'rgba(245,158,11,0.1)', borderRadius: 8, textAlign: 'center' }}>
+          <p style={{ fontSize: 28, margin: 0, color: errorRate > 5 ? '#ef4444' : '#22c55e' }}>{errorRate}%</p>
+          <small style={{ color: '#888' }}>Error Rate</small>
+        </div>
+      </div>
+
+      {/* Production Checklist */}
+      <div style={{ border: '1px solid #333', borderRadius: 8, padding: 16, marginBottom: 16 }}>
+        <h3 style={{ margin: '0 0 12px' }}>Production Checklist</h3>
+        {[
+          { label: 'APQ Enabled', done: true, detail: 'createPersistedQueryLink + sha256' },
+          { label: 'Error Monitoring', done: true, detail: 'onError link → Sentry/DataDog' },
+          { label: 'Retry Link', done: true, detail: '3 attempts, exponential backoff' },
+          { label: 'Cache Policies', done: true, detail: 'keyArgs + merge for pagination' },
+          { label: 'Fetch Policies', done: true, detail: 'cache-and-network default' },
+          { label: 'DevTools Disabled', done: true, detail: 'connectToDevTools: false' },
+          { label: 'Error Policy', done: true, detail: 'errorPolicy: all for partial data' },
+        ].map(item => (
+          <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
+            <span style={{ color: item.done ? '#22c55e' : '#ef4444' }}>
+              {item.done ? '[x]' : '[ ]'}
+            </span>
+            <span>{item.label}</span>
+            <span style={{ color: '#666', fontSize: 12, marginLeft: 'auto' }}>{item.detail}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Recent Operations */}
+      {metrics.operationLog.length > 0 && (
+        <div style={{ border: '1px solid #333', borderRadius: 8, padding: 16 }}>
+          <h4 style={{ margin: '0 0 8px' }}>Recent Operations</h4>
+          <div style={{ maxHeight: 150, overflow: 'auto' }}>
+            {metrics.operationLog.slice(-10).reverse().map((op, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 13 }}>
+                <span style={{ color: op.hasErrors ? '#ef4444' : '#ccc' }}>{op.name}</span>
+                <span style={{ color: op.duration > 1000 ? '#f59e0b' : '#888' }}>{op.duration}ms</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h2>Production Checklist</h2>
+      <p style={{ color: '#888', marginBottom: 16 }}>
+        APQ + Error Monitoring + Retry + Performance Tracking
+      </p>
+      <HealthDashboard />
+    </div>
+  );
+}
+
+export default App;`,
+      validationLogic: (code) => ({
+        success:
+          (code.includes("PersistedQuery") || code.includes("persisted") || code.includes("sha256")) &&
+          (code.includes("onError") || code.includes("errorLink") || code.includes("Monitor")),
+        message: "Production checklist complete! You've mastered Apollo Client from foundations to production.",
       }),
     },
   ];

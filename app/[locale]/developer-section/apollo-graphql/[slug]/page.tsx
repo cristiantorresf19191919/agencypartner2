@@ -2,7 +2,14 @@
 
 import React, { useCallback, useState } from "react";
 import { useParams } from "next/navigation";
-import { Hub as ApolloIcon } from "@mui/icons-material";
+import {
+  Hub as ApolloIcon,
+  Code as CodeIcon,
+  MenuBook as ReadIcon,
+  ChevronLeft,
+  ChevronRight,
+} from "@mui/icons-material";
+import { motion, AnimatePresence } from "framer-motion";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
@@ -105,6 +112,50 @@ function SectionShapeIcon({ tag }: { tag: LessonSectionTag }) {
   );
 }
 
+/* ─── Animation variants ─── */
+const editorPanelVariants = {
+  visible: {
+    width: "auto",
+    opacity: 1,
+    x: 0,
+    transition: {
+      width: { duration: 0.4, ease: [0.32, 0.72, 0, 1] },
+      opacity: { duration: 0.35, delay: 0.1, ease: "easeOut" },
+      x: { duration: 0.4, ease: [0.32, 0.72, 0, 1] },
+    },
+  },
+  hidden: {
+    width: 0,
+    opacity: 0,
+    x: 80,
+    transition: {
+      opacity: { duration: 0.2, ease: "easeIn" },
+      width: { duration: 0.35, delay: 0.05, ease: [0.32, 0.72, 0, 1] },
+      x: { duration: 0.3, ease: [0.32, 0.72, 0, 1] },
+    },
+  },
+};
+
+const sectionCardVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.97 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      delay: i * 0.06,
+      duration: 0.45,
+      ease: [0.25, 0.46, 0.45, 0.94],
+    },
+  }),
+};
+
+const toggleBtnVariants = {
+  idle: { scale: 1 },
+  hover: { scale: 1.08, boxShadow: "0 0 20px rgba(167, 139, 250, 0.4)" },
+  tap: { scale: 0.94 },
+};
+
 export default function ApolloGraphQLCourseLessonPage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
@@ -113,6 +164,7 @@ export default function ApolloGraphQLCourseLessonPage() {
   const { celebration, celebrate, onComplete } = useCelebration();
   const lesson = APOLLO_COURSE_LESSONS.find((l) => l.id === slug);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [editorVisible, setEditorVisible] = useState(true);
 
   const handleVerify = useCallback(
     (code: string) => {
@@ -161,19 +213,117 @@ export default function ApolloGraphQLCourseLessonPage() {
 
         <div className={`${playStyles.courseMain} ${!sidebarCollapsed ? playStyles.courseSidebarOpen : ""}`}>
           <section className={`${playStyles.playSection} ${playStyles.playSectionFullWidth}`}>
-            <div className={playStyles.layoutFill}>
-              <div className={playStyles.description}>
-                <div className={playStyles.descHeader}>
-                  <span className={playStyles.stepPill}>
+            {/* ─── Panel toggle toolbar ─── */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: 10,
+                marginBottom: 18,
+              }}
+            >
+              <motion.button
+                variants={toggleBtnVariants}
+                initial="idle"
+                whileHover="hover"
+                whileTap="tap"
+                onClick={() => setEditorVisible((v) => !v)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "8px 16px",
+                  borderRadius: 12,
+                  border: "1px solid rgba(167, 139, 250, 0.35)",
+                  background: editorVisible
+                    ? "rgba(167, 139, 250, 0.12)"
+                    : "linear-gradient(135deg, rgba(167, 139, 250, 0.25), rgba(124, 58, 237, 0.2))",
+                  color: "#a78bfa",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  transition: "background 0.3s, border-color 0.3s",
+                }}
+              >
+                {editorVisible ? (
+                  <>
+                    <ReadIcon style={{ fontSize: 18 }} />
+                    <span>Focus Mode</span>
+                    <ChevronRight style={{ fontSize: 16, opacity: 0.7 }} />
+                  </>
+                ) : (
+                  <>
+                    <CodeIcon style={{ fontSize: 18 }} />
+                    <span>Show Editor</span>
+                    <ChevronLeft style={{ fontSize: 16, opacity: 0.7 }} />
+                  </>
+                )}
+              </motion.button>
+            </motion.div>
+
+            {/* ─── Main 2-column layout ─── */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: editorVisible ? "minmax(320px, 480px) 1fr" : "1fr",
+                gap: 28,
+                alignItems: "start",
+                width: "100%",
+                minWidth: 0,
+                transition: "grid-template-columns 0.4s cubic-bezier(0.32, 0.72, 0, 1)",
+              }}
+            >
+              {/* ─── Left: Content panel ─── */}
+              <motion.div
+                layout
+                transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                className={playStyles.description}
+                style={{ maxWidth: editorVisible ? undefined : 860, margin: editorVisible ? undefined : "0 auto" }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className={playStyles.descHeader}
+                >
+                  <span
+                    className={playStyles.stepPill}
+                    style={{
+                      background: "rgba(167, 139, 250, 0.18)",
+                      color: "#a78bfa",
+                      borderColor: "rgba(167, 139, 250, 0.4)",
+                    }}
+                  >
                     {t("course-step").toUpperCase()} {lesson.step}
                   </span>
-                </div>
-                <h1 className={playStyles.descTitle}>{lesson.title}</h1>
+                </motion.div>
 
+                <motion.h1
+                  className={playStyles.descTitle}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05, duration: 0.45 }}
+                >
+                  {lesson.title}
+                </motion.h1>
+
+                {/* ─── Cascading section cards ─── */}
                 {lesson.sections && lesson.sections.length > 0 ? (
                   <div className={playStyles.contentFontWrap}>
                     {lesson.sections.map((sec: LessonSection, idx: number) => (
-                      <div key={idx} className={playStyles.conceptSectionCard} data-tag={sec.tag}>
+                      <motion.div
+                        key={`${lesson.id}-${idx}`}
+                        custom={idx}
+                        variants={sectionCardVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className={playStyles.conceptSectionCard}
+                        data-tag={sec.tag}
+                      >
                         <span className={`${playStyles.sectionTag} ${sectionTagClass(sec.tag)}`}>
                           <SectionShapeIcon tag={sec.tag} />
                           {sec.tag.replace("-", " ")}
@@ -183,27 +333,50 @@ export default function ApolloGraphQLCourseLessonPage() {
                           {parseSectionBody(sec.body, playStyles.inlineCode)}
                         </p>
                         {sec.badges && sec.badges.length > 0 && (
-                          <div className={playStyles.sectionBadges}>
+                          <motion.div
+                            className={playStyles.sectionBadges}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: idx * 0.06 + 0.3, duration: 0.3 }}
+                          >
                             {sec.badges.map((b) => (
                               <span key={b} className={playStyles.sectionBadge}>{b}</span>
                             ))}
-                          </div>
+                          </motion.div>
                         )}
                         {sec.code && (
-                          <HighlightedCode code={sec.code} language="typescript" className={playStyles.sectionCodeBlock} />
+                          <motion.div
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.06 + 0.2, duration: 0.35 }}
+                          >
+                            <HighlightedCode code={sec.code} language="typescript" className={playStyles.sectionCodeBlock} />
+                          </motion.div>
                         )}
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 ) : (
                   lesson.content.map((paragraph, i) => (
-                    <p key={i} className={playStyles.descBody}>
+                    <motion.p
+                      key={i}
+                      className={playStyles.descBody}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08, duration: 0.4 }}
+                    >
                       {paragraph}
-                    </p>
+                    </motion.p>
                   ))
                 )}
 
-                <div style={{ marginTop: "24px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                {/* ─── Prev / Next nav ─── */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.4 }}
+                  style={{ marginTop: 24, display: "flex", gap: 12, flexWrap: "wrap" }}
+                >
                   {lesson.prevStep && (
                     <Link
                       href={createLocalizedPath(`/developer-section/apollo-graphql/${lesson.prevStep}`)}
@@ -220,21 +393,34 @@ export default function ApolloGraphQLCourseLessonPage() {
                       {t("course-next")} →
                     </Link>
                   )}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
 
-              <div className={playStyles.editorColumnWrap}>
-                <CodeEditor
-                  key={lesson.id}
-                  code={lesson.defaultCode}
-                  language="typescript"
-                  onVerify={handleVerify}
-                  verifyButtonLabel={t("verify-button")}
-                  collapsePanelsByDefault={false}
-                  compactToolbar
-                  enableMultiFile
-                />
-              </div>
+              {/* ─── Right: Editor panel (animated) ─── */}
+              <AnimatePresence mode="popLayout">
+                {editorVisible && (
+                  <motion.div
+                    key="editor-panel"
+                    variants={editorPanelVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    className={playStyles.editorColumnWrap}
+                    style={{ overflow: "hidden", minWidth: 0 }}
+                  >
+                    <CodeEditor
+                      key={lesson.id}
+                      code={lesson.defaultCode}
+                      language="typescript"
+                      onVerify={handleVerify}
+                      verifyButtonLabel={t("verify-button")}
+                      collapsePanelsByDefault={false}
+                      compactToolbar
+                      enableMultiFile
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </section>
 
