@@ -14,6 +14,7 @@ import { ensureKotlinLanguage } from "@/lib/kotlinMonaco";
 import { ensureBashLanguage, registerBashCompletions } from "@/lib/bashMonaco";
 import { Highlight, themes } from "prism-react-renderer";
 import styles from "./CodeEditor.module.css";
+import { useTheme } from "@/contexts/ThemeContext";
 
 /** Languages supported by prism-react-renderer's bundled Prism. */
 const HIGHLIGHT_LANGUAGES = new Set([
@@ -172,6 +173,8 @@ export function CodeEditor({
   onVerify,
   verifyButtonLabel = "Verify",
 }: CodeEditorProps) {
+  const { theme: appTheme } = useTheme();
+  const monacoTheme = appTheme === "light" ? "vs" : "vs-dark-bright-keywords";
   const [code, setCode] = useState(initialCode);
   const [isFullscreen, setIsFullscreen] = useState(defaultFullscreen);
   const [showFullscreenPortal, setShowFullscreenPortal] = useState(false);
@@ -987,7 +990,7 @@ export function solution() {
       // Avoid editor.focus() on mount: it causes the page to scroll to the focused
       // editor. Blog posts have many CodeEditors; the last one to mount would
       // scroll the page to the bottom. Users can click into an editor to focus it.
-      monaco.editor.setTheme("vs-dark-bright-keywords");
+      monaco.editor.setTheme(monacoTheme);
       monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
       const isTsOrJs =
         isReactLike ||
@@ -1476,7 +1479,7 @@ export function solution() {
             options={editorOptions}
             beforeMount={handleBeforeMount}
             onMount={handleEditorMount}
-            theme="vs-dark-bright-keywords"
+            theme={monacoTheme}
           />
         </div>
         {isKotlin && (kotlinRunOutput != null || kotlinRunError != null) && (

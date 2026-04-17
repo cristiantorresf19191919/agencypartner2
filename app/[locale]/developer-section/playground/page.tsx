@@ -21,6 +21,7 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Skeleton } from "@/components/ui/Skeleton";
 import styles from "./PlaygroundPage.module.css";
 import type { OnMount } from "@monaco-editor/react";
@@ -78,6 +79,7 @@ const formatValue = (value: unknown): string => {
 
 export default function PlaygroundPage() {
   const { createLocalizedPath } = useLocale();
+  const { theme: appTheme } = useTheme();
   const [files, setFiles] = useState<PlaygroundFile[]>(() =>
     defaultFiles.map((f) => ({ ...f, uri: `file:///src/${f.name}` }))
   );
@@ -116,7 +118,7 @@ export default function PlaygroundPage() {
     monacoRef.current = monaco;
     editorRef.current = editor;
     editor.focus();
-    monaco.editor.setTheme("vs-dark");
+    monaco.editor.setTheme(appTheme === "light" ? "vs" : "vs-dark");
     monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: true,
@@ -531,7 +533,7 @@ export default function PlaygroundPage() {
               }}
               options={editorOptions}
               onMount={handleEditorMount}
-              theme="vs-dark"
+              theme={appTheme === "light" ? "vs" : "vs-dark"}
             />
           </div>
 

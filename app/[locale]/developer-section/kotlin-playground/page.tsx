@@ -20,6 +20,7 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Skeleton } from "@/components/ui/Skeleton";
 import styles from "../playground/PlaygroundPage.module.css";
 import type { OnMount } from "@monaco-editor/react";
@@ -64,6 +65,7 @@ fun main() {
 export default function KotlinPlaygroundPage() {
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
+  const { theme: appTheme } = useTheme();
   const [files, setFiles] = useState<PlaygroundFile[]>(() =>
     defaultFiles.map((f) => ({ ...f, uri: `file:///src/${f.name}` }))
   );
@@ -99,7 +101,7 @@ export default function KotlinPlaygroundPage() {
     monacoRef.current = monaco;
     editorRef.current = editor;
     editor.focus();
-    monaco.editor.setTheme("vs-dark");
+    monaco.editor.setTheme(appTheme === "light" ? "vs" : "vs-dark");
     defaultFiles.forEach((file) => {
       const uri = monaco.Uri.parse(`file:///src/${file.name}`);
       if (!monaco.editor.getModel(uri)) {
@@ -429,7 +431,7 @@ export default function KotlinPlaygroundPage() {
               }}
               options={editorOptions}
               onMount={handleEditorMount}
-              theme="vs-dark"
+              theme={appTheme === "light" ? "vs" : "vs-dark"}
             />
           </div>
 
