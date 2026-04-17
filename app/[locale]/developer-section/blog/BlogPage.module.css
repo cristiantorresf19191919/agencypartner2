@@ -881,6 +881,41 @@
   color: rgb(167, 243, 255);
 }
 
+/* ─── Blog Card Meta (Reading Time + Difficulty) ─── */
+.blogCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+}
+
+.readingTime {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.difficultyTag {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.7rem;
+}
+
+.difficulty-beginner {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.difficulty-intermediate {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+}
+
+.difficulty-advanced {
+  background: rgba(167, 139, 250, 0.15);
+  color: #a78bfa;
+}
+
 .backButton {
   text-align: center;
   margin-top: 2rem;

@@ -187,6 +187,18 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                     </button>
                   )}
                 </div>
+                <div className={styles.blogCardMeta}>
+                  {post.readingTime && (
+                    <span className={styles.readingTime}>
+                      {post.readingTime} {t("blog-min-read")}
+                    </span>
+                  )}
+                  {post.difficulty && (
+                    <span className={`${styles.difficultyTag} ${styles[`difficulty-${post.difficulty}`]}`}>
+                      {t(`hub-level-${post.difficulty}`)}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className={styles.topicsSection}>
                 <Text className={styles.topicsLabel}>

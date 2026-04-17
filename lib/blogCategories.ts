@@ -6,6 +6,8 @@ export interface BlogPost {
   color: string;
   slug: string;
   topics: string[];
+  readingTime?: number;
+  difficulty?: "beginner" | "intermediate" | "advanced";
 }
 
 export interface BlogCategory {
@@ -35,6 +37,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-blue-500 to-cyan-500",
         slug: "react-patterns",
         topics: ["Compound Components", "Higher-Order Components (HOC)", "Custom Hooks", "Render Props", "Containment Pattern", "Slot Pattern", "Selective Hydration"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
       {
         id: "composition-pattern",
@@ -44,6 +48,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-purple-500 to-pink-500",
         slug: "composition-pattern",
         topics: ["Composition", "Component Reusability", "Flexible APIs"],
+        readingTime: 10,
+        difficulty: "intermediate",
       },
       {
         id: "container-presentational-pattern",
@@ -53,6 +59,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-emerald-500 to-teal-500",
         slug: "container-presentational-pattern",
         topics: ["Container/Presentational Pattern", "Render Props", "DataSource Pattern", "Separation of Concerns"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
       {
         id: "advanced-react-hooks",
@@ -62,6 +70,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-violet-500 to-purple-500",
         slug: "advanced-react-hooks",
         topics: ["useTransition", "useLayoutEffect", "Callback Ref Pattern", "Router Loaders"],
+        readingTime: 20,
+        difficulty: "advanced",
       },
       {
         id: "advanced-react-concepts",
@@ -71,6 +81,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-cyan-500 to-blue-500",
         slug: "advanced-react-concepts",
         topics: ["Element Prop Pattern", "Split Context Pattern", "Derived State", "useEffect Best Practices"],
+        readingTime: 22,
+        difficulty: "advanced",
       },
       {
         id: "react-design-patterns",
@@ -80,6 +92,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-indigo-500 to-purple-500",
         slug: "react-design-patterns",
         topics: ["Modern Component Patterns", "Custom Hooks", "Context API & React 19", "TypeScript Best Practices"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
       {
         id: "concurrent-features",
@@ -89,6 +103,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-yellow-500 to-orange-500",
         slug: "concurrent-features",
         topics: ["Suspense & Error Boundaries", "useDeferredValue", "useTransition", "Streaming SSR"],
+        readingTime: 20,
+        difficulty: "advanced",
       },
       {
         id: "server-components",
@@ -98,6 +114,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-gray-600 to-slate-500",
         slug: "server-components",
         topics: ["Server vs Client Components", "Data Fetching Patterns", "Streaming & Progressive Rendering"],
+        readingTime: 18,
+        difficulty: "advanced",
       },
       {
         id: "react-internals",
@@ -107,6 +125,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-violet-600 to-purple-600",
         slug: "react-internals",
         topics: ["Fiber Architecture", "Reconciliation Algorithm", "Render & Commit Phases"],
+        readingTime: 25,
+        difficulty: "advanced",
       },
       {
         id: "react-best-practices",
@@ -116,6 +136,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-amber-500 to-orange-500",
         slug: "react-best-practices",
         topics: ["Eliminating Waterfalls", "Bundle Size", "Server-Side Performance", "Client Data Fetching", "Re-render Optimization", "Rendering", "JavaScript Performance", "Advanced Patterns"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -135,6 +157,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-orange-500 to-red-500",
         slug: "performance-optimization",
         topics: ["Code-Splitting", "useCallback", "useMemo", "State Collocation", "Throttling", "Debouncing"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
       {
         id: "code-splitting",
@@ -144,6 +168,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-indigo-600 to-purple-600",
         slug: "code-splitting",
         topics: ["Route-based Code Splitting", "Component-based Splitting", "Dynamic Imports", "Bundle Optimization"],
+        readingTime: 14,
+        difficulty: "intermediate",
       },
       {
         id: "performance-monitoring",
@@ -153,6 +179,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-teal-500 to-cyan-500",
         slug: "performance-monitoring",
         topics: ["React DevTools Profiler", "Web Vitals", "Bundle Analysis", "Performance Budgets"],
+        readingTime: 20,
+        difficulty: "advanced",
       },
       {
         id: "web-performance-core-web-vitals",
@@ -162,6 +190,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-yellow-500 to-orange-500",
         slug: "web-performance-core-web-vitals",
         topics: ["Critical Rendering Path", "Resource hints", "Service Workers & PWA", "Web Workers"],
+        readingTime: 18,
+        difficulty: "advanced",
       },
     ],
   },
@@ -181,6 +211,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-gray-800 to-gray-600",
         slug: "nextjs-best-practices",
         topics: ["App Router", "Server Components", "Data Fetching", "Caching Strategies", "Performance Optimization", "Routing Patterns", "API Routes", "Middleware"],
+        readingTime: 20,
+        difficulty: "advanced",
       },
     ],
   },
@@ -200,6 +232,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-orange-500 to-yellow-500",
         slug: "aws-cloud",
         topics: ["AWS Fundamentals", "EC2 & Compute", "S3 & Storage", "Lambda & Serverless", "RDS & Databases", "VPC & Networking"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
       {
         id: "edge-computing",
@@ -209,6 +243,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-indigo-500 to-purple-500",
         slug: "edge-computing",
         topics: ["Edge Computing Fundamentals", "Vercel Edge Functions", "Cloudflare Workers", "Edge Caching"],
+        readingTime: 18,
+        difficulty: "advanced",
       },
       {
         id: "terraform",
@@ -218,6 +254,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-green-500 to-emerald-500",
         slug: "terraform",
         topics: ["Terraform Fundamentals", "State Management", "Modules & Reusability", "Workspaces", "Provisioners", "Best Practices", "AWS/Azure/GCP Examples"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
       {
         id: "docker-zero-to-hero",
@@ -227,6 +265,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-blue-500 to-cyan-500",
         slug: "docker-zero-to-hero",
         topics: ["Images & Containers", "Dockerfile", "Volumes & Persistence", "Networking", "Docker Compose", "Multi-stage Builds", "Challenges"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
       {
         id: "kubernetes-zero-to-hero",
@@ -236,6 +276,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-blue-600 to-indigo-600",
         slug: "kubernetes-zero-to-hero",
         topics: ["Pods & Deployments", "Services & Ingress", "ConfigMaps & Secrets", "Volumes & PVC", "Namespaces", "HPA", "Jobs & CronJobs", "Debugging", "Helm", "Challenges"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
       {
         id: "serverless-applications",
@@ -256,6 +298,8 @@ export const blogCategories: BlogCategory[] = [
           "When to Use Serverless",
           "Challenges",
         ],
+        readingTime: 14,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -275,6 +319,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-amber-500 to-orange-500",
         slug: "gradle-zero-to-hero",
         topics: ["Gradle Wrapper", "build.gradle.kts", "Tasks", "Plugins", "Dependencies", "Multi-module", "Version Catalogs", "Build Hygiene"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -294,6 +340,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-green-500 to-emerald-500",
         slug: "testing-strategies",
         topics: ["React Testing Library", "Testing Custom Hooks", "Integration Testing", "E2E Testing", "TDD"],
+        readingTime: 14,
+        difficulty: "intermediate",
       },
       {
         id: "code-review",
@@ -303,6 +351,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-purple-600 to-pink-600",
         slug: "code-review",
         topics: ["Effective PR Reviews", "Constructive Feedback", "Architecture Review", "Security Review"],
+        readingTime: 8,
+        difficulty: "beginner",
       },
       {
         id: "error-handling",
@@ -312,6 +362,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-red-500 to-orange-500",
         slug: "error-handling",
         topics: ["Error Boundary Pattern", "Error Recovery", "Error Reporting", "Graceful Degradation"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -331,6 +383,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-red-600 to-pink-600",
         slug: "security",
         topics: ["XSS Prevention", "CSRF Protection", "Authentication Patterns", "Authorization Strategies"],
+        readingTime: 14,
+        difficulty: "intermediate",
       },
       {
         id: "authentication-authorization",
@@ -340,6 +394,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-red-600 to-orange-600",
         slug: "authentication-authorization",
         topics: ["JWT Deep Dive", "OAuth 2.0", "Session Management", "RBAC", "Permission-based Systems"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -359,6 +415,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-emerald-500 to-teal-500",
         slug: "state-management",
         topics: ["useImmer & useImmerReducer", "Zustand", "TanStack Query", "URL State with nuqs"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
       {
         id: "react-query",
@@ -368,6 +426,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-pink-500 to-rose-500",
         slug: "react-query",
         topics: ["Optimistic Updates", "Search Grid with Cancellation", "Infinite Feed", "Race Condition Prevention"],
+        readingTime: 14,
+        difficulty: "intermediate",
       },
       {
         id: "api-layer",
@@ -377,6 +437,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-indigo-500 to-purple-500",
         slug: "api-layer",
         topics: ["API Layer Architecture", "Separation of Concerns", "Custom Hooks for API", "TypeScript with API"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -396,6 +458,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-purple-500 to-pink-500",
         slug: "design-patterns",
         topics: ["Singleton", "Factory", "Observer", "Strategy", "Decorator", "Adapter", "Facade", "Command"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
       {
         id: "solid-principles",
@@ -405,6 +469,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-green-500 to-emerald-500",
         slug: "solid-principles",
         topics: ["Single Responsibility", "Open/Closed", "Liskov Substitution", "Interface Segregation", "Dependency Inversion"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
       {
         id: "advanced-patterns",
@@ -414,6 +480,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-purple-500 to-indigo-500",
         slug: "advanced-patterns",
         topics: ["Render Props Pattern", "Wrapper Components", "Polymorphic Components", "Design System Architecture"],
+        readingTime: 20,
+        difficulty: "advanced",
       },
       {
         id: "micro-frontends",
@@ -423,6 +491,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-slate-600 to-gray-600",
         slug: "micro-frontends",
         topics: ["Module Federation", "Single-SPA Architecture", "Independent Deployments", "Team Autonomy"],
+        readingTime: 22,
+        difficulty: "advanced",
       },
       {
         id: "migration-patterns",
@@ -432,6 +502,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-amber-500 to-yellow-500",
         slug: "migration-patterns",
         topics: ["Class to Hooks Migration", "Redux to Modern State", "React Version Upgrades", "Incremental Refactoring"],
+        readingTime: 14,
+        difficulty: "intermediate",
       },
       {
         id: "refactoring-guru",
@@ -441,6 +513,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-purple-500 to-pink-500",
         slug: "refactoring-guru",
         topics: ["Refused Bequest", "Code Smells", "Refactoring Techniques", "Object-Orientation Abusers", "Inheritance Patterns"],
+        readingTime: 10,
+        difficulty: "intermediate",
       },
       {
         id: "frontend-design-patterns-2026",
@@ -450,6 +524,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-cyan-500 to-purple-500",
         slug: "frontend-design-patterns-2026",
         topics: ["Atomic Design", "Signals vs Context API", "Container Queries", "Dark Mode & Theming", "Progressive Disclosure", "Lazy Loading & Code Splitting", "Tree Shaking", "Accessibility-First Components", "AI-Enhanced Workflows", "CSS Grid & Flexbox"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -469,6 +545,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-indigo-500 to-purple-500",
         slug: "how-llms-work",
         topics: ["Transformer Architecture", "Attention Mechanisms", "LLM Training", "Natural Language Processing", "Neural Networks"],
+        readingTime: 22,
+        difficulty: "advanced",
       },
     ],
   },
@@ -488,6 +566,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-blue-600 to-cyan-500",
         slug: "typescript-advanced",
         topics: ["Generic Components", "Utility Types", "Discriminated Unions", "Type Inference Patterns", "Branded Types"],
+        readingTime: 20,
+        difficulty: "advanced",
       },
     ],
   },
@@ -507,6 +587,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-blue-600 to-indigo-600",
         slug: "soft-skills",
         topics: ["Asking Questions", "Knowledge Sharing", "Communication Strategies", "Proactivity", "Accountability"],
+        readingTime: 7,
+        difficulty: "beginner",
       },
       {
         id: "interview-preparation",
@@ -516,6 +598,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-amber-500 to-orange-500",
         slug: "interview-preparation",
         topics: ["Technical Interviews", "System Design", "Coding Patterns", "Behavioral Interviews", "STAR Method"],
+        readingTime: 8,
+        difficulty: "beginner",
       },
     ],
   },
@@ -535,6 +619,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-indigo-500 to-violet-500",
         slug: "kotlin-multiplatform",
         topics: ["Shared UiState", "Expect/Actual UI adapters", "Adaptive layouts", "Shared navigation graphs"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
       {
         id: "flutter-react-native-kotlin-multiplatform",
@@ -544,6 +630,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-cyan-500 to-blue-600",
         slug: "flutter-react-native-kotlin-multiplatform",
         topics: ["Architecture Comparison", "Performance Benchmarks", "Code Sharing Strategies", "Ecosystem & Tooling"],
+        readingTime: 14,
+        difficulty: "intermediate",
       },
       {
         id: "kotlin-coroutines",
@@ -553,6 +641,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-violet-500 to-purple-600",
         slug: "kotlin-coroutines",
         topics: ["Coroutines basics", "Intro to coroutines and channels", "Cancellation and timeouts", "Composing suspending functions", "Context and dispatchers", "Asynchronous Flow", "Channels", "Coroutine exceptions", "Shared mutable state", "Select expression", "Debug tutorials", "Additional references"],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
       {
         id: "kotlin-spring-core",
@@ -562,6 +652,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-amber-500 to-orange-600",
         slug: "kotlin-spring-core",
         topics: ["Constructor injection", "Bean lifecycle", "@Configuration vs @Component", "Scopes & Prototype trap", "BeanPostProcessors", "Auto-configuration Starter", "DTOs & no entities", "GlobalExceptionHandler", "Filters vs Interceptors", "Bean Validation", "Phase 2 Perfect API challenge", "N+1 & JOIN FETCH", "Transaction propagation & proxy", "REQUIRED vs REQUIRES_NEW", "Optimistic locking @Version", "Phase 3 High-Load Optimizer", "OAuth2 & OIDC", "JWT resource server", "Spring Security filter chain", "@PreAuthorize", "CORS", "Phase 4 Secure Vault challenge", "Coroutines & suspend", "coroutineScope & async", "WebClient", "Kafka/Rabbit consumer groups", "DLQ", "Transactional Outbox", "Phase 5 Reliable Notifier challenge", "Actuator liveness/readiness", "MDC & correlation IDs", "Micrometer metrics", "Distributed tracing OpenTelemetry", "Phase 6 Glass Box challenge", "Modular Monolith", "Packaging by feature", "DDD lite rich vs anemic", "Testing pyramid Testcontainers", "Phase 7 Refactor capstone", "Course completion"],
+        readingTime: 25,
+        difficulty: "advanced",
       },
       {
         id: "kotlin-spring-reactivity",
@@ -571,6 +663,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-emerald-500 to-teal-600",
         slug: "kotlin-spring-reactivity",
         topics: ["Mono & Flux", "Reactive mindset", "map vs flatMap", "Zip & Tuples", "Error handling", "Kotlin Coroutines integration", "Spring WebFlux"],
+        readingTime: 20,
+        difficulty: "advanced",
       },
       {
         id: "kotlin-spring-mongodb-reactive",
@@ -580,6 +674,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-green-500 to-emerald-600",
         slug: "kotlin-spring-mongodb-reactive",
         topics: ["Reactive MongoDB", "@Document & data classes", "ReactiveMongoRepository", "flatMap & switchIfEmpty", "WebFlux REST", "ReactiveMongoTemplate", "Post + Comment capstone"],
+        readingTime: 18,
+        difficulty: "advanced",
       },
       {
         id: "spring-reactive-programming",
@@ -589,6 +685,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-cyan-500 to-blue-600",
         slug: "spring-reactive-programming",
         topics: ["Reactive Manifesto", "Reactive Streams", "Project Reactor", "Mono & Flux", "Hot vs Cold Publishers", "Backpressure", "Advanced Operators", "Spring WebFlux", "WebClient", "Reactive Repositories", "CAP Theorem", "Kafka Messaging", "Saga Pattern", "Resilience Patterns", "Spring Cloud Gateway"],
+        readingTime: 22,
+        difficulty: "advanced",
       },
     ],
   },
@@ -608,6 +706,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-blue-500 to-indigo-500",
         slug: "accessibility",
         topics: ["ARIA Patterns", "Keyboard Navigation", "Focus Management", "Screen Reader Optimization"],
+        readingTime: 6,
+        difficulty: "beginner",
       },
       {
         id: "internationalization",
@@ -617,6 +717,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-green-600 to-teal-600",
         slug: "internationalization",
         topics: ["react-i18next Patterns", "Date/Time Formatting", "RTL Support", "Locale Management"],
+        readingTime: 7,
+        difficulty: "beginner",
       },
       {
         id: "animations",
@@ -626,6 +728,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-pink-500 to-rose-500",
         slug: "animations",
         topics: ["Framer Motion Patterns", "React Spring", "Layout Animations", "Gesture Handling"],
+        readingTime: 6,
+        difficulty: "beginner",
       },
     ],
   },
@@ -645,6 +749,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-purple-500 to-pink-500",
         slug: "form-management",
         topics: ["React Hook Form", "Zod Schema Validation", "Complex Forms", "Multi-step Forms", "Dynamic Forms"],
+        readingTime: 7,
+        difficulty: "beginner",
       },
     ],
   },
@@ -664,6 +770,8 @@ export const blogCategories: BlogCategory[] = [
         color: "from-purple-500 to-pink-500",
         slug: "design-systems-component-libraries",
         topics: ["Building Design Systems", "Storybook Patterns", "Component Documentation", "Token System"],
+        readingTime: 12,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -693,6 +801,8 @@ export const blogCategories: BlogCategory[] = [
           "Best Practices",
           "Troubleshooting",
         ],
+        readingTime: 10,
+        difficulty: "intermediate",
       },
     ],
   },
@@ -725,6 +835,8 @@ export const blogCategories: BlogCategory[] = [
           "Dynamic Programming",
           "Greedy Algorithms",
         ],
+        readingTime: 15,
+        difficulty: "intermediate",
       },
     ],
   },
