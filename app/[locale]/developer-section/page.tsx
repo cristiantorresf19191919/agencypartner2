@@ -57,6 +57,8 @@ import {
   dismissWeeklyChallenge,
   getStore,
 } from "@/lib/devHubStore";
+import { getRecommendations } from "@/lib/recommendations";
+import { Lightbulb as LightbulbIcon } from "@mui/icons-material";
 import { getDueCount } from "@/lib/spacedRepetition";
 import { CHALLENGES } from "@/lib/challengesData";
 
@@ -430,6 +432,7 @@ export default function DeveloperSectionPage() {
   const [showChangelog, setShowChangelog] = useState(false);
   const [showWeeklyChallenge, setShowWeeklyChallenge] = useState(false);
   const weekly = getWeeklyChallenge();
+  const [recommendations, setRecommendations] = useState<Array<{ cardId: string; reasonKey: string }>>([]);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -439,6 +442,7 @@ export default function DeveloperSectionPage() {
     setRecentIds(getRecentVisits(3));
     setBookmarkedIds(new Set(getBookmarks()));
     setStreak(getStreak());
+    setRecommendations(getRecommendations());
 
     // Check if changelog was dismissed
     if (!isChangelogDismissed(CHANGELOG_VERSION)) {
@@ -756,6 +760,50 @@ export default function DeveloperSectionPage() {
                         <div className={styles.continueCardInfo}>
                           <div className={styles.continueCardTitle}>{t(card.titleKey)}</div>
                           <div className={styles.continueCardSub}>{t("hub-recently-visited")}</div>
+                        </div>
+                        <ArrowRight className={styles.continueCardArrow} />
+                      </motion.a>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Recommended Next */}
+          <AnimatePresence>
+            {recommendations.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4 }}
+                className={styles.recommendSection}
+              >
+                <div className={styles.recommendHeader}>
+                  <LightbulbIcon className={styles.recommendIcon} />
+                  <h2 className={styles.recommendTitle}>{t("hub-recommend-title")}</h2>
+                </div>
+                <div className={styles.continueGrid}>
+                  {recommendations.map((rec) => {
+                    const card = allCards.find((c) => c.id === rec.cardId);
+                    if (!card) return null;
+                    const Icon = card.icon;
+                    return (
+                      <motion.a
+                        key={card.id}
+                        href={createLocalizedPath(card.href)}
+                        className={styles.recommendCard}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleCardClick(card.id)}
+                      >
+                        <div className={styles.continueCardIcon}>
+                          <Icon />
+                        </div>
+                        <div className={styles.continueCardInfo}>
+                          <div className={styles.continueCardTitle}>{t(card.titleKey)}</div>
+                          <div className={styles.recommendReason}>{t(rec.reasonKey)}</div>
                         </div>
                         <ArrowRight className={styles.continueCardArrow} />
                       </motion.a>
