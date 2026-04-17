@@ -65,6 +65,32 @@ console.log(message);`,
   },
 ];
 
+const TS_TEMPLATES = [
+  {
+    nameKey: "tpl-hello-world",
+    files: [{ name: "index.ts", code: `console.log("Hello, World!");\nconsole.log("TypeScript is great!");` }],
+  },
+  {
+    nameKey: "tpl-todo-app",
+    files: [
+      { name: "index.ts", code: `import { TodoList } from "./todo";\n\nconst list = new TodoList();\nlist.add("Learn TypeScript");\nlist.add("Build something cool");\nlist.toggle(0);\nlist.print();` },
+      { name: "todo.ts", code: `interface Todo {\n  text: string;\n  done: boolean;\n}\n\nexport class TodoList {\n  private items: Todo[] = [];\n\n  add(text: string) {\n    this.items.push({ text, done: false });\n  }\n\n  toggle(index: number) {\n    if (this.items[index]) this.items[index].done = !this.items[index].done;\n  }\n\n  print() {\n    this.items.forEach((t, i) => {\n      console.log(\`\${t.done ? "✅" : "⬜"} \${i}: \${t.text}\`);\n    });\n  }\n}` },
+    ],
+  },
+  {
+    nameKey: "tpl-api-fetch",
+    files: [{ name: "index.ts", code: `async function fetchUser(id: number) {\n  const res = await fetch(\`https://jsonplaceholder.typicode.com/users/\${id}\`);\n  const user = await res.json();\n  console.log(\`Name: \${user.name}\`);\n  console.log(\`Email: \${user.email}\`);\n  console.log(\`City: \${user.address.city}\`);\n}\n\nfetchUser(1);` }],
+  },
+  {
+    nameKey: "tpl-state-machine",
+    files: [{ name: "index.ts", code: `type State = "idle" | "loading" | "success" | "error";\ntype Event = "FETCH" | "RESOLVE" | "REJECT" | "RESET";\n\nconst transitions: Record<State, Partial<Record<Event, State>>> = {\n  idle: { FETCH: "loading" },\n  loading: { RESOLVE: "success", REJECT: "error" },\n  success: { RESET: "idle" },\n  error: { RESET: "idle", FETCH: "loading" },\n};\n\nfunction transition(state: State, event: Event): State {\n  return transitions[state][event] ?? state;\n}\n\nlet current: State = "idle";\nconst events: Event[] = ["FETCH", "RESOLVE", "RESET", "FETCH", "REJECT", "RESET"];\n\nfor (const event of events) {\n  const next = transition(current, event);\n  console.log(\`\${current} --[\${event}]--> \${next}\`);\n  current = next;\n}` }],
+  },
+  {
+    nameKey: "tpl-custom-hook",
+    files: [{ name: "index.ts", code: `function useCounter(initial = 0) {\n  let count = initial;\n  return {\n    get: () => count,\n    increment: () => ++count,\n    decrement: () => --count,\n    reset: () => { count = initial; return count; },\n  };\n}\n\nconst counter = useCounter(10);\nconsole.log("Start:", counter.get());\ncounter.increment();\ncounter.increment();\nconsole.log("After 2 increments:", counter.get());\ncounter.decrement();\nconsole.log("After decrement:", counter.get());\nconsole.log("After reset:", counter.reset());` }],
+  },
+];
+
 const formatValue = (value: unknown): string => {
   if (value === undefined) return "undefined";
   if (value === null) return "null";
@@ -79,7 +105,9 @@ const formatValue = (value: unknown): string => {
 
 export default function PlaygroundPage() {
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
   const { theme: appTheme } = useTheme();
+  const [showTemplates, setShowTemplates] = useState(false);
   const [files, setFiles] = useState<PlaygroundFile[]>(() =>
     defaultFiles.map((f) => ({ ...f, uri: `file:///src/${f.name}` }))
   );
@@ -406,6 +434,24 @@ export default function PlaygroundPage() {
     }
   }, []);
 
+  const loadTemplate = useCallback((tpl: typeof TS_TEMPLATES[number]) => {
+    const newFiles = tpl.files.map((f) => ({ ...f, uri: `file:///src/${f.name}` }));
+    setFiles(newFiles);
+    setActiveFile(newFiles[0].name);
+    setShowTemplates(false);
+    setLogs([]);
+    setError(null);
+    setOutput("");
+    const monaco = monacoRef.current;
+    if (monaco) {
+      monaco.editor.getModels().forEach((m: { dispose: () => void }) => m.dispose());
+      tpl.files.forEach((file) => {
+        const uri = monaco.Uri.parse(`file:///src/${file.name}`);
+        monaco.editor.createModel(file.code, "typescript", uri);
+      });
+    }
+  }, []);
+
   const activeFileData = files.find((f) => f.name === activeFile) || files[0];
 
   return (
@@ -518,6 +564,38 @@ export default function PlaygroundPage() {
                 >
                   + New File
                 </button>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <button
+                    className={styles.newFileButton}
+                    style={{ background: "rgba(160, 106, 249, 0.1)", borderColor: "rgba(160, 106, 249, 0.3)" }}
+                    onClick={() => setShowTemplates(!showTemplates)}
+                  >
+                    {t("tpl-label")} &#9662;
+                  </button>
+                  {showTemplates && (
+                    <div style={{
+                      position: "absolute", top: "100%", left: 0, zIndex: 20, marginTop: 4,
+                      minWidth: 180, background: "#1e1e2e", border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 8, padding: 4, boxShadow: "0 8px 24px rgba(0,0,0,0.4)"
+                    }}>
+                      {TS_TEMPLATES.map((tpl) => (
+                        <button
+                          key={tpl.nameKey}
+                          style={{
+                            display: "block", width: "100%", textAlign: "left", padding: "8px 12px",
+                            border: "none", background: "none", color: "rgba(255,255,255,0.8)",
+                            fontSize: "0.8rem", borderRadius: 6, cursor: "pointer"
+                          }}
+                          onMouseEnter={(e) => { (e.target as HTMLElement).style.background = "rgba(160,106,249,0.15)"; }}
+                          onMouseLeave={(e) => { (e.target as HTMLElement).style.background = "none"; }}
+                          onClick={() => loadTemplate(tpl)}
+                        >
+                          {t(tpl.nameKey)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <MonacoEditor

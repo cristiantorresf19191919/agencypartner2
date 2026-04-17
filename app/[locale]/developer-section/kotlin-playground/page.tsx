@@ -62,10 +62,34 @@ fun main() {
   },
 ];
 
+const KT_TEMPLATES = [
+  {
+    nameKey: "tpl-kt-hello",
+    files: [{ name: "Main.kt", code: `fun main() {\n    println("Hello, World!")\n    println("Kotlin is awesome!")\n}` }],
+  },
+  {
+    nameKey: "tpl-kt-collections",
+    files: [{ name: "Main.kt", code: `fun main() {\n    val fruits = listOf("Apple", "Banana", "Cherry", "Date")\n    \n    // Filter and map\n    val longFruits = fruits.filter { it.length > 5 }.map { it.uppercase() }\n    println("Long fruits: \$longFruits")\n    \n    // Grouping\n    val byLength = fruits.groupBy { it.length }\n    println("By length: \$byLength")\n    \n    // Folding\n    val total = fruits.fold(0) { acc, fruit -> acc + fruit.length }\n    println("Total chars: \$total")\n}` }],
+  },
+  {
+    nameKey: "tpl-kt-coroutines",
+    files: [{ name: "Main.kt", code: `import kotlinx.coroutines.*\n\nfun main() = runBlocking {\n    println("Start")\n    \n    val deferred = async {\n        delay(100)\n        "Hello from coroutine!"\n    }\n    \n    println("Waiting...")\n    println(deferred.await())\n    println("Done")\n}` }],
+  },
+  {
+    nameKey: "tpl-kt-data-classes",
+    files: [{ name: "Main.kt", code: `data class User(val name: String, val age: Int, val email: String)\n\nfun main() {\n    val alice = User("Alice", 30, "alice@example.com")\n    val bob = alice.copy(name = "Bob", age = 25)\n    \n    println(alice)\n    println(bob)\n    println("Same? \${alice == bob}")\n    \n    val (name, age, email) = alice\n    println("Destructured: \$name, \$age, \$email")\n}` }],
+  },
+  {
+    nameKey: "tpl-kt-sealed",
+    files: [{ name: "Main.kt", code: `sealed class Result<out T> {\n    data class Success<T>(val data: T) : Result<T>()\n    data class Error(val message: String) : Result<Nothing>()\n    object Loading : Result<Nothing>()\n}\n\nfun fetchUser(id: Int): Result<String> {\n    return if (id > 0) Result.Success("User #\$id")\n    else Result.Error("Invalid ID")\n}\n\nfun main() {\n    val results = listOf(fetchUser(1), fetchUser(-1), Result.Loading)\n    \n    for (result in results) {\n        when (result) {\n            is Result.Success -> println("Got: \${result.data}")\n            is Result.Error -> println("Error: \${result.message}")\n            is Result.Loading -> println("Loading...")\n        }\n    }\n}` }],
+  },
+];
+
 export default function KotlinPlaygroundPage() {
   const { createLocalizedPath } = useLocale();
   const { t } = useLanguage();
   const { theme: appTheme } = useTheme();
+  const [showTemplates, setShowTemplates] = useState(false);
   const [files, setFiles] = useState<PlaygroundFile[]>(() =>
     defaultFiles.map((f) => ({ ...f, uri: `file:///src/${f.name}` }))
   );
@@ -306,6 +330,24 @@ export default function KotlinPlaygroundPage() {
     }
   }, []);
 
+  const loadTemplate = useCallback((tpl: typeof KT_TEMPLATES[number]) => {
+    const newFiles = tpl.files.map((f) => ({ ...f, uri: `file:///src/${f.name}` }));
+    setFiles(newFiles);
+    setActiveFile(newFiles[0].name);
+    setShowTemplates(false);
+    setLogs([]);
+    setError(null);
+    setOutput("");
+    const monaco = monacoRef.current;
+    if (monaco) {
+      monaco.editor.getModels().forEach((m: { dispose: () => void }) => m.dispose());
+      tpl.files.forEach((file) => {
+        const uri = monaco.Uri.parse(`file:///src/${file.name}`);
+        monaco.editor.createModel(file.code, "kotlin", uri);
+      });
+    }
+  }, []);
+
   const activeFileData = files.find((f) => f.name === activeFile) || files[0];
 
   return (
@@ -416,6 +458,38 @@ export default function KotlinPlaygroundPage() {
                 >
                   {t("kotlin-pg-new-file")}
                 </button>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <button
+                    className={styles.newFileButton}
+                    style={{ background: "rgba(160, 106, 249, 0.1)", borderColor: "rgba(160, 106, 249, 0.3)" }}
+                    onClick={() => setShowTemplates(!showTemplates)}
+                  >
+                    {t("tpl-label")} &#9662;
+                  </button>
+                  {showTemplates && (
+                    <div style={{
+                      position: "absolute", top: "100%", left: 0, zIndex: 20, marginTop: 4,
+                      minWidth: 180, background: "#1e1e2e", border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 8, padding: 4, boxShadow: "0 8px 24px rgba(0,0,0,0.4)"
+                    }}>
+                      {KT_TEMPLATES.map((tpl) => (
+                        <button
+                          key={tpl.nameKey}
+                          style={{
+                            display: "block", width: "100%", textAlign: "left", padding: "8px 12px",
+                            border: "none", background: "none", color: "rgba(255,255,255,0.8)",
+                            fontSize: "0.8rem", borderRadius: 6, cursor: "pointer"
+                          }}
+                          onMouseEnter={(e) => { (e.target as HTMLElement).style.background = "rgba(160,106,249,0.15)"; }}
+                          onMouseLeave={(e) => { (e.target as HTMLElement).style.background = "none"; }}
+                          onClick={() => loadTemplate(tpl)}
+                        >
+                          {t(tpl.nameKey)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <MonacoEditor
