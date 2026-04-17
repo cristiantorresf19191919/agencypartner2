@@ -3,6 +3,7 @@ import { REACT_COURSE_LESSONS } from "./reactCourseData";
 import { KOTLIN_COURSE_LESSONS } from "./kotlinCourseData";
 import { CSS_COURSE_LESSONS } from "./cssCourseData";
 import { TYPESCRIPT_COURSE_LESSONS } from "./typescriptCourseData";
+import { APOLLO_COURSE_LESSONS } from "./apolloCourseData";
 
 export interface SearchItem {
   id: string;
@@ -461,6 +462,25 @@ export function getSearchIndex(t: (key: string) => string): SearchItem[] {
     keywords: ["typescript", "types", "javascript"],
   }));
 
+  // Add Apollo GraphQL Course lessons
+  const apolloCourseItems: SearchItem[] = APOLLO_COURSE_LESSONS.map((lesson) => ({
+    id: `apollo-course-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/apollo-graphql/${lesson.id}`,
+    section: "Apollo GraphQL Course",
+    sectionKey: "apollo-graphql",
+    color: "#A78BFA",
+    keywords: [
+      "apollo",
+      "graphql",
+      "cache",
+      "query",
+      "mutation",
+      ...(lesson.sections?.flatMap((s) => s.badges || []) || []),
+    ],
+  }));
+
   return [
     ...navigationItems,
     ...blogItems,
@@ -468,6 +488,7 @@ export function getSearchIndex(t: (key: string) => string): SearchItem[] {
     ...kotlinCourseItems,
     ...cssCourseItems,
     ...typescriptCourseItems,
+    ...apolloCourseItems,
   ];
 }
 

@@ -85,6 +85,21 @@
   color: #7cf4ff;
 }
 
+/* Apollo GraphQL: accent with Apollo purple (#A78BFA) */
+.courseSidebarApollo .courseSidebarIcon {
+  color: #a78bfa;
+}
+
+.courseSidebarApollo .courseNavItemActive {
+  background: linear-gradient(120deg, rgba(167, 139, 250, 0.18), rgba(167, 139, 250, 0.1));
+  border-color: rgba(167, 139, 250, 0.4);
+  box-shadow: 0 2px 12px rgba(167, 139, 250, 0.2);
+}
+
+.courseSidebarApollo .courseNavItemActive .courseNavStep {
+  color: #a78bfa;
+}
+
 .courseSidebarHeader {
   display: flex;
   align-items: center;
