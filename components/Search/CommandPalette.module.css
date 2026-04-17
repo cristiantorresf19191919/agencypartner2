@@ -86,6 +86,38 @@
   color: #fff;
 }
 
+/* Filter chips */
+.paletteFilters {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.paletteFilterChip {
+  padding: 4px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.paletteFilterChip:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.paletteFilterActive {
+  background: rgba(160, 106, 249, 0.2);
+  border-color: rgba(160, 106, 249, 0.4);
+  color: white;
+}
+
 /* Results area */
 .results {
   flex: 1;

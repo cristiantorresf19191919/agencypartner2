@@ -51,9 +51,18 @@ export default function CommandPalette() {
   const { createLocalizedPath } = useLocale();
   const { showLoader } = useNavigationLoader();
   const [query, setQuery] = useState("");
+  const [searchFilter, setSearchFilter] = useState<string>("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  const paletteFilters = [
+    { id: "all", labelKey: "palette-filter-all" },
+    { id: "blog", labelKey: "palette-filter-blog" },
+    { id: "react-course", labelKey: "palette-filter-courses" },
+    { id: "challenges", labelKey: "palette-filter-challenges" },
+    { id: "interview", labelKey: "palette-filter-interview" },
+  ];
 
   const searchIndex = useMemo(() => getSearchIndex(t), [t]);
 
@@ -62,27 +71,33 @@ export default function CommandPalette() {
     return searchItems(searchIndex, query);
   }, [searchIndex, query]);
 
+  const filteredResults = useMemo(() => {
+    if (searchFilter === "all") return results;
+    return results.filter((item) => item.sectionKey.includes(searchFilter));
+  }, [results, searchFilter]);
+
   // Group results by section
   const groupedResults = useMemo<GroupedResults>(() => {
     const groups: GroupedResults = {};
-    results.forEach((item) => {
+    filteredResults.forEach((item) => {
       const key = item.sectionKey || "other";
       if (!groups[key]) groups[key] = [];
       groups[key].push(item);
     });
     return groups;
-  }, [results]);
+  }, [filteredResults]);
 
   // Flatten results for keyboard navigation
   const flatResults = useMemo(() => {
     return Object.values(groupedResults).flat();
   }, [groupedResults]);
 
-  // Focus input when opened
+  // Focus input when opened; reset filter when closed
   useEffect(() => {
     if (isOpen) {
       setQuery("");
       setSelectedIndex(0);
+      setSearchFilter("all");
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen]);
@@ -200,6 +215,19 @@ export default function CommandPalette() {
               )}
             </div>
 
+            {/* Filter Chips */}
+            <div className={styles.paletteFilters}>
+              {paletteFilters.map((f) => (
+                <button
+                  key={f.id}
+                  className={`${styles.paletteFilterChip} ${searchFilter === f.id ? styles.paletteFilterActive : ""}`}
+                  onClick={() => setSearchFilter(f.id)}
+                >
+                  {t(f.labelKey)}
+                </button>
+              ))}
+            </div>
+
             {/* Results */}
             <div className={styles.results} ref={resultsRef}>
               {/* Recent Searches (when no query) */}
@@ -239,7 +267,7 @@ export default function CommandPalette() {
               )}
 
               {/* No results */}
-              {query && results.length === 0 && (
+              {query && filteredResults.length === 0 && (
                 <div className={styles.emptyState}>
                   <p>{t("command-palette-no-results") || "No results found"}</p>
                   <span>{t("command-palette-try-different") || "Try a different search term"}</span>
