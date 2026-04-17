@@ -1833,3 +1833,26 @@
   color: #fbbf24;
   opacity: 0.8;
 }
+
+.shareStatsBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(160, 106, 249, 0.3);
+  background: rgba(160, 106, 249, 0.1);
+  color: #c4a6ff;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shareStatsBtn:hover {
+  background: rgba(160, 106, 249, 0.2);
+}
+
+.shareStatsIcon {
+  font-size: 16px !important;
+}

@@ -58,9 +58,12 @@ import {
   getStore,
 } from "@/lib/devHubStore";
 import { getRecommendations } from "@/lib/recommendations";
-import { Lightbulb as LightbulbIcon } from "@mui/icons-material";
+import { Lightbulb as LightbulbIcon, Share as ShareIcon } from "@mui/icons-material";
 import { getDueCount } from "@/lib/spacedRepetition";
 import { CHALLENGES } from "@/lib/challengesData";
+import dynamic from "next/dynamic";
+
+const ShareProgressCard = dynamic(() => import("@/components/ShareCard/ShareProgressCard"), { ssr: false });
 
 // Card data organized by content type
 type ContentCategory = "blog" | "playground" | "course" | "challenge" | "interview" | "game";
@@ -435,6 +438,7 @@ export default function DeveloperSectionPage() {
   const [recommendations, setRecommendations] = useState<Array<{ cardId: string; reasonKey: string }>>([]);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const srDueCount = getDueCount(getStore().interviewSR);
 
@@ -634,6 +638,10 @@ export default function DeveloperSectionPage() {
                 {t("hub-stats-streak")} ({t("hub-stats-days")})
               </span>
             </div>
+            <button className={styles.shareStatsBtn} onClick={() => setShowShareCard(true)}>
+              <ShareIcon className={styles.shareStatsIcon} />
+              <span>{t("hub-share-stats")}</span>
+            </button>
           </motion.div>
 
           {/* What's New Changelog Banner */}
@@ -1095,6 +1103,13 @@ export default function DeveloperSectionPage() {
         </AnimatePresence>
       </div>
       <Footer />
+      <ShareProgressCard
+        open={showShareCard}
+        onClose={() => setShowShareCard(false)}
+        streak={streak}
+        bookmarkCount={bookmarkedIds.size}
+        recentTopics={recentIds.slice(0, 3)}
+      />
     </main>
   );
 }
