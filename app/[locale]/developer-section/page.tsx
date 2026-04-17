@@ -39,6 +39,7 @@ import {
   Waves as FlowIcon,
   FavoriteBorder as HeartOutline,
   Favorite as HeartFilled,
+  People as PeopleIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -263,6 +264,17 @@ const contentGroups: Array<{
         ctaKey: "solve-react-challenges",
         difficulty: "advanced",
         tags: ["react"],
+      },
+      {
+        id: "multiplayer-challenges",
+        category: "challenge",
+        href: "/developer-section/challenges/multiplayer",
+        icon: PeopleIcon,
+        titleKey: "multiplayer-card-title",
+        descKey: "multiplayer-card-desc",
+        ctaKey: "multiplayer-card-cta",
+        difficulty: "intermediate",
+        tags: ["general"],
       },
     ],
   },
