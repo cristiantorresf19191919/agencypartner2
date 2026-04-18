@@ -40,6 +40,7 @@ import {
   FavoriteBorder as HeartOutline,
   Favorite as HeartFilled,
   People as PeopleIcon,
+  Cloud as CloudIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -247,6 +248,17 @@ const contentGroups: Array<{
         ctaKey: "start-course",
         difficulty: "advanced",
         tags: ["react", "typescript"],
+      },
+      {
+        id: "azure-course",
+        category: "course",
+        href: "/developer-section/azure-course",
+        icon: CloudIcon,
+        titleKey: "azure-course-card-title",
+        descKey: "azure-course-card-desc",
+        ctaKey: "start-course",
+        difficulty: "beginner",
+        tags: ["typescript", "general"],
       },
     ],
   },
