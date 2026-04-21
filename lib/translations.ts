@@ -999,6 +999,11 @@ const translations = {
     'react-challenge-result': 'Resultado',
     'react-challenge-loading-editor': 'Cargando editor…',
     'offline-banner': 'Estás sin conexión — el contenido en caché está disponible',
+    'mml-card-title': 'Matemáticas para Machine Learning',
+    'mml-card-desc': 'Visualizaciones interactivas de álgebra lineal, cálculo, probabilidad y aplicaciones de ML',
+    'mml-course-pill': 'Matemáticas Interactivas',
+    'mml-course-title': 'Matemáticas para Machine Learning',
+    'mml-course-subtitle': 'Domina las matemáticas detrás del ML con visualizaciones interactivas 2D y 3D',
   },
   en: {
     'hero-title':
@@ -1999,6 +2004,11 @@ const translations = {
     'react-challenge-result': 'Result',
     'react-challenge-loading-editor': 'Loading editor…',
     'offline-banner': "You're offline — cached content is available",
+    'mml-card-title': 'Mathematics for Machine Learning',
+    'mml-card-desc': 'Interactive visualizations covering linear algebra, calculus, probability, and ML applications',
+    'mml-course-pill': 'Interactive Math',
+    'mml-course-title': 'Mathematics for Machine Learning',
+    'mml-course-subtitle': 'Master the math behind ML with interactive 2D and 3D visualizations',
   },
 } as const;
 
