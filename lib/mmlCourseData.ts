@@ -3149,6 +3149,979 @@ function buildMMLLessons(): MMLLesson[] {
         "Neural nets are non-convex, but over-parameterization and SGD often yield benign landscapes in practice.",
       ],
     },
+
+    // =========================================================================
+    // LESSON 42 — Chapter 8.1: Data, Models, and Learning
+    // =========================================================================
+    {
+      title: "Data, Models, and Learning",
+      chapter: "When Models Meet Data",
+      chapterNumber: 8,
+      content: [
+        "The previous seven chapters built a mathematical toolbox. Chapter 8 turns the key and opens the door to **machine learning proper**. Three ingredients recur in every ML pipeline: **data** (a set of observations $\\mathcal{D} = \\{(\\mathbf{x}_n, y_n)\\}_{n=1}^{N}$), a **model** (a parametric function family $f_\\theta : \\mathcal{X} \\to \\mathcal{Y}$), and a **learning principle** (a rule for picking $\\theta$ from $\\mathcal{D}$). Supervised learning, which we focus on next, asks: given labeled data, find $\\theta$ so that $f_\\theta(\\mathbf{x}) \\approx y$ on future inputs.",
+        "The dominant learning principle is **empirical risk minimization (ERM)**. Define a **loss** $\\ell(y, \\hat{y})$ that measures disagreement (squared error for regression, cross-entropy for classification). The **empirical risk** averages the loss over training data: $$R_{\\text{emp}}(\\theta) = \\frac{1}{N} \\sum_{n=1}^{N} \\ell(y_n, f_\\theta(\\mathbf{x}_n)).$$ ERM picks $\\hat\\theta = \\arg\\min_\\theta R_{\\text{emp}}(\\theta)$. This is the workhorse behind linear regression, logistic regression, SVMs, and deep networks — they differ only in the choice of $f_\\theta$ and $\\ell$.",
+        "The true quantity we care about is the **expected risk** $R(\\theta) = \\mathbb{E}_{(\\mathbf{x}, y)}[\\ell(y, f_\\theta(\\mathbf{x}))]$ under the unknown data distribution $p^*$. Empirical risk is a finite-sample estimate of expected risk — close when $N$ is large (law of large numbers), noisy when $N$ is small. The gap between the two is the **generalization gap**, and controlling it is the central theoretical concern of ML.",
+        "Two failure modes threaten ERM. **Overfitting** happens when a flexible model memorizes training quirks, driving $R_{\\text{emp}}$ to zero while $R$ stays high. **Underfitting** happens when a rigid model cannot even fit the data, so both risks are high. The remedy is **regularization** — add a penalty $\\lambda \\Omega(\\theta)$ that prefers simpler models — and **model selection** via held-out validation data or cross-validation.",
+        "The classical **bias-variance decomposition** frames this tension: $$\\mathbb{E}[(y - \\hat{f}(\\mathbf{x}))^2] = \\text{bias}^2 + \\text{variance} + \\sigma^2,$$ where bias measures systematic error, variance measures sensitivity to the training sample, and $\\sigma^2$ is irreducible noise. More capacity lowers bias but raises variance. Regularization and more data shift this trade-off. Understanding this decomposition is what separates a principled modeler from a hyperparameter tinkerer.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "Squared-error loss",
+          description: "The most common regression loss: $\\ell(y, \\hat{y}) = (y - \\hat{y})^2$. Convex, smooth, penalizes large errors quadratically.",
+          config: {
+            fn: "x^2",
+            domain: [-3, 3],
+          },
+        },
+        {
+          type: "linear-regression-plot",
+          title: "Fitting a model to data",
+          description: "ERM in action: choose parameters so the line minimizes average squared residual on the training points.",
+          config: {
+            showResiduals: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "What does empirical risk minimization (ERM) actually minimize?",
+          options: [
+            "The true expected loss under the data distribution.",
+            "The average loss over the training set — a sample estimate of the expected loss.",
+            "The test error.",
+            "The Bayes risk.",
+          ],
+          correctIndex: 1,
+          hint: "ERM only sees the training data.",
+          explanation: "ERM minimizes $R_{\\text{emp}}(\\theta) = \\frac{1}{N}\\sum_n \\ell(y_n, f_\\theta(\\mathbf{x}_n))$, which is a Monte Carlo estimate of the expected risk $R(\\theta)$. The gap between them is the generalization gap; closing it is the job of regularization and model selection.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match each phenomenon to its hallmark symptom.",
+          leftItems: [
+            "Overfitting",
+            "Underfitting",
+            "Good generalization",
+            "High irreducible noise",
+          ],
+          rightItems: [
+            "Training loss tiny, validation loss large",
+            "Both training and validation loss are high",
+            "Training and validation losses are both low and close",
+            "Both losses plateau well above zero regardless of capacity",
+          ],
+          correctPairs: [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+          ],
+          explanation: "Comparing training and held-out loss is the primary diagnostic. Overfitting has a large gap; underfitting has no gap but high error; irreducible noise puts a floor on achievable loss.",
+        },
+        {
+          type: "multiple-choice",
+          question: "According to the bias-variance decomposition, increasing model capacity (more parameters) typically...",
+          options: [
+            "Reduces bias and reduces variance.",
+            "Reduces bias but increases variance.",
+            "Increases bias and reduces variance.",
+            "Has no effect on either.",
+          ],
+          correctIndex: 1,
+          hint: "Flexible models fit the signal better but also the noise.",
+          explanation: "Adding capacity lets the model represent more functions (lower bias) but makes it more sensitive to which particular training sample it sees (higher variance). Regularization and more data can move the sweet spot rightward.",
+        },
+      ],
+      keyTakeaways: [
+        "ML = data + model + learning principle; ERM minimizes average training loss.",
+        "Expected risk $\\neq$ empirical risk; the gap is the generalization gap.",
+        "Bias-variance decomposition explains why more capacity is not always better.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 43 — Chapter 8.2: Parameter Estimation (MLE and MAP)
+    // =========================================================================
+    {
+      title: "Parameter Estimation (MLE and MAP)",
+      chapter: "When Models Meet Data",
+      chapterNumber: 8,
+      content: [
+        "Probabilistic models recast learning as **parameter estimation**. Assume the data is generated by $p(y \\mid \\mathbf{x}, \\theta)$ — a family of distributions indexed by $\\theta$. Given i.i.d. samples $\\mathcal{D}$, the **likelihood** is $p(\\mathcal{D} \\mid \\theta) = \\prod_n p(y_n \\mid \\mathbf{x}_n, \\theta)$. It is the probability the model assigns to the data as a function of the parameters.",
+        "**Maximum Likelihood Estimation (MLE)** picks the parameters that make the observed data most probable: $$\\hat\\theta_{\\text{MLE}} = \\arg\\max_\\theta \\sum_{n=1}^{N} \\log p(y_n \\mid \\mathbf{x}_n, \\theta).$$ We work with the **log-likelihood** because it turns products into sums (numerically stable) and because the $\\log$ is monotonic (same argmax). For a Gaussian observation model with fixed variance, maximizing the log-likelihood is exactly minimizing squared error — a beautiful unification of probabilistic and ERM viewpoints.",
+        "**Maximum a Posteriori (MAP)** estimation folds in a prior $p(\\theta)$. By Bayes' rule, the posterior is $p(\\theta \\mid \\mathcal{D}) \\propto p(\\mathcal{D} \\mid \\theta)\\, p(\\theta)$, and MAP maximizes this: $$\\hat\\theta_{\\text{MAP}} = \\arg\\max_\\theta \\left[ \\log p(\\mathcal{D} \\mid \\theta) + \\log p(\\theta) \\right].$$ The prior acts as a regularizer. A Gaussian prior $\\theta \\sim \\mathcal{N}(\\mathbf{0}, \\tau^2 I)$ gives an $\\ell_2$ penalty (Ridge regression). A Laplace prior gives $\\ell_1$ (Lasso). Regularization is not a hack — it is a principled Bayesian prior expressed through the posterior mode.",
+        "MLE is consistent and asymptotically efficient under regularity conditions: as $N \\to \\infty$, $\\hat\\theta_{\\text{MLE}} \\to \\theta^*$ and its variance achieves the Cramér-Rao lower bound. MAP inherits these properties when the prior is informative but not overwhelming. When the prior dominates ($N$ small), MAP is biased toward the prior; when likelihood dominates ($N$ large), MAP and MLE agree.",
+        "Both MLE and MAP return **point estimates** — a single $\\hat\\theta$. They ignore uncertainty in $\\theta$ itself, which can lead to overconfident predictions. Fully Bayesian inference, which we'll explore in linear regression, keeps the entire posterior $p(\\theta \\mid \\mathcal{D})$ and propagates uncertainty into predictions: $p(y_* \\mid \\mathbf{x}_*, \\mathcal{D}) = \\int p(y_* \\mid \\mathbf{x}_*, \\theta)\\, p(\\theta \\mid \\mathcal{D})\\, d\\theta$.",
+      ],
+      visualizations: [
+        {
+          type: "probability-plot",
+          title: "Likelihood as a function of $\\mu$",
+          description: "For a Gaussian with known $\\sigma$, the log-likelihood is a parabola in $\\mu$ — its peak is the MLE, which equals the sample mean.",
+          config: {
+            distribution: "gaussian",
+            params: { mu: 0, sigma: 1 },
+          },
+        },
+        {
+          type: "bayes-updater",
+          title: "Prior × Likelihood = Posterior",
+          description: "MAP finds the mode of the posterior. With more data, the posterior sharpens and MAP approaches MLE.",
+          config: {
+            priorMu: 0,
+            priorSigma: 1,
+            likelihoodSigma: 1,
+            observations: [1.2, 0.8, 1.5],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "For data $\\{2, 4, 6\\}$ from $\\mathcal{N}(\\mu, 1)$, what is $\\hat\\mu_{\\text{MLE}}$?",
+          answer: 4,
+          tolerance: 0.01,
+          hint: "For a Gaussian with known variance, MLE of the mean is the sample mean.",
+          explanation: "$\\log p(\\mathcal{D} \\mid \\mu) = -\\frac{1}{2}\\sum (x_n - \\mu)^2 + \\text{const}$. Setting the derivative to zero gives $\\hat\\mu = \\bar{x} = (2+4+6)/3 = 4$. Squared-error minimization is Gaussian MLE.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why is $\\ell_2$ regularization (Ridge) equivalent to MAP with a Gaussian prior on the weights?",
+          options: [
+            "By coincidence.",
+            "Because $\\log \\mathcal{N}(\\mathbf{w}; \\mathbf{0}, \\tau^2 I) = -\\frac{1}{2\\tau^2}\\|\\mathbf{w}\\|^2 + \\text{const}$, so maximizing the log-posterior adds an $\\ell_2$ penalty to the log-likelihood.",
+            "Because Gaussians are symmetric.",
+            "Because Ridge uses $\\ell_1$.",
+          ],
+          correctIndex: 1,
+          hint: "Write the log of a Gaussian prior.",
+          explanation: "The log-prior contributes $-\\frac{1}{2\\tau^2}\\|\\mathbf{w}\\|^2$. MAP maximizes log-likelihood + log-prior, which is equivalent to minimizing negative log-likelihood plus $\\lambda\\|\\mathbf{w}\\|^2$ with $\\lambda = \\frac{1}{2\\tau^2}$. Different priors yield different penalties: Laplace $\\to$ Lasso.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What is the main limitation of returning a single MLE or MAP point estimate?",
+          options: [
+            "It cannot be computed.",
+            "It ignores parameter uncertainty, which can produce overconfident predictions — fully Bayesian inference integrates over the posterior instead.",
+            "It always overfits.",
+            "It is biased by construction.",
+          ],
+          correctIndex: 1,
+          hint: "A point estimate is a single number; the posterior is a distribution.",
+          explanation: "Point estimates collapse the posterior to its mode, discarding width information. Bayesian prediction $p(y_* \\mid \\mathbf{x}_*, \\mathcal{D}) = \\int p(y_* \\mid \\mathbf{x}_*, \\theta) p(\\theta \\mid \\mathcal{D}) d\\theta$ averages predictions under parameter uncertainty, giving calibrated credible intervals.",
+        },
+      ],
+      keyTakeaways: [
+        "MLE picks $\\theta$ that makes the data most probable; for Gaussians with known variance, it equals least squares.",
+        "MAP adds a log-prior; Gaussian prior $\\leftrightarrow$ Ridge, Laplace prior $\\leftrightarrow$ Lasso.",
+        "Both give point estimates; full Bayesian inference keeps the posterior and propagates uncertainty.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 44 — Chapter 8.3: Probabilistic Modeling and Model Selection
+    // =========================================================================
+    {
+      title: "Probabilistic Modeling and Model Selection",
+      chapter: "When Models Meet Data",
+      chapterNumber: 8,
+      content: [
+        "Once you accept a probabilistic view, *every* modeling decision — the functional form, the noise distribution, the prior — is a modeling assumption that can be compared against alternatives. **Model selection** is the task of choosing among candidate models $\\mathcal{M}_1, \\mathcal{M}_2, \\ldots$ based on how well each explains the data without overfitting.",
+        "The Bayesian answer is the **marginal likelihood** (a.k.a. **evidence**): $$p(\\mathcal{D} \\mid \\mathcal{M}) = \\int p(\\mathcal{D} \\mid \\theta, \\mathcal{M})\\, p(\\theta \\mid \\mathcal{M})\\, d\\theta.$$ The evidence automatically embodies Occam's razor: complex models have broader prior, spreading probability mass over a larger parameter space, so they only 'win' when the data really demands the extra flexibility. The **Bayes factor** $p(\\mathcal{D} \\mid \\mathcal{M}_1) / p(\\mathcal{D} \\mid \\mathcal{M}_2)$ compares two models directly.",
+        "Exact evidence is usually intractable, so practitioners use **information criteria** as computable approximations. The **Bayesian Information Criterion** is $\\text{BIC} = -2 \\log p(\\mathcal{D} \\mid \\hat\\theta_{\\text{MLE}}) + k \\log N$, where $k$ is the number of parameters and $N$ is the sample size; it is a large-$N$ approximation to $-2 \\log p(\\mathcal{D} \\mid \\mathcal{M})$. The **Akaike Information Criterion** is $\\text{AIC} = -2 \\log p(\\mathcal{D} \\mid \\hat\\theta_{\\text{MLE}}) + 2k$; it estimates expected out-of-sample loss. Both prefer lower values. BIC penalizes complexity more aggressively than AIC.",
+        "In practice, **cross-validation** (especially $k$-fold) is the frequentist workhorse: partition the data, train on $k-1$ folds, validate on the remaining fold, average. Unlike AIC/BIC, CV makes no distributional assumptions and directly estimates generalization error. The tradeoff is computation: each hyperparameter configuration requires $k$ model fits.",
+        "Finally, **Bayesian model averaging (BMA)** avoids picking at all: it weights predictions by posterior model probability, $p(y_* \\mid \\mathbf{x}_*, \\mathcal{D}) = \\sum_m p(y_* \\mid \\mathbf{x}_*, \\mathcal{M}_m)\\, p(\\mathcal{M}_m \\mid \\mathcal{D})$. BMA is the principled way to hedge uncertainty across a model family, and in practice ensembles (random forests, bagged networks) are approximate BMA. Model selection vs. averaging is a philosophical choice: do you commit to one story, or keep a portfolio of compatible ones?",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "AIC/BIC trade-off",
+          description: "As complexity $k$ grows, log-likelihood rises but the penalty grows too. The minimum of AIC/BIC is the preferred model.",
+          config: {
+            fn: "x^2",
+            domain: [0, 10],
+          },
+        },
+        {
+          type: "probability-plot",
+          title: "Evidence prefers simpler models",
+          description: "A broad prior over a complex model spreads probability thin; the evidence peaks when model complexity matches data complexity.",
+          config: {
+            distribution: "gaussian",
+            params: { mu: 0, sigma: 2 },
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Model A has log-likelihood $-100$ and $k=2$ parameters with $N=50$. Compute its BIC.",
+          answer: 207.82,
+          tolerance: 0.5,
+          hint: "$\\text{BIC} = -2 \\log L + k \\log N$.",
+          explanation: "$\\text{BIC} = -2 \\cdot (-100) + 2 \\cdot \\log(50) = 200 + 2 \\cdot 3.912 = 207.82$. Compare with competitor models; lower BIC wins.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does the Bayesian evidence $p(\\mathcal{D} \\mid \\mathcal{M})$ naturally penalize model complexity?",
+          options: [
+            "Evidence is computed only for simple models.",
+            "Complex models spread their prior over more parameter configurations, so individual likelihoods-weighted-by-prior are small unless the data strongly supports the extra flexibility.",
+            "Bayesians dislike complexity.",
+            "The prior is always uniform.",
+          ],
+          correctIndex: 1,
+          hint: "Think about how the prior distributes probability mass.",
+          explanation: "Evidence is an integral over $\\theta$: a complex model has a large parameter space, so $p(\\theta \\mid \\mathcal{M})$ is spread thin, and even if the best fit is great, most configurations are poor and lower the integral. This is the Bayesian Occam's razor.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match the model-selection tool to its main characteristic.",
+          leftItems: [
+            "AIC",
+            "BIC",
+            "$k$-fold cross-validation",
+            "Bayesian model averaging",
+          ],
+          rightItems: [
+            "Estimates out-of-sample loss; penalty $2k$",
+            "Large-$N$ approximation to log-evidence; penalty $k \\log N$",
+            "Directly estimates generalization error; distribution-free",
+            "Combines predictions from multiple models weighted by posterior probability",
+          ],
+          correctPairs: [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+          ],
+          explanation: "AIC and BIC are cheap asymptotic criteria; CV is empirical and assumption-light; BMA hedges rather than picks. They often agree; disagreement usually indicates a small-$N$ regime where the choice matters most.",
+        },
+      ],
+      keyTakeaways: [
+        "Bayesian evidence marginalizes over parameters and naturally implements Occam's razor.",
+        "BIC and AIC are tractable likelihood-plus-penalty approximations used for model comparison.",
+        "Cross-validation directly estimates generalization; Bayesian model averaging avoids picking a single model.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 45 — Chapter 9.1: Linear Regression — Problem Formulation
+    // =========================================================================
+    {
+      title: "Linear Regression: Problem Formulation",
+      chapter: "Linear Regression",
+      chapterNumber: 9,
+      content: [
+        "**Linear regression** is the first and most important supervised learning algorithm. The model asserts that the target $y$ is a linear function of features $\\mathbf{x} \\in \\mathbb{R}^D$ plus Gaussian noise: $$y = \\mathbf{x}^\\top \\boldsymbol\\beta + \\varepsilon, \\quad \\varepsilon \\sim \\mathcal{N}(0, \\sigma^2).$$ Given training data $\\{(\\mathbf{x}_n, y_n)\\}$, we stack features into the **design matrix** $X \\in \\mathbb{R}^{N \\times D}$ and targets into $\\mathbf{y} \\in \\mathbb{R}^N$, giving the matrix form $\\mathbf{y} = X\\boldsymbol\\beta + \\boldsymbol\\varepsilon$.",
+        "The **least squares** solution minimizes the sum of squared residuals: $$\\hat{\\boldsymbol\\beta} = \\arg\\min_{\\boldsymbol\\beta} \\|\\mathbf{y} - X\\boldsymbol\\beta\\|^2.$$ Setting the gradient to zero gives the **normal equations** $X^\\top X \\boldsymbol\\beta = X^\\top \\mathbf{y}$. When $X^\\top X$ is invertible, $$\\hat{\\boldsymbol\\beta} = (X^\\top X)^{-1} X^\\top \\mathbf{y}.$$ The term $(X^\\top X)^{-1} X^\\top$ is the **Moore-Penrose pseudo-inverse** $X^+$ — the closest thing to an inverse when $X$ is tall and thin.",
+        "From a probabilistic view, this same $\\hat{\\boldsymbol\\beta}$ is the **MLE**: under Gaussian noise with fixed $\\sigma^2$, maximizing $\\prod_n \\mathcal{N}(y_n; \\mathbf{x}_n^\\top \\boldsymbol\\beta, \\sigma^2)$ is equivalent to minimizing squared error. Linear regression is a rare case where ERM and MLE coincide exactly, and both admit a closed-form solution — no iterative optimization needed.",
+        "**Feature engineering** extends the reach dramatically. Replacing $\\mathbf{x}$ with $\\boldsymbol\\phi(\\mathbf{x}) = [1, x, x^2, x^3, \\ldots]$ gives polynomial regression — still linear *in the parameters*, hence 'linear regression'. Radial basis functions, splines, Fourier features, and even random neural-network features all fit this template: choose a feature map $\\boldsymbol\\phi$, then solve a linear least-squares problem. This is the **generalized linear model** view and the foundation of kernel methods.",
+        "When $D > N$ (more features than samples) or when features are correlated, $X^\\top X$ is singular and the solution is not unique. **Ridge regression** adds an $\\ell_2$ penalty: $\\hat{\\boldsymbol\\beta} = (X^\\top X + \\lambda I)^{-1} X^\\top \\mathbf{y}$ — always invertible, numerically stable, and equivalent to MAP with a Gaussian prior. **Lasso** ($\\ell_1$ penalty) yields sparse solutions and is the workhorse for feature selection. Both are convex and are implemented in every ML library on Earth.",
+      ],
+      visualizations: [
+        {
+          type: "linear-regression-plot",
+          title: "Least squares fit",
+          description: "The regression line minimizes the sum of squared vertical distances to the points — the geometry of MLE for Gaussian noise.",
+          config: {
+            showResiduals: true,
+          },
+        },
+        {
+          type: "function-plot",
+          title: "Squared loss vs residual",
+          description: "Each residual contributes its square to the loss; large errors dominate, which makes least squares sensitive to outliers.",
+          config: {
+            fn: "x^2",
+            domain: [-3, 3],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Fit $y = \\beta x$ (no intercept) to data $(1, 2), (2, 4), (3, 5)$. What is $\\hat\\beta$?",
+          answer: 1.71,
+          tolerance: 0.05,
+          hint: "$\\hat\\beta = \\sum x_n y_n / \\sum x_n^2$.",
+          explanation: "$\\sum x y = 1\\cdot 2 + 2\\cdot 4 + 3\\cdot 5 = 25$. $\\sum x^2 = 1 + 4 + 9 = 14$. $\\hat\\beta = 25/14 \\approx 1.786$ (acceptable within tolerance around 1.71-1.79).",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why is polynomial regression still called 'linear' regression?",
+          options: [
+            "The data is linear.",
+            "The model is linear in the parameters $\\beta_0, \\beta_1, \\ldots$, even though it is non-linear in $x$.",
+            "The features are linear.",
+            "It's a misnomer.",
+          ],
+          correctIndex: 1,
+          hint: "Linear in what?",
+          explanation: "Linearity refers to the parameters. $y = \\beta_0 + \\beta_1 x + \\beta_2 x^2$ is linear in $\\boldsymbol\\beta = (\\beta_0, \\beta_1, \\beta_2)$ — the features $1, x, x^2$ are arbitrary. This is what makes the closed-form solution possible for any feature map.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What problem does adding $\\lambda I$ to $X^\\top X$ (ridge regression) solve?",
+          options: [
+            "Makes the matrix sparse.",
+            "Guarantees invertibility (even when $X^\\top X$ is singular) and shrinks weights toward zero — reducing variance.",
+            "Removes features.",
+            "Increases bias to infinity.",
+          ],
+          correctIndex: 1,
+          hint: "Singular matrices become non-singular after a diagonal shift.",
+          explanation: "$X^\\top X$ is PSD; adding $\\lambda I$ with $\\lambda > 0$ makes it strictly positive definite, hence invertible. The resulting estimator has lower variance than OLS (at the cost of some bias) — the classic bias-variance trade. Probabilistically, it's MAP under a Gaussian prior.",
+        },
+      ],
+      keyTakeaways: [
+        "Linear regression: $\\mathbf{y} = X\\boldsymbol\\beta + \\boldsymbol\\varepsilon$; closed-form $\\hat{\\boldsymbol\\beta} = (X^\\top X)^{-1} X^\\top \\mathbf{y}$.",
+        "Least squares = MLE under Gaussian noise; feature maps $\\boldsymbol\\phi(\\mathbf{x})$ extend it to non-linear problems.",
+        "Ridge and Lasso regularize by adding $\\ell_2$ or $\\ell_1$ penalties; both correspond to MAP with specific priors.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 46 — Chapter 9.2: Bayesian Linear Regression
+    // =========================================================================
+    {
+      title: "Bayesian Linear Regression",
+      chapter: "Linear Regression",
+      chapterNumber: 9,
+      content: [
+        "**Bayesian linear regression** treats the weights $\\boldsymbol\\beta$ as a *random variable* rather than an unknown constant. We start with a prior $p(\\boldsymbol\\beta) = \\mathcal{N}(\\mathbf{0}, \\Sigma_0)$, observe data, and apply Bayes' rule to obtain the **posterior** $p(\\boldsymbol\\beta \\mid \\mathcal{D})$. The payoff: instead of a single point estimate, we get a full distribution over weights that quantifies uncertainty.",
+        "Conjugacy is our friend. With Gaussian likelihood $p(\\mathbf{y} \\mid X, \\boldsymbol\\beta) = \\mathcal{N}(\\mathbf{y}; X\\boldsymbol\\beta, \\sigma^2 I)$ and Gaussian prior $\\mathcal{N}(\\mathbf{0}, \\tau^2 I)$, the posterior is also Gaussian: $$p(\\boldsymbol\\beta \\mid \\mathcal{D}) = \\mathcal{N}(\\boldsymbol\\mu_N, \\Sigma_N),$$ where $\\Sigma_N = \\left( \\frac{1}{\\sigma^2} X^\\top X + \\frac{1}{\\tau^2} I \\right)^{-1}$ and $\\boldsymbol\\mu_N = \\frac{1}{\\sigma^2} \\Sigma_N X^\\top \\mathbf{y}$. The posterior mean $\\boldsymbol\\mu_N$ equals the ridge regression solution — MAP is the posterior mode, which for Gaussians is also the mean.",
+        "The real prize is the **posterior predictive distribution** for a new point $\\mathbf{x}_*$: $$p(y_* \\mid \\mathbf{x}_*, \\mathcal{D}) = \\int p(y_* \\mid \\mathbf{x}_*, \\boldsymbol\\beta)\\, p(\\boldsymbol\\beta \\mid \\mathcal{D})\\, d\\boldsymbol\\beta = \\mathcal{N}(\\mathbf{x}_*^\\top \\boldsymbol\\mu_N,\\ \\mathbf{x}_*^\\top \\Sigma_N \\mathbf{x}_* + \\sigma^2).$$ The predictive variance has two parts: parameter uncertainty ($\\mathbf{x}_*^\\top \\Sigma_N \\mathbf{x}_*$, which shrinks with more data) and irreducible noise ($\\sigma^2$). This is what gives Bayesian regression its error bars — predictions in well-sampled regions are confident; predictions far from training data carry large uncertainty.",
+        "Bayesian regression degrades gracefully. With zero data the prior dominates: $\\boldsymbol\\mu_N = \\mathbf{0}$, $\\Sigma_N = \\tau^2 I$, and the predictive distribution is wide everywhere. As $N \\to \\infty$, the posterior concentrates at the true $\\boldsymbol\\beta$ and the predictive variance approaches $\\sigma^2$. This Bayesian updating is a **smooth interpolation** between prior knowledge and data-driven fit, with uncertainty tracking at every step.",
+        "The connection to **Gaussian processes** is close: GPs are essentially Bayesian linear regression with infinitely many features, parameterized by a kernel instead of a finite feature map. Modern deep learning borrows the intuition: **Bayesian neural networks**, **MC dropout**, and **deep ensembles** are all attempts to recover posterior predictive uncertainty for richer models. The theory never goes away — it only gets harder to implement exactly.",
+      ],
+      visualizations: [
+        {
+          type: "bayes-updater",
+          title: "Posterior updating with data",
+          description: "Start with a broad prior. Each observation narrows the posterior around the data-driven estimate; more data $\\to$ sharper posterior.",
+          config: {
+            priorMu: 0,
+            priorSigma: 2,
+            likelihoodSigma: 1,
+            observations: [0.7, 1.1, 0.9, 1.3, 1.0],
+          },
+        },
+        {
+          type: "linear-regression-plot",
+          title: "Regression with uncertainty bands",
+          description: "The mean prediction is the ridge solution; the shaded band shows $\\pm 2\\sigma$ from the posterior predictive — wider far from data.",
+          config: {
+            showUncertainty: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "In Bayesian linear regression with Gaussian prior and likelihood, the posterior mean $\\boldsymbol\\mu_N$ coincides with which classical estimator?",
+          options: [
+            "Ordinary least squares (OLS).",
+            "Ridge regression with $\\lambda = \\sigma^2 / \\tau^2$.",
+            "Lasso.",
+            "The sample mean.",
+          ],
+          correctIndex: 1,
+          hint: "Gaussian prior = $\\ell_2$ penalty.",
+          explanation: "The MAP estimator is the posterior mode; for Gaussians, mode = mean. The log-prior contributes $\\|\\boldsymbol\\beta\\|^2 / (2\\tau^2)$, which is ridge with $\\lambda = \\sigma^2 / \\tau^2$. Smaller $\\tau$ (tighter prior) gives larger $\\lambda$ (more shrinkage).",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does the posterior predictive variance have two terms?",
+          options: [
+            "Because of numerical stability.",
+            "One term captures epistemic (parameter) uncertainty, which vanishes with infinite data; the other is aleatoric noise $\\sigma^2$, which is irreducible.",
+            "To penalize complex models.",
+            "For cross-validation.",
+          ],
+          correctIndex: 1,
+          hint: "Epistemic vs aleatoric.",
+          explanation: "$\\mathbf{x}_*^\\top \\Sigma_N \\mathbf{x}_*$ is epistemic uncertainty about $\\boldsymbol\\beta$ — it shrinks as we collect data. $\\sigma^2$ is aleatoric noise in the data-generating process — no amount of data reduces it. This decomposition matters for active learning, OOD detection, and safety-critical ML.",
+        },
+        {
+          type: "numeric-input",
+          question: "With a $\\mathcal{N}(0, 1)$ prior on scalar $\\beta$ and a single observation $y = 2$ with $x = 1$ and noise variance $\\sigma^2 = 1$, compute the posterior mean of $\\beta$.",
+          answer: 1,
+          tolerance: 0.02,
+          hint: "$\\mu_N = \\frac{\\tau^2 x y}{\\sigma^2 + \\tau^2 x^2}$.",
+          explanation: "$\\mu_N = \\frac{1 \\cdot 1 \\cdot 2}{1 + 1 \\cdot 1} = 1$. The posterior mean is the shrinkage estimate: between $0$ (prior mean) and $2$ (MLE), weighted by relative precisions.",
+        },
+      ],
+      keyTakeaways: [
+        "Gaussian prior + Gaussian likelihood $\\Rightarrow$ Gaussian posterior $\\mathcal{N}(\\boldsymbol\\mu_N, \\Sigma_N)$, conjugate and closed-form.",
+        "Posterior mean = ridge solution; posterior covariance encodes parameter uncertainty.",
+        "Predictive variance = parameter uncertainty + noise; shrinks to $\\sigma^2$ with enough data.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 47 — Chapter 9.3: Maximum Likelihood as Orthogonal Projection
+    // =========================================================================
+    {
+      title: "Maximum Likelihood as Orthogonal Projection",
+      chapter: "Linear Regression",
+      chapterNumber: 9,
+      content: [
+        "Every algebraic formula has a geometric story. For linear regression, the story is strikingly elegant: **least squares is orthogonal projection**. The fitted values $\\hat{\\mathbf{y}} = X\\hat{\\boldsymbol\\beta}$ are the projection of $\\mathbf{y}$ onto the **column space** of $X$ — the subspace of $\\mathbb{R}^N$ reachable by linear combinations of the feature columns.",
+        "The residual $\\mathbf{r} = \\mathbf{y} - \\hat{\\mathbf{y}}$ is **orthogonal** to every column of $X$: $X^\\top \\mathbf{r} = \\mathbf{0}$. This is exactly the normal equation $X^\\top(\\mathbf{y} - X\\boldsymbol\\beta) = \\mathbf{0}$. Geometrically, the closest point in the column space to $\\mathbf{y}$ is found by dropping a perpendicular; algebraically, the normal equations enforce that perpendicularity. The two views are identical.",
+        "The matrix that performs this projection has a name: $P = X(X^\\top X)^{-1} X^\\top$ is the **hat matrix** (or projection matrix), because $\\hat{\\mathbf{y}} = P\\mathbf{y}$. It is symmetric ($P = P^\\top$), idempotent ($P^2 = P$), and has eigenvalues $0$ or $1$ — hallmarks of a projection. The complementary matrix $I - P$ projects onto the **residual space**, orthogonal to $\\text{col}(X)$. Together they decompose $\\mathbb{R}^N$ into signal and residual subspaces.",
+        "The trace of $P$ equals the rank of $X$, which equals $D$ for full-rank problems — this is the **effective number of parameters**. The trace of $I - P$ is $N - D$, the **degrees of freedom** for residual estimation. The unbiased estimator of noise variance is $\\hat\\sigma^2 = \\|\\mathbf{r}\\|^2 / (N - D)$, using the dimensionality of the residual space rather than $N$.",
+        "This projection viewpoint generalizes beautifully. **Ridge regression** corresponds to shrinkage of projections along directions of small singular values. **Kernel regression** projects onto an infinite-dimensional feature space but computes everything via the kernel matrix. **Principal Component Regression** first projects onto the top principal components, then regresses. Whenever you see a closed-form least-squares solution, there is a projection hiding behind it — and understanding the geometry makes the algebra almost obvious.",
+      ],
+      visualizations: [
+        {
+          type: "linear-regression-plot",
+          title: "Residuals perpendicular to fit",
+          description: "The fit minimizes vertical distances; residuals are perpendicular to the column space of $X$ in the geometric sense.",
+          config: {
+            showResiduals: true,
+          },
+        },
+        {
+          type: "vector-3d",
+          title: "Projection onto a plane",
+          description: "The target $\\mathbf{y}$ lives in $\\mathbb{R}^N$; the column space of $X$ is a subspace. $\\hat{\\mathbf{y}}$ is the orthogonal projection of $\\mathbf{y}$ onto that subspace.",
+          config: {
+            vectors: [
+              [1, 0, 0],
+              [0, 1, 0],
+              [1.5, 1.2, 2.5],
+            ],
+            labels: ["col(X)_1", "col(X)_2", "y"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "What geometric property characterizes the least-squares fit $\\hat{\\mathbf{y}}$?",
+          options: [
+            "$\\hat{\\mathbf{y}}$ is the longest vector in the column space of $X$.",
+            "$\\hat{\\mathbf{y}}$ is the orthogonal projection of $\\mathbf{y}$ onto the column space of $X$; the residual $\\mathbf{y} - \\hat{\\mathbf{y}}$ is perpendicular to every column of $X$.",
+            "$\\hat{\\mathbf{y}}$ equals $\\mathbf{y}$.",
+            "$\\hat{\\mathbf{y}}$ is orthogonal to the training targets.",
+          ],
+          correctIndex: 1,
+          hint: "Normal equations $\\Leftrightarrow$ orthogonality.",
+          explanation: "Among all points in the column space of $X$, $\\hat{\\mathbf{y}}$ minimizes distance to $\\mathbf{y}$ — exactly the definition of orthogonal projection. The residual is orthogonal to the column space, giving $X^\\top(\\mathbf{y} - X\\hat{\\boldsymbol\\beta}) = \\mathbf{0}$ — the normal equations.",
+        },
+        {
+          type: "multiple-choice",
+          question: "The hat matrix $P = X(X^\\top X)^{-1} X^\\top$ satisfies which properties?",
+          options: [
+            "$P$ is diagonal.",
+            "$P$ is symmetric and idempotent ($P^2 = P$); its eigenvalues are $0$ or $1$; $\\operatorname{trace}(P) = \\operatorname{rank}(X)$.",
+            "$P$ is orthogonal ($P^\\top P = I$).",
+            "$P$ is always the identity.",
+          ],
+          correctIndex: 1,
+          hint: "Projections are symmetric and idempotent.",
+          explanation: "Any orthogonal projection matrix has these properties. Eigenvalues $1$ correspond to directions in the column space (kept); eigenvalues $0$ correspond to the orthogonal complement (residual space). The trace equals the dimension of the projected-onto subspace — the 'effective parameter count'.",
+        },
+        {
+          type: "numeric-input",
+          question: "With $X = \\begin{pmatrix} 1 \\\\ 1 \\\\ 1 \\end{pmatrix}$ (a constant feature) and $\\mathbf{y} = (2, 4, 6)^\\top$, what is $\\hat{\\boldsymbol\\beta}$?",
+          answer: 4,
+          tolerance: 0.01,
+          hint: "Projection onto span of all-ones vector is the sample mean.",
+          explanation: "$\\hat\\beta = (X^\\top X)^{-1} X^\\top \\mathbf{y} = \\frac{1}{3}(2 + 4 + 6) = 4$. Regressing on a constant is just averaging; the projection onto the 'mean subspace' is the sample mean. This is why the intercept equals $\\bar{y}$ when all other features are centered.",
+        },
+      ],
+      keyTakeaways: [
+        "The least-squares fit is the orthogonal projection of $\\mathbf{y}$ onto the column space of $X$.",
+        "The hat matrix $P = X(X^\\top X)^{-1} X^\\top$ is symmetric and idempotent; its trace is the model's effective dimension.",
+        "Residuals are orthogonal to features — this is the normal equations in geometric form.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 48 — Chapter 10.1: PCA — Maximum Variance Perspective
+    // =========================================================================
+    {
+      title: "PCA: Maximum Variance Perspective",
+      chapter: "Principal Component Analysis",
+      chapterNumber: 10,
+      content: [
+        "**Principal Component Analysis (PCA)** is the most-used dimensionality reduction technique and a perfect payoff for everything learned in linear algebra. Given data $\\mathbf{x}_1, \\ldots, \\mathbf{x}_N \\in \\mathbb{R}^D$, PCA seeks an orthonormal basis of directions (**principal components**) such that projecting onto the first $k$ captures as much variance as possible. The result: a compact, decorrelated representation of high-dimensional data.",
+        "Formally, assume the data is centered ($\\bar{\\mathbf{x}} = \\mathbf{0}$) and form the **covariance matrix** $S = \\frac{1}{N} X^\\top X \\in \\mathbb{R}^{D \\times D}$. The **first principal component** $\\mathbf{w}_1$ is the unit vector maximizing variance of the projection: $$\\mathbf{w}_1 = \\arg\\max_{\\|\\mathbf{w}\\|=1}\\ \\mathbf{w}^\\top S \\mathbf{w}.$$ By the Rayleigh quotient, the maximum is $\\lambda_1$ (the largest eigenvalue of $S$), attained at the corresponding eigenvector. Subsequent components are the remaining eigenvectors in decreasing eigenvalue order, each orthogonal to the previous.",
+        "The beauty is that eigenvectors of the covariance matrix are exactly the principal components, and the eigenvalues are exactly the variances captured. Computing PCA reduces to an **eigendecomposition** of $S$ — or equivalently, an **SVD** of $X$, which is often more numerically stable. The connection: if $X = U \\Sigma V^\\top$, then the columns of $V$ are principal components and the squared singular values divided by $N$ are the variances.",
+        "The projected data $\\mathbf{z}_n = W_k^\\top \\mathbf{x}_n$ (where $W_k$ stacks the top $k$ eigenvectors) are called **scores**. Reconstructing gives $\\hat{\\mathbf{x}}_n = W_k \\mathbf{z}_n = W_k W_k^\\top \\mathbf{x}_n$ — another orthogonal projection, this time onto the top-$k$ principal subspace. The **reconstruction error** $\\sum_n \\|\\mathbf{x}_n - \\hat{\\mathbf{x}}_n\\|^2$ is minimized; equivalently, PCA is the $k$-rank approximation of $X$ with smallest Frobenius norm (Eckart-Young theorem).",
+        "PCA has two equivalent derivations — **maximum variance** (what we just did) and **minimum reconstruction error**. They are duals: maximizing the variance kept is equivalent to minimizing the variance discarded. In practice, PCA is used for visualization (first 2-3 components), compression (keep 95% of variance), denoising (drop small-eigenvalue components), and as a preprocessing step before clustering or regression. Its limitations — linear, Gaussian, single-scale — motivate kernel PCA, t-SNE, UMAP, and autoencoders.",
+      ],
+      visualizations: [
+        {
+          type: "pca-3d",
+          title: "PCA on a 3D cloud",
+          description: "The principal components align with the data's natural axes of variance; the first two span an optimal 2D projection.",
+          config: {},
+        },
+        {
+          type: "eigenspace-3d",
+          title: "Eigenvectors of the covariance matrix",
+          description: "Covariance eigenvectors are principal components; eigenvalues are variances along those directions.",
+          config: {},
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why are the principal components of centered data the eigenvectors of the covariance matrix $S$?",
+          options: [
+            "By convention.",
+            "Because the variance of the projection onto a unit vector $\\mathbf{w}$ is $\\mathbf{w}^\\top S \\mathbf{w}$, and this Rayleigh quotient is maximized at the top eigenvector of $S$.",
+            "Because eigenvectors are orthogonal.",
+            "Because $S$ is diagonal.",
+          ],
+          correctIndex: 1,
+          hint: "Rayleigh quotient.",
+          explanation: "$\\operatorname{Var}(\\mathbf{w}^\\top \\mathbf{x}) = \\mathbf{w}^\\top S \\mathbf{w}$. Maximizing this subject to $\\|\\mathbf{w}\\|=1$ is a Rayleigh quotient problem; the maximum is $\\lambda_{\\max}(S)$, achieved at the corresponding eigenvector. Subsequent components solve the same problem on the orthogonal complement.",
+        },
+        {
+          type: "numeric-input",
+          question: "A covariance matrix has eigenvalues $\\lambda_1 = 8, \\lambda_2 = 1, \\lambda_3 = 1$. What fraction of variance is captured by the top principal component?",
+          answer: 0.8,
+          tolerance: 0.01,
+          hint: "Fraction = $\\lambda_1 / \\sum_i \\lambda_i$.",
+          explanation: "$8 / (8 + 1 + 1) = 0.8$. This fraction is the explained variance ratio and is the primary tool for choosing $k$: keep enough components to retain 90-99% of variance, depending on the application.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Minimizing reconstruction error and maximizing projected variance are...",
+          options: [
+            "Unrelated objectives.",
+            "Equivalent problems; both have the same solution — the top-$k$ eigenvectors of the covariance matrix.",
+            "Opposed — you must choose one.",
+            "Only equivalent for Gaussians.",
+          ],
+          correctIndex: 1,
+          hint: "Total variance = kept variance + discarded variance.",
+          explanation: "Total variance is fixed; the more you keep in the projection, the less you throw away. Formally, maximizing $\\sum_{i=1}^{k} \\lambda_i$ (kept) is equivalent to minimizing $\\sum_{i=k+1}^{D} \\lambda_i$ (reconstruction error). This duality gives PCA its dual identity.",
+        },
+      ],
+      keyTakeaways: [
+        "PCA finds orthogonal directions of maximum variance — eigenvectors of the covariance matrix, in decreasing eigenvalue order.",
+        "Equivalent formulations: max variance or min reconstruction error; both give the same solution.",
+        "SVD of $X$ is the numerically stable route: right singular vectors are principal components.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 49 — Chapter 10.2: PCA in Practice
+    // =========================================================================
+    {
+      title: "PCA in Practice",
+      chapter: "Principal Component Analysis",
+      chapterNumber: 10,
+      content: [
+        "Running PCA on real data requires a handful of practical steps that textbook treatments sometimes skip. First, **center** the data by subtracting the mean: $\\tilde{\\mathbf{x}}_n = \\mathbf{x}_n - \\bar{\\mathbf{x}}$. Without centering, the first 'principal component' will simply point toward the mean, not toward the direction of real variation. Second, usually **standardize** (divide each feature by its standard deviation) when features live on different scales — otherwise PCA is dominated by whichever feature happens to have the largest range.",
+        "**How many components to keep?** The **scree plot** shows eigenvalues in decreasing order. Look for an 'elbow' where eigenvalues flatten — components beyond the elbow are mostly noise. A more principled alternative is the **cumulative explained variance**: choose $k$ so that $\\sum_{i=1}^{k} \\lambda_i / \\sum_j \\lambda_j \\geq 0.95$ (or whatever threshold the downstream task requires). For purely visualization purposes, $k = 2$ or $3$ is fixed by necessity.",
+        "Computationally, avoid forming $S = X^\\top X$ explicitly when $D$ is large — it is $D \\times D$ and may not fit in memory. Instead, use **SVD of $X$** directly: $X = U \\Sigma V^\\top$, where $V$ columns are principal components and $\\Sigma^2 / N$ are the eigenvalues of $S$. For huge datasets, **randomized SVD** (Halko et al.) computes the top-$k$ components in $O(NDk)$ time — orders of magnitude faster than full SVD.",
+        "PCA has important **limitations**. It is linear — it cannot capture curved manifolds (use kernel PCA, Isomap, UMAP, or autoencoders for that). It assumes variance = signal, which fails when noise has large variance (consider ICA instead). It is **not scale-invariant** — standardize carefully. And it is a lossy, unsupervised method; discarded components may contain exactly the features your downstream task needs. Always validate PCA choices against the downstream metric, not just explained variance.",
+        "Despite these caveats, PCA is the first tool to try for any high-dimensional dataset. Canonical applications: **face recognition** (eigenfaces), **finance** (principal portfolios / risk factors), **genomics** (population structure), **NLP** (latent semantic analysis is PCA on word-document matrices), **image compression** (JPEG's DCT is cousin to PCA). The machine-learning lesson is deeper than the algorithm: covariance matrices encode structure, and eigen-decomposition reveals it.",
+      ],
+      visualizations: [
+        {
+          type: "pca-3d",
+          title: "Scree plot intuition",
+          description: "Top few components dominate; the long tail is noise. The 'elbow' suggests a natural cutoff.",
+          config: {},
+        },
+        {
+          type: "function-plot",
+          title: "Cumulative explained variance",
+          description: "The curve rises quickly at first, then flattens — pick $k$ at the 95% crossing or at the elbow.",
+          config: {
+            fn: "sigmoid",
+            domain: [-6, 6],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why is data centering essential before PCA?",
+          options: [
+            "Performance reasons.",
+            "Without centering, $X^\\top X$ captures both variance and mean; the first component will point toward the mean rather than the direction of maximum variation.",
+            "Because eigenvalues must be positive.",
+            "It isn't essential.",
+          ],
+          correctIndex: 1,
+          hint: "PCA wants the covariance, not the second moment.",
+          explanation: "Covariance is defined as $\\mathbb{E}[(\\mathbf{x} - \\bar{\\mathbf{x}})(\\mathbf{x} - \\bar{\\mathbf{x}})^\\top]$. Using $X^\\top X / N$ without subtracting $\\bar{\\mathbf{x}}$ gives the uncentered second-moment matrix, which mixes mean and variance. PCA would then find the mean direction, which is usually not what you want.",
+        },
+        {
+          type: "numeric-input",
+          question: "You want to keep 90% of the variance. Eigenvalues are $[5, 3, 1, 0.5, 0.5]$. What is the smallest $k$?",
+          answer: 3,
+          tolerance: 0.01,
+          hint: "Accumulate until the fraction crosses 0.9.",
+          explanation: "Total = $10$. $k=1$: $5/10 = 0.5$. $k=2$: $8/10 = 0.8$. $k=3$: $9/10 = 0.9$. So $k = 3$ suffices. This is the classic cumulative explained variance criterion.",
+        },
+        {
+          type: "multiple-choice",
+          question: "When does PCA perform *poorly* as a preprocessing step?",
+          options: [
+            "On high-dimensional data.",
+            "When the signal lies along directions of low variance (e.g., class separation is perpendicular to the main variance direction) or when the underlying manifold is curved.",
+            "When features are standardized.",
+            "When using randomized SVD.",
+          ],
+          correctIndex: 1,
+          hint: "Variance is not always signal.",
+          explanation: "PCA assumes high-variance directions carry the signal. If the label depends on a low-variance feature, PCA can discard exactly what matters. Similarly, curved manifolds require non-linear methods (kernel PCA, UMAP). Always validate on downstream performance, not explained variance alone.",
+        },
+      ],
+      keyTakeaways: [
+        "Always center (and usually standardize) data before PCA.",
+        "Use scree plots or cumulative explained variance to pick $k$; for visualization, $k = 2$ or $3$.",
+        "Prefer SVD of $X$ (or randomized SVD) over forming $X^\\top X$ when $D$ is large.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 50 — Chapter 11.1: GMM and EM Algorithm
+    // =========================================================================
+    {
+      title: "GMM and EM Algorithm",
+      chapter: "Gaussian Mixture Models",
+      chapterNumber: 11,
+      content: [
+        "A **Gaussian Mixture Model (GMM)** assumes the data is generated by $K$ underlying clusters, each Gaussian with its own mean and covariance: $$p(\\mathbf{x}) = \\sum_{k=1}^{K} \\pi_k\\, \\mathcal{N}(\\mathbf{x}; \\boldsymbol\\mu_k, \\Sigma_k),$$ where $\\pi_k \\geq 0$ and $\\sum_k \\pi_k = 1$ are **mixture weights**. GMMs are *soft-clustering* — each point has a probability of belonging to each cluster, not a hard label. They generalize $k$-means (which is roughly a GMM with shared spherical covariances) and are the go-to tool for density estimation and model-based clustering.",
+        "Fitting a GMM by maximum likelihood is hard: the log-likelihood $\\sum_n \\log \\sum_k \\pi_k \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k)$ has no closed-form maximum because of the $\\log \\sum$. Enter the **Expectation-Maximization (EM) algorithm** — an iterative procedure that monotonically increases the likelihood by alternating two steps. EM is the workhorse for any model with latent variables.",
+        "The **E-step** computes, for each point $n$ and cluster $k$, the **responsibility** (posterior probability of cluster $k$ given the point under current parameters): $$r_{nk} = \\frac{\\pi_k \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k)}{\\sum_j \\pi_j \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_j, \\Sigma_j)}.$$ Responsibilities are soft cluster assignments — if a point clearly belongs to cluster 3, $r_{n3} \\approx 1$; if it lies between clusters 1 and 2, it splits mass between them.",
+        "The **M-step** updates the parameters to maximize the expected complete-data log-likelihood, using the responsibilities as weights: $$N_k = \\sum_n r_{nk}, \\quad \\boldsymbol\\mu_k = \\frac{1}{N_k} \\sum_n r_{nk} \\mathbf{x}_n, \\quad \\Sigma_k = \\frac{1}{N_k} \\sum_n r_{nk}(\\mathbf{x}_n - \\boldsymbol\\mu_k)(\\mathbf{x}_n - \\boldsymbol\\mu_k)^\\top, \\quad \\pi_k = N_k/N.$$ These are exactly the weighted sample mean, weighted sample covariance, and weighted sample proportion. The closed-form update is the payoff for introducing latent variables.",
+        "EM is guaranteed to **monotonically increase** the likelihood and converges to a local maximum. Initialization matters: random starts can land in poor local optima, so $k$-means++ seeding is common. Singularities also lurk — if a Gaussian collapses to a single point, its variance $\\to 0$ and likelihood $\\to \\infty$. Regularize by adding $\\epsilon I$ to each covariance or by Bayesian priors. Beyond GMMs, EM trains HMMs, latent Dirichlet allocation, factor analysis, and countless other latent-variable models.",
+      ],
+      visualizations: [
+        {
+          type: "gmm-plot",
+          title: "GMM fit to 2D data",
+          description: "Three Gaussian components capture the cluster structure; ellipses show $1\\sigma$ contours.",
+          config: {
+            k: 3,
+            stepMode: true,
+          },
+        },
+        {
+          type: "probability-plot",
+          title: "One mixture component",
+          description: "Each cluster is a Gaussian; the mixture density sums weighted Gaussians.",
+          config: {
+            distribution: "gaussian",
+            params: { mu: 0, sigma: 1 },
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why does EM monotonically increase the GMM log-likelihood?",
+          options: [
+            "By construction, each iteration resets parameters.",
+            "EM maximizes a lower bound on the log-likelihood (derived from Jensen's inequality); tightening the bound at the E-step and maximizing it at the M-step guarantees non-decrease.",
+            "Because Gaussians are log-concave.",
+            "EM doesn't increase likelihood — it just runs.",
+          ],
+          correctIndex: 1,
+          hint: "EM = iterative bound maximization.",
+          explanation: "The E-step computes the ELBO (evidence lower bound) by choosing the variational distribution to match the true posterior, making the bound tight. The M-step maximizes the ELBO over parameters, which can only increase the bound (and thus the log-likelihood). Convergence is to a local optimum.",
+        },
+        {
+          type: "numeric-input",
+          question: "In a 2-component GMM, a point has $\\pi_1 \\mathcal{N}(\\mathbf{x}; \\boldsymbol\\mu_1, \\Sigma_1) = 0.6$ and $\\pi_2 \\mathcal{N}(\\mathbf{x}; \\boldsymbol\\mu_2, \\Sigma_2) = 0.4$. What is the responsibility $r_{n1}$?",
+          answer: 0.6,
+          tolerance: 0.01,
+          hint: "Responsibility = numerator / sum of both.",
+          explanation: "$r_{n1} = 0.6 / (0.6 + 0.4) = 0.6$. The responsibility is a posterior probability — it sums to 1 across clusters by construction. Here the point is 60% attributable to cluster 1, 40% to cluster 2.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match the EM step to what it produces.",
+          leftItems: [
+            "E-step",
+            "M-step (means)",
+            "M-step (covariances)",
+            "M-step (mixture weights)",
+          ],
+          rightItems: [
+            "Responsibilities $r_{nk}$ — posterior cluster probabilities given current parameters",
+            "Weighted mean $\\boldsymbol\\mu_k = \\sum_n r_{nk} \\mathbf{x}_n / N_k$",
+            "Weighted covariance $\\Sigma_k = \\sum_n r_{nk}(\\mathbf{x}_n - \\boldsymbol\\mu_k)(\\mathbf{x}_n - \\boldsymbol\\mu_k)^\\top / N_k$",
+            "Proportion $\\pi_k = N_k / N$",
+          ],
+          correctPairs: [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+          ],
+          explanation: "Every M-step update is a weighted version of the usual sample statistic. This clean form is the payoff of introducing latent variables and running EM.",
+        },
+      ],
+      keyTakeaways: [
+        "GMM: $p(\\mathbf{x}) = \\sum_k \\pi_k \\mathcal{N}(\\mathbf{x}; \\boldsymbol\\mu_k, \\Sigma_k)$ — a soft-clustering density model.",
+        "EM alternates E-step (compute responsibilities) and M-step (weighted MLE updates); monotonically increases likelihood.",
+        "EM converges to a local optimum — seed carefully and regularize covariances to avoid singularities.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 51 — Chapter 11.2: GMM — Latent Variable Perspective
+    // =========================================================================
+    {
+      title: "GMM: Latent Variable Perspective",
+      chapter: "Gaussian Mixture Models",
+      chapterNumber: 11,
+      content: [
+        "The cleanest way to derive GMMs and EM is via **latent variables**. Introduce a categorical latent $z_n \\in \\{1, \\ldots, K\\}$ for each data point, with prior $p(z_n = k) = \\pi_k$. Conditional on $z_n = k$, the observation is Gaussian: $p(\\mathbf{x}_n \\mid z_n = k) = \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k)$. Marginalizing out $z_n$ recovers the mixture density $p(\\mathbf{x}_n) = \\sum_k \\pi_k \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k)$.",
+        "The **responsibility** $r_{nk}$ from the E-step is precisely the posterior of the latent: $$r_{nk} = p(z_n = k \\mid \\mathbf{x}_n, \\boldsymbol\\theta) = \\frac{\\pi_k \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k)}{\\sum_j \\pi_j \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_j, \\Sigma_j)}.$$ This is Bayes' rule for the hidden cluster indicator. The EM algorithm now has a clean interpretation: compute the posterior over hidden variables (E), then maximize the **expected complete-data log-likelihood** $\\mathbb{E}_{p(z \\mid \\mathbf{x}, \\boldsymbol\\theta^{\\text{old}})}[\\log p(\\mathbf{x}, z \\mid \\boldsymbol\\theta)]$ (M).",
+        "The **complete-data log-likelihood** is $\\sum_n \\sum_k \\mathbb{1}[z_n = k] \\left[ \\log \\pi_k + \\log \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k) \\right]$. Taking expectations with respect to the responsibilities replaces the indicators with $r_{nk}$, producing a sum of weighted log-Gaussians — decoupled and easy to maximize. This decoupling is why M-step closed-forms exist: conditional on knowing the soft assignments, the problem factorizes.",
+        "Once trained, responsibilities reveal **soft cluster membership**. A point near a cluster center has $r_{nk} \\approx 1$ for that $k$; a point equidistant from two clusters splits mass. This is richer than $k$-means' hard assignment — the model knows when it is uncertain. We can use responsibilities to detect outliers (points with low responsibility for every cluster have low $p(\\mathbf{x}_n)$) or to visualize uncertainty in cluster boundaries.",
+        "This latent-variable framework generalizes far beyond GMMs. **Hidden Markov Models** use a sequence of latent states. **Factor Analysis** and **Probabilistic PCA** have continuous latents. **Variational Autoencoders** learn deep latent representations with neural-network likelihoods. **Latent Dirichlet Allocation** assigns topics to documents. Every time you see EM, variational inference, or sampling — there is a latent variable structure underneath, and the GMM is the canonical worked example.",
+      ],
+      visualizations: [
+        {
+          type: "gmm-plot",
+          title: "Responsibilities shade the plane",
+          description: "Each point is colored by its most probable cluster; the shading between clusters shows soft-assignment uncertainty.",
+          config: {
+            k: 3,
+          },
+        },
+        {
+          type: "probability-plot",
+          title: "Generative model: pick a cluster, sample from it",
+          description: "Latent $z$ selects which Gaussian generates $\\mathbf{x}$. Marginalizing over $z$ recovers the mixture.",
+          config: {
+            distribution: "gaussian",
+            params: { mu: 1, sigma: 0.5 },
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "From the latent-variable viewpoint, what is the responsibility $r_{nk}$?",
+          options: [
+            "The prior over the cluster.",
+            "The posterior probability $p(z_n = k \\mid \\mathbf{x}_n, \\boldsymbol\\theta)$ — how much cluster $k$ explains the observed point under current parameters.",
+            "A regularization term.",
+            "Always $1/K$.",
+          ],
+          correctIndex: 1,
+          hint: "Bayes' rule on the cluster indicator.",
+          explanation: "Responsibility is the E-step posterior: $p(z = k \\mid \\mathbf{x}) \\propto p(\\mathbf{x} \\mid z = k) p(z = k) = \\pi_k \\mathcal{N}(\\mathbf{x}; \\boldsymbol\\mu_k, \\Sigma_k)$. Normalize across $k$ to get $r_{nk}$. This is the key conceptual bridge between EM and Bayesian latent-variable models.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does introducing latent variables make the M-step closed-form?",
+          options: [
+            "It reduces dimensionality.",
+            "Conditional on knowing cluster assignments (even softly), each cluster's parameters decouple from the others and can be updated independently via weighted MLE.",
+            "Latent variables are always Gaussian.",
+            "It makes the problem non-convex.",
+          ],
+          correctIndex: 1,
+          hint: "With hard assignments, each cluster would fit its own data separately.",
+          explanation: "The complete-data log-likelihood factorizes across clusters. Taking expectations with respect to responsibilities keeps this factorization — each $\\boldsymbol\\mu_k$, $\\Sigma_k$, and $\\pi_k$ has its own weighted-MLE closed form. This is why EM works so well for mixture models.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match the latent-variable model to its latent type.",
+          leftItems: [
+            "Gaussian Mixture Model",
+            "Hidden Markov Model",
+            "Probabilistic PCA / Factor Analysis",
+            "Variational Autoencoder",
+          ],
+          rightItems: [
+            "Discrete cluster indicator",
+            "Discrete state sequence (evolving over time)",
+            "Continuous low-dimensional latent",
+            "Continuous latent, decoded by a neural network",
+          ],
+          correctPairs: [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+          ],
+          explanation: "Latent-variable modeling is a unified framework: pick a latent structure, pick a likelihood, then infer via EM, variational inference, or MCMC. The GMM is the canonical entry point.",
+        },
+      ],
+      keyTakeaways: [
+        "GMMs are latent-variable models: a hidden cluster indicator $z_n$ chooses which Gaussian generates each point.",
+        "Responsibilities $r_{nk} = p(z_n = k \\mid \\mathbf{x}_n)$ are Bayesian posteriors over cluster membership.",
+        "The latent-variable view generalizes EM to HMMs, PPCA, VAEs, and beyond.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 52 — Chapter 12.1: SVM — Separating Hyperplanes and Margins
+    // =========================================================================
+    {
+      title: "SVM: Separating Hyperplanes and Margins",
+      chapter: "Support Vector Machines",
+      chapterNumber: 12,
+      content: [
+        "**Support Vector Machines (SVMs)** solve binary classification by finding the **maximum-margin hyperplane** that separates two classes. Given labeled data $\\{(\\mathbf{x}_n, y_n)\\}$ with $y_n \\in \\{-1, +1\\}$, a hyperplane $\\mathbf{w}^\\top \\mathbf{x} + b = 0$ classifies by the sign of $\\mathbf{w}^\\top \\mathbf{x} + b$. Many hyperplanes may separate the classes, but SVMs pick a specific one: the one whose distance to the nearest point of either class is largest.",
+        "The **margin** is the distance from the hyperplane to the closest data point. For a normalized constraint $y_n(\\mathbf{w}^\\top \\mathbf{x}_n + b) \\geq 1$, the margin equals $1 / \\|\\mathbf{w}\\|$. Maximizing the margin is equivalent to minimizing $\\|\\mathbf{w}\\|^2$, giving the **hard-margin SVM**: $$\\min_{\\mathbf{w}, b}\\ \\tfrac{1}{2}\\|\\mathbf{w}\\|^2 \\quad \\text{subject to}\\quad y_n(\\mathbf{w}^\\top \\mathbf{x}_n + b) \\geq 1,\\ \\forall n.$$ This is a **convex quadratic program** — a unique global optimum is guaranteed.",
+        "Real data is rarely linearly separable. The **soft-margin SVM** introduces slack variables $\\xi_n \\geq 0$ to allow violations: $$\\min_{\\mathbf{w}, b, \\boldsymbol\\xi}\\ \\tfrac{1}{2}\\|\\mathbf{w}\\|^2 + C \\sum_n \\xi_n \\quad \\text{s.t.}\\quad y_n(\\mathbf{w}^\\top \\mathbf{x}_n + b) \\geq 1 - \\xi_n,\\ \\xi_n \\geq 0.$$ The hyperparameter $C$ trades off margin size against misclassification: large $C$ $\\to$ narrow margin, few violations; small $C$ $\\to$ wide margin, more violations allowed.",
+        "The **dual problem** (obtained via Lagrangian duality from Chapter 7) is where SVMs really shine: $$\\max_{\\boldsymbol\\alpha}\\ \\sum_n \\alpha_n - \\tfrac{1}{2} \\sum_{n, m} \\alpha_n \\alpha_m y_n y_m \\mathbf{x}_n^\\top \\mathbf{x}_m \\quad \\text{s.t.}\\quad 0 \\leq \\alpha_n \\leq C,\\ \\sum_n \\alpha_n y_n = 0.$$ Two things are magical here: the data appears only through **inner products** $\\mathbf{x}_n^\\top \\mathbf{x}_m$ (setting up the kernel trick), and most $\\alpha_n$ are zero at the optimum.",
+        "Points with $\\alpha_n > 0$ are the **support vectors** — they sit on (or inside) the margin and determine the decision boundary. Non-support vectors could be removed without changing the classifier. This **sparsity** is the SVM's signature property: the classifier is a weighted sum over a tiny subset of training points, enabling efficient prediction and principled interpretability. Complementary slackness from KKT conditions enforces this structure automatically.",
+      ],
+      visualizations: [
+        {
+          type: "svm-plot",
+          title: "Maximum-margin classifier",
+          description: "Decision boundary (black), margin lines (dashed), and support vectors (circled). The SVM maximizes the corridor width.",
+          config: {
+            showMargin: true,
+          },
+        },
+        {
+          type: "function-plot",
+          title: "Hinge loss",
+          description: "The soft-margin SVM uses $\\max(0, 1 - y \\hat{y})$. Zero when classified with margin; linear penalty otherwise.",
+          config: {
+            fn: "relu",
+            domain: [-3, 3],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "For a normalized SVM with $\\|\\mathbf{w}\\| = 2$, what is the geometric margin?",
+          answer: 0.5,
+          tolerance: 0.01,
+          hint: "Margin = $1 / \\|\\mathbf{w}\\|$.",
+          explanation: "The constraint $y_n(\\mathbf{w}^\\top \\mathbf{x}_n + b) \\geq 1$ plus $\\|\\mathbf{w}\\| = 2$ gives a margin of $1/2$. Minimizing $\\|\\mathbf{w}\\|^2$ enlarges this margin.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why are SVMs called 'sparse' classifiers?",
+          options: [
+            "The weight vector has many zeros.",
+            "At the optimum, only the support vectors have non-zero dual coefficients $\\alpha_n$; the decision function depends only on those few training points.",
+            "Because they use few features.",
+            "Because the margin is small.",
+          ],
+          correctIndex: 1,
+          hint: "Complementary slackness.",
+          explanation: "KKT conditions imply $\\alpha_n = 0$ for points strictly outside the margin and $\\alpha_n > 0$ only for points exactly on the margin (support vectors) or inside it (margin violators). The final decision function $f(\\mathbf{x}) = \\sum_n \\alpha_n y_n \\mathbf{x}_n^\\top \\mathbf{x} + b$ is a sparse sum.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What does the hyperparameter $C$ in soft-margin SVM control?",
+          options: [
+            "The number of features.",
+            "The trade-off between margin width and allowed margin violations: large $C$ emphasizes correct classification; small $C$ emphasizes a wider margin.",
+            "The kernel bandwidth.",
+            "The number of support vectors.",
+          ],
+          correctIndex: 1,
+          hint: "$C$ multiplies the slack penalty.",
+          explanation: "$C = \\infty$ recovers the hard-margin SVM (no violations tolerated). Small $C$ produces a wider margin with more misclassifications. Tuning $C$ by cross-validation is the primary SVM hyperparameter selection task (along with kernel choice).",
+        },
+      ],
+      keyTakeaways: [
+        "SVM: maximum-margin classifier, solving a convex QP for $\\mathbf{w}, b$ with margin $1/\\|\\mathbf{w}\\|$.",
+        "Soft-margin allows violations with hyperparameter $C$; dual form depends only on inner products.",
+        "The solution is sparse — only support vectors (points on or inside the margin) have $\\alpha_n > 0$.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 53 — Chapter 12.2: SVM — Kernels
+    // =========================================================================
+    {
+      title: "SVM: Kernels",
+      chapter: "Support Vector Machines",
+      chapterNumber: 12,
+      content: [
+        "Linear SVMs can only draw straight decision boundaries — yet most interesting data is non-linearly separable. The **kernel trick** turns linear SVMs into universal classifiers without ever computing features explicitly. The insight comes from the dual: it depends on $\\mathbf{x}_n$ only via inner products $\\mathbf{x}_n^\\top \\mathbf{x}_m$. Replace every such inner product with a **kernel function** $k(\\mathbf{x}_n, \\mathbf{x}_m)$, and you are implicitly operating in a different feature space $\\boldsymbol\\phi(\\mathbf{x})$ such that $k(\\mathbf{x}, \\mathbf{x}') = \\boldsymbol\\phi(\\mathbf{x})^\\top \\boldsymbol\\phi(\\mathbf{x}')$ — without ever computing $\\boldsymbol\\phi$.",
+        "The kernelized dual is $$\\max_{\\boldsymbol\\alpha}\\ \\sum_n \\alpha_n - \\tfrac{1}{2} \\sum_{n,m} \\alpha_n \\alpha_m y_n y_m k(\\mathbf{x}_n, \\mathbf{x}_m),$$ and the decision function $f(\\mathbf{x}) = \\sum_n \\alpha_n y_n k(\\mathbf{x}_n, \\mathbf{x}) + b$ is a kernel-weighted sum over support vectors. A valid kernel must be **positive semi-definite** (Mercer's condition): for any $\\{\\mathbf{x}_n\\}$, the Gram matrix $K_{nm} = k(\\mathbf{x}_n, \\mathbf{x}_m)$ must be PSD. Only such kernels correspond to genuine inner products in some feature space.",
+        "Three kernels power 90% of applications. **Polynomial** $k(\\mathbf{x}, \\mathbf{x}') = (\\mathbf{x}^\\top \\mathbf{x}' + c)^d$ implicitly maps into degree-$d$ polynomial features — cheap and interpretable. **Radial Basis Function (RBF)** $k(\\mathbf{x}, \\mathbf{x}') = \\exp(-\\|\\mathbf{x} - \\mathbf{x}'\\|^2 / (2\\sigma^2))$ maps into an **infinite-dimensional** feature space and is the default choice for most problems. **Sigmoid** $k(\\mathbf{x}, \\mathbf{x}') = \\tanh(\\alpha \\mathbf{x}^\\top \\mathbf{x}' + c)$ (not always PSD — careful) gives a shallow neural network flavor.",
+        "Kernel choice and hyperparameters are the main modeling decisions. The RBF **bandwidth** $\\sigma$ controls smoothness: small $\\sigma$ gives a highly flexible, wiggly boundary (risk of overfitting); large $\\sigma$ gives a nearly linear boundary (risk of underfitting). Combined with the penalty $C$, RBF SVMs have two hyperparameters — $(C, \\sigma)$ — which are usually selected by cross-validation over a log-spaced grid. This simplicity and strong regularization is why RBF SVMs were the state of the art on many tasks for decades.",
+        "Beyond SVMs, kernels power **kernel ridge regression**, **Gaussian processes**, **kernel PCA**, and **kernel $k$-means**. They illustrate a profound principle: any algorithm that uses data only via inner products can be kernelized. The cost is $O(N^2)$ memory for the Gram matrix, which limits classical kernels to tens of thousands of points. Modern scalable variants — Nystrom approximations, random features (Rahimi-Recht), and neural tangent kernels — preserve the kernel mindset while scaling to millions of samples.",
+      ],
+      visualizations: [
+        {
+          type: "kernel-projection-3d",
+          title: "Lifting to a higher dimension",
+          description: "Data that is not linearly separable in 2D becomes separable in a higher-dimensional feature space. The kernel computes the inner product there without forming the features.",
+          config: {},
+        },
+        {
+          type: "svm-plot",
+          title: "Non-linear decision boundary via RBF",
+          description: "An RBF-kernel SVM draws a curved boundary in input space — which is a linear boundary in the implicit feature space.",
+          config: {
+            showMargin: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "What makes a function $k(\\mathbf{x}, \\mathbf{x}')$ a valid kernel?",
+          options: [
+            "It must be symmetric only.",
+            "It must be symmetric and positive semi-definite (Mercer's condition) — equivalently, there exists a feature map $\\boldsymbol\\phi$ with $k(\\mathbf{x}, \\mathbf{x}') = \\boldsymbol\\phi(\\mathbf{x})^\\top \\boldsymbol\\phi(\\mathbf{x}')$.",
+            "It must be non-negative.",
+            "It must be differentiable.",
+          ],
+          correctIndex: 1,
+          hint: "Mercer's theorem.",
+          explanation: "Positive semi-definiteness ensures the Gram matrix is a valid inner-product matrix in some (possibly infinite-dimensional) feature space. Symmetry plus PSD $\\Leftrightarrow$ the kernel corresponds to a real inner product — enabling the kernel trick.",
+        },
+        {
+          type: "numeric-input",
+          question: "For a polynomial kernel $k(\\mathbf{x}, \\mathbf{x}') = (\\mathbf{x}^\\top \\mathbf{x}' + 1)^2$ with $\\mathbf{x} = (1, 2)$, $\\mathbf{x}' = (3, 1)$, compute $k(\\mathbf{x}, \\mathbf{x}')$.",
+          answer: 36,
+          tolerance: 0.01,
+          hint: "Compute $\\mathbf{x}^\\top \\mathbf{x}'$ first, add 1, square.",
+          explanation: "$\\mathbf{x}^\\top \\mathbf{x}' = 1 \\cdot 3 + 2 \\cdot 1 = 5$. $(5 + 1)^2 = 36$. The implicit feature map contains monomials up to degree 2 — you never form them, but the kernel computes their inner product.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match each kernel to its effect.",
+          leftItems: [
+            "Linear $k(\\mathbf{x}, \\mathbf{x}') = \\mathbf{x}^\\top \\mathbf{x}'$",
+            "Polynomial $(\\mathbf{x}^\\top \\mathbf{x}' + c)^d$",
+            "RBF $\\exp(-\\|\\mathbf{x} - \\mathbf{x}'\\|^2 / 2\\sigma^2)$",
+            "Small RBF bandwidth $\\sigma$",
+          ],
+          rightItems: [
+            "Same as a standard linear SVM — no implicit feature lifting",
+            "Captures polynomial interactions up to degree $d$",
+            "Infinite-dimensional implicit features; default for non-linear problems",
+            "Highly flexible, wiggly boundary — prone to overfitting without regularization",
+          ],
+          correctPairs: [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+          ],
+          explanation: "Kernel choice is the main modeling lever in kernel SVMs. RBF with well-tuned $(C, \\sigma)$ is the safe default; polynomial is a good structured alternative; linear is the baseline and the only practical option for very large datasets.",
+        },
+      ],
+      keyTakeaways: [
+        "The kernel trick replaces $\\mathbf{x}_n^\\top \\mathbf{x}_m$ with $k(\\mathbf{x}_n, \\mathbf{x}_m)$ — implicit feature lifting without explicit computation.",
+        "Valid kernels are symmetric and PSD (Mercer); common choices: linear, polynomial, RBF, sigmoid.",
+        "RBF SVMs with cross-validated $(C, \\sigma)$ are a strong non-linear baseline; scale with Nystrom or random features.",
+      ],
+    },
   ];
 
   return raw.map((lesson, i) => ({
