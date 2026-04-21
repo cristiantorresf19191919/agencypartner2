@@ -41,6 +41,7 @@ import {
   Favorite as HeartFilled,
   People as PeopleIcon,
   Cloud as CloudIcon,
+  Functions as FunctionsIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -150,6 +151,17 @@ const contentGroups: Array<{
     id: "course",
     sectionKey: "hub-section-courses",
     cards: [
+      {
+        id: "mathematics-ml",
+        category: "course",
+        href: "/developer-section/mathematics-ml",
+        icon: FunctionsIcon,
+        titleKey: "mml-card-title",
+        descKey: "mml-card-desc",
+        ctaKey: "start-course",
+        difficulty: "intermediate",
+        tags: ["general"],
+      },
       {
         id: "kotlin-course",
         category: "course",
