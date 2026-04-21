@@ -772,6 +772,2383 @@ function buildMMLLessons(): MMLLesson[] {
         "Linear regression with bias, neural-net layers, and SVM boundaries are all affine objects.",
       ],
     },
+
+    // =========================================================================
+    // LESSON 10 — Chapter 3.1: Norms
+    // =========================================================================
+    {
+      title: "Norms",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "A **norm** on a vector space $V$ is a function $\\|\\cdot\\| : V \\to \\mathbb{R}_{\\geq 0}$ that assigns each vector a non-negative length. Formally, it must satisfy three axioms: **absolute homogeneity** ($\\|\\lambda \\mathbf{v}\\| = |\\lambda| \\cdot \\|\\mathbf{v}\\|$), the **triangle inequality** ($\\|\\mathbf{u} + \\mathbf{v}\\| \\leq \\|\\mathbf{u}\\| + \\|\\mathbf{v}\\|$), and **positive definiteness** ($\\|\\mathbf{v}\\| = 0 \\iff \\mathbf{v} = \\mathbf{0}$).",
+        "The three most important norms in ML form a family. The **Euclidean** or $L_2$ norm $\\|\\mathbf{x}\\|_2 = \\sqrt{x_1^2 + \\dots + x_n^2}$ is the straight-line distance you know from school. The **Manhattan** or $L_1$ norm $\\|\\mathbf{x}\\|_1 = |x_1| + \\dots + |x_n|$ measures block-by-block travel. The **max** or $L_\\infty$ norm $\\|\\mathbf{x}\\|_\\infty = \\max_i |x_i|$ returns the largest component.",
+        "These are unified by the **$L_p$ norm**: $\\|\\mathbf{x}\\|_p = \\left(\\sum_i |x_i|^p\\right)^{1/p}$ for $p \\geq 1$. As $p \\to \\infty$ we recover $L_\\infty$. The **unit ball** $\\{\\mathbf{x} : \\|\\mathbf{x}\\| \\leq 1\\}$ has a distinct shape for each $p$: a diamond for $L_1$, a circle for $L_2$, a square for $L_\\infty$. That shape is not cosmetic — it determines the geometry of regularization.",
+        "In ML, norms measure the *size* of parameters or errors. **Ridge regression** adds $\\lambda \\|\\mathbf{w}\\|_2^2$ to the loss, shrinking weights smoothly toward zero. **Lasso regression** uses $\\lambda \\|\\mathbf{w}\\|_1$ instead; because the $L_1$ unit ball has sharp corners on the axes, the optimum often lands exactly on an axis, producing a **sparse** weight vector. Switching norms literally changes the geometry of the solution.",
+        "A powerful fact: in any *finite-dimensional* vector space, all norms are **equivalent** in the sense that they induce the same topology — convergence in one norm implies convergence in any other. Practically, this means your choice of norm affects numerical values and geometry, but not qualitative properties like continuity or limits. In infinite dimensions (function spaces), this equivalence breaks, which is why functional analysis becomes far richer.",
+      ],
+      visualizations: [
+        {
+          type: "norm-balls",
+          title: "Unit balls of $L_1$, $L_2$, $L_\\infty$",
+          description: "The set $\\{\\mathbf{x} : \\|\\mathbf{x}\\|_p = 1\\}$ — a diamond, circle, and square respectively. Same vectors, different definitions of length.",
+          config: {},
+        },
+        {
+          type: "vector-2d",
+          title: "Three norms of the same vector",
+          description: "For $\\mathbf{v} = (3, 4)$: $\\|\\mathbf{v}\\|_2 = 5$, $\\|\\mathbf{v}\\|_1 = 7$, $\\|\\mathbf{v}\\|_\\infty = 4$.",
+          config: {
+            vectors: [[3, 4]],
+            labels: ["v = (3,4)"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Compute the $L_2$ norm of $\\mathbf{v} = (1, 2, 2)$.",
+          answer: 3,
+          tolerance: 0.01,
+          hint: "$\\|\\mathbf{v}\\|_2 = \\sqrt{v_1^2 + v_2^2 + v_3^2}$.",
+          explanation: "$\\sqrt{1^2 + 2^2 + 2^2} = \\sqrt{1 + 4 + 4} = \\sqrt{9} = 3$. This is the Euclidean distance from the origin to the point $(1, 2, 2)$.",
+        },
+        {
+          type: "numeric-input",
+          question: "Compute the $L_1$ norm of $\\mathbf{v} = (-2, 3, -1, 4)$.",
+          answer: 10,
+          tolerance: 0.01,
+          hint: "Sum the absolute values of each component.",
+          explanation: "$\\|\\mathbf{v}\\|_1 = |-2| + |3| + |-1| + |4| = 2 + 3 + 1 + 4 = 10$. The $L_1$ norm is also called the taxicab or Manhattan norm.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does Lasso ($L_1$ regularization) tend to produce sparse solutions while Ridge ($L_2$) does not?",
+          options: [
+            "Lasso is computationally faster.",
+            "The $L_1$ unit ball has corners on the axes, so the optimum often lies exactly on a coordinate axis (some weights = 0).",
+            "Ridge is applied only to bias terms.",
+            "Sparsity is caused by the learning rate, not the norm.",
+          ],
+          correctIndex: 1,
+          hint: "Look at the shape of the unit balls.",
+          explanation: "When the loss's level sets first touch the $L_1$ diamond, contact usually happens at a **corner** — where one or more coordinates are zero. The smooth $L_2$ circle has no such corners, so Ridge produces small but generally non-zero weights.",
+        },
+      ],
+      keyTakeaways: [
+        "A norm assigns a non-negative length satisfying homogeneity, the triangle inequality, and positive definiteness.",
+        "$L_1$, $L_2$, and $L_\\infty$ are the workhorses; their unit balls have distinctive shapes.",
+        "Regularization picks a norm, and that choice changes the geometry of solutions (sparse vs. smooth).",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 11 — Chapter 3.2: Inner Products
+    // =========================================================================
+    {
+      title: "Inner Products",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "An **inner product** $\\langle \\cdot, \\cdot \\rangle : V \\times V \\to \\mathbb{R}$ is a function that eats two vectors and returns a scalar, satisfying three properties: **symmetry** ($\\langle \\mathbf{u}, \\mathbf{v}\\rangle = \\langle \\mathbf{v}, \\mathbf{u}\\rangle$), **linearity** in each argument, and **positive definiteness** ($\\langle \\mathbf{v}, \\mathbf{v}\\rangle \\geq 0$, with equality iff $\\mathbf{v} = \\mathbf{0}$). The most familiar example is the **dot product**: $\\langle \\mathbf{u}, \\mathbf{v}\\rangle = \\mathbf{u}^\\top \\mathbf{v} = \\sum_i u_i v_i$.",
+        "Every inner product induces a norm via $\\|\\mathbf{v}\\| = \\sqrt{\\langle \\mathbf{v}, \\mathbf{v}\\rangle}$. In $\\mathbb{R}^n$ with the standard dot product, this gives the familiar Euclidean norm. But we can build *weighted* inner products too: $\\langle \\mathbf{u}, \\mathbf{v}\\rangle_A = \\mathbf{u}^\\top A \\mathbf{v}$ for any **symmetric positive definite** matrix $A$. Different $A$s produce different geometries on the same vector space.",
+        "A profound consequence of the axioms is the **Cauchy–Schwarz inequality**: $|\\langle \\mathbf{u}, \\mathbf{v}\\rangle| \\leq \\|\\mathbf{u}\\| \\cdot \\|\\mathbf{v}\\|$, with equality iff the two vectors are parallel. This single inequality powers countless proofs — the triangle inequality falls out of it, as does the definition of the angle between vectors.",
+        "Inner products go far beyond $\\mathbb{R}^n$. On the space of continuous functions on $[a, b]$, the integral $\\langle f, g\\rangle = \\int_a^b f(x) g(x) \\, dx$ is an inner product. This is the foundation of Fourier analysis: the sine and cosine functions are *orthogonal* under this product, so expressing a signal as a sum of them is the analog of expressing a vector in an orthogonal basis.",
+        "In ML, inner products are the atom of **similarity**. Cosine similarity $\\frac{\\langle \\mathbf{u}, \\mathbf{v}\\rangle}{\\|\\mathbf{u}\\|\\|\\mathbf{v}\\|}$ measures how aligned two vectors are regardless of magnitude — central to word embeddings and retrieval. **Kernel methods** (like the kernel trick in SVMs) replace the standard dot product with $\\kappa(\\mathbf{u}, \\mathbf{v}) = \\langle \\phi(\\mathbf{u}), \\phi(\\mathbf{v})\\rangle$ where $\\phi$ implicitly maps data into a higher-dimensional feature space, never computing $\\phi$ directly.",
+      ],
+      visualizations: [
+        {
+          type: "vector-2d",
+          title: "Dot product as alignment",
+          description: "For $\\mathbf{u} = (2, 1)$, $\\mathbf{v} = (1, 2)$: $\\mathbf{u}^\\top \\mathbf{v} = 2 + 2 = 4$. Positive dot product means the angle between them is acute.",
+          config: {
+            vectors: [[2, 1], [1, 2]],
+            labels: ["u", "v"],
+          },
+        },
+        {
+          type: "vector-2d",
+          title: "Negative dot product",
+          description: "For $\\mathbf{u} = (2, 1)$, $\\mathbf{v} = (-1, 1)$: $\\mathbf{u}^\\top \\mathbf{v} = -2 + 1 = -1$. Negative means the angle is obtuse.",
+          config: {
+            vectors: [[2, 1], [-1, 1]],
+            labels: ["u", "v"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Compute $\\langle \\mathbf{u}, \\mathbf{v}\\rangle$ for $\\mathbf{u} = (1, 2, 3)$ and $\\mathbf{v} = (4, -1, 2)$.",
+          answer: 8,
+          tolerance: 0.01,
+          hint: "Sum the products of corresponding components.",
+          explanation: "$1\\cdot 4 + 2\\cdot(-1) + 3\\cdot 2 = 4 - 2 + 6 = 8$. The positive value indicates the two vectors are more than 90° apart in the same general direction.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which property does the dot product NOT satisfy?",
+          options: [
+            "$\\langle \\mathbf{u}, \\mathbf{v}\\rangle = \\langle \\mathbf{v}, \\mathbf{u}\\rangle$",
+            "$\\langle \\mathbf{u} + \\mathbf{w}, \\mathbf{v}\\rangle = \\langle \\mathbf{u}, \\mathbf{v}\\rangle + \\langle \\mathbf{w}, \\mathbf{v}\\rangle$",
+            "$\\langle \\mathbf{v}, \\mathbf{v}\\rangle \\geq 0$",
+            "$\\langle \\mathbf{u}, \\mathbf{v}\\rangle \\leq \\mathbf{u} + \\mathbf{v}$",
+          ],
+          correctIndex: 3,
+          hint: "One option is ungrammatical — scalars vs vectors.",
+          explanation: "The fourth option is nonsensical: it compares a scalar to a vector sum. The first three are exactly the symmetry, linearity, and positive definiteness axioms.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Two text embeddings have dot product 0.95 (after normalization). What does this tell us?",
+          options: [
+            "The texts are unrelated.",
+            "The embeddings are nearly parallel, so the texts are semantically similar.",
+            "The embeddings are orthogonal.",
+            "One embedding is zero.",
+          ],
+          correctIndex: 1,
+          hint: "Normalized dot product is cosine similarity, bounded by 1.",
+          explanation: "After normalization, $\\langle \\mathbf{u}, \\mathbf{v}\\rangle = \\cos\\theta$. A value near 1 means $\\theta \\approx 0$ — the vectors point in nearly the same direction, indicating high semantic similarity. This is how retrieval and RAG systems rank documents.",
+        },
+      ],
+      keyTakeaways: [
+        "An inner product generalizes the dot product: symmetric, bilinear, positive definite.",
+        "Every inner product induces a norm via $\\|\\mathbf{v}\\| = \\sqrt{\\langle \\mathbf{v}, \\mathbf{v}\\rangle}$.",
+        "Cosine similarity and kernel methods in ML are direct applications of inner products.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 12 — Chapter 3.3: Lengths and Distances
+    // =========================================================================
+    {
+      title: "Lengths and Distances",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "Once we have a norm, we automatically get a **distance** between any two points: $d(\\mathbf{u}, \\mathbf{v}) = \\|\\mathbf{u} - \\mathbf{v}\\|$. The distance inherits all the good behavior of the norm — non-negativity, symmetry, the triangle inequality — so every normed space is also a **metric space**. And because every inner product induces a norm, every inner-product space automatically comes with a notion of distance.",
+        "The **Euclidean distance** $d_2(\\mathbf{u}, \\mathbf{v}) = \\sqrt{\\sum_i (u_i - v_i)^2}$ is the default in most ML contexts — it is the distance you would measure with a ruler. The **Manhattan distance** $d_1$, **Chebyshev distance** $d_\\infty$, and **Mahalanobis distance** $d_M(\\mathbf{u}, \\mathbf{v}) = \\sqrt{(\\mathbf{u} - \\mathbf{v})^\\top \\Sigma^{-1} (\\mathbf{u} - \\mathbf{v})}$ (which re-scales by a covariance matrix) are all common alternatives tailored to different data geometries.",
+        "A classical identity connects distance to inner product: $\\|\\mathbf{u} - \\mathbf{v}\\|^2 = \\|\\mathbf{u}\\|^2 - 2\\langle \\mathbf{u}, \\mathbf{v}\\rangle + \\|\\mathbf{v}\\|^2$. This is the **law of cosines** in vector form, and it is how most similarity-to-distance conversions work under the hood. It also explains why squared Euclidean distance is often preferred computationally: it avoids the square root while preserving ordering.",
+        "The closest-point problem — given a query, find the nearest training point — is the heart of **$k$-nearest-neighbors** classification, retrieval-augmented generation, and clustering. The *choice of distance* changes the answer. For images you may want cosine distance on embeddings; for time series, dynamic time warping; for distributions, the Wasserstein distance. Getting the metric right is half the battle.",
+        "Two subtle pitfalls. First, in very high dimensions most pairs of random points are roughly equidistant — the so-called **concentration of distances** — so naive Euclidean distance loses discriminative power. Second, raw features with different scales (age in years, income in dollars) will be dominated by the larger scale. This is why **standardization** (subtract mean, divide by standard deviation) or using the Mahalanobis metric is essential before measuring distance on real-world data.",
+      ],
+      visualizations: [
+        {
+          type: "vector-2d",
+          title: "Euclidean distance = length of the difference",
+          description: "$d(\\mathbf{u}, \\mathbf{v}) = \\|\\mathbf{u} - \\mathbf{v}\\|$. The difference vector connects the tips.",
+          config: {
+            vectors: [[4, 3], [1, 1], [3, 2]],
+            labels: ["u", "v", "u-v"],
+          },
+        },
+        {
+          type: "norm-balls",
+          title: "Unit balls = equidistant sets",
+          description: "Each unit ball is the set of points at distance exactly 1 from the origin under the corresponding norm.",
+          config: {},
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Compute the Euclidean distance between $\\mathbf{u} = (1, 2)$ and $\\mathbf{v} = (4, 6)$.",
+          answer: 5,
+          tolerance: 0.01,
+          hint: "Take $\\mathbf{u} - \\mathbf{v}$ and compute its length.",
+          explanation: "$\\mathbf{u} - \\mathbf{v} = (-3, -4)$. $\\|\\mathbf{u} - \\mathbf{v}\\|_2 = \\sqrt{9 + 16} = \\sqrt{25} = 5$. The classic 3-4-5 right triangle.",
+        },
+        {
+          type: "numeric-input",
+          question: "Compute the Manhattan distance between $\\mathbf{u} = (2, -1, 3)$ and $\\mathbf{v} = (5, 1, 0)$.",
+          answer: 8,
+          tolerance: 0.01,
+          hint: "Sum absolute differences component-by-component.",
+          explanation: "$|2 - 5| + |-1 - 1| + |3 - 0| = 3 + 2 + 3 = 8$. Manhattan distance measures travel along axis-aligned paths.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why is feature standardization usually recommended before computing Euclidean distances for $k$-NN?",
+          options: [
+            "It speeds up the algorithm.",
+            "Features with large numerical scales will dominate the distance, swamping smaller-scaled features regardless of importance.",
+            "Distances are not defined on raw data.",
+            "Euclidean distance requires integer inputs.",
+          ],
+          correctIndex: 1,
+          hint: "Think about comparing age (0–100) with income (0–1,000,000).",
+          explanation: "Without scaling, `income` will contribute differences of thousands while `age` contributes single digits, making age effectively invisible in the distance. Standardizing puts features on comparable scales so each contributes according to its true information content.",
+        },
+      ],
+      keyTakeaways: [
+        "Distance is induced by a norm: $d(\\mathbf{u}, \\mathbf{v}) = \\|\\mathbf{u} - \\mathbf{v}\\|$.",
+        "Different metrics (Euclidean, Manhattan, Mahalanobis) encode different geometries.",
+        "High-dimensional and unstandardized data require careful distance choice and preprocessing.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 13 — Chapter 3.4: Angles and Orthogonality
+    // =========================================================================
+    {
+      title: "Angles and Orthogonality",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "From an inner product we can extract the **angle** between two non-zero vectors via $\\cos\\theta = \\frac{\\langle \\mathbf{u}, \\mathbf{v}\\rangle}{\\|\\mathbf{u}\\| \\cdot \\|\\mathbf{v}\\|}$. Cauchy–Schwarz guarantees this ratio lies in $[-1, 1]$, so $\\theta \\in [0, \\pi]$ is well-defined. When $\\theta = 0$ the vectors are parallel and pointing the same way; when $\\theta = \\pi$ they are anti-parallel; when $\\theta = \\pi/2$ they are **orthogonal**.",
+        "Two vectors are **orthogonal**, written $\\mathbf{u} \\perp \\mathbf{v}$, exactly when $\\langle \\mathbf{u}, \\mathbf{v}\\rangle = 0$. Orthogonality is the vector analog of 'independent' or 'unrelated' — orthogonal directions contribute cleanly separate information. Geometrically, two orthogonal vectors meet at a right angle, but algebraically orthogonality extends to any inner-product space, including spaces of functions.",
+        "The **Pythagorean theorem** generalizes to any inner-product space: if $\\mathbf{u} \\perp \\mathbf{v}$, then $\\|\\mathbf{u} + \\mathbf{v}\\|^2 = \\|\\mathbf{u}\\|^2 + \\|\\mathbf{v}\\|^2$. This is not a coincidence — the Pythagorean theorem *is* what you get when you expand the squared norm and use orthogonality to kill the cross term. Every 'variance decomposition' in statistics is Pythagoras in disguise.",
+        "A matrix $Q$ is **orthogonal** if $Q^\\top Q = I$, i.e., its columns form an orthonormal set (unit length, pairwise perpendicular). Orthogonal matrices preserve inner products: $\\langle Q\\mathbf{u}, Q\\mathbf{v}\\rangle = \\langle \\mathbf{u}, \\mathbf{v}\\rangle$. Consequently they preserve lengths and angles — they are exactly the **rigid motions** of space: rotations and reflections. Orthogonal transformations are the best-behaved linear maps, numerically stable and information-preserving.",
+        "Angles are everywhere in ML. **Cosine similarity** $\\cos\\theta$ is the go-to retrieval metric because it ignores vector magnitude. **Attention scores** in transformers compute $\\mathbf{q}^\\top \\mathbf{k} / \\sqrt{d}$ — a scaled dot product, essentially an unnormalized cosine. **Orthogonal initialization** of weights in RNNs prevents gradient explosion by keeping signal magnitudes stable. The angle concept, once abstract, is the backbone of modern representation learning.",
+      ],
+      visualizations: [
+        {
+          type: "vector-2d",
+          title: "Orthogonal vectors",
+          description: "$\\mathbf{u} = (3, 1)$ and $\\mathbf{v} = (-1, 3)$ are orthogonal: $\\langle \\mathbf{u}, \\mathbf{v}\\rangle = -3 + 3 = 0$, so the angle is exactly 90°.",
+          config: {
+            vectors: [[3, 1], [-1, 3]],
+            labels: ["u", "v ⊥ u"],
+          },
+        },
+        {
+          type: "matrix-transform-2d",
+          title: "A rotation is orthogonal",
+          description: "$Q = \\begin{pmatrix}\\cos\\theta & -\\sin\\theta \\\\ \\sin\\theta & \\cos\\theta\\end{pmatrix}$ preserves lengths and angles. Here $\\theta = 30°$.",
+          config: {
+            matrix: [
+              [0.866, -0.5],
+              [0.5, 0.866],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Two unit vectors have inner product $0.5$. What is the angle $\\theta$ between them, in degrees?",
+          answer: 60,
+          tolerance: 1,
+          hint: "$\\cos\\theta = 0.5$; solve for $\\theta$.",
+          explanation: "$\\cos^{-1}(0.5) = 60°$ (or $\\pi/3$ radians). This is a classic pair in the equilateral triangle — each internal angle of the triangle appears as the angle between edges.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Are $\\mathbf{u} = (1, 2, -1)$ and $\\mathbf{v} = (3, -1, 1)$ orthogonal?",
+          options: [
+            "Yes — their dot product is 0.",
+            "No — their dot product is 2.",
+            "No — their dot product is -2.",
+            "Cannot determine without magnitudes.",
+          ],
+          correctIndex: 0,
+          hint: "Compute $\\mathbf{u}^\\top \\mathbf{v}$.",
+          explanation: "$1\\cdot 3 + 2\\cdot(-1) + (-1)\\cdot 1 = 3 - 2 - 1 = 0$. Orthogonality requires only that the inner product vanish, not any particular magnitudes.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does cosine similarity ignore vector magnitude, and why is this useful for text embeddings?",
+          options: [
+            "It is a bug in the definition.",
+            "Dividing by $\\|\\mathbf{u}\\|\\|\\mathbf{v}\\|$ normalizes the result; useful because document length shouldn't dominate topical similarity.",
+            "Magnitude is always 1 for embeddings.",
+            "Cosine similarity is only defined for integers.",
+          ],
+          correctIndex: 1,
+          hint: "Think about what the normalization achieves.",
+          explanation: "A long document and a short document about the same topic should be 'close' regardless of token count. Cosine similarity extracts only the **direction** of each embedding, making similarity depend on content rather than length — exactly the property you want for retrieval.",
+        },
+      ],
+      keyTakeaways: [
+        "$\\cos\\theta = \\langle \\mathbf{u}, \\mathbf{v}\\rangle / (\\|\\mathbf{u}\\|\\|\\mathbf{v}\\|)$ defines the angle between vectors.",
+        "Orthogonal vectors have zero inner product; orthogonal matrices preserve lengths and angles.",
+        "Cosine similarity and attention mechanisms use this geometry at the heart of modern ML.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 14 — Chapter 3.5: Orthonormal Basis
+    // =========================================================================
+    {
+      title: "Orthonormal Basis",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "A set of vectors $\\{\\mathbf{b}_1, \\dots, \\mathbf{b}_n\\}$ is **orthonormal** if each has unit length ($\\|\\mathbf{b}_i\\| = 1$) and any two are orthogonal ($\\langle \\mathbf{b}_i, \\mathbf{b}_j\\rangle = 0$ for $i \\neq j$). Compactly, $\\langle \\mathbf{b}_i, \\mathbf{b}_j\\rangle = \\delta_{ij}$ (the Kronecker delta). An **orthonormal basis** is a basis that happens to be orthonormal — the best possible coordinate system.",
+        "Why 'best possible'? Coordinates in an orthonormal basis are trivially computed: $c_i = \\langle \\mathbf{v}, \\mathbf{b}_i\\rangle$. No matrix inversion needed, just dot products. Moreover, lengths and inner products look exactly as in the standard basis: $\\langle \\mathbf{u}, \\mathbf{v}\\rangle = \\sum_i u_i v_i$ when both are expressed in an ONB. Orthonormality preserves Euclidean geometry.",
+        "The **Gram–Schmidt process** constructs an orthonormal basis from any basis. Given $\\{\\mathbf{v}_1, \\dots, \\mathbf{v}_n\\}$: set $\\mathbf{u}_1 = \\mathbf{v}_1$, then iteratively subtract projections onto earlier $\\mathbf{u}_i$s: $\\mathbf{u}_k = \\mathbf{v}_k - \\sum_{i<k} \\frac{\\langle \\mathbf{v}_k, \\mathbf{u}_i\\rangle}{\\langle \\mathbf{u}_i, \\mathbf{u}_i\\rangle} \\mathbf{u}_i$. Finally normalize each $\\mathbf{u}_k$ to unit length. The procedure constructs the **QR decomposition** $A = QR$ used by many solvers.",
+        "Numerically, classical Gram–Schmidt accumulates rounding error badly. **Modified Gram–Schmidt** reduces this by re-projecting each vector against the running orthonormalized set rather than the originals. For higher stability, **Householder reflections** or **Givens rotations** compute QR without ever explicitly forming the intermediate Gram-Schmidt vectors — this is what `numpy.linalg.qr` does.",
+        "Orthonormal bases show up constantly in ML. The **Discrete Fourier Transform** uses an ONB of complex sinusoids. **Wavelet bases** provide multi-resolution ONBs of functions. **PCA** finds an ONB of data-adapted directions, and **random orthogonal matrices** are used for initialization and low-distortion dimensionality reduction via the Johnson–Lindenstrauss lemma. Whenever you see an orthonormal basis, expect clean math and stable computation.",
+      ],
+      visualizations: [
+        {
+          type: "vector-2d",
+          title: "Two orthonormal bases of $\\mathbb{R}^2$",
+          description: "The standard basis $\\{e_1, e_2\\}$ (black) and a rotated ONB $\\{(\\frac{1}{\\sqrt 2}, \\frac{1}{\\sqrt 2}), (-\\frac{1}{\\sqrt 2}, \\frac{1}{\\sqrt 2})\\}$ (red). Both describe the same plane.",
+          config: {
+            vectors: [[1, 0], [0, 1], [0.707, 0.707], [-0.707, 0.707]],
+            labels: ["e₁", "e₂", "b₁", "b₂"],
+          },
+        },
+        {
+          type: "vector-2d",
+          title: "Gram–Schmidt step",
+          description: "Given $\\mathbf{v}_1 = (2, 0)$ and $\\mathbf{v}_2 = (1, 2)$, subtract the projection of $\\mathbf{v}_2$ onto $\\mathbf{v}_1$ to get an orthogonal pair.",
+          config: {
+            vectors: [[2, 0], [1, 2], [0, 2]],
+            labels: ["v₁", "v₂", "u₂"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "vector-input",
+          question: "Apply Gram–Schmidt to $\\mathbf{v}_1 = (1, 0)$ and $\\mathbf{v}_2 = (1, 1)$. Enter the second orthogonal vector $\\mathbf{u}_2$ (before normalization).",
+          dimensions: 2,
+          answer: [0, 1],
+          tolerance: 0.01,
+          showPreview: true,
+          hint: "$\\mathbf{u}_2 = \\mathbf{v}_2 - \\frac{\\langle \\mathbf{v}_2, \\mathbf{v}_1\\rangle}{\\|\\mathbf{v}_1\\|^2} \\mathbf{v}_1$.",
+          explanation: "$\\langle \\mathbf{v}_2, \\mathbf{v}_1\\rangle = 1$, $\\|\\mathbf{v}_1\\|^2 = 1$, so the projection is $(1, 0)$. $\\mathbf{u}_2 = (1, 1) - (1, 0) = (0, 1)$, which is indeed orthogonal to $\\mathbf{v}_1$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "If $Q$ has orthonormal columns, what is $Q^\\top Q$?",
+          options: [
+            "The zero matrix",
+            "$Q$ itself",
+            "The identity matrix $I$",
+            "Undefined",
+          ],
+          correctIndex: 2,
+          hint: "Each entry $(i,j)$ of $Q^\\top Q$ is $\\langle \\mathbf{q}_i, \\mathbf{q}_j\\rangle$.",
+          explanation: "The $(i,j)$ entry of $Q^\\top Q$ is $\\mathbf{q}_i^\\top \\mathbf{q}_j = \\delta_{ij}$, so $Q^\\top Q = I$. This is the defining identity of orthonormal columns (and, when $Q$ is square, of orthogonal matrices).",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why are orthonormal bases numerically preferred in ML algorithms?",
+          options: [
+            "They are faster to store.",
+            "Inner products and lengths keep their simple form, and orthonormal transformations do not amplify numerical errors.",
+            "They are required by Python.",
+            "Only orthonormal bases span vector spaces.",
+          ],
+          correctIndex: 1,
+          hint: "Think about condition number and rounding error.",
+          explanation: "Orthogonal matrices have condition number 1 — they do not magnify floating-point error. Coordinates computed via dot products are numerically stable. Contrast with general bases, where change-of-basis can amplify tiny perturbations significantly.",
+        },
+      ],
+      keyTakeaways: [
+        "Orthonormal means unit length and pairwise orthogonal — the friendliest coordinate system.",
+        "Gram–Schmidt constructs an ONB from any basis and underlies the QR decomposition.",
+        "Orthogonal matrices preserve inner products and are numerically stable.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 15 — Chapter 3.6: Orthogonal Complement
+    // =========================================================================
+    {
+      title: "Orthogonal Complement",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "Given a subspace $U$ of an inner-product space $V$, its **orthogonal complement** is the set $U^\\perp = \\{\\mathbf{v} \\in V : \\langle \\mathbf{v}, \\mathbf{u}\\rangle = 0 \\text{ for all } \\mathbf{u} \\in U\\}$ — every vector that is orthogonal to every vector in $U$. This is itself a subspace, and it is the 'leftover' directions that $U$ misses.",
+        "The crucial structural fact: $V = U \\oplus U^\\perp$, meaning every vector $\\mathbf{v} \\in V$ decomposes *uniquely* as $\\mathbf{v} = \\mathbf{v}_U + \\mathbf{v}_{U^\\perp}$ with $\\mathbf{v}_U \\in U$ and $\\mathbf{v}_{U^\\perp} \\in U^\\perp$. This is the **orthogonal decomposition** and it is the backbone of projections, least squares, and Fourier analysis. Dimensions also add: $\\dim U + \\dim U^\\perp = \\dim V$.",
+        "A second pleasant property: $(U^\\perp)^\\perp = U$ — taking the complement twice returns you to the original subspace (in finite dimensions). So $U$ and $U^\\perp$ form a perfectly balanced pair, each fully determining the other.",
+        "The **four fundamental subspaces** of a matrix $A \\in \\mathbb{R}^{m \\times n}$ are orthogonal complements in two natural pairings. Inside $\\mathbb{R}^n$: the null space $\\text{null}(A)$ and the row space $\\text{row}(A) = \\text{col}(A^\\top)$ are orthogonal complements. Inside $\\mathbb{R}^m$: the left null space $\\text{null}(A^\\top)$ and the column space $\\text{col}(A)$ are orthogonal complements. This is **Strang's fundamental theorem of linear algebra** in a single picture.",
+        "Applications abound. In regression, the residual vector $\\mathbf{y} - X\\hat{\\mathbf{w}}$ lies in the orthogonal complement of the column space of $X$ — that's *why* the normal equations $X^\\top(\\mathbf{y} - X\\hat{\\mathbf{w}}) = 0$ hold. In signal processing, separating a signal into 'useful subspace' plus 'noise subspace' is exactly an orthogonal decomposition. In PCA, the top-$k$ principal directions and the discarded directions are orthogonal complements.",
+      ],
+      visualizations: [
+        {
+          type: "vector-2d",
+          title: "$U$ and $U^\\perp$ in $\\mathbb{R}^2$",
+          description: "The subspace $U$ spanned by $(2, 1)$ has complement spanned by $(-1, 2)$. Together they fill $\\mathbb{R}^2$.",
+          config: {
+            vectors: [[2, 1], [-1, 2]],
+            labels: ["U: span(2,1)", "U⊥: span(-1,2)"],
+          },
+        },
+        {
+          type: "vector-3d",
+          title: "Line and its orthogonal plane",
+          description: "In $\\mathbb{R}^3$, the orthogonal complement of a line is a plane (and vice versa). Dimensions add to 3.",
+          config: {
+            vectors: [[1, 1, 1], [1, -1, 0], [1, 1, -2]],
+            labels: ["U: line", "U⊥", "U⊥"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "vector-input",
+          question: "In $\\mathbb{R}^2$, find a non-zero vector orthogonal to $\\mathbf{u} = (3, 4)$.",
+          dimensions: 2,
+          answer: [4, -3],
+          tolerance: 0.01,
+          showPreview: true,
+          hint: "For a 2D vector $(a, b)$, the vector $(b, -a)$ is always orthogonal.",
+          explanation: "$(4, -3)$ satisfies $3\\cdot 4 + 4\\cdot(-3) = 12 - 12 = 0$. Any scalar multiple (like $(-4, 3)$ or $(8, -6)$) also works — $U^\\perp$ is a full 1-D line.",
+        },
+        {
+          type: "multiple-choice",
+          question: "For $A \\in \\mathbb{R}^{4 \\times 3}$ with rank 2, what is $\\dim(\\text{null}(A))$?",
+          options: ["1", "2", "3", "4"],
+          correctIndex: 0,
+          hint: "Row space has dimension = rank. Null space is its orthogonal complement in $\\mathbb{R}^3$.",
+          explanation: "The row space has dimension 2 (= rank) and lives in $\\mathbb{R}^3$ (= number of columns). Its orthogonal complement — the null space — has dimension $3 - 2 = 1$. This matches rank-nullity.",
+        },
+        {
+          type: "multiple-choice",
+          question: "In least-squares regression, why is the residual $\\mathbf{y} - X\\hat{\\mathbf{w}}$ orthogonal to the column space of $X$?",
+          options: [
+            "By coincidence.",
+            "Because the optimal fit is the projection of $\\mathbf{y}$ onto $\\text{col}(X)$, and residuals live in the orthogonal complement.",
+            "Because $X$ is orthogonal.",
+            "The residual is zero, so orthogonality is trivial.",
+          ],
+          correctIndex: 1,
+          hint: "Think about orthogonal decomposition $\\mathbf{y} = \\mathbf{y}_{\\text{col}(X)} + \\mathbf{y}_{\\text{col}(X)^\\perp}$.",
+          explanation: "OLS finds $\\hat{\\mathbf{w}}$ so that $X\\hat{\\mathbf{w}}$ is the orthogonal projection of $\\mathbf{y}$ onto the column space. By definition of projection, the residual $\\mathbf{y} - X\\hat{\\mathbf{w}}$ sits in the orthogonal complement — giving the normal equations $X^\\top(\\mathbf{y} - X\\hat{\\mathbf{w}}) = 0$.",
+        },
+      ],
+      keyTakeaways: [
+        "$U^\\perp$ is all vectors orthogonal to every element of $U$; it is itself a subspace.",
+        "Every vector splits uniquely as $\\mathbf{v}_U + \\mathbf{v}_{U^\\perp}$, and dimensions add.",
+        "Row space and null space are orthogonal complements — the geometric heart of least squares.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 16 — Chapter 3.7: Orthogonal Projections
+    // =========================================================================
+    {
+      title: "Orthogonal Projections",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "An **orthogonal projection** onto a subspace $U$ is the linear map $\\pi_U : V \\to V$ that sends each vector $\\mathbf{v}$ to its unique best approximation by an element of $U$ — the vector $\\mathbf{u}^* \\in U$ minimizing $\\|\\mathbf{v} - \\mathbf{u}\\|$. By the orthogonal decomposition theorem, this $\\mathbf{u}^*$ is exactly the $U$-component of $\\mathbf{v}$.",
+        "For a 1-D subspace spanned by a unit vector $\\mathbf{b}$, the projection is simple: $\\pi_{\\mathbf{b}}(\\mathbf{v}) = \\langle \\mathbf{v}, \\mathbf{b}\\rangle \\mathbf{b}$. When $\\mathbf{b}$ is not unit, divide by its squared norm: $\\pi_{\\mathbf{b}}(\\mathbf{v}) = \\frac{\\langle \\mathbf{v}, \\mathbf{b}\\rangle}{\\langle \\mathbf{b}, \\mathbf{b}\\rangle} \\mathbf{b}$. The scalar $\\langle \\mathbf{v}, \\mathbf{b}\\rangle / \\|\\mathbf{b}\\|^2$ is the **coordinate** of the projection along $\\mathbf{b}$.",
+        "For a general subspace $U = \\text{col}(B)$ where $B$'s columns are a basis of $U$, the projection matrix is $P_U = B(B^\\top B)^{-1} B^\\top$. If the columns of $B$ are orthonormal, this simplifies to $P_U = BB^\\top$. Projection matrices are **symmetric** ($P^\\top = P$) and **idempotent** ($P^2 = P$): projecting twice is the same as projecting once.",
+        "The **least-squares solution** to $A\\mathbf{x} = \\mathbf{b}$ (when exact solutions don't exist) is exactly $\\hat{\\mathbf{x}} = (A^\\top A)^{-1} A^\\top \\mathbf{b}$ — the preimage of the projection of $\\mathbf{b}$ onto $\\text{col}(A)$. Every regression problem, every curve fit, every dimension-reduction step is secretly an orthogonal projection in disguise.",
+        "Projections also power **feature extraction** and **denoising**. PCA projects data onto the top-$k$ principal subspace, discarding noise directions. In image compression, projecting onto a wavelet or DCT basis and keeping the largest coefficients is a lossy projection that the human eye hardly notices. Whenever you approximate something complicated with something simpler, a projection is almost certainly under the hood.",
+      ],
+      visualizations: [
+        {
+          type: "vector-2d",
+          title: "Projecting a vector onto a line",
+          description: "$\\mathbf{v} = (3, 2)$ projects onto the line $\\text{span}(1, 1)$ giving $\\pi(\\mathbf{v}) = (2.5, 2.5)$. The residual $\\mathbf{v} - \\pi(\\mathbf{v})$ is perpendicular to the line.",
+          config: {
+            vectors: [[3, 2], [2.5, 2.5], [0.5, -0.5]],
+            labels: ["v", "π(v)", "v - π(v)"],
+          },
+        },
+        {
+          type: "vector-3d",
+          title: "Projection onto a plane",
+          description: "In $\\mathbb{R}^3$, projecting onto a 2-D plane drops the vector 'straight down' along the plane's normal.",
+          config: {
+            vectors: [[1, 2, 3], [1, 2, 0], [0, 0, 3]],
+            labels: ["v", "π(v)", "residual"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "vector-input",
+          question: "Project $\\mathbf{v} = (4, 3)$ onto the line spanned by $\\mathbf{b} = (1, 0)$.",
+          dimensions: 2,
+          answer: [4, 0],
+          tolerance: 0.01,
+          showPreview: true,
+          hint: "Projecting onto the $x$-axis sets the $y$-coordinate to zero.",
+          explanation: "$\\langle \\mathbf{v}, \\mathbf{b}\\rangle = 4$, $\\|\\mathbf{b}\\|^2 = 1$, so $\\pi(\\mathbf{v}) = 4\\mathbf{b} = (4, 0)$. The residual $(0, 3)$ is perpendicular to the $x$-axis.",
+        },
+        {
+          type: "numeric-input",
+          question: "What is the squared distance from $\\mathbf{v} = (1, 2, 2)$ to the $xy$-plane (the subspace $z = 0$)?",
+          answer: 4,
+          tolerance: 0.01,
+          hint: "The distance is the length of the component perpendicular to the plane.",
+          explanation: "Projecting onto the $xy$-plane gives $(1, 2, 0)$; the residual is $(0, 0, 2)$, which has squared norm $4$. The projection is the closest point; the residual length is the distance.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which property does a projection matrix $P$ satisfy?",
+          options: [
+            "$P = P^{-1}$",
+            "$P^2 = P$ (idempotent)",
+            "$P$ is always orthogonal",
+            "$P$ is always invertible",
+          ],
+          correctIndex: 1,
+          hint: "Projecting a vector that's already in the subspace leaves it unchanged.",
+          explanation: "Projections are **idempotent**: once a vector is projected into $U$, projecting again does nothing. This is the defining algebraic property: $P^2 = P$. Projections are generally not invertible (they collapse $U^\\perp$ to zero).",
+        },
+      ],
+      keyTakeaways: [
+        "$\\pi_U(\\mathbf{v})$ is the closest point in $U$ to $\\mathbf{v}$; the residual is in $U^\\perp$.",
+        "Projection matrices are symmetric and idempotent: $P^\\top = P$ and $P^2 = P$.",
+        "Least squares, PCA, and many ML techniques are orthogonal projections.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 17 — Chapter 3.8: Rotations
+    // =========================================================================
+    {
+      title: "Rotations",
+      chapter: "Analytic Geometry",
+      chapterNumber: 3,
+      content: [
+        "A **rotation** is a linear transformation that preserves lengths, angles, and orientation. In $\\mathbb{R}^2$, rotation by angle $\\theta$ counterclockwise is the matrix $R_\\theta = \\begin{pmatrix}\\cos\\theta & -\\sin\\theta \\\\ \\sin\\theta & \\cos\\theta\\end{pmatrix}$. Its columns are unit vectors 90° apart; it satisfies $R^\\top R = I$ and $\\det R = +1$ (the $+1$ is what distinguishes rotations from reflections, which have $\\det = -1$).",
+        "Rotations in $\\mathbb{R}^2$ form a **group** under composition: $R_\\alpha R_\\beta = R_{\\alpha + \\beta}$, rotations commute, and every rotation has an inverse $R_\\theta^{-1} = R_{-\\theta} = R_\\theta^\\top$. This beautiful structure is called $SO(2)$, the **special orthogonal group** in 2 dimensions.",
+        "In 3D, rotations are specified by an axis and an angle. Elementary rotations about the $x$-, $y$-, and $z$-axes have well-known $3\\times 3$ matrix forms; any rotation can be decomposed into three such elementary ones via **Euler angles**. Unlike 2D, 3D rotations do **not** commute — rotating yaw-then-pitch is different from pitch-then-yaw, a fact pilots and robotics engineers know intimately.",
+        "Higher-dimensional rotations live in $SO(n)$, the group of orthogonal matrices with determinant $+1$. These preserve Euclidean distance and orientation in any number of dimensions. An important fact: every rotation can be written as $R = e^{A}$ for some skew-symmetric matrix $A$ (i.e., $A^\\top = -A$). This is the bridge between the **Lie group** $SO(n)$ and its **Lie algebra** $\\mathfrak{so}(n)$, used in robotics and differential geometry.",
+        "Rotations matter in ML beyond graphics. In PCA, a data rotation aligns axes with directions of maximum variance. In normalizing flows, each invertible transformation is often a composition of rotations and scalings. **Rotary Position Embedding (RoPE)** in modern transformers encodes positions by rotating query/key vectors in high-dimensional space — a mathematically elegant way to inject sequence position that preserves inner products up to phase. Knowing your rotations is surprisingly practical.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Rotation by 45°",
+          description: "$R_{45°} = \\begin{pmatrix}\\frac{\\sqrt 2}{2} & -\\frac{\\sqrt 2}{2} \\\\ \\frac{\\sqrt 2}{2} & \\frac{\\sqrt 2}{2}\\end{pmatrix}$ rotates every point by $45°$ counterclockwise.",
+          config: {
+            matrix: [
+              [0.707, -0.707],
+              [0.707, 0.707],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+        {
+          type: "matrix-transform-3d",
+          title: "3D rotation about the $z$-axis",
+          description: "A rotation in the $xy$-plane leaves the $z$-axis fixed. The matrix has the 2D rotation block and a 1 in the corner.",
+          config: {
+            matrix: [
+              [0.866, -0.5, 0],
+              [0.5, 0.866, 0],
+              [0, 0, 1],
+            ],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "matrix-input",
+          question: "Write the $2\\times 2$ rotation matrix for $\\theta = 90°$ counterclockwise.",
+          rows: 2,
+          cols: 2,
+          answer: [
+            [0, -1],
+            [1, 0],
+          ],
+          tolerance: 0.01,
+          hint: "$\\cos 90° = 0$, $\\sin 90° = 1$.",
+          explanation: "$R_{90°} = \\begin{pmatrix}0 & -1 \\\\ 1 & 0\\end{pmatrix}$. Check: $(1, 0) \\mapsto (0, 1)$ and $(0, 1) \\mapsto (-1, 0)$ — a quarter turn counterclockwise.",
+        },
+        {
+          type: "vector-input",
+          question: "Rotate the vector $(1, 0)$ by $90°$ counterclockwise. Enter the result.",
+          dimensions: 2,
+          answer: [0, 1],
+          tolerance: 0.01,
+          showPreview: true,
+          hint: "Apply $R_{90°}$ to the vector.",
+          explanation: "$R_{90°}(1, 0) = (0\\cdot 1 + (-1)\\cdot 0,\\; 1\\cdot 1 + 0\\cdot 0) = (0, 1)$. The positive $x$-axis rotates to the positive $y$-axis.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which statement about 3D rotations is TRUE?",
+          options: [
+            "They always commute.",
+            "They do not commute in general — rotation order matters.",
+            "They are determined by a single angle.",
+            "They have determinant $-1$.",
+          ],
+          correctIndex: 1,
+          hint: "Think about the difference between yaw-then-pitch and pitch-then-yaw.",
+          explanation: "3D rotations **do not commute**: $R_x R_y \\neq R_y R_x$ in general. This non-commutativity is the source of Gimbal lock and the reason quaternions are used in practice. Rotations always have determinant $+1$ (reflections have $-1$).",
+        },
+      ],
+      keyTakeaways: [
+        "A rotation is an orthogonal matrix with $\\det = +1$ — it preserves lengths, angles, and orientation.",
+        "2D rotations commute and form $SO(2)$; 3D rotations do not commute.",
+        "Rotations appear in PCA, RoPE embeddings, and normalizing flows in modern ML.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 18 — Chapter 4.1: Determinant and Trace
+    // =========================================================================
+    {
+      title: "Determinant and Trace",
+      chapter: "Matrix Decompositions",
+      chapterNumber: 4,
+      content: [
+        "The **determinant** $\\det(A)$ of a square matrix is a single scalar that captures the **signed volume scaling factor** of the linear map $\\mathbf{x} \\mapsto A\\mathbf{x}$. If $\\det(A) = 3$, the map triples areas (in 2D) or volumes (in 3D). If $\\det(A) < 0$, it reverses orientation (like a reflection). If $\\det(A) = 0$, the map collapses space — volumes become zero because the image is lower-dimensional.",
+        "For a $2\\times 2$ matrix, $\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix} = ad - bc$. In higher dimensions, the determinant expands recursively via **cofactor expansion** or is computed numerically from the LU decomposition as the product of pivots. Key identities: $\\det(AB) = \\det(A)\\det(B)$, $\\det(A^\\top) = \\det(A)$, and $\\det(A^{-1}) = 1/\\det(A)$.",
+        "The determinant is the gatekeeper of invertibility: $A$ is invertible iff $\\det(A) \\neq 0$. Singular matrices live on a thin surface in the space of all matrices, the **zero set** of the determinant polynomial. Numerically, a near-zero determinant warns of ill-conditioning — though the determinant itself can be a misleading size estimate (condition number is a better diagnostic).",
+        "The **trace** $\\text{tr}(A)$ is the sum of diagonal entries. Despite its simple definition, it has rich properties: $\\text{tr}(AB) = \\text{tr}(BA)$ (even when $AB \\neq BA$!), it is linear ($\\text{tr}(A + B) = \\text{tr}(A) + \\text{tr}(B)$), and it equals the **sum of eigenvalues**. Dually, the determinant equals the **product of eigenvalues**.",
+        "Both show up throughout ML. The **log-determinant** $\\log \\det(A)$ appears in multivariate Gaussian log-likelihoods and is a key term in normalizing flow training (where the change of variables formula requires $\\log|\\det(\\partial f/\\partial \\mathbf{x})|$). The trace powers the **Frobenius norm** $\\|A\\|_F^2 = \\text{tr}(A^\\top A)$, used as a matrix-level regularizer. Understanding determinant and trace is the key to reading many probabilistic ML papers.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Determinant as area scaling",
+          description: "This matrix has $\\det = 2 \\cdot 3 - 1 \\cdot 0 = 6$, meaning it scales every area by 6. A unit square becomes a parallelogram of area 6.",
+          config: {
+            matrix: [
+              [2, 1],
+              [0, 3],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+        {
+          type: "matrix-transform-2d",
+          title: "Determinant zero = collapse",
+          description: "$\\det\\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix} = 0$ — the matrix sends the whole plane to a line, so the area scaling factor is zero.",
+          config: {
+            matrix: [
+              [1, 2],
+              [2, 4],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Compute $\\det\\begin{pmatrix}3 & 1 \\\\ 2 & 4\\end{pmatrix}$.",
+          answer: 10,
+          tolerance: 0.01,
+          hint: "For a 2×2 matrix: $ad - bc$.",
+          explanation: "$3\\cdot 4 - 1\\cdot 2 = 12 - 2 = 10$. The matrix scales areas by 10.",
+        },
+        {
+          type: "numeric-input",
+          question: "Find $\\text{tr}(A)$ for $A = \\begin{pmatrix}4 & 1 & -2 \\\\ 3 & 5 & 0 \\\\ 0 & 7 & 2\\end{pmatrix}$.",
+          answer: 11,
+          tolerance: 0.01,
+          hint: "Sum the diagonal.",
+          explanation: "$\\text{tr}(A) = 4 + 5 + 2 = 11$. Off-diagonal entries don't matter. This also equals the sum of the matrix's eigenvalues.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which identity always holds, even when $AB \\neq BA$?",
+          options: [
+            "$\\text{tr}(AB) = \\text{tr}(A) \\cdot \\text{tr}(B)$",
+            "$\\text{tr}(AB) = \\text{tr}(BA)$",
+            "$\\det(A + B) = \\det(A) + \\det(B)$",
+            "$\\text{tr}(A^{-1}) = 1 / \\text{tr}(A)$",
+          ],
+          correctIndex: 1,
+          hint: "Trace is invariant under cyclic permutation.",
+          explanation: "**Cyclic invariance**: $\\text{tr}(AB) = \\text{tr}(BA)$ always. This is surprising since the matrices themselves don't commute — but the sum of diagonals of the product does. It's why we can freely rearrange traces in derivations: $\\text{tr}(ABC) = \\text{tr}(BCA) = \\text{tr}(CAB)$.",
+        },
+      ],
+      keyTakeaways: [
+        "$\\det(A)$ measures signed volume scaling; $A$ is invertible iff $\\det(A) \\neq 0$.",
+        "$\\text{tr}(A)$ sums the diagonal and is cyclically invariant: $\\text{tr}(AB) = \\text{tr}(BA)$.",
+        "Determinant = product of eigenvalues; trace = sum of eigenvalues.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 19 — Chapter 4.2: Eigenvalues and Eigenvectors
+    // =========================================================================
+    {
+      title: "Eigenvalues and Eigenvectors",
+      chapter: "Matrix Decompositions",
+      chapterNumber: 4,
+      content: [
+        "An **eigenvector** of a square matrix $A$ is a non-zero vector $\\mathbf{v}$ that $A$ stretches without rotating: $A\\mathbf{v} = \\lambda \\mathbf{v}$ for some scalar $\\lambda$, the corresponding **eigenvalue**. Eigenvectors are the *invariant directions* of the map: every other vector gets bent by $A$, but these lie along axes that $A$ merely scales.",
+        "To find them algebraically, rewrite $A\\mathbf{v} = \\lambda \\mathbf{v}$ as $(A - \\lambda I)\\mathbf{v} = \\mathbf{0}$. For a non-trivial $\\mathbf{v}$ to exist, $A - \\lambda I$ must be singular, i.e., $\\det(A - \\lambda I) = 0$. This equation in $\\lambda$ is the **characteristic polynomial** — a polynomial of degree $n$ whose roots are the eigenvalues. For each root $\\lambda$, the corresponding eigenvectors span the **eigenspace** $\\ker(A - \\lambda I)$.",
+        "Eigenvalues can be real or complex, distinct or repeated. A $2\\times 2$ rotation matrix has complex eigenvalues $e^{\\pm i\\theta}$ — it has no real invariant direction other than the origin. A **diagonalizable** matrix has $n$ linearly independent eigenvectors that form a basis; in that basis, $A$ acts by pure scaling. A **defective** matrix (like $\\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$) has fewer independent eigenvectors than its size — it cannot be fully diagonalized and needs Jordan form.",
+        "Symmetric real matrices enjoy a remarkable guarantee called the **spectral theorem**: all eigenvalues are real, eigenvectors from different eigenspaces are orthogonal, and the matrix can be diagonalized by an orthonormal basis: $A = QDQ^\\top$ with $Q$ orthogonal and $D$ diagonal. This is the cleanest possible factorization, and it is why covariance matrices, Hessians, and Laplacians are such tractable objects.",
+        "Eigenvalues unlock enormous parts of ML. **PCA** extracts the top eigenvectors of the covariance matrix as principal directions. **Spectral clustering** uses eigenvectors of the graph Laplacian. **Google's PageRank** is the dominant eigenvector of a stochastic matrix. Even the stability of a neural-network dynamical system hinges on whether the Jacobian's eigenvalues lie inside the unit disk.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Eigenvectors: directions that don't bend",
+          description: "$A = \\begin{pmatrix}2 & 1 \\\\ 0 & 3\\end{pmatrix}$ has eigenvalues 2 and 3. Vectors along the eigenvectors get scaled; other vectors also rotate.",
+          config: {
+            matrix: [
+              [2, 1],
+              [0, 3],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+        {
+          type: "eigenspace-3d",
+          title: "Eigenspaces in 3D",
+          description: "For a symmetric matrix in $\\mathbb{R}^3$, eigenvectors form an orthogonal basis — three perpendicular directions that diagonalize the matrix.",
+          config: {
+            vectors: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+            labels: ["v₁ (λ=3)", "v₂ (λ=1)", "v₃ (λ=0.5)"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Find the larger eigenvalue of $A = \\begin{pmatrix}3 & 1 \\\\ 0 & 2\\end{pmatrix}$.",
+          answer: 3,
+          tolerance: 0.01,
+          hint: "For an upper-triangular matrix, eigenvalues are the diagonal entries.",
+          explanation: "The characteristic polynomial $(3-\\lambda)(2-\\lambda) = 0$ gives $\\lambda = 2, 3$. The larger is **3**. For triangular matrices, the diagonal gives you the eigenvalues for free.",
+        },
+        {
+          type: "vector-input",
+          question: "Find an eigenvector of $A = \\begin{pmatrix}2 & 0 \\\\ 0 & 5\\end{pmatrix}$ corresponding to $\\lambda = 5$.",
+          dimensions: 2,
+          answer: [0, 1],
+          tolerance: 0.01,
+          showPreview: true,
+          hint: "$A$ is diagonal — the standard basis vectors are eigenvectors.",
+          explanation: "$A\\mathbf{e}_2 = (0, 5) = 5\\cdot (0, 1)$, so $(0, 1)$ is an eigenvector with eigenvalue 5. Any non-zero scalar multiple also works — the eigenspace is the entire $y$-axis.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does PCA work by taking eigenvectors of the covariance matrix?",
+          options: [
+            "Because eigenvectors are orthogonal (for symmetric matrices), they provide a clean basis aligned with variance directions.",
+            "By random coincidence.",
+            "Because covariance matrices are always diagonal.",
+            "Because eigenvalues are integers.",
+          ],
+          correctIndex: 0,
+          hint: "Symmetric matrices are orthogonally diagonalizable, and eigenvalues measure spread along eigenvectors.",
+          explanation: "The covariance matrix is symmetric, so its eigenvectors are orthogonal and its eigenvalues are real non-negative. The top eigenvector points in the direction of **maximum variance**, the next-largest eigenvalue's eigenvector is the next best *orthogonal* direction, and so on. PCA is exactly this diagonalization.",
+        },
+      ],
+      keyTakeaways: [
+        "Eigenvectors are invariant directions of a linear map; eigenvalues say how much they scale.",
+        "The characteristic polynomial $\\det(A - \\lambda I) = 0$ finds eigenvalues.",
+        "Symmetric matrices diagonalize in an orthonormal basis — the core of PCA and spectral methods.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 20 — Chapter 4.3: Cholesky Decomposition
+    // =========================================================================
+    {
+      title: "Cholesky Decomposition",
+      chapter: "Matrix Decompositions",
+      chapterNumber: 4,
+      content: [
+        "The **Cholesky decomposition** factors a symmetric positive definite (SPD) matrix $A$ as $A = LL^\\top$, where $L$ is lower triangular with positive diagonal entries. It is essentially the 'square root' of an SPD matrix — analogous to writing a positive number as $x = (\\sqrt{x})^2$.",
+        "A matrix is **positive definite** if $\\mathbf{x}^\\top A \\mathbf{x} > 0$ for every non-zero $\\mathbf{x}$. Equivalently, all eigenvalues are strictly positive. SPD matrices are ubiquitous: covariance matrices, Gram matrices $X^\\top X$ (when $X$ has full column rank), and Hessians at strict minima are all SPD. Cholesky is the fastest, most numerically stable factorization available for this class.",
+        "The algorithm is specialized Gaussian elimination that exploits symmetry. For each row $i$, compute the diagonal entry $\\ell_{ii} = \\sqrt{a_{ii} - \\sum_{k<i}\\ell_{ik}^2}$ and the sub-diagonal entries via similar formulas. The process fails iff some diagonal element becomes non-positive — a clean **test** for positive definiteness: a matrix is SPD iff Cholesky succeeds without complex square roots.",
+        "Cholesky solves $A\\mathbf{x} = \\mathbf{b}$ in two triangular steps: first $L\\mathbf{y} = \\mathbf{b}$ (forward substitution), then $L^\\top \\mathbf{x} = \\mathbf{y}$ (backward substitution). Each step costs $O(n^2)$; the decomposition itself is $O(n^3/3)$, **half** the cost of LU. That is why Cholesky is the default when solving normal equations for linear regression (since $X^\\top X$ is SPD).",
+        "Beyond solving, Cholesky has distinctive ML uses. In Bayesian methods and Gaussian processes, it lets us **sample from multivariate Gaussians**: if $\\mathbf{z} \\sim \\mathcal{N}(\\mathbf{0}, I)$ and $A = LL^\\top$, then $L\\mathbf{z} \\sim \\mathcal{N}(\\mathbf{0}, A)$ — a single matrix-vector multiply generates correlated samples. It also computes log-determinants cheaply: $\\log\\det(A) = 2\\sum_i \\log \\ell_{ii}$, needed in likelihoods and variational lower bounds.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Cholesky factor reshapes a circle into an ellipse",
+          description: "$L$ maps the unit circle to an ellipse whose covariance equals $A = LL^\\top$. This is how Cholesky samples correlated Gaussians.",
+          config: {
+            matrix: [
+              [1.4, 0],
+              [0.7, 1.2],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "matrix-input",
+          question: "Find the Cholesky factor $L$ of $A = \\begin{pmatrix}4 & 2 \\\\ 2 & 5\\end{pmatrix}$.",
+          rows: 2,
+          cols: 2,
+          answer: [
+            [2, 0],
+            [1, 2],
+          ],
+          tolerance: 0.01,
+          hint: "$\\ell_{11} = \\sqrt{a_{11}}$, $\\ell_{21} = a_{21}/\\ell_{11}$, $\\ell_{22} = \\sqrt{a_{22} - \\ell_{21}^2}$.",
+          explanation: "$\\ell_{11} = \\sqrt{4} = 2$. $\\ell_{21} = 2/2 = 1$. $\\ell_{22} = \\sqrt{5 - 1} = 2$. Check: $LL^\\top = \\begin{pmatrix}2 & 0 \\\\ 1 & 2\\end{pmatrix}\\begin{pmatrix}2 & 1 \\\\ 0 & 2\\end{pmatrix} = \\begin{pmatrix}4 & 2 \\\\ 2 & 5\\end{pmatrix}$. ✓",
+        },
+        {
+          type: "multiple-choice",
+          question: "For which class of matrices is Cholesky decomposition defined?",
+          options: [
+            "All square matrices",
+            "Symmetric positive definite matrices only",
+            "Orthogonal matrices only",
+            "Invertible matrices only",
+          ],
+          correctIndex: 1,
+          hint: "The algorithm requires taking square roots of diagonal quantities.",
+          explanation: "Cholesky needs all the diagonal 'corrected' entries to be positive so their square roots are real — equivalent to the matrix being **symmetric positive definite**. For general symmetric indefinite matrices, one uses $LDL^\\top$ instead.",
+        },
+        {
+          type: "multiple-choice",
+          question: "How does Cholesky enable efficient sampling from $\\mathcal{N}(\\boldsymbol\\mu, \\Sigma)$?",
+          options: [
+            "It computes $\\Sigma^{-1}$ in closed form.",
+            "Given $A = LL^\\top$ and $\\mathbf{z} \\sim \\mathcal{N}(\\mathbf{0}, I)$, the sample $\\boldsymbol\\mu + L\\mathbf{z}$ has the desired covariance.",
+            "It uses rejection sampling.",
+            "It works only for univariate Gaussians.",
+          ],
+          correctIndex: 1,
+          hint: "Compute the covariance of $L\\mathbf{z}$ directly.",
+          explanation: "$\\text{Cov}(L\\mathbf{z}) = L\\text{Cov}(\\mathbf{z})L^\\top = LIL^\\top = LL^\\top = \\Sigma$. A single matrix-vector product transforms i.i.d. standard normals into correlated ones — the foundation of Gaussian process sampling and variational posteriors.",
+        },
+      ],
+      keyTakeaways: [
+        "Cholesky: $A = LL^\\top$ for symmetric positive definite $A$; $L$ is lower triangular.",
+        "Solves systems in $O(n^3/3)$ — half the cost of LU — and tests positive definiteness as a side effect.",
+        "Enables fast Gaussian sampling and log-determinant computation in Bayesian ML.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 21 — Chapter 4.4: Eigendecomposition and Diagonalization
+    // =========================================================================
+    {
+      title: "Eigendecomposition and Diagonalization",
+      chapter: "Matrix Decompositions",
+      chapterNumber: 4,
+      content: [
+        "A square matrix $A$ is **diagonalizable** if it can be written as $A = PDP^{-1}$, where $D$ is diagonal and $P$ is invertible. The columns of $P$ are eigenvectors of $A$ and the diagonal entries of $D$ are the corresponding eigenvalues. This decomposition expresses the linear map in the *eigenbasis*, where it becomes pure per-axis scaling.",
+        "Not every matrix is diagonalizable. A sufficient condition is having $n$ linearly independent eigenvectors, which is automatic when all eigenvalues are distinct. A matrix with repeated eigenvalues may or may not be diagonalizable, depending on whether each eigenvalue has enough eigenvectors (**geometric multiplicity** = **algebraic multiplicity**). When it fails, we fall back on Jordan normal form.",
+        "Symmetric real matrices are always **orthogonally diagonalizable**: $A = QDQ^\\top$ with $Q$ orthogonal. This is the **spectral theorem** again — the nicest possible decomposition. For SPD matrices, all eigenvalues are positive, and we can define matrix functions like $A^{1/2} = QD^{1/2}Q^\\top$, $e^A = Q e^D Q^\\top$, or $\\log A = Q \\log(D) Q^\\top$, simply by applying the function entrywise to the diagonal.",
+        "Why diagonalize? Because functions of $A$ become trivial: $A^k = PD^k P^{-1}$ reduces computing a matrix power to raising scalars. Solving linear ODEs $\\dot{\\mathbf{x}} = A\\mathbf{x}$ reduces to decoupled 1D equations. And iterative dynamics like $\\mathbf{x}_{k+1} = A\\mathbf{x}_k$ have a simple long-term behavior governed by the **dominant eigenvalue** — if $|\\lambda_1| < 1$ the system contracts to zero, if $|\\lambda_1| > 1$ it diverges.",
+        "In ML, eigendecomposition is the engine of **PCA** (decomposing the covariance matrix), **spectral clustering** (decomposing the graph Laplacian), and **Gaussian processes** (decomposing the kernel matrix). It also underpins **stability analysis** of learned dynamics (RNNs, diffusion models) — if eigenvalues of the learned Jacobian stray outside the unit circle, training and generation will misbehave in predictable ways.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Diagonalization: scaling in the eigenbasis",
+          description: "$A = \\begin{pmatrix}3 & 1 \\\\ 1 & 3\\end{pmatrix}$ has eigenvalues 2 and 4. In the eigenbasis, it acts as pure scaling along two orthogonal axes.",
+          config: {
+            matrix: [
+              [3, 1],
+              [1, 3],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+        {
+          type: "eigenspace-3d",
+          title: "Symmetric matrix has orthogonal eigenvectors",
+          description: "The spectral theorem: a symmetric 3×3 matrix has an orthonormal eigenbasis. Each colored axis scales by its eigenvalue.",
+          config: {
+            vectors: [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+            labels: ["λ₁", "λ₂", "λ₃"],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Which matrix is NOT diagonalizable over the reals?",
+          options: [
+            "$\\begin{pmatrix}2 & 0 \\\\ 0 & 3\\end{pmatrix}$",
+            "$\\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$",
+            "$\\begin{pmatrix}1 & 2 \\\\ 2 & 1\\end{pmatrix}$",
+            "$\\begin{pmatrix}4 & 0 \\\\ 0 & 4\\end{pmatrix}$",
+          ],
+          correctIndex: 1,
+          hint: "Check that it has enough independent eigenvectors.",
+          explanation: "$\\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$ has a repeated eigenvalue $\\lambda = 1$ but only **one** independent eigenvector $(1, 0)$. It is a defective shear matrix — diagonalization fails and Jordan form is required.",
+        },
+        {
+          type: "numeric-input",
+          question: "If $A$ has eigenvalues 2 and 3, what is $A^{10}$'s largest eigenvalue?",
+          answer: 59049,
+          tolerance: 1,
+          hint: "$A^k$ has eigenvalues $\\lambda_i^k$.",
+          explanation: "$3^{10} = 59049$. The eigenvalues of $A^k$ are exactly the $k$-th powers of the eigenvalues of $A$ — an immediate consequence of $A^k = PD^kP^{-1}$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "For an SPD matrix $\\Sigma$, what does the spectral theorem guarantee about its eigenvectors?",
+          options: [
+            "They may be complex.",
+            "They are orthogonal, and all eigenvalues are strictly positive.",
+            "They are linearly dependent.",
+            "There are fewer than $n$ of them.",
+          ],
+          correctIndex: 1,
+          hint: "Symmetric + positive definite = best possible case.",
+          explanation: "SPD matrices are both symmetric (so eigenvectors are orthogonal) and positive definite (so eigenvalues are strictly positive). This gives $\\Sigma = Q D Q^\\top$ with $Q$ orthogonal and $D$ positive diagonal — the ideal setup for PCA and GP computations.",
+        },
+      ],
+      keyTakeaways: [
+        "Diagonalization $A = PDP^{-1}$ expresses a map as scaling in the eigenbasis.",
+        "Symmetric matrices diagonalize orthogonally: $A = QDQ^\\top$.",
+        "Matrix powers, exponentials, and functions all simplify in the eigenbasis.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 22 — Chapter 4.5: Singular Value Decomposition
+    // =========================================================================
+    {
+      title: "Singular Value Decomposition",
+      chapter: "Matrix Decompositions",
+      chapterNumber: 4,
+      content: [
+        "The **singular value decomposition** (SVD) factors *any* matrix $A \\in \\mathbb{R}^{m\\times n}$ as $A = U\\Sigma V^\\top$, where $U \\in \\mathbb{R}^{m\\times m}$ and $V \\in \\mathbb{R}^{n\\times n}$ are orthogonal and $\\Sigma$ is a (rectangular) diagonal matrix with non-negative entries $\\sigma_1 \\geq \\sigma_2 \\geq \\dots \\geq 0$ called the **singular values**. Unlike eigendecomposition, SVD applies to rectangular and singular matrices — there is no 'diagonalizability' condition to worry about.",
+        "Geometrically, every linear map factors as **rotate, scale, rotate**. $V^\\top$ rotates input space to align with the data's principal axes, $\\Sigma$ stretches each axis independently (possibly flattening some to zero), and $U$ rotates to output space. This decomposition is why SVD is so powerful: it reveals the intrinsic geometric action of any matrix.",
+        "Singular values relate to eigenvalues: the $\\sigma_i$ are the square roots of the eigenvalues of $A^\\top A$ (or of $AA^\\top$). The columns of $V$ are the corresponding eigenvectors of $A^\\top A$ (right singular vectors); the columns of $U$ are the eigenvectors of $AA^\\top$ (left singular vectors). For symmetric matrices, SVD and eigendecomposition coincide up to sign.",
+        "Many matrix diagnostics are read directly off the singular values. The **rank** of $A$ equals the number of non-zero singular values. The **condition number** $\\kappa(A) = \\sigma_1 / \\sigma_r$ measures numerical sensitivity — a large condition number means small input errors blow up. The **spectral norm** is $\\sigma_1$, and the **Frobenius norm** is $\\sqrt{\\sum \\sigma_i^2}$.",
+        "SVD is the universal ML tool. The Moore–Penrose **pseudo-inverse** is $A^+ = V\\Sigma^+ U^\\top$ — the best-effort inverse for rectangular/singular matrices, used in least-squares regression. **PCA** on a data matrix $X$ is literally the SVD of (centered) $X$. **Latent Semantic Analysis**, **recommender systems**, **model compression**, and **low-rank adaptation** all reduce to truncating the SVD to keep only the top singular values.",
+      ],
+      visualizations: [
+        {
+          type: "svd-3d",
+          title: "SVD: rotate → scale → rotate",
+          description: "Every matrix decomposes into three simple operations: a rotation, axis-aligned scaling, and another rotation.",
+          config: {
+            matrix: [
+              [2, 1, 0],
+              [1, 2, 0],
+              [0, 0, 0.5],
+            ],
+          },
+        },
+        {
+          type: "matrix-transform-2d",
+          title: "SVD of a 2D matrix",
+          description: "Here $A = U\\Sigma V^\\top$ maps a unit circle to an ellipse whose axes lengths are the singular values.",
+          config: {
+            matrix: [
+              [2, 1],
+              [1, 2],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Which statement about SVD is TRUE?",
+          options: [
+            "SVD only exists for square matrices.",
+            "SVD exists for any real matrix.",
+            "SVD requires the matrix to be symmetric.",
+            "The singular values can be negative.",
+          ],
+          correctIndex: 1,
+          hint: "SVD is much more general than eigendecomposition.",
+          explanation: "SVD exists for **every** real (or complex) matrix, regardless of shape or rank. Singular values are always non-negative by convention, and they are real even when the matrix is not symmetric.",
+        },
+        {
+          type: "numeric-input",
+          question: "$A$ is $5 \\times 3$ with singular values $\\{4, 2, 0\\}$. What is the rank of $A$?",
+          answer: 2,
+          tolerance: 0,
+          hint: "Rank = number of non-zero singular values.",
+          explanation: "The rank equals the number of strictly positive singular values: 2. Equivalently, $A$ maps $\\mathbb{R}^3$ onto a 2-dimensional subspace of $\\mathbb{R}^5$, collapsing one direction entirely.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why is SVD preferred over eigendecomposition for numerical linear algebra?",
+          options: [
+            "SVD is faster.",
+            "SVD works for all matrices (rectangular, singular, non-symmetric), always uses orthogonal transforms, and is numerically stable.",
+            "Eigendecomposition doesn't exist for real matrices.",
+            "SVD is the only method that gives real numbers.",
+          ],
+          correctIndex: 1,
+          hint: "Think about generality and numerical properties.",
+          explanation: "SVD is universally applicable and uses only orthogonal matrices, which have condition number 1 and do not amplify floating-point error. Eigendecomposition requires diagonalizability, may use ill-conditioned $P$ matrices, and can yield complex numbers for non-symmetric real matrices.",
+        },
+      ],
+      keyTakeaways: [
+        "SVD factors any matrix as $A = U\\Sigma V^\\top$ — rotate, scale, rotate.",
+        "Singular values reveal rank, condition number, and matrix norms.",
+        "SVD powers PCA, pseudo-inverse, low-rank approximation, and recommender systems.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 23 — Chapter 4.6: Matrix Approximation
+    // =========================================================================
+    {
+      title: "Matrix Approximation",
+      chapter: "Matrix Decompositions",
+      chapterNumber: 4,
+      content: [
+        "Given a matrix $A$ of rank $r$, the **best rank-$k$ approximation** (for $k < r$) is the matrix $A_k$ that minimizes $\\|A - A_k\\|$ among all rank-$k$ matrices. The answer is a celebrated result: the **Eckart–Young theorem** says $A_k = \\sum_{i=1}^k \\sigma_i \\mathbf{u}_i \\mathbf{v}_i^\\top$ — just keep the top $k$ singular values and corresponding singular vectors from the full SVD.",
+        "This is optimal under both the **Frobenius** norm $\\|A - A_k\\|_F = \\sqrt{\\sigma_{k+1}^2 + \\dots + \\sigma_r^2}$ and the **spectral** norm $\\|A - A_k\\|_2 = \\sigma_{k+1}$. The approximation error is directly controlled by the discarded singular values — if they are small, you have compressed without losing much, and if they decay quickly, you can use small $k$ very effectively.",
+        "This is the most useful theorem in data compression. An $m \\times n$ matrix requires $mn$ numbers; its rank-$k$ approximation requires only $k(m + n + 1)$ numbers (store $U_k$, $\\Sigma_k$, $V_k$). For images, recommendation matrices, or learned weight matrices, the singular values often decay exponentially, so $k \\ll \\min(m, n)$ gives nearly lossless compression.",
+        "**Principal Component Analysis** is the application to data. Given a centered data matrix $X \\in \\mathbb{R}^{n\\times d}$, the rank-$k$ SVD approximation gives the best $k$-dimensional affine reconstruction. The principal components are the top-$k$ right singular vectors; projecting onto them yields the low-dimensional representation.",
+        "In modern deep learning, **Low-Rank Adaptation (LoRA)** freezes a large pretrained weight matrix $W$ and learns a low-rank update $W + UV^\\top$ with $U, V$ skinny. This is the same rank-$k$ parameterization, used as a *cheap fine-tuning* strategy: millions of parameters become thousands, with minimal loss in quality. Matrix approximation is the quiet backbone of efficient AI.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Rank-1 approximation of a 2x2 matrix",
+          description: "Keeping only the largest singular value collapses the action to a single direction — an outer product $\\sigma_1 \\mathbf{u}_1 \\mathbf{v}_1^\\top$.",
+          config: {
+            matrix: [
+              [3, 0],
+              [0, 0.1],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "A matrix has singular values $\\{10, 5, 2, 0.1\\}$. What is the Frobenius error of the best rank-2 approximation?",
+          answer: 2.002,
+          tolerance: 0.01,
+          hint: "$\\|A - A_k\\|_F = \\sqrt{\\sum_{i>k} \\sigma_i^2}$.",
+          explanation: "We discard $\\sigma_3 = 2$ and $\\sigma_4 = 0.1$. The Frobenius error is $\\sqrt{2^2 + 0.1^2} = \\sqrt{4.01} \\approx 2.002$. This quantifies how much information is lost when compressing to rank 2.",
+        },
+        {
+          type: "multiple-choice",
+          question: "The singular values of a $1000 \\times 1000$ weight matrix are $\\{5, 4.9, 4.8, \\dots\\}$ with no big gap. What does this mean for low-rank compression?",
+          options: [
+            "The matrix is essentially rank 1 — cut hard.",
+            "There is no natural truncation point; aggressive compression will lose meaningful information.",
+            "The matrix is orthogonal.",
+            "Compression is free — keep only the top singular value.",
+          ],
+          correctIndex: 1,
+          hint: "Look for a spectral gap.",
+          explanation: "A flat spectrum means every direction carries roughly equal information. Unlike a fast-decaying spectrum, there is no small $k$ that captures most of the matrix — LoRA or truncation will sacrifice real representational capacity. Good compression relies on **spectral gaps**.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does LoRA parameterize weight updates as $UV^\\top$ with $U \\in \\mathbb{R}^{d\\times r}$ and $V \\in \\mathbb{R}^{d\\times r}$?",
+          options: [
+            "For aesthetic symmetry.",
+            "To force the update to be low rank, drastically reducing trainable parameters while still expressing rich adaptations.",
+            "Because full matrices are illegal in transformers.",
+            "To ensure orthogonality.",
+          ],
+          correctIndex: 1,
+          hint: "Count the parameters: $2dr$ vs. $d^2$.",
+          explanation: "A full $d\\times d$ update has $d^2$ parameters; $UV^\\top$ has only $2dr$. For $d = 4096$, $r = 8$: full = 16M params, LoRA = 65K. The low-rank factorization is expressive enough for fine-tuning because task-specific updates empirically live in a low-rank subspace.",
+        },
+      ],
+      keyTakeaways: [
+        "The best rank-$k$ approximation is given by the top-$k$ SVD terms (Eckart–Young).",
+        "Approximation error equals the discarded singular values' norm.",
+        "Low-rank approximation powers compression, PCA, and parameter-efficient fine-tuning (LoRA).",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 24 — Chapter 4.7: Matrix Phylogeny
+    // =========================================================================
+    {
+      title: "Matrix Phylogeny",
+      chapter: "Matrix Decompositions",
+      chapterNumber: 4,
+      content: [
+        "Let's step back and organize the decompositions you have met into a **phylogeny** — a family tree of matrix factorizations, each specialized for different matrix classes. The most general factorizations apply to the broadest set of matrices; the most specialized exploit extra structure for speed or insight.",
+        "At the top sit **LU** ($A = LU$, requires $A$ invertible after permutations) and **QR** ($A = QR$, exists for any rectangular $A$). These are the workhorses for solving linear systems and least-squares problems. LU is cheap but numerically delicate; QR uses orthogonal matrices and is more stable, especially for tall-skinny matrices.",
+        "Moving to square matrices, **eigendecomposition** ($A = PDP^{-1}$) exists for diagonalizable matrices. For the subset of **symmetric** matrices, it specializes to $A = QDQ^\\top$ with orthogonal $Q$ (spectral theorem). For the even narrower subset of **symmetric positive definite** matrices, we get **Cholesky** ($A = LL^\\top$) as a fast square-root factorization.",
+        "Above everything in generality sits **SVD** ($A = U\\Sigma V^\\top$), which works for every rectangular matrix, every rank, every condition number. It is slower than specialized decompositions but universal. Inside, every other decomposition can be connected to it: QR is an intermediate step, eigendecomposition is SVD when $A$ is symmetric, and Cholesky is a specialized $LDL^\\top$ for positive-definite matrices.",
+        "When you are solving an ML problem, pick the most specific decomposition that still applies. For normal equations $X^\\top X \\mathbf{w} = X^\\top \\mathbf{y}$, use **Cholesky** — it's twice as fast as LU. For least squares on ill-conditioned data, use **QR** on $X$ directly, avoiding the conditioning squaring from $X^\\top X$. For PCA, use **SVD** on $X$ directly for best numerics. For general spectral problems, use **eigendecomposition** of the relevant symmetric operator. Knowing the phylogeny is knowing when to use which tool.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Same map, multiple factorizations",
+          description: "Every matrix admits several decompositions: LU, QR, SVD. They reveal different structural features — triangular, orthogonal, singular-value.",
+          config: {
+            matrix: [
+              [2, 1],
+              [1, 3],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "drag-to-match",
+          question: "Match each decomposition to the most specific matrix class it targets.",
+          leftItems: [
+            "Cholesky ($LL^\\top$)",
+            "Eigendecomposition ($PDP^{-1}$)",
+            "SVD ($U\\Sigma V^\\top$)",
+            "QR ($QR$)",
+          ],
+          rightItems: [
+            "Symmetric positive definite",
+            "Diagonalizable (square)",
+            "Any real matrix",
+            "Any rectangular $m \\geq n$",
+          ],
+          correctPairs: [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+          ],
+          hint: "Most specific condition wins.",
+          explanation: "Cholesky needs the strongest assumption (SPD), QR the weakest (any rectangular), and SVD is genuinely universal. Eigendecomposition sits in between, needing only diagonalizability. Pick the most specific applicable decomposition for speed and numerical quality.",
+        },
+        {
+          type: "multiple-choice",
+          question: "You need to solve $X^\\top X \\mathbf{w} = X^\\top \\mathbf{y}$ with $X$ well-conditioned and $X^\\top X$ SPD. Which factorization is most efficient?",
+          options: ["LU", "QR", "Cholesky", "SVD"],
+          correctIndex: 2,
+          hint: "Exploit symmetry and positive definiteness.",
+          explanation: "Since $X^\\top X$ is SPD, **Cholesky** solves the system in $O(n^3/3)$ — half the cost of LU. For mildly ill-conditioned problems you should skip $X^\\top X$ entirely and use QR on $X$, but for well-conditioned cases Cholesky is the fastest.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which decomposition is the 'safest default' when matrix structure is unknown or the matrix is ill-conditioned?",
+          options: ["LU without pivoting", "Cholesky", "SVD", "A single Gaussian elimination step"],
+          correctIndex: 2,
+          hint: "Which works on any matrix and is numerically robust?",
+          explanation: "**SVD** always exists, uses orthogonal transformations (condition number 1), and reveals rank and conditioning directly. It is the slowest classical choice but the most robust — the 'hammer' when you don't know what kind of nail you have.",
+        },
+      ],
+      keyTakeaways: [
+        "Decompositions form a hierarchy: SVD (most general) → QR → eigendecomposition → Cholesky (most specialized).",
+        "Pick the most specific decomposition your matrix structure allows — it's faster and more stable.",
+        "SVD is the universal fallback when structure is unknown or conditioning is poor.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 25 — Chapter 5.1: Differentiation of Univariate Functions
+    // =========================================================================
+    {
+      title: "Differentiation of Univariate Functions",
+      chapter: "Vector Calculus",
+      chapterNumber: 5,
+      content: [
+        "The **derivative** $f'(x)$ of a function $f : \\mathbb{R} \\to \\mathbb{R}$ measures its instantaneous rate of change at $x$. Formally, $f'(x) = \\lim_{h \\to 0} \\frac{f(x + h) - f(x)}{h}$. Geometrically, it is the slope of the **tangent line** to the graph of $f$ at the point $(x, f(x))$.",
+        "A function is **differentiable** at $x$ if this limit exists. Differentiability implies continuity, but not conversely — the absolute value $|x|$ is continuous everywhere but not differentiable at $0$, where the graph has a sharp corner. More broadly, functions with kinks, cusps, or vertical tangents fail to be differentiable at those points.",
+        "A few derivative rules do most of the work: $\\frac{d}{dx}x^n = nx^{n-1}$ (power rule), $\\frac{d}{dx} e^x = e^x$, $\\frac{d}{dx} \\ln x = 1/x$, $\\frac{d}{dx} \\sin x = \\cos x$, $\\frac{d}{dx} \\cos x = -\\sin x$. Combined with **linearity** $(af + bg)' = af' + bg'$, the **product rule** $(fg)' = f'g + fg'$, and the **chain rule** $(f \\circ g)'(x) = f'(g(x))\\cdot g'(x)$, you can differentiate almost any elementary function.",
+        "Derivatives are how we find **extrema**: at a local minimum or maximum of a smooth function, $f'(x) = 0$. The **second derivative** $f''(x)$ tells us the concavity — positive means a local min (curving up), negative means a local max (curving down). This is the foundation of optimization.",
+        "In ML, univariate differentiation is everywhere: computing the derivative of a loss with respect to one scalar parameter, tuning a learning rate by analyzing how a scalar-valued update behaves, understanding activation functions like $\\sigma(x)$ or ReLU via their (sub)derivatives. Before we can take gradients of complex neural networks, we need rock-solid comfort with 1D derivatives as the atomic building block.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "$f(x) = x^2$ and its tangent",
+          description: "At $x = 1$, the tangent line has slope $f'(1) = 2$. At $x = 0$, the slope is $0$ (the minimum).",
+          config: {
+            fn: "x^2",
+            domain: [-3, 3],
+            showTangent: true,
+          },
+        },
+        {
+          type: "function-plot",
+          title: "Sigmoid and its derivative",
+          description: "$\\sigma(x) = 1/(1+e^{-x})$. Its derivative $\\sigma'(x) = \\sigma(x)(1 - \\sigma(x))$ is maximal at $x = 0$ and shrinks at the tails — the source of the **vanishing gradient** problem.",
+          config: {
+            fn: "sigmoid",
+            domain: [-6, 6],
+            showTangent: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "If $f(x) = 3x^2 + 2x - 5$, what is $f'(2)$?",
+          answer: 14,
+          tolerance: 0.01,
+          hint: "Differentiate term by term, then plug in $x = 2$.",
+          explanation: "$f'(x) = 6x + 2$. So $f'(2) = 12 + 2 = 14$. The tangent line at $x = 2$ has slope 14.",
+        },
+        {
+          type: "numeric-input",
+          question: "At the minimum of $f(x) = x^2 - 4x + 7$, what is $x$?",
+          answer: 2,
+          tolerance: 0.01,
+          hint: "Set $f'(x) = 0$.",
+          explanation: "$f'(x) = 2x - 4 = 0$ gives $x = 2$. Since $f''(x) = 2 > 0$, this is indeed a minimum. The minimum value is $f(2) = 4 - 8 + 7 = 3$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why is the derivative of ReLU at $x = 0$ technically undefined?",
+          options: [
+            "Because ReLU is discontinuous at 0.",
+            "Because the left and right derivatives (0 and 1) disagree — the function has a corner.",
+            "Because ReLU is not a real function.",
+            "By convention only; it really equals 1.",
+          ],
+          correctIndex: 1,
+          hint: "Look at the one-sided limits.",
+          explanation: "Just to the left of 0, ReLU is zero (slope 0); just to the right, it's $x$ (slope 1). The two-sided limit disagrees, so the derivative doesn't exist there — mathematically a **subgradient** or simply a convention (most frameworks pick 0 or 1).",
+        },
+      ],
+      keyTakeaways: [
+        "$f'(x)$ is the slope of the tangent line; the limit of difference quotients.",
+        "Linearity, product rule, and chain rule handle almost all elementary functions.",
+        "Derivatives identify extrema ($f'=0$) and diagnose concavity via $f''$.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 26 — Chapter 5.2: Partial Derivatives and Gradients
+    // =========================================================================
+    {
+      title: "Partial Derivatives and Gradients",
+      chapter: "Vector Calculus",
+      chapterNumber: 5,
+      content: [
+        "For a function $f : \\mathbb{R}^n \\to \\mathbb{R}$ of several variables, the **partial derivative** $\\frac{\\partial f}{\\partial x_i}$ is the rate of change of $f$ as $x_i$ varies while all other variables are held fixed. Computationally, you differentiate $f$ treating every variable but $x_i$ as a constant.",
+        "The **gradient** $\\nabla f(\\mathbf{x})$ packages all the partial derivatives into a single vector: $\\nabla f = \\left(\\frac{\\partial f}{\\partial x_1}, \\dots, \\frac{\\partial f}{\\partial x_n}\\right)^\\top$. The gradient has a beautiful geometric interpretation: it **points in the direction of steepest ascent**, and its magnitude is the rate of increase in that direction. The negative gradient points toward steepest descent — which is why gradient descent works.",
+        "The **directional derivative** in direction $\\mathbf{u}$ (a unit vector) is $D_{\\mathbf{u}} f = \\nabla f \\cdot \\mathbf{u}$ — the projection of the gradient onto $\\mathbf{u}$. This lets us read off two facts: the gradient direction gives the maximum rate of increase ($\\|\\nabla f\\|$), and any direction perpendicular to the gradient gives zero instantaneous change (you are moving along a level set).",
+        "At a smooth interior extremum, the gradient vanishes: $\\nabla f(\\mathbf{x}^*) = \\mathbf{0}$. Such points are called **critical points** or **stationary points** and come in three flavors: local minima, local maxima, and **saddle points** (minimum in some directions, maximum in others). In high-dimensional deep learning landscapes, saddle points are overwhelmingly more common than local minima, a fact that reshapes how we think about optimization.",
+        "In ML, **every training step is gradient-based**: compute $\\nabla_{\\mathbf{w}} L(\\mathbf{w})$, step in its negative direction. Variants of this idea — SGD, Adam, RMSprop — differ only in how they denoise or adaptively rescale the gradient. A working intuition for gradients is arguably the single most important mathematical skill for a practicing ML engineer.",
+      ],
+      visualizations: [
+        {
+          type: "gradient-field",
+          title: "Gradient of a bowl",
+          description: "For $f(x, y) = x^2 + y^2$, $\\nabla f = (2x, 2y)$ — arrows point outward from the origin. Gradient descent flows **inward** toward the minimum.",
+          config: {
+            surface: "bowl",
+            showTrajectory: true,
+          },
+        },
+        {
+          type: "gradient-field",
+          title: "Saddle point",
+          description: "$f(x, y) = x^2 - y^2$ has a saddle at the origin. Following $-\\nabla f$ can escape along the unstable direction ($y$).",
+          config: {
+            surface: "saddle",
+            showTrajectory: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "vector-input",
+          question: "For $f(x, y) = x^2 + 3y^2$, compute $\\nabla f(1, 2)$. Enter as $(\\partial_x f, \\partial_y f)$.",
+          dimensions: 2,
+          answer: [2, 12],
+          tolerance: 0.01,
+          showPreview: true,
+          hint: "$\\partial_x f = 2x$, $\\partial_y f = 6y$.",
+          explanation: "$\\nabla f(x, y) = (2x, 6y)$. At $(1, 2)$: $\\nabla f = (2, 12)$. The gradient points 'mostly $y$' because the $3y^2$ term grows faster.",
+        },
+        {
+          type: "multiple-choice",
+          question: "At a point where $\\nabla f = \\mathbf{0}$, the function has:",
+          options: [
+            "A local minimum",
+            "A local maximum",
+            "A critical point — could be min, max, or saddle",
+            "A point of discontinuity",
+          ],
+          correctIndex: 2,
+          hint: "Vanishing gradient is necessary but not sufficient.",
+          explanation: "A zero gradient identifies a **critical point**, but doesn't reveal its nature. To distinguish min/max/saddle, examine the **Hessian** (second-derivative matrix) — positive definite = min, negative definite = max, indefinite = saddle.",
+        },
+        {
+          type: "multiple-choice",
+          question: "In which direction does $f$ increase fastest at a point $\\mathbf{x}$?",
+          options: [
+            "The negative gradient direction",
+            "The gradient direction $\\nabla f(\\mathbf{x})$",
+            "Any direction perpendicular to the gradient",
+            "Along the $x$-axis always",
+          ],
+          correctIndex: 1,
+          hint: "Use the directional derivative $D_{\\mathbf{u}} f = \\nabla f \\cdot \\mathbf{u}$ and Cauchy–Schwarz.",
+          explanation: "$D_{\\mathbf{u}} f = \\nabla f \\cdot \\mathbf{u} = \\|\\nabla f\\| \\cos\\theta$ is maximized when $\\mathbf{u}$ aligns with $\\nabla f$. Gradient descent steps in the *opposite* direction to minimize $f$ as quickly as possible.",
+        },
+      ],
+      keyTakeaways: [
+        "Partial derivatives measure rate of change along a single coordinate axis.",
+        "The gradient packages them into a vector pointing in the direction of steepest ascent.",
+        "Critical points where $\\nabla f = \\mathbf{0}$ include minima, maxima, and (often) saddles.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 27 — Chapter 5.3: Gradients of Vector-Valued Functions
+    // =========================================================================
+    {
+      title: "Gradients of Vector-Valued Functions",
+      chapter: "Vector Calculus",
+      chapterNumber: 5,
+      content: [
+        "When $f : \\mathbb{R}^n \\to \\mathbb{R}^m$ maps vectors to vectors, the analog of the gradient is a matrix called the **Jacobian**, $J_f = \\frac{\\partial f}{\\partial \\mathbf{x}} \\in \\mathbb{R}^{m \\times n}$. Its $(i,j)$ entry is $\\frac{\\partial f_i}{\\partial x_j}$ — the sensitivity of the $i$-th output component to the $j$-th input. Row $i$ is the gradient of $f_i$ transposed.",
+        "The Jacobian is the **best linear approximation** of $f$ near a point: $f(\\mathbf{x} + \\Delta \\mathbf{x}) \\approx f(\\mathbf{x}) + J_f(\\mathbf{x}) \\Delta \\mathbf{x}$. This extends the 1D idea $f(x + h) \\approx f(x) + f'(x) h$ to arbitrary input/output dimensions. It's why we call $f$ 'locally linear' and why gradient-based methods work — the nonlinear function behaves like a matrix at each point.",
+        "The **chain rule** generalizes elegantly to Jacobians. If $\\mathbf{z} = f(\\mathbf{y})$ and $\\mathbf{y} = g(\\mathbf{x})$, then $\\frac{\\partial \\mathbf{z}}{\\partial \\mathbf{x}} = \\frac{\\partial \\mathbf{z}}{\\partial \\mathbf{y}} \\cdot \\frac{\\partial \\mathbf{y}}{\\partial \\mathbf{x}} = J_f \\cdot J_g$ — just multiply Jacobians in order. This is the mathematical backbone of **backpropagation**: each layer contributes one Jacobian factor, and the chain rule stitches them together.",
+        "For **linear functions** $f(\\mathbf{x}) = A\\mathbf{x} + \\mathbf{b}$, the Jacobian is simply $A$ — the linear approximation is exact. For **element-wise nonlinearities** like $\\sigma$ applied to a vector, the Jacobian is $\\text{diag}(\\sigma'(\\mathbf{x}_1), \\dots, \\sigma'(\\mathbf{x}_n))$. These two cases, combined via chain rule, give you the Jacobian of any feedforward network.",
+        "In ML, the Jacobian drives **backpropagation** (chaining layer-by-layer Jacobians), **adversarial attacks** (linearizing a classifier via its input Jacobian), **neural ODE solvers** (integrating flow Jacobians for invertibility), and **normalizing flows** (tracking $\\log|\\det J|$ for density estimation). Working comfortably with Jacobians is the bridge from scalar calculus to the matrix calculus that dominates modern deep learning.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "Jacobian as local linearization",
+          description: "Near $\\mathbf{x}_0$, the nonlinear map $f$ looks like multiplication by $J_f(\\mathbf{x}_0)$ — a matrix that morphs a small neighborhood.",
+          config: {
+            matrix: [
+              [1.5, 0.5],
+              [0.3, 1.2],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "matrix-input",
+          question: "The Jacobian of the linear map $f(\\mathbf{x}) = A\\mathbf{x}$ with $A = \\begin{pmatrix}2 & 0 \\\\ 1 & 3\\end{pmatrix}$ at any point is:",
+          rows: 2,
+          cols: 2,
+          answer: [
+            [2, 0],
+            [1, 3],
+          ],
+          tolerance: 0.01,
+          hint: "For linear maps, $J_f = A$ everywhere.",
+          explanation: "The Jacobian of a linear map is the matrix itself, independent of the point. This is the best linear approximation — which is exact for linear maps.",
+        },
+        {
+          type: "multiple-choice",
+          question: "For $f : \\mathbb{R}^3 \\to \\mathbb{R}^5$, the Jacobian has shape:",
+          options: ["$3 \\times 5$", "$5 \\times 3$", "$3 \\times 3$", "$5 \\times 5$"],
+          correctIndex: 1,
+          hint: "Rows = output dim, columns = input dim.",
+          explanation: "By convention $J_f \\in \\mathbb{R}^{m \\times n}$ where $m = 5$ outputs and $n = 3$ inputs. Each row is a gradient of one output coordinate; each column tracks how outputs change as one input varies.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why is backpropagation essentially a chain-rule computation of Jacobians?",
+          options: [
+            "By coincidence.",
+            "A neural network is a composition of layers; by chain rule, the full Jacobian is the product of per-layer Jacobians, computed right-to-left from output loss.",
+            "Because backpropagation uses SVD.",
+            "Because gradients must be approximated numerically.",
+          ],
+          correctIndex: 1,
+          hint: "Each layer is a function; composing functions composes Jacobians.",
+          explanation: "The network $y = f_L \\circ \\dots \\circ f_1 (x)$ has total Jacobian $J = J_{f_L} \\cdots J_{f_1}$. Backprop avoids forming these giant Jacobians directly by using **vector-Jacobian products** — multiplying the incoming gradient by each layer's Jacobian in reverse order, the essence of reverse-mode automatic differentiation.",
+        },
+      ],
+      keyTakeaways: [
+        "The Jacobian $J_f \\in \\mathbb{R}^{m\\times n}$ collects all partial derivatives of a vector-valued map.",
+        "It is the best local linear approximation: $f(\\mathbf{x}+\\Delta) \\approx f(\\mathbf{x}) + J_f \\Delta$.",
+        "Chain rule: Jacobians of compositions multiply — the basis of backpropagation.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 28 — Chapter 5.4: Gradients of Matrices
+    // =========================================================================
+    {
+      title: "Gradients of Matrices",
+      chapter: "Vector Calculus",
+      chapterNumber: 5,
+      content: [
+        "In ML, loss functions often depend on whole **matrices** of parameters (think weight matrices in a neural net layer). The gradient with respect to a matrix is just another matrix: $\\frac{\\partial L}{\\partial W} \\in \\mathbb{R}^{m \\times n}$ has the same shape as $W$, with entry $(i,j)$ giving $\\frac{\\partial L}{\\partial w_{ij}}$.",
+        "Matrix calculus identities streamline derivations. The most-used ones: $\\nabla_{\\mathbf{x}}(\\mathbf{a}^\\top \\mathbf{x}) = \\mathbf{a}$, $\\nabla_{\\mathbf{x}}(\\mathbf{x}^\\top A \\mathbf{x}) = (A + A^\\top)\\mathbf{x}$ (and $= 2A\\mathbf{x}$ when $A$ is symmetric), $\\nabla_W(\\|X - WY\\|_F^2) = -2(X - WY)Y^\\top$, and $\\nabla_W(\\text{tr}(W^\\top A)) = A$. These let us differentiate common ML losses quickly without expanding index-by-index.",
+        "Using these identities, we can rederive the **normal equations**. For $L(\\mathbf{w}) = \\|\\mathbf{y} - X\\mathbf{w}\\|^2$, expanding gives $L = \\mathbf{y}^\\top \\mathbf{y} - 2\\mathbf{w}^\\top X^\\top \\mathbf{y} + \\mathbf{w}^\\top X^\\top X \\mathbf{w}$. Applying the identities: $\\nabla_{\\mathbf{w}} L = -2X^\\top \\mathbf{y} + 2X^\\top X \\mathbf{w}$. Setting this to zero yields $X^\\top X \\mathbf{w} = X^\\top \\mathbf{y}$ — the normal equations, arrived at without a single index calculation.",
+        "The **denominator layout** (also called 'gradient layout') matches the shape of $W$ — the convention most ML texts and auto-diff libraries use. An alternative **numerator layout** transposes. Be consistent, pick one, and note PyTorch/JAX use denominator layout by default (the gradient of a loss has the same shape as the parameter).",
+        "Neural network training is one long matrix gradient computation. A single fully connected layer $\\mathbf{h} = \\sigma(W\\mathbf{x} + \\mathbf{b})$ has $\\nabla_W L = \\delta \\mathbf{x}^\\top$ where $\\delta$ is the upstream gradient after passing through $\\sigma'$. This **outer-product** structure is general: the gradient of a matrix that appears in a linear-plus-nonlinear layer is always an outer product of the downstream error and the upstream activation. This is the atom of deep-learning gradient math.",
+      ],
+      visualizations: [
+        {
+          type: "matrix-transform-2d",
+          title: "A weight update step",
+          description: "Gradient descent: $W \\leftarrow W - \\eta \\nabla_W L$. Each entry of $W$ is nudged in the direction that reduces the loss most.",
+          config: {
+            matrix: [
+              [1, 0.1],
+              [0.05, 1],
+            ],
+            animateFromIdentity: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "What is $\\nabla_{\\mathbf{x}} (\\mathbf{a}^\\top \\mathbf{x})$?",
+          options: ["$\\mathbf{x}$", "$\\mathbf{a}$", "$\\mathbf{a}^\\top$", "$0$"],
+          correctIndex: 1,
+          hint: "Expand: $\\mathbf{a}^\\top \\mathbf{x} = a_1 x_1 + \\dots + a_n x_n$.",
+          explanation: "Each partial is $\\partial/\\partial x_i (\\mathbf{a}^\\top \\mathbf{x}) = a_i$, so the full gradient is $\\mathbf{a}$. This is the matrix-calculus analog of $\\frac{d}{dx}(ax) = a$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What is $\\nabla_{\\mathbf{x}}(\\mathbf{x}^\\top A \\mathbf{x})$ when $A$ is symmetric?",
+          options: ["$A\\mathbf{x}$", "$2A\\mathbf{x}$", "$\\mathbf{x}^\\top A$", "$A^\\top A \\mathbf{x}$"],
+          correctIndex: 1,
+          hint: "$\\nabla_{\\mathbf{x}}(\\mathbf{x}^\\top A \\mathbf{x}) = (A + A^\\top)\\mathbf{x}$; use $A = A^\\top$.",
+          explanation: "For symmetric $A$, $(A + A^\\top) = 2A$, giving gradient $2A\\mathbf{x}$. This matches the 1D analog $\\frac{d}{dx}(ax^2) = 2ax$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "In a fully connected layer, why does the weight gradient have the outer-product form $\\delta \\mathbf{x}^\\top$?",
+          options: [
+            "By numerical convention.",
+            "Because $\\mathbf{h} = W\\mathbf{x}$ means $\\frac{\\partial h_i}{\\partial w_{ij}} = x_j$; combined with upstream gradient $\\delta_i$, the gradient's $(i,j)$ entry is $\\delta_i x_j$.",
+            "Because $W$ is orthogonal.",
+            "By coincidence.",
+          ],
+          correctIndex: 1,
+          hint: "Differentiate a single entry of $W$.",
+          explanation: "Each weight $w_{ij}$ affects only output $h_i$, and the chain rule gives $\\frac{\\partial L}{\\partial w_{ij}} = \\delta_i \\cdot x_j$. Stacking all $i, j$ gives the outer product $\\delta \\mathbf{x}^\\top$ — the atomic gradient update for a linear layer.",
+        },
+      ],
+      keyTakeaways: [
+        "Matrix gradients have the same shape as the matrix parameter.",
+        "Identities like $\\nabla_{\\mathbf{x}}(\\mathbf{x}^\\top A \\mathbf{x}) = (A+A^\\top)\\mathbf{x}$ shortcut derivations.",
+        "Neural-net weight gradients are outer products $\\delta \\mathbf{x}^\\top$ — the core of backprop.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 29 — Chapter 5.5: Backpropagation and Automatic Differentiation
+    // =========================================================================
+    {
+      title: "Backpropagation and Automatic Differentiation",
+      chapter: "Vector Calculus",
+      chapterNumber: 5,
+      content: [
+        "**Backpropagation** is the chain rule, applied efficiently to a **computational graph** — a directed acyclic graph where each node is a primitive operation and edges carry intermediate values. To compute $\\nabla_\\theta L$, we start from the loss at the top and walk the graph in reverse, multiplying by each operation's local Jacobian as we go. The cost is roughly twice the forward pass, regardless of how many parameters there are.",
+        "Modern auto-diff (PyTorch, JAX, TensorFlow) implements this as two modes. **Forward-mode** computes $J\\mathbf{v}$ (Jacobian-vector product) by walking the graph forward while carrying tangent vectors. **Reverse-mode** (= backpropagation) computes $\\mathbf{u}^\\top J$ (vector-Jacobian product) by walking backward. When the output is scalar (a loss) and inputs are high-dimensional (parameters), reverse mode is overwhelmingly cheaper — one backward pass replaces millions of forward-mode passes.",
+        "A critical insight: **we never materialize the full Jacobian**. For a neural network with millions of parameters, the Jacobian is an unmanageable matrix. Instead, backprop computes Jacobian-vector products implicitly, layer by layer. For a matrix multiply $\\mathbf{y} = W\\mathbf{x}$, the gradient contribution is $\\nabla_W L = \\delta \\mathbf{x}^\\top$ and $\\nabla_{\\mathbf{x}} L = W^\\top \\delta$ — each is a single matrix multiply, never an explicit Jacobian.",
+        "Auto-diff handles arbitrary computations, not just neural networks. Any differentiable function expressible as a composition of primitives (add, multiply, log, exp, matmul, etc.) is automatically differentiable. This is why modern ML frameworks can compute gradients of non-standard architectures, custom losses, variational objectives, and even implicit functions via the implicit function theorem.",
+        "Two practical pitfalls: **vanishing gradients** (derivatives of sigmoids/tanhs shrink near saturation, and products of many small numbers collapse to zero) and **exploding gradients** (products of many large numbers blow up). Techniques like ReLU activations, residual connections, and gradient clipping address these directly. Understanding how gradients propagate — and where they die — is essential for training deep networks.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "Vanishing gradient: sigmoid saturation",
+          description: "$\\sigma'(x)$ is near zero for $|x| > 4$, so deep sigmoid networks lose gradient through the chain. ReLU fixes this for $x > 0$.",
+          config: {
+            fn: "sigmoid",
+            domain: [-8, 8],
+            showTangent: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why is reverse-mode auto-diff preferred over forward-mode for training neural networks?",
+          options: [
+            "It is numerically more accurate.",
+            "Networks have many parameters and a scalar loss — reverse mode computes the gradient in one backward pass, independent of parameter count.",
+            "Forward mode does not work on GPUs.",
+            "Reverse mode avoids the chain rule.",
+          ],
+          correctIndex: 1,
+          hint: "Compare cost as a function of input vs output dimension.",
+          explanation: "Forward mode costs scale with **input** dimension; reverse mode with **output** dimension. Since training has a scalar loss (output dim 1) and millions of parameters (input dim huge), reverse is cheaper by a factor of millions — the same reason all major ML libraries use backprop.",
+        },
+        {
+          type: "numeric-input",
+          question: "A 50-layer deep sigmoid network has pre-activations saturated to $\\sigma'(x) \\approx 0.1$. Roughly what factor does the gradient shrink by after 50 layers?",
+          answer: 1e-50,
+          tolerance: 1e-49,
+          hint: "Multiply 0.1 by itself 50 times.",
+          explanation: "$0.1^{50} = 10^{-50}$ — essentially zero in floating point. This is the **vanishing gradient** problem, and it's why deep sigmoid nets failed historically. ReLU (derivative 0 or 1), residual connections, and batch norm are all tools to keep gradients flowing.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does backprop never need to explicitly form the full Jacobian of a layer?",
+          options: [
+            "Because the Jacobian is always zero.",
+            "It computes only the vector-Jacobian product $\\mathbf{u}^\\top J$ needed to propagate the gradient, which is usually a cheap primitive operation.",
+            "Because it uses finite differences.",
+            "Jacobians are computed symbolically once.",
+          ],
+          correctIndex: 1,
+          hint: "For a linear layer, the Jacobian is $W$ but the VJP is just a matrix multiply.",
+          explanation: "Backprop only needs the **vector-Jacobian product**: given the upstream gradient $\\delta$, compute $\\delta^\\top J$. For most primitives, this is a straightforward operation (a matmul for linear layers, an element-wise multiply for activations) whose cost matches the forward pass.",
+        },
+      ],
+      keyTakeaways: [
+        "Backprop is reverse-mode auto-diff: chain rule executed right-to-left on a computational graph.",
+        "Each layer contributes a vector-Jacobian product — never a full Jacobian — making gradients scale linearly in graph size.",
+        "Watch for vanishing/exploding gradients; architectural choices (ReLU, residuals, clipping) mitigate them.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 30 — Chapter 5.6: Higher-Order Derivatives
+    // =========================================================================
+    {
+      title: "Higher-Order Derivatives",
+      chapter: "Vector Calculus",
+      chapterNumber: 5,
+      content: [
+        "Taking the derivative of a derivative gives **higher-order derivatives**. In 1D, $f''(x)$ measures **curvature** — how fast the slope is itself changing. Large positive $f''$ means the function curves up sharply (a narrow bowl), small $f''$ means gentle curvature (a wide bowl), and negative $f''$ means curving down (a hill).",
+        "For multivariable $f : \\mathbb{R}^n \\to \\mathbb{R}$, the second-order object is the **Hessian matrix** $H_f \\in \\mathbb{R}^{n \\times n}$ with entries $H_{ij} = \\frac{\\partial^2 f}{\\partial x_i \\partial x_j}$. For sufficiently smooth $f$, mixed partials commute (Clairaut's theorem): $\\frac{\\partial^2 f}{\\partial x_i \\partial x_j} = \\frac{\\partial^2 f}{\\partial x_j \\partial x_i}$, so the Hessian is **symmetric**.",
+        "The Hessian characterizes critical points. At a point where $\\nabla f = \\mathbf{0}$: if $H$ is **positive definite** (all eigenvalues > 0), it is a local minimum; if **negative definite**, a local maximum; if **indefinite** (mixed signs), a saddle point; if singular, the test is inconclusive and you need higher-order analysis. The eigenvalues of the Hessian give the curvatures along the principal axes of the quadratic form.",
+        "The **condition number** of the Hessian — the ratio $\\lambda_{\\max} / \\lambda_{\\min}$ — governs how hard the optimization problem is. A high condition number means the loss landscape has very elongated valleys: gradient descent zigzags because it can't find the long narrow direction. This is exactly why **Newton's method** $\\mathbf{x}_{k+1} = \\mathbf{x}_k - H^{-1}\\nabla f$ converges faster: it rescales by the inverse Hessian, making the effective landscape isotropic.",
+        "In ML, the Hessian drives **second-order optimization** (Newton, quasi-Newton methods like L-BFGS, natural gradient descent), **Laplace approximations** of Bayesian posteriors (approximate a posterior by a Gaussian with covariance $H^{-1}$), and **sharpness-based generalization** (flat minima with small Hessian eigenvalues tend to generalize better than sharp ones). Storing and inverting Hessians is expensive ($O(n^2)$ storage, $O(n^3)$ inversion), which is why most deep learning uses first-order methods or stochastic approximations.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "Second derivative = curvature",
+          description: "$f(x) = x^2$ has $f''(x) = 2$ everywhere — uniform positive curvature, a convex bowl.",
+          config: {
+            fn: "x^2",
+            domain: [-3, 3],
+            showTangent: true,
+          },
+        },
+        {
+          type: "gradient-field",
+          title: "Ill-conditioned quadratic",
+          description: "When Hessian eigenvalues differ widely, gradient descent zigzags along the narrow valley instead of flowing straight to the minimum.",
+          config: {
+            surface: "rosenbrock",
+            showTrajectory: true,
+            learningRate: 0.001,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "matrix-input",
+          question: "Compute the Hessian of $f(x, y) = x^2 + 3xy + 2y^2$ at any point.",
+          rows: 2,
+          cols: 2,
+          answer: [
+            [2, 3],
+            [3, 4],
+          ],
+          tolerance: 0.01,
+          hint: "Second partials: $f_{xx}, f_{xy}, f_{yx}, f_{yy}$.",
+          explanation: "$f_x = 2x + 3y$, $f_y = 3x + 4y$. So $f_{xx} = 2$, $f_{xy} = 3$, $f_{yx} = 3$, $f_{yy} = 4$. The Hessian is constant because $f$ is a quadratic form — and symmetric, as expected.",
+        },
+        {
+          type: "multiple-choice",
+          question: "A critical point has Hessian eigenvalues $\\{2, -1\\}$. What kind of point is it?",
+          options: ["Local minimum", "Local maximum", "Saddle point", "Undefined"],
+          correctIndex: 2,
+          hint: "Positive in one direction, negative in another.",
+          explanation: "The Hessian is **indefinite** (mixed signs), so the point is a **saddle**: curving up in one principal direction and down in the other. Gradient descent can escape along the negative-eigenvalue direction.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why do most deep learning pipelines avoid computing the full Hessian?",
+          options: [
+            "The Hessian is undefined for neural networks.",
+            "For a model with $n$ parameters, storing the Hessian takes $O(n^2)$ memory, which is infeasible for $n$ in the millions.",
+            "Hessians give wrong gradients.",
+            "PyTorch cannot compute them.",
+          ],
+          correctIndex: 1,
+          hint: "Think about memory for a billion-parameter model.",
+          explanation: "For $n = 10^9$ parameters, the Hessian has $10^{18}$ entries — petabytes of storage. Inverting it takes $O(n^3)$ operations. Instead, methods like L-BFGS approximate $H^{-1}$ from low-rank updates, or natural gradient uses the Fisher information as a proxy.",
+        },
+      ],
+      keyTakeaways: [
+        "The Hessian is the matrix of second partial derivatives; it is symmetric for smooth functions.",
+        "Positive/negative definite Hessian ⟹ local min/max; indefinite ⟹ saddle.",
+        "The condition number of $H$ controls optimization difficulty — Newton's method inverts it to fix ill-conditioning.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 31 — Chapter 5.7: Linearization and Taylor Series
+    // =========================================================================
+    {
+      title: "Linearization and Taylor Series",
+      chapter: "Vector Calculus",
+      chapterNumber: 5,
+      content: [
+        "A **Taylor series** approximates a smooth function by a polynomial. Near a point $a$, the $k$-th order approximation is $f(x) \\approx f(a) + f'(a)(x - a) + \\frac{f''(a)}{2!}(x-a)^2 + \\dots + \\frac{f^{(k)}(a)}{k!}(x - a)^k$. The **first-order** approximation is the tangent line (linearization); the **second-order** version is a parabola tangent to the function at $a$.",
+        "For multivariable $f : \\mathbb{R}^n \\to \\mathbb{R}$, the Taylor expansion becomes $f(\\mathbf{x}) \\approx f(\\mathbf{a}) + \\nabla f(\\mathbf{a})^\\top (\\mathbf{x} - \\mathbf{a}) + \\frac{1}{2} (\\mathbf{x} - \\mathbf{a})^\\top H_f(\\mathbf{a}) (\\mathbf{x} - \\mathbf{a})$. Linearization uses only the gradient; quadratic approximation adds the Hessian term. This is the bedrock of almost all continuous optimization theory.",
+        "Approximation quality depends on how far you are from the base point and how non-polynomial $f$ is. The **remainder term** $R_k(x)$ typically decays as $|x - a|^{k+1}$ for smooth functions, so small neighborhoods admit very accurate low-order approximations. For smooth functions analytic in a neighborhood, the series converges exactly to $f$ — but not every smooth function has this property (a famous counter-example is $e^{-1/x^2}$, smooth but not analytic at 0).",
+        "Linearization is a recurring idea in ML. **Gradient descent** uses the 1st-order Taylor approximation to propose a step. **Newton's method** uses the 2nd-order approximation and jumps directly to the minimum of the local quadratic model. **Natural gradient** uses a Riemannian correction based on the Fisher metric. **Trust region methods** use quadratic models but constrain step size to where the model is trustworthy.",
+        "Beyond optimization, Taylor series power **Laplace approximations** (approximate a posterior by its 2nd-order expansion around the mode), **extended Kalman filters** (linearize nonlinear dynamics at each step), and numerical solvers for ODEs and PDEs. Even approximating activation functions by low-degree polynomials for homomorphic-encryption-friendly inference is a Taylor-series maneuver. It is the universal 'zoom in close and pretend things are simple' tool.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "Taylor approximation of $\\sin(x)$",
+          description: "Near $x = 0$, $\\sin x \\approx x - x^3/6 + x^5/120 - \\dots$. Each added term extends the region of good approximation.",
+          config: {
+            fn: "sin",
+            domain: [-6, 6],
+            showTangent: true,
+            taylorOrder: 5,
+          },
+        },
+        {
+          type: "function-plot",
+          title: "Linearization of $e^x$ at 0",
+          description: "Near $x = 0$, $e^x \\approx 1 + x + x^2/2 + \\dots$. The tangent line $1 + x$ is excellent for small $x$.",
+          config: {
+            fn: "exp",
+            domain: [-2, 2],
+            showTangent: true,
+            taylorOrder: 2,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "What is the first-order Taylor expansion of $f(x) = e^x$ around $x = 0$?",
+          options: ["$1 + x$", "$x$", "$e + x$", "$1 + x + x^2$"],
+          correctIndex: 0,
+          hint: "$f(0) = 1$, $f'(0) = e^0 = 1$.",
+          explanation: "First-order: $f(0) + f'(0)x = 1 + 1\\cdot x = 1 + x$. This is an excellent approximation near 0: $e^{0.1} \\approx 1.105$, while $1 + 0.1 = 1.1$ — off by less than 0.5%.",
+        },
+        {
+          type: "numeric-input",
+          question: "Use a 2nd-order Taylor expansion of $\\cos(x)$ at 0 to approximate $\\cos(0.2)$. Enter the approximation.",
+          answer: 0.98,
+          tolerance: 0.01,
+          hint: "$\\cos x \\approx 1 - x^2/2$.",
+          explanation: "$\\cos(x) \\approx 1 - x^2/2$. So $\\cos(0.2) \\approx 1 - 0.02 = 0.98$. True value: $\\cos(0.2) \\approx 0.9801$ — the quadratic approximation is accurate to 4 decimal places.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does Newton's method converge faster than gradient descent near a minimum?",
+          options: [
+            "Newton uses a smaller learning rate.",
+            "Newton uses the 2nd-order Taylor model (Hessian) and jumps directly to its minimum — exact for quadratics, near-optimal for smooth functions near a minimum.",
+            "Newton avoids the chain rule.",
+            "Gradient descent is wrong.",
+          ],
+          correctIndex: 1,
+          hint: "Compare 1st- vs 2nd-order approximations.",
+          explanation: "Gradient descent's linear model has no curvature, so steps are conservative. Newton's quadratic model captures curvature exactly for quadratic losses and **quadratically converges** near smooth minima — quickly doubling the number of correct digits per step.",
+        },
+      ],
+      keyTakeaways: [
+        "Taylor series approximate a smooth function by a polynomial around a point.",
+        "Linearization uses gradient; quadratic approximation adds the Hessian.",
+        "Taylor approximations underlie gradient descent, Newton, Kalman filters, and Laplace approximations.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 32 — Chapter 6.1: Probability Spaces
+    // =========================================================================
+    {
+      title: "Probability Spaces",
+      chapter: "Probability and Distributions",
+      chapterNumber: 6,
+      content: [
+        "A **probability space** is a mathematical stage for reasoning about uncertainty. It consists of three ingredients: a **sample space** $\\Omega$ (the set of all possible outcomes), a collection $\\mathcal{F}$ of **events** (subsets of $\\Omega$ we want to assign probabilities to), and a **probability measure** $P$ that assigns a number in $[0, 1]$ to each event. Together, $(\\Omega, \\mathcal{F}, P)$ axiomatize the notion of chance.",
+        "The probability measure $P$ satisfies three **Kolmogorov axioms**: (1) $P(A) \\geq 0$ for every event $A$, (2) $P(\\Omega) = 1$ — something must happen, and (3) **countable additivity**: for disjoint events $A_1, A_2, \\dots$, $P(\\bigcup_i A_i) = \\sum_i P(A_i)$. From these three, you can derive everything: complements ($P(A^c) = 1 - P(A)$), unions (inclusion–exclusion), and monotonicity.",
+        "A **random variable** is a function $X : \\Omega \\to \\mathbb{R}$ that assigns a number to each outcome. It lets us translate messy sample spaces into real numbers we can compute with. Crucially, we usually don't care about $\\Omega$ itself — we care about the **distribution** of $X$, $P(X \\in A)$ for sets $A \\subseteq \\mathbb{R}$. The distribution is the practical object.",
+        "**Independence** of events is defined by $P(A \\cap B) = P(A) P(B)$ — the joint probability factorizes. Conceptually, knowing $A$ tells us nothing about $B$. Random variables $X, Y$ are independent if their joint distribution factors as the product of marginals: $p(x, y) = p(x) p(y)$. Independence is a very strong assumption that many ML models rely on (naive Bayes is the extreme example) — and whose violation has real consequences.",
+        "In ML, probability spaces formalize the data-generating process. We imagine each training example $(\\mathbf{x}_i, y_i)$ as drawn independently from some underlying joint distribution $p(\\mathbf{x}, y)$. Our goal is to estimate conditional probabilities $p(y \\mid \\mathbf{x})$ from a finite sample. Every learning algorithm — from linear regression to GPT — is implicitly or explicitly estimating some probability-space object.",
+      ],
+      visualizations: [
+        {
+          type: "probability-plot",
+          title: "A uniform distribution on [0, 1]",
+          description: "$P(X \\in [a, b]) = b - a$ for $0 \\leq a \\leq b \\leq 1$. The density is flat.",
+          config: {
+            distribution: "uniform",
+            params: { a: 0, b: 1 },
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "A fair six-sided die is rolled. What is $P(\\text{even})$?",
+          answer: 0.5,
+          tolerance: 0.01,
+          hint: "Three of six outcomes are even: 2, 4, 6.",
+          explanation: "The event 'even' is $\\{2, 4, 6\\}$, each with probability $1/6$. Total: $3/6 = 0.5$. The sample space was $\\Omega = \\{1, 2, 3, 4, 5, 6\\}$ with uniform $P$.",
+        },
+        {
+          type: "numeric-input",
+          question: "If $P(A) = 0.3$ and $P(B) = 0.4$, and $A, B$ are independent, what is $P(A \\cap B)$?",
+          answer: 0.12,
+          tolerance: 0.01,
+          hint: "Independence means probabilities multiply.",
+          explanation: "$P(A \\cap B) = P(A) P(B) = 0.3 \\cdot 0.4 = 0.12$. This is the defining property of independence — and why $\\log p$ decomposes as a sum of independent log-probs, a fact exploited by every likelihood-based model.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which statement violates the Kolmogorov axioms?",
+          options: [
+            "$P(\\emptyset) = 0$",
+            "$P(A^c) = 1 - P(A)$",
+            "$P(A) = 1.2$ for some event $A$",
+            "$P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$",
+          ],
+          correctIndex: 2,
+          hint: "Probabilities must be in [0, 1].",
+          explanation: "Probabilities are in $[0, 1]$ by the non-negativity axiom and normalization $P(\\Omega) = 1$. A probability of 1.2 is impossible. The other three are standard derived facts.",
+        },
+      ],
+      keyTakeaways: [
+        "A probability space is $(\\Omega, \\mathcal{F}, P)$: outcomes, events, and a measure satisfying Kolmogorov's axioms.",
+        "Random variables transport probability to $\\mathbb{R}$; we usually care about their distribution.",
+        "Independence means joint probability factorizes: $P(A \\cap B) = P(A) P(B)$.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 33 — Chapter 6.2: Discrete and Continuous Probabilities
+    // =========================================================================
+    {
+      title: "Discrete and Continuous Probabilities",
+      chapter: "Probability and Distributions",
+      chapterNumber: 6,
+      content: [
+        "Random variables come in two flavors. A **discrete** random variable takes values in a finite or countable set (like $\\{1, 2, 3, 4, 5, 6\\}$ or $\\mathbb{N}$) and is described by a **probability mass function** (PMF): $p(x) = P(X = x)$. Mass functions satisfy $p(x) \\geq 0$ and $\\sum_x p(x) = 1$ — probability is distributed across discrete points.",
+        "A **continuous** random variable takes values in an uncountable set like $\\mathbb{R}$, and is described by a **probability density function** (PDF) $p(x)$ with $p(x) \\geq 0$ and $\\int p(x) \\, dx = 1$. The probability of any single point is zero; meaningful probabilities come from **intervals**: $P(a \\leq X \\leq b) = \\int_a^b p(x) \\, dx$.",
+        "Densities are *not* probabilities — they can be greater than 1 (a narrow tall density integrates to 1 over a small region). This surprises people. The right mental picture: a density is a rate, probability-per-unit-of-$x$, and what matters is the area under it over an interval. Units matter too: if $x$ is in meters, $p(x)$ has units of 1/meter.",
+        "Both types share a **cumulative distribution function** (CDF): $F(x) = P(X \\leq x)$. For discrete variables, the CDF is a staircase; for continuous, it's a smooth increasing function. The CDF is universally useful because it always exists, always returns true probabilities, and maps cleanly to quantile-based computations (sampling via inverse CDF, confidence intervals).",
+        "ML mixes both constantly. Classification outputs a discrete distribution over labels via softmax. Regression predicts a continuous $y$ given $\\mathbf{x}$. Tokens in a language model are discrete but attention scores are continuous. Mastery of both paradigms — and especially how to think about *mixed* or *structured* distributions like those in energy-based models — is essential for building and debugging modern probabilistic systems.",
+      ],
+      visualizations: [
+        {
+          type: "probability-plot",
+          title: "Gaussian PDF",
+          description: "A continuous distribution. The area under the curve between $a$ and $b$ gives $P(a \\leq X \\leq b)$.",
+          config: {
+            distribution: "gaussian",
+            params: { mu: 0, sigma: 1 },
+          },
+        },
+        {
+          type: "probability-plot",
+          title: "Exponential density",
+          description: "A continuous density for waiting times: $p(x) = \\lambda e^{-\\lambda x}$ for $x \\geq 0$.",
+          config: {
+            distribution: "exponential",
+            params: { lambda: 1 },
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "A die has PMF $p(x) = 1/6$ for $x \\in \\{1, \\dots, 6\\}$. What is $P(X \\leq 3)$?",
+          answer: 0.5,
+          tolerance: 0.01,
+          hint: "Sum the masses for $x = 1, 2, 3$.",
+          explanation: "$P(X \\leq 3) = p(1) + p(2) + p(3) = 3/6 = 0.5$. This is the value of the CDF at $x = 3$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "For a continuous random variable with density $p(x)$, what is $P(X = a)$?",
+          options: ["$p(a)$", "0", "1", "$\\int p(a) da$"],
+          correctIndex: 1,
+          hint: "Integrate from $a$ to $a$.",
+          explanation: "For a continuous RV, the probability of any specific point is **zero** because integration over a single point gives 0. Only intervals have positive probability. This is why we describe continuous variables by densities (rates), not masses.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Can a probability density $p(x)$ exceed 1?",
+          options: [
+            "Never — densities are probabilities.",
+            "Yes — densities are rates, and a tall narrow density can exceed 1 as long as $\\int p = 1$.",
+            "Only for Gaussians.",
+            "Only on bounded intervals.",
+          ],
+          correctIndex: 1,
+          hint: "Think about a uniform density on $[0, 0.1]$.",
+          explanation: "A uniform distribution on $[0, 0.1]$ has density $p(x) = 10$ — far above 1. What must be $\\leq 1$ is the integral over any set, i.e., the **probability**. Densities are measured in '1/length' units and can exceed 1 as long as the total integral is 1.",
+        },
+      ],
+      keyTakeaways: [
+        "Discrete distributions use PMFs (probabilities at points); continuous use PDFs (probabilities per unit).",
+        "The CDF $F(x) = P(X \\leq x)$ exists for both and is universally useful.",
+        "Densities are rates — they can exceed 1; only integrals give probabilities.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 34 — Chapter 6.3: Sum Rule, Product Rule, Bayes' Theorem
+    // =========================================================================
+    {
+      title: "Sum Rule, Product Rule, Bayes' Theorem",
+      chapter: "Probability and Distributions",
+      chapterNumber: 6,
+      content: [
+        "Three rules underpin all of probability. The **sum rule** (or marginalization): $p(x) = \\sum_y p(x, y)$ (or $\\int p(x, y) \\, dy$ in the continuous case). Given a joint distribution, you recover a marginal by summing/integrating out the other variable. This is how we go from 'full knowledge' to 'knowledge about $X$ alone'.",
+        "The **product rule**: $p(x, y) = p(x \\mid y) p(y) = p(y \\mid x) p(x)$. The joint probability factors into a conditional times a marginal in either direction. Chaining it gives us the **chain rule of probability**: $p(x_1, x_2, \\dots, x_n) = p(x_1) p(x_2 \\mid x_1) p(x_3 \\mid x_1, x_2) \\cdots$, essential for autoregressive models like language models.",
+        "**Bayes' theorem** is just the product rule rearranged: $p(x \\mid y) = \\frac{p(y \\mid x) p(x)}{p(y)}$. It inverts a conditional: if we know how effects follow from causes ($p(y \\mid x)$), we can reason about causes from observed effects ($p(x \\mid y)$). The pieces have standard names: $p(x)$ is the **prior**, $p(y \\mid x)$ is the **likelihood**, $p(x \\mid y)$ is the **posterior**, and $p(y) = \\sum_x p(y \\mid x) p(x)$ is the **evidence**.",
+        "Bayes' rule is the engine of **Bayesian inference**: start with a prior belief about parameters $\\theta$, observe data $\\mathcal{D}$, and update to $p(\\theta \\mid \\mathcal{D}) \\propto p(\\mathcal{D} \\mid \\theta) p(\\theta)$. The evidence in the denominator is often intractable, which is why approximate methods — variational inference, MCMC, Laplace approximations — are so central to modern probabilistic ML.",
+        "Applications stretch from classic spam filters (Bayes' rule combining word likelihoods and class priors) to medical diagnosis (testing-rule problem: with a 99% accurate test and 1% prevalence, the posterior probability of disease given a positive test is only about 50%, a frequently botched intuition) to modern **Bayesian neural networks** and **diffusion models**. Fluency with these three rules is the baseline for all probabilistic reasoning.",
+      ],
+      visualizations: [
+        {
+          type: "bayes-updater",
+          title: "Bayesian update: prior meets likelihood",
+          description: "Start with a Gaussian prior, observe data, and watch the posterior concentrate. Each observation sharpens belief.",
+          config: {
+            priorMu: 0,
+            priorSigma: 2,
+            likelihoodSigma: 1,
+            observations: [1, 1.2, 0.8, 1.1],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "A disease has prevalence 1% ($p(D) = 0.01$). A test has sensitivity $p(+ \\mid D) = 0.99$ and false positive rate $p(+ \\mid \\neg D) = 0.05$. What is $p(D \\mid +)$?",
+          answer: 0.167,
+          tolerance: 0.01,
+          hint: "Use Bayes: $p(D \\mid +) = \\frac{p(+ \\mid D)p(D)}{p(+)}$, with $p(+) = p(+\\mid D)p(D) + p(+\\mid \\neg D)p(\\neg D)$.",
+          explanation: "$p(+) = 0.99 \\cdot 0.01 + 0.05 \\cdot 0.99 = 0.0099 + 0.0495 = 0.0594$. $p(D \\mid +) = 0.0099 / 0.0594 \\approx 0.167$ — only **17%**, not 99%, despite the highly accurate test. This is the base-rate fallacy.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which identity is the **product rule** of probability?",
+          options: [
+            "$p(x, y) = p(x) + p(y)$",
+            "$p(x, y) = p(x \\mid y) p(y)$",
+            "$p(x \\mid y) = p(y \\mid x)$",
+            "$p(x, y) = p(x) p(y)$",
+          ],
+          correctIndex: 1,
+          hint: "Joint = conditional × marginal.",
+          explanation: "The product rule $p(x, y) = p(x \\mid y)p(y)$ always holds. The last option only holds under **independence**; the first two are not valid in general.",
+        },
+        {
+          type: "multiple-choice",
+          question: "In Bayes' rule $p(\\theta \\mid \\mathcal{D}) \\propto p(\\mathcal{D} \\mid \\theta) p(\\theta)$, what does $p(\\theta)$ encode?",
+          options: [
+            "The posterior",
+            "The likelihood",
+            "Our prior beliefs about $\\theta$ before seeing data",
+            "The evidence",
+          ],
+          correctIndex: 2,
+          hint: "Think about the flow: prior → observe → posterior.",
+          explanation: "$p(\\theta)$ is the **prior** — beliefs about $\\theta$ before any data. The likelihood $p(\\mathcal{D} \\mid \\theta)$ is how well each $\\theta$ explains the observed data. Multiplying them and normalizing gives the posterior $p(\\theta \\mid \\mathcal{D})$.",
+        },
+      ],
+      keyTakeaways: [
+        "Sum rule marginalizes; product rule factors joints; Bayes inverts conditionals.",
+        "Bayes: posterior ∝ likelihood × prior. The evidence normalizes.",
+        "Base-rate fallacies are everywhere — always apply Bayes, don't trust raw test accuracies.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 35 — Chapter 6.4: Summary Statistics and Independence
+    // =========================================================================
+    {
+      title: "Summary Statistics and Independence",
+      chapter: "Probability and Distributions",
+      chapterNumber: 6,
+      content: [
+        "Distributions are high-dimensional objects, but we often compress them into a few **summary statistics**. The **expected value** (mean) $\\mathbb{E}[X] = \\sum_x x\\, p(x)$ (or $\\int x\\, p(x)\\, dx$) gives the long-run average. Expectation is **linear**: $\\mathbb{E}[aX + bY + c] = a\\mathbb{E}[X] + b\\mathbb{E}[Y] + c$ — no independence required. This linearity is the single most-used identity in probabilistic ML.",
+        "The **variance** $\\text{Var}[X] = \\mathbb{E}[(X - \\mathbb{E}[X])^2]$ measures spread around the mean. Its square root $\\sigma = \\sqrt{\\text{Var}[X]}$ is the **standard deviation**, measured in the same units as $X$. Variance is not linear but satisfies $\\text{Var}[aX + b] = a^2 \\text{Var}[X]$ — constants shift the mean but not the spread.",
+        "For two random variables, the **covariance** $\\text{Cov}[X, Y] = \\mathbb{E}[(X - \\mathbb{E} X)(Y - \\mathbb{E} Y)]$ measures linear co-variation. Positive means they tend to move together; negative means oppositely; zero means no linear relationship. The normalized version is the **correlation** $\\rho = \\text{Cov}[X, Y] / (\\sigma_X \\sigma_Y) \\in [-1, 1]$.",
+        "For multiple random variables bundled as a vector $\\mathbf{X}$, the **covariance matrix** $\\Sigma$ has entries $\\Sigma_{ij} = \\text{Cov}[X_i, X_j]$. Diagonal entries are variances; off-diagonals are covariances. Covariance matrices are always **symmetric positive semi-definite** — a fact exploited heavily by PCA, Gaussian processes, and variational methods.",
+        "**Independence implies zero covariance**, but not conversely: zero correlation does not imply independence. Two variables can be perfectly dependent with zero correlation (e.g., $Y = X^2$ with $X \\sim \\mathcal{N}(0, 1)$). This is a constant source of bugs: if your model assumes independence based on zero correlation, you may miss crucial nonlinear relationships. In ML, we usually check with **mutual information** or other nonlinear measures when independence is a critical assumption.",
+      ],
+      visualizations: [
+        {
+          type: "probability-plot",
+          title: "Gaussian: mean = 0, std = 1",
+          description: "The Gaussian is characterized entirely by its mean and variance. 68% of mass lies within one standard deviation.",
+          config: {
+            distribution: "gaussian",
+            params: { mu: 0, sigma: 1 },
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Roll a fair six-sided die. What is $\\mathbb{E}[X]$?",
+          answer: 3.5,
+          tolerance: 0.01,
+          hint: "Sum $x \\cdot p(x)$ for $x = 1, \\dots, 6$.",
+          explanation: "$\\mathbb{E}[X] = (1 + 2 + 3 + 4 + 5 + 6)/6 = 21/6 = 3.5$. The expected value need not be an attainable outcome — it is the long-run average.",
+        },
+        {
+          type: "numeric-input",
+          question: "If $X$ has variance 4, what is $\\text{Var}[3X - 5]$?",
+          answer: 36,
+          tolerance: 0.01,
+          hint: "$\\text{Var}[aX + b] = a^2 \\text{Var}[X]$.",
+          explanation: "Constants shift the mean but not the spread, and multiplicative scaling squares: $\\text{Var}[3X - 5] = 9 \\cdot 4 = 36$. Standard deviation: $\\sigma = 6$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Two random variables have correlation 0. Which is TRUE?",
+          options: [
+            "They are independent.",
+            "They have no linear relationship, but may have a nonlinear one.",
+            "They are identically distributed.",
+            "One is a constant.",
+          ],
+          correctIndex: 1,
+          hint: "Zero correlation rules out linear dependence only.",
+          explanation: "Correlation captures **linear** dependence. Two variables can satisfy $Y = X^2$ (perfectly deterministic) yet have $\\rho = 0$. True independence is a stronger condition — often checked via mutual information or copula-based measures in modern ML.",
+        },
+      ],
+      keyTakeaways: [
+        "Mean, variance, covariance, and correlation summarize distributions.",
+        "Expectation is linear; variance is not (it squares scaling factors).",
+        "Covariance matrices are symmetric PSD; independence implies zero covariance but not conversely.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 36 — Chapter 6.5: Gaussian Distribution
+    // =========================================================================
+    {
+      title: "Gaussian Distribution",
+      chapter: "Probability and Distributions",
+      chapterNumber: 6,
+      content: [
+        "The **Gaussian** (or **Normal**) distribution is the most important distribution in statistics and ML. A univariate Gaussian has density $p(x) = \\frac{1}{\\sqrt{2\\pi \\sigma^2}} \\exp\\left(-\\frac{(x - \\mu)^2}{2\\sigma^2}\\right)$, parameterized by mean $\\mu$ and variance $\\sigma^2$. Its classic bell shape: symmetric around $\\mu$, inflection points at $\\mu \\pm \\sigma$, and roughly 99.7% of mass within $\\mu \\pm 3\\sigma$.",
+        "The **multivariate Gaussian** $\\mathcal{N}(\\boldsymbol\\mu, \\Sigma)$ on $\\mathbb{R}^d$ has density $p(\\mathbf{x}) = \\frac{1}{\\sqrt{(2\\pi)^d \\det\\Sigma}} \\exp\\left(-\\tfrac{1}{2}(\\mathbf{x} - \\boldsymbol\\mu)^\\top \\Sigma^{-1}(\\mathbf{x} - \\boldsymbol\\mu)\\right)$. The level sets are ellipsoids aligned with the eigenvectors of $\\Sigma$ — the same eigenvectors PCA recovers. The mean is the center; the covariance describes the shape and orientation.",
+        "Gaussians are **closed under several operations**: sums of independent Gaussians are Gaussian, affine transformations $A\\mathbf{x} + \\mathbf{b}$ of Gaussian vectors are Gaussian, marginals are Gaussian, and conditionals are Gaussian. The conditional formulas $p(\\mathbf{x}_1 \\mid \\mathbf{x}_2)$ have closed forms — the workhorses of Gaussian processes and Kalman filters.",
+        "Why are Gaussians everywhere? Three reasons. The **central limit theorem** says sums of many independent variables become approximately Gaussian, so noise is often modeled as Gaussian. The **maximum entropy principle** says the Gaussian is the 'most uncertain' distribution given fixed mean and variance, making it the least-committal choice. And practically, the Gaussian's closed-form algebra means tractable inference.",
+        "In ML, Gaussians power linear regression's noise model ($y = \\mathbf{w}^\\top \\mathbf{x} + \\epsilon$, $\\epsilon \\sim \\mathcal{N}$), **variational autoencoders** (Gaussian latents and decoder posteriors), **diffusion models** (Gaussian transition kernels), and **Gaussian processes** (distributions over functions). Understanding Gaussian algebra — conditionals, marginals, and precision matrices — is arguably the most practically useful probability skill in ML.",
+      ],
+      visualizations: [
+        {
+          type: "probability-plot",
+          title: "Gaussian densities with different $\\sigma$",
+          description: "Larger $\\sigma$ = wider and shorter bell. Smaller $\\sigma$ = narrower and taller. Both integrate to 1.",
+          config: {
+            distribution: "gaussian",
+            params: { mu: 0, sigma: 1 },
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "For $X \\sim \\mathcal{N}(10, 4)$ (mean 10, variance 4), what percentage of mass lies within $X \\in [8, 12]$?",
+          answer: 68,
+          tolerance: 2,
+          hint: "$\\sigma = 2$; the interval is $\\mu \\pm \\sigma$.",
+          explanation: "Since $\\sigma^2 = 4$, $\\sigma = 2$. The interval $[8, 12] = [\\mu - \\sigma, \\mu + \\sigma]$. For any Gaussian, ~68% of mass lies within 1 standard deviation of the mean. This is the famous **68-95-99.7 rule**.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which statement about multivariate Gaussians is TRUE?",
+          options: [
+            "Level sets are always spheres.",
+            "Marginals and conditionals are both Gaussian.",
+            "The covariance must be diagonal.",
+            "They can take negative values.",
+          ],
+          correctIndex: 1,
+          hint: "Gaussians are closed under many operations.",
+          explanation: "Marginals $p(\\mathbf{x}_A)$ and conditionals $p(\\mathbf{x}_A \\mid \\mathbf{x}_B)$ of a joint Gaussian are both themselves Gaussian with closed-form mean and covariance — the property that makes GPs and Kalman filters tractable. Level sets are generally **ellipsoids**, not spheres (unless $\\Sigma = \\sigma^2 I$).",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does linear regression assume Gaussian noise by default?",
+          options: [
+            "It is required by the matrix inverse.",
+            "Maximum likelihood under Gaussian noise gives the squared-error loss — exactly the least-squares objective.",
+            "Gaussian noise is always positive.",
+            "Gaussian is the only noise model.",
+          ],
+          correctIndex: 1,
+          hint: "Take $-\\log p(y \\mid \\mathbf{x})$ under the Gaussian model.",
+          explanation: "Under $y \\mid \\mathbf{x} \\sim \\mathcal{N}(\\mathbf{w}^\\top \\mathbf{x}, \\sigma^2)$, the log-likelihood is $-(y - \\mathbf{w}^\\top \\mathbf{x})^2/(2\\sigma^2) + \\text{const}$. Maximizing it is exactly minimizing squared error — the MLE of Gaussian linear models **is** ordinary least squares.",
+        },
+      ],
+      keyTakeaways: [
+        "Univariate Gaussian: $\\mu, \\sigma^2$; multivariate: $\\boldsymbol\\mu, \\Sigma$ with ellipsoidal level sets.",
+        "Gaussians are closed under affine transforms, sums, marginals, and conditionals.",
+        "Gaussians underlie linear regression, VAEs, diffusion models, and GPs.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 37 — Chapter 6.6: Conjugacy and Exponential Family
+    // =========================================================================
+    {
+      title: "Conjugacy and Exponential Family",
+      chapter: "Probability and Distributions",
+      chapterNumber: 6,
+      content: [
+        "In Bayesian inference, we update a prior $p(\\theta)$ with a likelihood $p(\\mathcal{D} \\mid \\theta)$ to get a posterior $p(\\theta \\mid \\mathcal{D}) \\propto p(\\mathcal{D} \\mid \\theta)p(\\theta)$. The posterior is generally messy — but for certain **conjugate** prior-likelihood pairs, the posterior has the same functional form as the prior. This turns inference from integral calculus into parameter arithmetic.",
+        "Classical conjugate pairs: **Beta prior + Bernoulli/Binomial likelihood → Beta posterior**; **Gaussian prior (known variance) + Gaussian likelihood → Gaussian posterior**; **Dirichlet prior + Multinomial → Dirichlet posterior**; **Gamma prior + Poisson → Gamma**. The math reduces to updating 'effective counts' or 'natural parameters', avoiding integration entirely.",
+        "The deeper reason these exist: the **exponential family** of distributions. A family has exponential-family form if $p(x \\mid \\theta) = h(x) \\exp\\left(\\boldsymbol\\eta(\\theta)^\\top T(x) - A(\\theta)\\right)$, where $T(x)$ are the **sufficient statistics**, $\\boldsymbol\\eta$ are **natural parameters**, and $A$ is the **log-partition function**. Gaussian, Bernoulli, Poisson, Beta, Dirichlet, Gamma, and categorical distributions are all exponential families.",
+        "Exponential families have beautiful properties. Sufficient statistics carry all information from the data about $\\theta$ — you can throw away the raw data. The MLE comes from matching the expected sufficient statistics to the empirical ones. Any exponential family has a conjugate prior of a specific form. And the family is closed under multiplication (so posteriors stay in it).",
+        "In ML, this framework clarifies many methods. **Logistic regression** and **Poisson regression** are exponential families with the linear predictor feeding the natural parameter — hence **generalized linear models** (GLMs). **Variational inference** with exponential family approximations becomes coordinate-wise parameter updates. Even modern **energy-based models** are unnormalized exponential families. Seeing the family lurking behind a model is a shortcut to both theory and efficient algorithms.",
+      ],
+      visualizations: [
+        {
+          type: "probability-plot",
+          title: "Beta distribution is conjugate to Bernoulli",
+          description: "Given a Beta(α, β) prior and Bernoulli data, the posterior is Beta(α + #successes, β + #failures) — pure arithmetic.",
+          config: {
+            distribution: "beta",
+            params: { alpha: 2, beta: 5 },
+          },
+        },
+        {
+          type: "bayes-updater",
+          title: "Conjugate Gaussian updating",
+          description: "With a Gaussian prior and Gaussian likelihood, each data point updates the posterior to another Gaussian.",
+          config: {
+            priorMu: 0,
+            priorSigma: 1,
+            likelihoodSigma: 0.5,
+            observations: [0.5, 0.8, 0.3],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Which prior-likelihood pair is conjugate?",
+          options: [
+            "Beta prior, Gaussian likelihood",
+            "Gaussian prior, Gaussian likelihood",
+            "Uniform prior, Beta likelihood",
+            "Poisson prior, Gaussian likelihood",
+          ],
+          correctIndex: 1,
+          hint: "Classic conjugate pair for continuous means.",
+          explanation: "Gaussian-Gaussian is the canonical conjugate pair: prior $\\mathcal{N}(\\mu_0, \\sigma_0^2)$ + likelihood $\\mathcal{N}(\\mu, \\sigma^2)$ with known $\\sigma^2$ gives posterior $\\mathcal{N}(\\mu_N, \\sigma_N^2)$ with closed-form updates. Beta-Bernoulli is another classic.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What is the practical advantage of conjugate priors in Bayesian ML?",
+          options: [
+            "They are unbiased.",
+            "The posterior stays in the same family, so inference reduces to parameter updates instead of integration.",
+            "They have zero variance.",
+            "They eliminate the need for any data.",
+          ],
+          correctIndex: 1,
+          hint: "Closed-form posterior means no numerical integration.",
+          explanation: "Conjugacy makes the posterior computable by **updating a few numbers**, not by solving integrals. This is why algorithms like Bayesian linear regression with Gaussian prior, topic models with Dirichlet priors, and Bayesian bandits with Beta priors are both theoretically clean and computationally fast.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Which distribution is NOT in the exponential family (in its standard form)?",
+          options: ["Gaussian", "Bernoulli", "Uniform on $[a, b]$ with variable $a, b$", "Poisson"],
+          correctIndex: 2,
+          hint: "The support must not depend on the parameters.",
+          explanation: "The uniform distribution on $[a, b]$ has support that depends on the parameters $a, b$ — disqualifying it from being in the exponential family (which requires a parameter-free support). Gaussian, Bernoulli, and Poisson are textbook members.",
+        },
+      ],
+      keyTakeaways: [
+        "Conjugate priors yield posteriors in the same family — inference reduces to parameter updates.",
+        "The exponential family unifies many common distributions via sufficient statistics.",
+        "GLMs, variational inference, and energy-based models all sit inside this framework.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 38 — Chapter 6.7: Change of Variables
+    // =========================================================================
+    {
+      title: "Change of Variables",
+      chapter: "Probability and Distributions",
+      chapterNumber: 6,
+      content: [
+        "Given a random variable $X$ with density $p_X$, what is the density of $Y = f(X)$? The answer is the **change of variables formula**: for a smooth, invertible $f$, $p_Y(y) = p_X(f^{-1}(y)) \\left| \\frac{df^{-1}}{dy} \\right|$. The Jacobian factor accounts for how $f$ stretches or compresses probability density — concentrations of probability move with the inverse stretch.",
+        "In higher dimensions, this becomes $p_Y(\\mathbf{y}) = p_X(f^{-1}(\\mathbf{y})) \\left| \\det J_{f^{-1}}(\\mathbf{y}) \\right|$, where $J_{f^{-1}}$ is the Jacobian matrix of the inverse. Equivalently, using the forward Jacobian: $p_Y(\\mathbf{y}) = p_X(\\mathbf{x}) / |\\det J_f(\\mathbf{x})|$ where $\\mathbf{x} = f^{-1}(\\mathbf{y})$. Either form says: **volume scaling of $f$ must be corrected** so total probability stays 1.",
+        "The formula requires $f$ to be a **bijection** (one-to-one and onto on the relevant domain) and to be smooth enough for its Jacobian to exist. If $f$ is not invertible — think $Y = X^2$ for $X \\in \\mathbb{R}$ — you sum contributions from all preimages. If $f$ collapses dimensions (e.g., a rank-deficient transformation), you cannot recover a density on $Y$; instead, $Y$ lives on a lower-dimensional manifold.",
+        "Change of variables shows up throughout probabilistic ML. Deriving the distribution of a sum, ratio, or transformation of known variables (e.g., $Y = e^X$ for $X$ Gaussian gives a log-normal). Converting between scale parameters (when modeling $\\sigma$ vs $\\log \\sigma$ or $\\tau = 1/\\sigma^2$). Any time we substitute a parameterization, the Jacobian keeps the probabilities honest.",
+        "The marquee application is **normalizing flows**: stack a sequence of invertible transformations $f_1, f_2, \\dots, f_K$ to map a simple base distribution (standard Gaussian) to a complex target. Each layer contributes a log-det-Jacobian term, and the log-likelihood of the target becomes $\\log p_X(\\mathbf{x}) = \\log p_Z(f^{-1}(\\mathbf{x})) + \\sum_k \\log|\\det J_{f_k^{-1}}|$. Flows are the clearest modern use of change of variables — invertibility and tractable Jacobians are the whole design constraint.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "Transformation $Y = e^X$",
+          description: "If $X \\sim \\mathcal{N}(0, 1)$, then $Y = e^X$ follows a log-normal distribution. The Jacobian factor $1/y$ reshapes the density.",
+          config: {
+            fn: "exp",
+            domain: [-2, 2],
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "The change of variables formula for densities requires the transformation to be:",
+          options: [
+            "Linear",
+            "Smooth and invertible (bijective)",
+            "Increasing",
+            "Bounded",
+          ],
+          correctIndex: 1,
+          hint: "Need to invert and compute a Jacobian.",
+          explanation: "For a single-valued density transformation, $f$ must be **bijective** (invertible) and differentiable (so Jacobian exists). Linearity is not required. Non-bijective transforms can still work if we sum over preimages or consider more general measure-theoretic formulations.",
+        },
+        {
+          type: "multiple-choice",
+          question: "In a normalizing flow, why do we need the Jacobian determinants of each transformation to be easy to compute?",
+          options: [
+            "For numerical stability.",
+            "Because the log-likelihood requires summing $\\log |\\det J_k|$ at every layer; expensive determinants would make training impractical.",
+            "To ensure invertibility.",
+            "By convention.",
+          ],
+          correctIndex: 1,
+          hint: "Training requires evaluating the log-likelihood at every step.",
+          explanation: "Each flow layer contributes a $\\log|\\det J|$ term to the log-likelihood. Naive determinants cost $O(d^3)$, infeasible for large $d$. Flow architectures (RealNVP, Glow, autoregressive flows) are specifically designed so Jacobians are triangular, diagonal, or otherwise cheap — often $O(d)$.",
+        },
+        {
+          type: "numeric-input",
+          question: "$X$ is uniform on $[0, 1]$, and $Y = 2X$. What is the density of $Y$ at $y = 1$?",
+          answer: 0.5,
+          tolerance: 0.01,
+          hint: "$p_Y(y) = p_X(y/2) \\cdot |dx/dy|$.",
+          explanation: "$X = Y/2$, $dx/dy = 1/2$. Since $p_X = 1$ on $[0, 1]$ (so $p_X(0.5) = 1$), $p_Y(1) = 1 \\cdot 1/2 = 0.5$. $Y$ is uniform on $[0, 2]$, so its density is $1/2$ — consistent.",
+        },
+      ],
+      keyTakeaways: [
+        "When $Y = f(X)$ with $f$ invertible, $p_Y(\\mathbf{y}) = p_X(\\mathbf{x}) / |\\det J_f|$.",
+        "The Jacobian corrects for the volume scaling of $f$.",
+        "Normalizing flows chain invertible transforms, summing log-det-Jacobians for tractable density estimation.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 39 — Chapter 7.1: Gradient Descent
+    // =========================================================================
+    {
+      title: "Gradient Descent",
+      chapter: "Continuous Optimization",
+      chapterNumber: 7,
+      content: [
+        "**Gradient descent** is the simplest and most-used continuous optimization algorithm: to minimize a differentiable $f(\\mathbf{x})$, start at some $\\mathbf{x}_0$ and iteratively update $\\mathbf{x}_{k+1} = \\mathbf{x}_k - \\eta \\nabla f(\\mathbf{x}_k)$, where $\\eta > 0$ is the **learning rate**. Each step moves in the direction of steepest descent — the negative gradient — by an amount scaled by $\\eta$.",
+        "The learning rate is the most important hyperparameter. Too small, and convergence is glacial. Too large, and the algorithm may overshoot and diverge. For convex quadratics, the optimal $\\eta$ is related to the Hessian's eigenvalues: $\\eta \\leq 2/\\lambda_{\\max}$ for stability, and the convergence rate depends on the condition number $\\kappa = \\lambda_{\\max}/\\lambda_{\\min}$. Ill-conditioned problems (large $\\kappa$) converge slowly.",
+        "Practical variants include **momentum** ($\\mathbf{v}_{k+1} = \\beta \\mathbf{v}_k + \\nabla f$, step in $\\mathbf{v}$), which accelerates along consistent directions and damps oscillation. **Adam** adapts per-parameter learning rates by tracking running averages of gradients and their squares — the default for deep learning. **SGD with warm restarts** and **cyclical learning rates** address the challenges of non-convex landscapes by periodically resetting.",
+        "**Stochastic gradient descent (SGD)** uses a random mini-batch of data to estimate $\\nabla f$, trading variance for enormous speedups on large datasets. Remarkably, SGD often **generalizes better** than exact gradient descent — the noise acts as a regularizer and helps escape sharp minima. This is one of the deep mysteries (and joys) of deep learning.",
+        "Gradient descent is not guaranteed to find a global minimum in general — only a critical point. For non-convex losses (like neural network training), we can land at local minima, saddle points, or simply plateau. In practice, it is the primary algorithm for training every modern neural network — a testament to how well it navigates even these challenging landscapes when combined with good initialization, architectures, and stochasticity.",
+      ],
+      visualizations: [
+        {
+          type: "gradient-field",
+          title: "GD on a bowl",
+          description: "On a convex quadratic, GD spirals toward the unique minimum. Step size controls speed and stability.",
+          config: {
+            surface: "bowl",
+            showTrajectory: true,
+            learningRate: 0.1,
+          },
+        },
+        {
+          type: "gradient-field",
+          title: "GD on Rosenbrock",
+          description: "The Rosenbrock function has a narrow curved valley — a classic non-trivial optimization benchmark.",
+          config: {
+            surface: "rosenbrock",
+            showTrajectory: true,
+            learningRate: 0.001,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "numeric-input",
+          question: "Starting from $x_0 = 4$ with learning rate $\\eta = 0.1$, perform one GD step on $f(x) = x^2$. What is $x_1$?",
+          answer: 3.2,
+          tolerance: 0.01,
+          hint: "$f'(x) = 2x$, so update is $x - 0.1 \\cdot 2x = 0.8 x$.",
+          explanation: "$x_1 = x_0 - \\eta f'(x_0) = 4 - 0.1 \\cdot 8 = 4 - 0.8 = 3.2$. Each step multiplies $x$ by $0.8$, so convergence is geometric. With $\\eta = 0.5$, we'd reach the minimum in one step — the 'optimal' rate.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What happens if the learning rate is too large in gradient descent on a strictly convex quadratic?",
+          options: [
+            "Convergence is faster.",
+            "The algorithm may oscillate or diverge — steps overshoot the minimum.",
+            "The gradient becomes zero.",
+            "No issue — learning rate is harmless.",
+          ],
+          correctIndex: 1,
+          hint: "Picture jumping past the bottom of the bowl.",
+          explanation: "For $f(x) = x^2$ with $\\eta > 1$, each step moves farther from the minimum than it started. The algorithm diverges. The sweet spot is $\\eta$ small enough to descend every step, large enough to make progress — exactly why learning rate tuning is so important.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why does stochastic gradient descent (SGD) often **generalize better** than full-batch gradient descent?",
+          options: [
+            "SGD is mathematically better.",
+            "The noise in SGD gradients acts as implicit regularization and helps escape sharp minima that generalize poorly.",
+            "Full batch overfits.",
+            "SGD uses a smaller model.",
+          ],
+          correctIndex: 1,
+          hint: "Think about what 'sharp' vs 'flat' minima mean.",
+          explanation: "Mini-batch noise jitters the trajectory, preventing settlement in narrow minima that correspond to memorization. This implicit regularization leads to **flatter minima** — empirically, these generalize better. It's one reason SGD remains competitive with (or better than) more sophisticated optimizers for many tasks.",
+        },
+      ],
+      keyTakeaways: [
+        "Gradient descent steps in the negative-gradient direction; learning rate balances stability and speed.",
+        "Momentum, Adam, and SGD variants address ill-conditioning and stochasticity.",
+        "SGD's noise acts as a regularizer, often improving generalization.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 40 — Chapter 7.2: Constrained Optimization and Lagrange Multipliers
+    // =========================================================================
+    {
+      title: "Constrained Optimization and Lagrange Multipliers",
+      chapter: "Continuous Optimization",
+      chapterNumber: 7,
+      content: [
+        "Real optimization problems often come with **constraints**: minimize $f(\\mathbf{x})$ subject to $g_i(\\mathbf{x}) = 0$ (equality) or $h_j(\\mathbf{x}) \\leq 0$ (inequality). Constraints restrict the feasible region, and the unconstrained optimum may lie outside it. The minimum on the feasible set may be anywhere — interior, on the boundary of one constraint, or at the intersection of several.",
+        "For equality constraints $g(\\mathbf{x}) = 0$, the **Lagrange multiplier** technique reduces the constrained problem to an unconstrained one. Form the **Lagrangian** $\\mathcal{L}(\\mathbf{x}, \\lambda) = f(\\mathbf{x}) + \\lambda\\, g(\\mathbf{x})$ and find stationary points: $\\nabla_{\\mathbf{x}} \\mathcal{L} = \\nabla f + \\lambda \\nabla g = \\mathbf{0}$ and $g(\\mathbf{x}) = 0$. Geometrically, at the optimum, $\\nabla f$ is parallel to $\\nabla g$ — you can't reduce $f$ without violating the constraint.",
+        "For inequality constraints $h(\\mathbf{x}) \\leq 0$, we get the **Karush–Kuhn–Tucker (KKT) conditions**: stationarity $\\nabla f + \\sum \\mu_j \\nabla h_j = \\mathbf{0}$, primal feasibility $h_j \\leq 0$, dual feasibility $\\mu_j \\geq 0$, and complementary slackness $\\mu_j h_j = 0$ (each constraint is either tight ($h_j = 0$) or has zero multiplier). The multipliers have an interpretation as 'shadow prices' — the rate of change of the optimal value as the constraint is relaxed.",
+        "Every constrained problem has a **dual problem**: $\\max_{\\lambda, \\mu \\geq 0} \\min_{\\mathbf{x}} \\mathcal{L}(\\mathbf{x}, \\lambda, \\mu)$. **Weak duality** holds always: the dual objective lower-bounds the primal. **Strong duality** — equality between primal and dual optima — holds for convex problems under mild conditions. The dual is often easier to solve, and it exposes beautiful structure in many problems (SVMs are the textbook example).",
+        "In ML, constrained optimization is everywhere. **SVMs** solve a quadratic program with margin constraints, and their dual is where the kernel trick appears. **Trust region** methods use inequality constraints on step size. **Proximal methods** and **ADMM** solve constrained variants of common losses. Even **fairness-aware learning** and **safe RL** cast requirements as constraints. Knowing Lagrangians is knowing how to reason about 'what I want, subject to what I must'.",
+      ],
+      visualizations: [
+        {
+          type: "gradient-field",
+          title: "Gradient and constraint surface",
+          description: "At the constrained optimum, $\\nabla f$ is parallel to the constraint gradient — you can't reduce $f$ without leaving the feasible set.",
+          config: {
+            surface: "bowl",
+            showTrajectory: false,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "vector-input",
+          question: "Minimize $f(x, y) = x^2 + y^2$ subject to $x + y = 1$. Enter the optimal $(x, y)$.",
+          dimensions: 2,
+          answer: [0.5, 0.5],
+          tolerance: 0.01,
+          showPreview: true,
+          hint: "Lagrangian: $\\mathcal{L} = x^2 + y^2 + \\lambda(x + y - 1)$. Set partial derivatives to zero.",
+          explanation: "$\\partial_x \\mathcal{L} = 2x + \\lambda = 0$, $\\partial_y \\mathcal{L} = 2y + \\lambda = 0 \\Rightarrow x = y$. Constraint: $x + y = 1 \\Rightarrow x = y = 1/2$. Geometrically, the closest point on the line $x + y = 1$ to the origin.",
+        },
+        {
+          type: "multiple-choice",
+          question: "At a constrained minimum, what geometric relationship holds between $\\nabla f$ and the constraint gradient $\\nabla g$?",
+          options: [
+            "Orthogonal",
+            "Parallel (proportional)",
+            "Equal in magnitude",
+            "Both zero",
+          ],
+          correctIndex: 1,
+          hint: "Think of level sets tangent to the constraint.",
+          explanation: "At the minimum, moving along the constraint surface doesn't change $f$ — so $\\nabla f$ must be perpendicular to the constraint surface, which means **parallel to $\\nabla g$** (the surface's normal). The ratio is the Lagrange multiplier $\\lambda$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "In an SVM, what do the KKT conditions' complementary slackness tell us?",
+          options: [
+            "All data points are support vectors.",
+            "Points with $\\mu_j > 0$ are on the margin (the support vectors); interior points have $\\mu_j = 0$.",
+            "The dual problem is unsolvable.",
+            "Gradients are always zero.",
+          ],
+          correctIndex: 1,
+          hint: "Complementary slackness: $\\mu_j h_j = 0$.",
+          explanation: "$\\mu_j h_j = 0$ means either the constraint is tight ($h_j = 0$, point is on the margin and is a support vector) or the multiplier is zero (point is interior and doesn't affect the solution). This is why SVMs are **sparse** in data — only support vectors matter.",
+        },
+      ],
+      keyTakeaways: [
+        "Lagrangian $\\mathcal{L} = f + \\lambda g$ converts equality-constrained problems to unconstrained stationary-point problems.",
+        "KKT conditions generalize this to inequality constraints; complementary slackness implies sparsity in SVMs.",
+        "Duality provides bounds, alternative formulations, and the kernel trick in ML.",
+      ],
+    },
+
+    // =========================================================================
+    // LESSON 41 — Chapter 7.3: Convex Optimization
+    // =========================================================================
+    {
+      title: "Convex Optimization",
+      chapter: "Continuous Optimization",
+      chapterNumber: 7,
+      content: [
+        "A set $C$ is **convex** if for any $\\mathbf{x}, \\mathbf{y} \\in C$ and $t \\in [0, 1]$, the convex combination $t\\mathbf{x} + (1-t)\\mathbf{y}$ is also in $C$ — the line segment between any two points stays inside. A function $f$ is **convex** if $f(t\\mathbf{x} + (1-t)\\mathbf{y}) \\leq tf(\\mathbf{x}) + (1-t)f(\\mathbf{y})$: the graph lies below every chord connecting two points.",
+        "Equivalent conditions for twice-differentiable $f$: $f$ is convex iff its Hessian is positive semi-definite everywhere. Linear, quadratic-with-PSD-matrix, exponential, $-\\log$, max of affine, and many others are convex. The class is closed under non-negative linear combinations, pointwise maxima, and affine-domain-change — so you can build complex convex functions from simple pieces.",
+        "The superpower of convex optimization is this: **every local minimum is a global minimum**, and gradient-based methods converge (often at known rates) to that global optimum. No saddle points, no local traps, no initialization concerns. If you can cast your problem as convex, you have essentially solved it — which is why so much effort goes into finding convex formulations.",
+        "Classic convex problems include **least squares** (convex quadratic objective), **logistic regression** (convex log-loss), **Lasso and Ridge regression** (convex objectives with convex regularizers), **SVMs** (convex quadratic program), and **linear programming**. Modern convex solvers (CVX, SCS, MOSEK) can routinely handle problems with millions of variables. Entire fields — portfolio optimization, network flow, compressed sensing — are built on convex foundations.",
+        "Neural network training is famously **non-convex** — the loss landscape has innumerable local minima and saddle points. Yet neural networks consistently train to good solutions via SGD, which is one of deep learning's great mysteries. Theoretical work suggests that over-parameterization creates benign landscapes where most local minima are nearly as good as the global one, and that SGD dynamics prefer 'flat' minima that generalize. Even in this non-convex regime, intuitions from convex analysis — Lipschitz smoothness, strong convexity, duality — remain guiding lights.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "A convex function",
+          description: "$f(x) = x^2$ is convex: every chord between two points lies above the graph. The unique minimum is global.",
+          config: {
+            fn: "x^2",
+            domain: [-3, 3],
+          },
+        },
+        {
+          type: "gradient-field",
+          title: "Convex bowl vs non-convex saddle",
+          description: "On a convex bowl, GD always converges to the unique minimum. On a saddle, it can get stuck in surprising ways.",
+          config: {
+            surface: "bowl",
+            showTrajectory: true,
+          },
+        },
+      ],
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Which of the following functions is NOT convex on $\\mathbb{R}$?",
+          options: [
+            "$f(x) = x^2$",
+            "$f(x) = |x|$",
+            "$f(x) = e^x$",
+            "$f(x) = \\sin(x)$",
+          ],
+          correctIndex: 3,
+          hint: "Check whether chords always lie above the graph.",
+          explanation: "$\\sin(x)$ alternates between convex and concave regions — many chords cut through it. The other three are all globally convex: $x^2$ has positive second derivative, $|x|$ is convex (the sub-derivative set is monotone), and $e^x$ has positive second derivative.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What is the key guarantee of convex optimization that non-convex doesn't provide?",
+          options: [
+            "Solutions are always unique.",
+            "Every local minimum is the global minimum, and first-order methods provably find it.",
+            "The function is always differentiable.",
+            "There are no constraints.",
+          ],
+          correctIndex: 1,
+          hint: "Think about what can go wrong in non-convex optimization.",
+          explanation: "Convexity rules out local minima that aren't global. Gradient descent can't get 'stuck' in a suboptimal valley because no such valley exists. This dramatically simplifies theory and practice: convergence rates are known, global optima are attainable, and initialization rarely matters. Non-convex problems (neural nets) offer no such guarantees.",
+        },
+        {
+          type: "multiple-choice",
+          question: "Why is neural network training non-convex, despite often working well in practice?",
+          options: [
+            "The loss is convex; training is easy.",
+            "The composition of layers (e.g., ReLU, tanh, multiple matrix multiplies) introduces non-convexity, but over-parameterization and SGD dynamics often find good minima anyway.",
+            "The data is non-convex.",
+            "Gradient descent is not used.",
+          ],
+          correctIndex: 1,
+          hint: "The architecture produces the non-convexity.",
+          explanation: "Composing nonlinear activations with linear layers destroys convexity — even a two-layer neural net has non-convex loss. Modern theory suggests that with enough over-parameterization, the loss landscape has many near-global minima and few 'bad' local minima, so SGD finds good solutions despite non-convexity — a phenomenon still under active study.",
+        },
+      ],
+      keyTakeaways: [
+        "Convex sets and functions have the 'chord property'; every local minimum is global.",
+        "Least squares, logistic regression, SVMs, Lasso, and Ridge are all convex problems.",
+        "Neural nets are non-convex, but over-parameterization and SGD often yield benign landscapes in practice.",
+      ],
+    },
   ];
 
   return raw.map((lesson, i) => ({
