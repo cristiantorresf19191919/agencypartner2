@@ -5,7 +5,11 @@
       "Bash(git -C /c/Users/crist/Programming/agencypartner2 log --format='%h %s' -30)",
       "WebFetch(domain:codesandbox.io)",
       "Bash(npm run build:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(npx tsc:*)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
