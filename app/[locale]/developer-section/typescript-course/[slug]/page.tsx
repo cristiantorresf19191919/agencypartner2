@@ -9,6 +9,7 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import CourseSidebar from "@/components/Layout/CourseSidebar";
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getTypeScriptLessonById, TYPESCRIPT_COURSE_LESSONS } from "@/lib/typescriptCourseData";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
@@ -52,6 +53,7 @@ export default function TypeScriptCourseLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const lesson = getTypeScriptLessonById(slug);
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -65,9 +67,9 @@ export default function TypeScriptCourseLessonPage() {
       const result = lesson.validationLogic(code, out);
       if (result.success) {
         celebrate("simple");
-        return { success: true, message: result.message ?? "Correct!" };
+        return { success: true, message: result.message ?? t("course-correct") };
       }
-      return { success: false, message: result.message ?? "Not quite. Try again." };
+      return { success: false, message: result.message ?? t("not-quite-try-again") };
     },
     [lesson]
   );
@@ -77,8 +79,8 @@ export default function TypeScriptCourseLessonPage() {
       <main className={styles.page}>
         <DeveloperHeader />
         <div className={playStyles.notFound}>
-          <p>Lesson not found</p>
-          <Link href={createLocalizedPath("/developer-section/typescript-course")}>Back to course</Link>
+          <p>{t("course-lesson-not-found")}</p>
+          <Link href={createLocalizedPath("/developer-section/typescript-course")}>{t("course-back-to-course")}</Link>
         </div>
         <Footer />
       </main>
@@ -109,7 +111,7 @@ export default function TypeScriptCourseLessonPage() {
               <div className={playStyles.description}>
                 <div className={playStyles.descHeader}>
                   <span className={playStyles.stepPill}>
-                    STEP {lesson.step}
+                    {t("course-step").toUpperCase()} {lesson.step}
                   </span>
                 </div>
                 <h1 className={playStyles.descTitle}>{lesson.title}</h1>
@@ -124,7 +126,7 @@ export default function TypeScriptCourseLessonPage() {
                       href={createLocalizedPath(`/developer-section/typescript-course/${lesson.prevStep}`)}
                       className={styles.secondaryLink}
                     >
-                      ← Previous
+                      ← {t("course-previous")}
                     </Link>
                   )}
                   {lesson.nextStep && (
@@ -132,7 +134,7 @@ export default function TypeScriptCourseLessonPage() {
                       href={createLocalizedPath(`/developer-section/typescript-course/${lesson.nextStep}`)}
                       className={styles.secondaryLink}
                     >
-                      Next →
+                      {t("course-next")} →
                     </Link>
                   )}
                 </div>
@@ -145,7 +147,7 @@ export default function TypeScriptCourseLessonPage() {
                   language="typescript"
                   onRunCustom={onRunCustom}
                   onVerify={onVerify}
-                  verifyButtonLabel="Verify"
+                  verifyButtonLabel={t("verify-button")}
                   collapsePanelsByDefault={false}
                   compactToolbar
                   enableMultiFile
@@ -157,10 +159,10 @@ export default function TypeScriptCourseLessonPage() {
           <div className={styles.footerActions}>
             <div className={playStyles.footerRow}>
               <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section/typescript-course")}>
-                Back to course
+                {t("course-back-to-course")}
               </Link>
               <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-                Developer Hub
+                {t("course-developer-hub")}
               </Link>
             </div>
           </div>

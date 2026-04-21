@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getAndroidLessonById } from "@/lib/androidKotlinData";
 import { CodeEditor } from "@/components/ui/CodeEditor";
 import styles from "../../challenges/ChallengesPage.module.css";
@@ -14,14 +15,15 @@ export default function AndroidKotlinLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const lesson = getAndroidLessonById(slug);
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
 
   if (!lesson) {
     return (
       <main className={styles.page}>
         <DeveloperHeader />
         <div className={playStyles.notFound}>
-          <p>Lesson not found</p>
-          <a href={createLocalizedPath("/developer-section/android-kotlin")}>Back to levels</a>
+          <p>{t("course-lesson-not-found")}</p>
+          <a href={createLocalizedPath("/developer-section/android-kotlin")}>{t("course-back-to-android-levels")}</a>
         </div>
         <Footer />
       </main>
@@ -40,7 +42,7 @@ export default function AndroidKotlinLessonPage() {
           <div className={playStyles.description}>
             <div className={playStyles.descHeader}>
               <span className={styles.difficulty} style={{ background: "rgba(124, 244, 255, 0.2)", color: "#7cf4ff" }}>
-                Level {lesson.level}
+                {t("course-level")} {lesson.level}
               </span>
             </div>
             <h1 className={playStyles.descTitle}>{lesson.title}</h1>
@@ -51,13 +53,13 @@ export default function AndroidKotlinLessonPage() {
               <p style={{ whiteSpace: "pre-wrap", marginBottom: "16px" }}>{lesson.description}</p>
 
               <h4 className={playStyles.descSub} style={{ marginTop: "24px" }}>
-                📚 Explanation
+                📚 {t("course-explanation")}
               </h4>
               <p style={{ fontSize: "14px", color: "#c6d5ff", lineHeight: "1.6" }}>
                 {lesson.explanation}
               </p>
               <p style={{ fontSize: "12px", color: "#94a3b8", marginTop: "16px" }}>
-                Note: Code execution is not available for Android/Kotlin in the browser. Use Android Studio to run and test the app.
+                {t("course-android-no-execution")}
               </p>
             </div>
           </div>
@@ -80,10 +82,10 @@ export default function AndroidKotlinLessonPage() {
       <div className={styles.footerActions}>
         <div className={playStyles.footerRow}>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section/android-kotlin")}>
-            Back to Android Levels
+            {t("course-back-to-android-levels")}
           </a>
           <a className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-            Back to Developer Hub
+            {t("course-back-to-developer-hub")}
           </a>
         </div>
       </div>

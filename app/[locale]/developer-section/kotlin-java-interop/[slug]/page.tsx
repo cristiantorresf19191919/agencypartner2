@@ -7,6 +7,7 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import CourseSidebar from "@/components/Layout/CourseSidebar";
 import { useLocale } from "@/lib/useLocale";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   getKotlinInteropLessonById,
   KOTLIN_JAVA_INTEROP_LESSONS,
@@ -31,6 +32,7 @@ export default function KotlinJavaInteropLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const lesson = getKotlinInteropLessonById(slug);
   const { createLocalizedPath } = useLocale();
+  const { t } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -80,7 +82,7 @@ export default function KotlinJavaInteropLessonPage() {
     async (code: string): Promise<{ logs: string[]; error?: string }> => {
       const hasMain = /fun\s+main\s*\(/.test(code);
       if (!hasMain) {
-        return { logs: [], error: "No 'fun main()' found. Add a main function to run." };
+        return { logs: [], error: t("course-no-main-found") };
       }
       const { stdout, err } = await runKotlin(code, "");
       const logs = stdout ? stdout.split("\n") : [];
@@ -92,7 +94,7 @@ export default function KotlinJavaInteropLessonPage() {
   const onVerify = useCallback(
     async (code: string): Promise<{ success: boolean; message: string }> => {
       if (!activePractice || !activePractice.testCases.length) {
-        return { success: false, message: "No test cases to verify." };
+        return { success: false, message: t("course-no-test-cases") };
       }
       let passed = 0;
       const total = activePractice.testCases.length;
@@ -109,7 +111,7 @@ export default function KotlinJavaInteropLessonPage() {
       }
       return {
         success,
-        message: success ? "All tests passed!" : `${passed}/${total} tests passed.`,
+        message: success ? t("course-all-tests-passed") : `${passed}/${total} ${t("course-tests-passed")}.`,
       };
     },
     [activePractice, runKotlin]
@@ -120,8 +122,8 @@ export default function KotlinJavaInteropLessonPage() {
       <main className={styles.page}>
         <DeveloperHeader />
         <div className={playStyles.notFound}>
-          <p>Lesson not found</p>
-          <Link href={createLocalizedPath("/developer-section/kotlin-java-interop")}>Back to course</Link>
+          <p>{t("course-lesson-not-found")}</p>
+          <Link href={createLocalizedPath("/developer-section/kotlin-java-interop")}>{t("course-back-to-course")}</Link>
         </div>
         <Footer />
       </main>
@@ -152,7 +154,7 @@ export default function KotlinJavaInteropLessonPage() {
               <div className={playStyles.description}>
                 <div className={playStyles.descHeader}>
                   <span className={playStyles.stepPill}>
-                    STEP {lesson.step}
+                    {t("course-step").toUpperCase()} {lesson.step}
                   </span>
                 </div>
                 <h1 className={playStyles.descTitle}>{lesson.title}</h1>
@@ -164,7 +166,7 @@ export default function KotlinJavaInteropLessonPage() {
 
                 {lesson.codeExamples.length > 0 && (
                   <>
-                    <h4 className={playStyles.descSub}>Code examples</h4>
+                    <h4 className={playStyles.descSub}>{t("course-code-examples")}</h4>
                     {lesson.codeExamples.map((ex, i) => (
                       <div key={i} style={{ marginBottom: "16px" }}>
                         <HighlightedCode code={ex.code} language="kotlin" className={playStyles.sample} style={{ marginTop: "8px" }} />
@@ -181,7 +183,7 @@ export default function KotlinJavaInteropLessonPage() {
                 {lesson.practice && lesson.practice.length > 0 && (
                   <>
                     <h4 className={playStyles.descSub} style={{ marginTop: "24px" }}>
-                      Practice
+                      {t("course-practice")}
                     </h4>
                     {lesson.practice.map((p) => (
                       <div key={p.id} className={playStyles.practiceCard}>
@@ -197,11 +199,11 @@ export default function KotlinJavaInteropLessonPage() {
                           onClick={() => loadPractice(p)}
                           style={{ marginRight: "8px" }}
                         >
-                          Load in editor
+                          {t("course-load-in-editor")}
                         </button>
                         {p.solution && (
                           <details style={{ marginTop: "10px" }}>
-                            <summary style={{ cursor: "pointer", color: "#7cf4ff", fontSize: "13px" }}>Show solution</summary>
+                            <summary style={{ cursor: "pointer", color: "#7cf4ff", fontSize: "13px" }}>{t("course-show-solution")}</summary>
                             <HighlightedCode code={p.solution} language="kotlin" className={playStyles.sample} style={{ marginTop: "8px", fontSize: "12px" }} />
                           </details>
                         )}
@@ -216,7 +218,7 @@ export default function KotlinJavaInteropLessonPage() {
                       href={createLocalizedPath(`/developer-section/kotlin-java-interop/${lesson.prevStep}`)}
                       className={styles.secondaryLink}
                     >
-                      ← Previous
+                      ← {t("course-previous")}
                     </Link>
                   )}
                   {lesson.nextStep && (
@@ -224,7 +226,7 @@ export default function KotlinJavaInteropLessonPage() {
                       href={createLocalizedPath(`/developer-section/kotlin-java-interop/${lesson.nextStep}`)}
                       className={styles.secondaryLink}
                     >
-                      Next →
+                      {t("course-next")} →
                     </Link>
                   )}
                 </div>
@@ -237,7 +239,7 @@ export default function KotlinJavaInteropLessonPage() {
                   language="kotlin"
                   onRunCustom={onRunCustom}
                   onVerify={activePractice && activePractice.testCases.length > 0 ? onVerify : undefined}
-                  verifyButtonLabel="Submit"
+                  verifyButtonLabel={t("challenge-submit")}
                   collapsePanelsByDefault={false}
                   compactToolbar
                 />
@@ -248,10 +250,10 @@ export default function KotlinJavaInteropLessonPage() {
           <div className={styles.footerActions}>
             <div className={playStyles.footerRow}>
               <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section/kotlin-java-interop")}>
-                Back to course
+                {t("course-back-to-course")}
               </Link>
               <Link className={styles.secondaryLink} href={createLocalizedPath("/developer-section")}>
-                Developer Hub
+                {t("course-developer-hub")}
               </Link>
             </div>
           </div>
