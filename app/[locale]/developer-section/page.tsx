@@ -42,6 +42,8 @@ import {
   People as PeopleIcon,
   Cloud as CloudIcon,
   Functions as FunctionsIcon,
+  LocalCafe as CoffeeIcon,
+  Hub as HubIcon,
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
@@ -271,6 +273,28 @@ const contentGroups: Array<{
         ctaKey: "start-course",
         difficulty: "beginner",
         tags: ["typescript", "general"],
+      },
+      {
+        id: "java-course",
+        category: "course",
+        href: "/developer-section/java-course",
+        icon: CoffeeIcon,
+        titleKey: "java-course-card-title",
+        descKey: "java-course-card-desc",
+        ctaKey: "start-course",
+        difficulty: "advanced",
+        tags: ["interview", "general"],
+      },
+      {
+        id: "mobx-course",
+        category: "course",
+        href: "/developer-section/mobx-course",
+        icon: HubIcon,
+        titleKey: "mobx-course-card-title",
+        descKey: "mobx-course-card-desc",
+        ctaKey: "start-course",
+        difficulty: "intermediate",
+        tags: ["react", "typescript"],
       },
     ],
   },
