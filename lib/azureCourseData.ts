@@ -1,14 +1,16 @@
 /**
- * Azure Course — Zero to Hero: 30 lessons covering Azure fundamentals through
- * advanced services. Uses Monaco editor with TypeScript validation.
+ * Azure Course — Zero to Hero: 36 lessons covering Azure from cloud concepts
+ * through production-grade enterprise patterns. Uses Monaco editor with
+ * TypeScript validation.
  *
  * Tiers:
- *   1. Foundations        (1-8)
- *   2. Compute            (9-14)
- *   3. Storage & Data     (15-19)
- *   4. Networking         (20-23)
- *   5. DevOps & CI/CD     (24-27)
- *   6. Security & Monitor (28-30)
+ *   1. Foundations                  (1-8)
+ *   2. Compute                      (9-14)
+ *   3. Storage & Data               (15-19)
+ *   4. Networking                   (20-23)
+ *   5. DevOps & CI/CD               (24-27)
+ *   6. Security & Monitor           (28-30)
+ *   7. Production Azure (real-world)(31-36)
  */
 
 import type { WebCourseLesson, LessonSection } from "./webCourseTypes";
@@ -739,6 +741,383 @@ function buildAzureLessons(): WebCourseLesson[] {
       validationLogic: (code: string, logs: string[]) => ({
         success: code.includes("WellArchitectedAnalyzer") && code.includes("analyze") && logs.some((l) => l.includes("Well-Architected")) && logs.some((l) => l.includes("Overall")),
         message: "Azure Zero to Hero — COMPLETE! You are a cloud architect now!",
+      }),
+    },
+
+    /* ══════════════════════════════════════════════════════════════════════
+     * TIER 7 — Production Azure: Real-World Patterns (Lessons 31-36)
+     * Based on patterns used by enterprise Azure teams: Entra ID + MSAL auth,
+     * Spring Boot resource servers, Service Bus messaging, private package
+     * feeds, Helm on AKS, and Key Vault integration at scale.
+     * ══════════════════════════════════════════════════════════════════════ */
+
+    // ── Lesson 31 ────────────────────────────────────────────────────────
+    {
+      title: "Azure 31: Entra ID & MSAL.js — SPA Authentication",
+      content: [
+        "Microsoft Entra ID (formerly Azure AD) is Azure's identity platform. MSAL.js lets Single-Page Apps sign users in and call protected APIs using OAuth 2.0 + PKCE.",
+        "Build an MSAL client simulator that handles login, token caching with silent refresh, and falls back to interactive auth when the cache expires.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Entra ID in 60 seconds",
+          body: "An **Entra ID tenant** is your org's identity directory. Inside it you create an **App Registration** for each app — it gets a **client ID**, an **authority URL** (`https://login.microsoftonline.com/{tenantId}`), and a set of **exposed scopes** (e.g. `api://my-api/read`). Users sign in, consent to scopes, and the app receives an **access token** (JWT) to call APIs.",
+          badges: ["Entra ID", "App Registration", "Tenant"],
+          code: "// App Registration essentials\n// Application (client) ID: aaaa1111-....\n// Directory (tenant) ID:   bbbb2222-....\n// Redirect URI (SPA):       https://app.contoso.com/auth\n// Exposed API scope:        api://orders-api/orders.read",
+        },
+        {
+          tag: "concept",
+          title: "OAuth 2.0 Authorization Code + PKCE",
+          body: "SPAs can't keep a client secret, so they use **Authorization Code flow with PKCE**. The app generates a random `code_verifier`, hashes it into a `code_challenge`, sends the user to Entra ID, and exchanges the returned code for tokens — proving possession of the verifier. MSAL.js handles all of this; you just call `loginRedirect` or `loginPopup`, then `acquireTokenSilent` for subsequent API calls.",
+          badges: ["OAuth 2.0", "PKCE", "Access Token"],
+          code: "import { PublicClientApplication } from '@azure/msal-browser';\nconst msal = new PublicClientApplication({\n  auth: {\n    clientId: 'aaaa1111-....',\n    authority: 'https://login.microsoftonline.com/bbbb2222-....',\n    redirectUri: window.location.origin,\n  },\n});\nawait msal.loginRedirect({ scopes: ['api://orders-api/orders.read'] });",
+        },
+        {
+          tag: "concept",
+          title: "React integration with msal-react",
+          body: "`@azure/msal-react` wraps your app in an `<MsalProvider>`. Hooks like `useMsal()`, `useIsAuthenticated()`, and `useMsalAuthentication()` give components live auth state. Wrap protected UI in `<AuthenticatedTemplate>` and `<UnauthenticatedTemplate>` to switch rendering without writing `if` chains.",
+          badges: ["React", "msal-react", "Hooks"],
+          code: "<MsalProvider instance={msal}>\n  <AuthenticatedTemplate>\n    <Dashboard />\n  </AuthenticatedTemplate>\n  <UnauthenticatedTemplate>\n    <SignInButton />\n  </UnauthenticatedTemplate>\n</MsalProvider>",
+        },
+        {
+          tag: "exercise",
+          title: "Build an MSAL client simulator",
+          body: "Create a `MsalClient` that tracks an in-memory token cache `{ scope -> { token, expiresAt } }`. Implement `login(user)`, `acquireTokenSilent(scope)` that returns the cached token if not expired, and `acquireTokenInteractive(scope)` that is called when silent fails. Log every cache hit, miss, and interactive fallback.",
+          badges: ["Practice", "MSAL", "Token Cache"],
+        },
+        {
+          tag: "tip",
+          title: "Prefer acquireTokenSilent — fall back to interactive",
+          body: "In production code, always call `acquireTokenSilent` first. It returns a cached token without a network round trip. Only on `InteractionRequiredAuthError` should you fall back to `acquireTokenRedirect` or `acquireTokenPopup`. This pattern keeps the UX smooth — users stay signed in across tabs and reloads.",
+          badges: ["Best Practice", "UX"],
+        },
+        {
+          tag: "key-point",
+          title: "Quiz: Delegated vs Application permissions",
+          body: "Your API is called by a user-facing SPA. Which permission type do you expose? **Delegated** — the token represents a user acting through the app. **Application permissions** are for daemons/services with no user context (client credentials flow), not SPAs.",
+          badges: ["Quiz"],
+        },
+      ],
+      defaultCode: `// MSAL Client Simulator\ninterface CachedToken { token: string; expiresAt: number; }\n\nclass MsalClient {\n  private clientId: string;\n  private tenantId: string;\n  private user: string | null = null;\n  private cache = new Map<string, CachedToken>();\n  private interactiveCalls = 0;\n  private silentHits = 0;\n  private silentMisses = 0;\n\n  constructor(clientId: string, tenantId: string) {\n    this.clientId = clientId;\n    this.tenantId = tenantId;\n    console.log("MsalClient initialized for tenant " + tenantId.slice(0, 8) + "...");\n  }\n\n  login(user: string): void {\n    this.user = user;\n    console.log("Login: " + user + " signed in via Entra ID");\n  }\n\n  acquireTokenSilent(scope: string): string {\n    if (!this.user) throw new Error("InteractionRequired: no user");\n    const entry = this.cache.get(scope);\n    const now = Date.now();\n    if (entry && entry.expiresAt > now) {\n      this.silentHits++;\n      console.log("  [silent HIT ] " + scope + " (exp in " + Math.round((entry.expiresAt - now) / 1000) + "s)");\n      return entry.token;\n    }\n    this.silentMisses++;\n    console.log("  [silent MISS] " + scope + " -> falling back to interactive");\n    return this.acquireTokenInteractive(scope);\n  }\n\n  acquireTokenInteractive(scope: string): string {\n    if (!this.user) throw new Error("InteractionRequired: no user");\n    this.interactiveCalls++;\n    const token = "eyJ." + scope.replace(/\\W/g, "") + "." + Date.now().toString(36);\n    this.cache.set(scope, { token, expiresAt: Date.now() + 3600_000 });\n    console.log("  [interactive] token issued for " + scope);\n    return token;\n  }\n\n  forceExpire(scope: string): void {\n    const entry = this.cache.get(scope);\n    if (entry) entry.expiresAt = 0;\n  }\n\n  stats(): void {\n    console.log("\\n--- MSAL stats ---");\n    console.log("silent hits:       " + this.silentHits);\n    console.log("silent misses:     " + this.silentMisses);\n    console.log("interactive calls: " + this.interactiveCalls);\n  }\n}\n\nconst msal = new MsalClient("aaaa1111-2222-3333-4444-555566667777", "bbbb2222-3333-4444-5555-666677778888");\nmsal.login("alice@contoso.com");\n\n// Fresh — silent will miss, fall back to interactive\nmsal.acquireTokenSilent("api://orders/read");\n// Warm — silent hits the cache\nmsal.acquireTokenSilent("api://orders/read");\nmsal.acquireTokenSilent("api://orders/read");\n// Different scope — miss\nmsal.acquireTokenSilent("api://orders/write");\n// Simulate token expiry\nmsal.forceExpire("api://orders/read");\nmsal.acquireTokenSilent("api://orders/read");\n\nmsal.stats();`,
+      validationLogic: (code: string, logs: string[]) => ({
+        success:
+          code.includes("MsalClient") &&
+          code.includes("acquireTokenSilent") &&
+          code.includes("acquireTokenInteractive") &&
+          logs.some((l) => l.includes("silent HIT")) &&
+          logs.some((l) => l.includes("interactive")) &&
+          logs.some((l) => l.includes("MSAL stats")),
+        message: "MSAL token cache + silent refresh working — that is exactly how production SPA auth behaves.",
+      }),
+    },
+
+    // ── Lesson 32 ────────────────────────────────────────────────────────
+    {
+      title: "Azure 32: Entra ID + Spring Boot — Resource Server",
+      content: [
+        "A resource server accepts a JWT access token and validates it before serving data. Spring Boot apps using `spring-cloud-azure-starter-active-directory` validate issuer, audience, signature, and expiry, then enforce scopes with `@PreAuthorize`.",
+        "Build a JWT validator that decodes a token, checks every required claim, and extracts scopes to answer authorization questions.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "JWT anatomy",
+          body: "A JWT has three base64url parts joined with dots: `header.payload.signature`. The **header** names the algorithm (`RS256`) and the signing key ID (`kid`). The **payload** carries claims — `iss` (issuer), `aud` (audience), `exp` (expiry), `sub` (user), and `scp` or `roles` (permissions). The **signature** is `RS256(header + '.' + payload, privateKey)` — the resource server verifies it against Entra ID's public JWKS.",
+          badges: ["JWT", "Claims", "JWKS"],
+          code: "// Example payload (decoded)\n{\n  \"iss\": \"https://login.microsoftonline.com/{tenantId}/v2.0\",\n  \"aud\": \"api://orders-api\",\n  \"exp\": 1735689600,\n  \"scp\": \"orders.read orders.write\",\n  \"sub\": \"alice@contoso.com\"\n}",
+        },
+        {
+          tag: "concept",
+          title: "Spring Boot + Azure AD starter",
+          body: "Adding `spring-cloud-azure-starter-active-directory` and configuring `spring.cloud.azure.active-directory.credential.client-id` + `spring.cloud.azure.active-directory.profile.tenant-id` wires up a resource server. Spring Security auto-validates every incoming `Authorization: Bearer ...` token against Entra ID's JWKS, rejects expired/untrusted tokens, and exposes scopes as `SCOPE_orders.read` authorities.",
+          badges: ["Spring Boot", "AAD Starter"],
+          code: "# application.yml\nspring:\n  cloud:\n    azure:\n      active-directory:\n        profile:\n          tenant-id: ${AZURE_TENANT_ID}\n        credential:\n          client-id: ${AZURE_CLIENT_ID}\n        app-id-uri: api://orders-api",
+        },
+        {
+          tag: "concept",
+          title: "Scope-based authorization",
+          body: "Use `@PreAuthorize(\"hasAuthority('SCOPE_orders.read')\")` on controllers or services. Spring matches the authority against the `scp` claim in the token. For application permissions (daemon-to-API), use `ROLE_` prefix instead — the `roles` claim maps to `ROLE_...` authorities.",
+          badges: ["@PreAuthorize", "Scopes"],
+          code: "@RestController\n@RequestMapping(\"/orders\")\nclass OrderController {\n  @GetMapping\n  @PreAuthorize(\"hasAuthority('SCOPE_orders.read')\")\n  fun list(): List<Order> = service.findAll()\n\n  @PostMapping\n  @PreAuthorize(\"hasAuthority('SCOPE_orders.write')\")\n  fun create(@RequestBody o: Order): Order = service.save(o)\n}",
+        },
+        {
+          tag: "exercise",
+          title: "Build a JWT validator",
+          body: "Create a `JwtValidator` configured with `expectedIssuer` and `expectedAudience`. Implement `validate(token)` that splits the JWT, base64-decodes the payload, and checks `iss`, `aud`, and `exp` — returning `{ valid, reason }`. Implement `hasScope(token, scope)` that returns whether the scope appears in the `scp` claim.",
+          badges: ["Practice", "JWT", "Claims"],
+        },
+        {
+          tag: "tip",
+          title: "Use Managed Identity in AKS",
+          body: "Don't put client secrets in Helm values or pipeline variables. Enable **Workload Identity** on your AKS cluster, bind the pod's service account to a federated Entra ID credential, and the Spring Boot app gets tokens via the instance metadata endpoint — zero secrets, zero rotation.",
+          badges: ["Managed Identity", "Workload Identity", "AKS"],
+        },
+        {
+          tag: "key-point",
+          title: "Quiz: Why validate the audience claim?",
+          body: "Why is checking `aud` critical? **Token confusion attacks.** Without the audience check, a token issued for a different API in the same tenant could be accepted by yours. `aud` must match your API's App ID URI — otherwise reject the request with 401.",
+          badges: ["Quiz", "Security"],
+        },
+      ],
+      defaultCode: `// JWT Validator (simulates what Spring Security does under the hood)\ninterface JwtPayload {\n  iss: string;\n  aud: string;\n  exp: number;\n  sub: string;\n  scp?: string;\n  roles?: string[];\n}\n\nfunction base64urlDecode(input: string): string {\n  const pad = "=".repeat((4 - (input.length % 4)) % 4);\n  const base64 = (input + pad).replace(/-/g, "+").replace(/_/g, "/");\n  return atob(base64);\n}\n\nfunction encodeJwt(payload: JwtPayload): string {\n  const header = btoa(JSON.stringify({ alg: "RS256", typ: "JWT" })).replace(/=+$/, "");\n  const body = btoa(JSON.stringify(payload)).replace(/=+$/, "");\n  return header + "." + body + ".fake-signature";\n}\n\nclass JwtValidator {\n  constructor(private expectedIssuer: string, private expectedAudience: string) {}\n\n  validate(token: string): { valid: boolean; reason?: string; payload?: JwtPayload } {\n    const parts = token.split(".");\n    if (parts.length !== 3) return { valid: false, reason: "malformed" };\n    let payload: JwtPayload;\n    try { payload = JSON.parse(base64urlDecode(parts[1])); }\n    catch { return { valid: false, reason: "payload-not-json" }; }\n\n    if (payload.iss !== this.expectedIssuer) return { valid: false, reason: "bad-issuer" };\n    if (payload.aud !== this.expectedAudience) return { valid: false, reason: "bad-audience" };\n    if (payload.exp * 1000 < Date.now()) return { valid: false, reason: "expired" };\n    return { valid: true, payload };\n  }\n\n  hasScope(token: string, scope: string): boolean {\n    const result = this.validate(token);\n    if (!result.valid || !result.payload) return false;\n    const scopes = (result.payload.scp || "").split(" ");\n    return scopes.includes(scope);\n  }\n}\n\nconst validator = new JwtValidator(\n  "https://login.microsoftonline.com/contoso/v2.0",\n  "api://orders-api",\n);\n\nconst good = encodeJwt({\n  iss: "https://login.microsoftonline.com/contoso/v2.0",\n  aud: "api://orders-api",\n  exp: Math.floor(Date.now() / 1000) + 3600,\n  sub: "alice@contoso.com",\n  scp: "orders.read orders.write",\n});\n\nconst wrongAud = encodeJwt({\n  iss: "https://login.microsoftonline.com/contoso/v2.0",\n  aud: "api://OTHER-api",\n  exp: Math.floor(Date.now() / 1000) + 3600,\n  sub: "alice@contoso.com",\n  scp: "orders.read",\n});\n\nconst expired = encodeJwt({\n  iss: "https://login.microsoftonline.com/contoso/v2.0",\n  aud: "api://orders-api",\n  exp: Math.floor(Date.now() / 1000) - 60,\n  sub: "alice@contoso.com",\n  scp: "orders.read",\n});\n\nconsole.log("good token:     ", validator.validate(good));\nconsole.log("wrong audience: ", validator.validate(wrongAud));\nconsole.log("expired:        ", validator.validate(expired));\nconsole.log("hasScope read:  ", validator.hasScope(good, "orders.read"));\nconsole.log("hasScope admin: ", validator.hasScope(good, "orders.admin"));`,
+      validationLogic: (code: string, logs: string[]) => ({
+        success:
+          code.includes("JwtValidator") &&
+          code.includes("hasScope") &&
+          logs.some((l) => l.includes("bad-audience")) &&
+          logs.some((l) => l.includes("expired")) &&
+          logs.some((l) => l.includes("valid: true")),
+        message: "JWT validator working — that is exactly the check Spring Security runs per request.",
+      }),
+    },
+
+    // ── Lesson 33 ────────────────────────────────────────────────────────
+    {
+      title: "Azure 33: Service Bus — Topics, Queues & Dead-Letter",
+      content: [
+        "Azure Service Bus is the enterprise messaging broker — **queues** for 1-to-1 work distribution, **topics + subscriptions** for 1-to-N pub-sub with filters. Both support peek-lock, sessions, and dead-letter queues for resilient async processing.",
+        "Build a Service Bus simulator that supports topic + subscription filters, peek-lock retry semantics, and automatic dead-lettering after a retry budget is exhausted.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Queue vs Topic",
+          body: "A **Queue** is a 1:1 pipe — many senders, but each message is delivered to exactly one consumer. A **Topic** is pub-sub — senders publish once, and every **Subscription** gets its own copy (optionally filtered by SQL or correlation rules). Use queues for work-stealing (one worker per job); use topics when multiple downstream services each need to react to the same event.",
+          badges: ["Queue", "Topic", "Subscription"],
+          code: "// Publish to a topic — fan-out to all subscriptions\nvar sender = client.CreateSender(\"order-events\");\nawait sender.SendMessageAsync(new ServiceBusMessage(json) {\n  Subject = \"order.created\",\n  CorrelationId = orderId,\n});",
+        },
+        {
+          tag: "concept",
+          title: "Peek-lock & redelivery",
+          body: "Default receive mode is **PeekLock**: the broker hands the message to the consumer but hides it under a lock (default 60s). On `CompleteAsync()` the message is deleted; on `AbandonAsync()` or lock expiry it's re-queued. After **MaxDeliveryCount** (default 10) the broker moves it to the **Dead-Letter Queue** (DLQ). This is the retry budget — an unrecoverable poison message doesn't block the queue forever.",
+          badges: ["PeekLock", "Redelivery", "DLQ"],
+          code: "await using var processor = client.CreateProcessor(\"orders\");\nprocessor.ProcessMessageAsync += async args => {\n  try { await handle(args.Message); await args.CompleteMessageAsync(args.Message); }\n  catch { await args.AbandonMessageAsync(args.Message); }\n};",
+        },
+        {
+          tag: "concept",
+          title: "Sessions for ordering",
+          body: "Service Bus normally delivers messages to multiple consumers concurrently — order is not guaranteed. Enable **sessions** to pin all messages with the same `SessionId` to a single consumer, processed sequentially. Use cases: per-aggregate ordering (all events for `orderId=42` go to the same worker), saga state machines.",
+          badges: ["Sessions", "FIFO"],
+        },
+        {
+          tag: "exercise",
+          title: "Build a Service Bus topic simulator",
+          body: "Create a `ServiceBusTopic` with `subscribe(name, filter)` (filter is a predicate on `subject`) and `publish(message)` that fans out to matching subscriptions. Each subscription keeps a retry counter per message — if `process()` throws, the message goes back to the queue; after `maxDeliveryCount=3` failures it moves to `subscription.dlq`. Log every publish, deliver, retry, and dead-letter event.",
+          badges: ["Practice", "Service Bus", "DLQ"],
+        },
+        {
+          tag: "tip",
+          title: "Always enable the DLQ dashboard",
+          body: "In production, messages in the DLQ are the single highest-signal indicator of a broken consumer. Wire an Azure Monitor alert on `DeadletteredMessages > 0` for every critical subscription, and build a small ops tool to inspect and re-submit DLQ messages after fixes. Silent DLQs are how outages compound.",
+          badges: ["Operations", "Monitoring"],
+        },
+        {
+          tag: "key-point",
+          title: "Quiz: Subscription filter",
+          body: "Your topic publishes `order.created`, `order.paid`, `order.cancelled`. An invoice service should only care about paid orders. What goes in the subscription filter? **`sys.Subject = 'order.paid'`** — an SQL filter on the subject routes only matching messages, leaving the rest to other subscriptions.",
+          badges: ["Quiz"],
+        },
+      ],
+      defaultCode: `// Azure Service Bus — Topic + Subscriptions + DLQ Simulator\ninterface SbMessage { id: string; subject: string; body: unknown; }\ntype Handler = (msg: SbMessage) => void;\ntype Filter = (msg: SbMessage) => boolean;\n\ninterface Subscription {\n  name: string;\n  filter: Filter;\n  handler: Handler;\n  maxDeliveryCount: number;\n  dlq: SbMessage[];\n  deliveries: Map<string, number>;\n}\n\nclass ServiceBusTopic {\n  private subs: Subscription[] = [];\n\n  constructor(public name: string) {\n    console.log("Topic created: " + name);\n  }\n\n  subscribe(name: string, filter: Filter, handler: Handler, maxDeliveryCount = 3): void {\n    this.subs.push({ name, filter, handler, maxDeliveryCount, dlq: [], deliveries: new Map() });\n    console.log("  subscription '" + name + "' ready");\n  }\n\n  publish(msg: SbMessage): void {\n    console.log("\\npublish " + msg.id + " subject=" + msg.subject);\n    for (const sub of this.subs) {\n      if (!sub.filter(msg)) { console.log("  -> " + sub.name + " FILTERED"); continue; }\n      this.deliver(sub, msg);\n    }\n  }\n\n  private deliver(sub: Subscription, msg: SbMessage): void {\n    const attempt = (sub.deliveries.get(msg.id) ?? 0) + 1;\n    sub.deliveries.set(msg.id, attempt);\n    try {\n      sub.handler(msg);\n      console.log("  -> " + sub.name + " COMPLETE (attempt " + attempt + ")");\n    } catch (err) {\n      if (attempt >= sub.maxDeliveryCount) {\n        sub.dlq.push(msg);\n        console.log("  -> " + sub.name + " DEAD-LETTER after " + attempt + " attempts: " + (err as Error).message);\n      } else {\n        console.log("  -> " + sub.name + " ABANDON (attempt " + attempt + ") — will redeliver");\n        this.deliver(sub, msg);\n      }\n    }\n  }\n\n  dlqReport(): void {\n    console.log("\\n--- DLQ summary ---");\n    for (const sub of this.subs)\n      console.log(sub.name.padEnd(16) + " dlq=" + sub.dlq.length + " msgs");\n  }\n}\n\nconst topic = new ServiceBusTopic("order-events");\n\n// Invoice service only cares about paid orders\ntopic.subscribe(\n  "invoice-service",\n  m => m.subject === "order.paid",\n  m => console.log("     invoice: generating PDF for " + m.id),\n);\n\n// Analytics gets everything\nlet analyticsFlaky = 0;\ntopic.subscribe(\n  "analytics",\n  () => true,\n  m => {\n    // Simulate a transient failure on the cancelled event\n    if (m.subject === "order.cancelled" && analyticsFlaky++ < 2)\n      throw new Error("transient db timeout");\n    console.log("     analytics: recorded " + m.subject);\n  },\n);\n\n// Shipment service always crashes on one message — ends up in DLQ\ntopic.subscribe(\n  "shipment-service",\n  m => m.subject === "order.paid",\n  m => { throw new Error("malformed address for " + m.id); },\n);\n\ntopic.publish({ id: "o-1", subject: "order.created", body: {} });\ntopic.publish({ id: "o-2", subject: "order.paid",    body: {} });\ntopic.publish({ id: "o-3", subject: "order.cancelled", body: {} });\n\ntopic.dlqReport();`,
+      validationLogic: (code: string, logs: string[]) => ({
+        success:
+          code.includes("ServiceBusTopic") &&
+          code.includes("subscribe") &&
+          code.includes("publish") &&
+          logs.some((l) => l.includes("FILTERED")) &&
+          logs.some((l) => l.includes("ABANDON")) &&
+          logs.some((l) => l.includes("DEAD-LETTER")) &&
+          logs.some((l) => l.includes("DLQ summary")),
+        message: "Topic routing + retry + DLQ all working — this is exactly how Azure Service Bus behaves in production.",
+      }),
+    },
+
+    // ── Lesson 34 ────────────────────────────────────────────────────────
+    {
+      title: "Azure 34: Azure Artifacts — Private Package Feeds",
+      content: [
+        "Azure Artifacts hosts private Maven, npm, NuGet, and Python package feeds inside Azure DevOps. Feeds support upstream sources (proxying Maven Central / npmjs) and views (Release / Prerelease / @Local) for promotion workflows.",
+        "Build a config generator that emits Maven `settings.xml` and npm `.npmrc` entries for a given Azure Artifacts feed + auth token.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Feed anatomy",
+          body: "A **feed** lives at `pkgs.dev.azure.com/{org}/{project}/_packaging/{feed}/{protocol}/v1`. **Upstream sources** let the feed transparently proxy public registries (Maven Central, npmjs, nuget.org) — every package your build pulls is cached in your feed, insulating you from public-registry outages and supply-chain attacks. **Views** (`@Local`, `@Prerelease`, `@Release`) partition the same feed so consumers can pin to promoted versions only.",
+          badges: ["Feed", "Upstream", "Views"],
+          code: "// Maven feed URL format\nhttps://pkgs.dev.azure.com/{org}/{project}/_packaging/{feed}@Release/maven/v1\n\n// npm registry URL\nhttps://pkgs.dev.azure.com/{org}/{project}/_packaging/{feed}/npm/registry/",
+        },
+        {
+          tag: "concept",
+          title: "Auth — pipelines vs local dev",
+          body: "In **Azure Pipelines**, use the `MavenAuthenticate@0` or `npmAuthenticate@0` task — it injects `System.AccessToken` into `settings.xml`/`.npmrc` automatically, no secret stored anywhere. For **local dev**, create a Personal Access Token (PAT) scoped to Packaging (Read) and paste it into your settings. Base64-encode `user:PAT` for the `Authorization: Basic ...` header Maven expects.",
+          badges: ["PAT", "System.AccessToken"],
+          code: "# azure-pipelines.yml\nsteps:\n  - task: MavenAuthenticate@0\n    inputs:\n      artifactsFeeds: 'Driveway'\n  - script: mvn clean deploy",
+        },
+        {
+          tag: "concept",
+          title: "Promotion workflow with views",
+          body: "CI publishes to `@Local` on every build. When QA approves, the version is **promoted** to `@Prerelease`. When release-ready, it's promoted again to `@Release`. Consumers in production pin to `@Release` only, so an accidental `1.2.3-SNAPSHOT` never leaks into prod. This turns your feed into a mini app-store with review gates.",
+          badges: ["Promotion", "SDLC"],
+        },
+        {
+          tag: "exercise",
+          title: "Build a feed config generator",
+          body: "Create an `ArtifactsConfig` class with `forMaven(feed, view)` returning a `settings.xml` snippet and `forNpm(feed, view)` returning `.npmrc` lines. Include a `withPat(pat)` method that injects the base64-encoded auth header for Maven and the `_authToken=` line for npm. Use `@Release` as the default view.",
+          badges: ["Practice", "Artifacts"],
+        },
+        {
+          tag: "tip",
+          title: "Always route through upstream sources",
+          body: "Configure your feed to upstream to Maven Central / npmjs and then point your builds **only** at the feed — never directly at the public registry. This gives you two superpowers: (1) if Maven Central has an outage your builds still work from the cache, and (2) if a malicious package appears upstream you can retention-block it in your feed.",
+          badges: ["Supply Chain", "Resilience"],
+        },
+        {
+          tag: "key-point",
+          title: "Quiz: Pipeline auth without secrets",
+          body: "Why does `MavenAuthenticate@0` not need a PAT? **It uses `System.AccessToken`** — the auto-generated pipeline OAuth token scoped to the current project's feeds. Zero secrets in your repo, and the token dies when the job ends.",
+          badges: ["Quiz", "Security"],
+        },
+      ],
+      defaultCode: `// Azure Artifacts Feed Config Generator\ninterface FeedRef { org: string; project: string; feed: string; view: string; }\n\nclass ArtifactsConfig {\n  private pat: string | null = null;\n  private user = "azure";\n\n  withPat(pat: string, user = "azure"): this {\n    this.pat = pat;\n    this.user = user;\n    return this;\n  }\n\n  private mavenUrl(f: FeedRef): string {\n    return "https://pkgs.dev.azure.com/" + f.org + "/" + f.project +\n      "/_packaging/" + f.feed + "@" + f.view + "/maven/v1";\n  }\n\n  private npmUrl(f: FeedRef): string {\n    return "https://pkgs.dev.azure.com/" + f.org + "/" + f.project +\n      "/_packaging/" + f.feed + "/npm/registry/";\n  }\n\n  forMaven(f: FeedRef): string {\n    const id = f.feed + "-" + f.view;\n    const url = this.mavenUrl(f);\n    const auth = this.pat\n      ? "\\n  <servers>\\n    <server>\\n      <id>" + id + "</id>\\n      <username>" + this.user + "</username>\\n      <password>" + this.pat + "</password>\\n    </server>\\n  </servers>"\n      : "\\n  <!-- auth injected by MavenAuthenticate@0 task -->";\n    return "<settings>" + auth + "\\n  <profiles><profile>\\n    <repositories><repository>\\n      <id>" + id + "</id>\\n      <url>" + url + "</url>\\n    </repository></repositories>\\n  </profile></profiles>\\n</settings>";\n  }\n\n  forNpm(f: FeedRef): string {\n    const url = this.npmUrl(f).replace("https:", "");\n    const token = this.pat\n      ? btoa(this.user + ":" + this.pat)\n      : "\${System.AccessToken}";\n    return [\n      "registry=" + this.npmUrl(f),\n      "always-auth=true",\n      url + ":_authToken=" + token,\n      url + ":username=" + this.user,\n    ].join("\\n");\n  }\n}\n\nconst feed: FeedRef = {\n  org: "LithiaMotors",\n  project: "Roam",\n  feed: "Driveway",\n  view: "Release",\n};\n\nconst cfg = new ArtifactsConfig().withPat("abc123secretpat");\n\nconsole.log("=== Maven settings.xml ===");\nconsole.log(cfg.forMaven(feed));\nconsole.log("\\n=== .npmrc ===");\nconsole.log(cfg.forNpm(feed));\n\n// Pipeline mode — no PAT, auth is injected by the task\nconsole.log("\\n=== pipeline mode (no PAT) ===");\nconsole.log(new ArtifactsConfig().forMaven(feed));`,
+      validationLogic: (code: string, logs: string[]) => ({
+        success:
+          code.includes("ArtifactsConfig") &&
+          code.includes("forMaven") &&
+          code.includes("forNpm") &&
+          logs.some((l) => l.includes("pkgs.dev.azure.com")) &&
+          logs.some((l) => l.includes("_authToken=")) &&
+          logs.some((l) => l.includes("MavenAuthenticate")),
+        message: "Artifacts feed config generator working — drop these into real settings.xml / .npmrc and your builds pull from the private feed.",
+      }),
+    },
+
+    // ── Lesson 35 ────────────────────────────────────────────────────────
+    {
+      title: "Azure 35: Helm on AKS — Values Overlays",
+      content: [
+        "Helm is the package manager for Kubernetes. A **chart** is a templated bundle of manifests + a `values.yaml` with sensible defaults. The production pattern on AKS is a **base values file** overlaid by per-environment files (`values-dev.yaml`, `values-uat.yaml`, `values-prod.yaml`) so one chart deploys to every cluster with only the deltas changing.",
+        "Build a Helm values overlay merger that deep-merges a base config with an environment overlay and additional `--set` overrides, producing the effective config Helm would render.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Chart structure",
+          body: "A Helm chart is a directory: `Chart.yaml` (metadata, version), `values.yaml` (defaults), `templates/` (Go-templated manifests — Deployment, Service, ConfigMap, Ingress). At install time, Helm renders each template with the merged values, then applies the result to the cluster as a **Release** with a version history you can `rollback` to.",
+          badges: ["Chart", "Release", "Templates"],
+          code: "my-chart/\n├── Chart.yaml\n├── values.yaml              # defaults\n├── values-dev.yaml          # dev overrides\n├── values-uat.yaml\n├── values-prod.yaml\n└── templates/\n    ├── deployment.yaml\n    ├── service.yaml\n    └── ingress.yaml",
+        },
+        {
+          tag: "concept",
+          title: "Overlay merge semantics",
+          body: "`helm install -f values.yaml -f values-prod.yaml` does a **deep merge**: scalars and leaves in the right file win; maps are merged key-by-key; **arrays are replaced wholesale** (a common gotcha). `--set key=value` overrides are applied last and beat both files — pipelines use this for dynamic values (image tag, commit SHA, Key Vault secret refs).",
+          badges: ["Deep Merge", "--set"],
+          code: "helm upgrade --install orders ./chart \\\n  -f values.yaml \\\n  -f values-prod.yaml \\\n  --set image.tag=$(Build.BuildNumber) \\\n  --set secrets.dbPassword=$(DB_PASSWORD) \\\n  --namespace orders --create-namespace",
+        },
+        {
+          tag: "concept",
+          title: "Pipeline pattern",
+          body: "A standard Azure Pipelines deploy step: (1) Log in to AKS with `AzureCLI@2` + `az aks get-credentials`, (2) Pull secrets with `AzureKeyVault@2`, (3) `helm upgrade --install` with `-f values-$(env).yaml` and `--set image.tag` plus `--set` lines for Key-Vault-sourced secrets. One chart, N environments, all the deltas in version control.",
+          badges: ["Azure Pipelines", "AKS", "Helm Upgrade"],
+        },
+        {
+          tag: "exercise",
+          title: "Build a values merger",
+          body: "Write a `mergeValues(base, overlay, setOverrides)` function that deep-merges the three sources with the precedence base < overlay < setOverrides. Maps merge recursively; arrays and scalars are replaced. Parse `--set a.b.c=x` style overrides into nested objects. Log the final effective config.",
+          badges: ["Practice", "Deep Merge"],
+        },
+        {
+          tag: "tip",
+          title: "Keep secrets OUT of values files",
+          body: "Values files live in git. Anything secret (DB passwords, API keys) should come from **Key Vault via CSI driver** (mounted into the pod at runtime) or from `--set` with the value sourced from the pipeline's `AzureKeyVault@2` task. If you see a raw secret in `values-prod.yaml` during a code review, fail the PR — it's already compromised by being in git history.",
+          badges: ["Security", "Code Review"],
+        },
+        {
+          tag: "key-point",
+          title: "Quiz: Array merge",
+          body: "Your `values.yaml` has `env: [{name: A, value: 1}, {name: B, value: 2}]` and `values-prod.yaml` has `env: [{name: A, value: 99}]`. What does the deployed pod see? **Only `A=99`** — arrays are replaced wholesale. If you need to add to an array, you must redeclare the full list in the overlay.",
+          badges: ["Quiz", "Gotcha"],
+        },
+      ],
+      defaultCode: `// Helm Values Overlay Merger\ntype Val = string | number | boolean | null | Val[] | { [k: string]: Val };\n\nfunction isPlainObject(v: unknown): v is Record<string, Val> {\n  return typeof v === "object" && v !== null && !Array.isArray(v);\n}\n\nfunction deepMerge(base: Val, overlay: Val): Val {\n  if (!isPlainObject(base) || !isPlainObject(overlay)) return overlay;\n  const out: Record<string, Val> = { ...base };\n  for (const [k, v] of Object.entries(overlay)) {\n    out[k] = k in out && isPlainObject(out[k]) && isPlainObject(v)\n      ? deepMerge(out[k] as Val, v)\n      : v;\n  }\n  return out;\n}\n\nfunction parseSet(expr: string): Record<string, Val> {\n  // Turn "image.tag=1.2.3" into { image: { tag: "1.2.3" } }\n  const [path, raw] = expr.split("=");\n  const value: Val = /^-?\\d+(\\.\\d+)?$/.test(raw) ? Number(raw)\n    : raw === "true" ? true : raw === "false" ? false : raw;\n  const keys = path.split(".");\n  const result: Record<string, Val> = {};\n  let cursor: Record<string, Val> = result;\n  for (let i = 0; i < keys.length - 1; i++) {\n    cursor[keys[i]] = {};\n    cursor = cursor[keys[i]] as Record<string, Val>;\n  }\n  cursor[keys[keys.length - 1]] = value;\n  return result;\n}\n\nfunction render(base: Val, overlay: Val, sets: string[]): Val {\n  let merged = deepMerge(base, overlay);\n  for (const s of sets) merged = deepMerge(merged, parseSet(s));\n  return merged;\n}\n\n// --- base values.yaml ---\nconst base: Val = {\n  replicaCount: 2,\n  image: { repository: "drivewayprodcontainerregistry.azurecr.io/orders", tag: "latest", pullPolicy: "IfNotPresent" },\n  resources: { requests: { cpu: "100m", memory: "256Mi" }, limits: { cpu: "500m", memory: "512Mi" } },\n  env: [{ name: "LOG_LEVEL", value: "info" }],\n  ingress: { enabled: false },\n};\n\n// --- values-prod.yaml overlay ---\nconst prod: Val = {\n  replicaCount: 6,\n  resources: { requests: { cpu: "500m", memory: "1Gi" }, limits: { cpu: "2000m", memory: "2Gi" } },\n  ingress: { enabled: true, host: "orders.driveway.com" },\n  // NOTE: arrays are REPLACED, not merged — intentional\n  env: [{ name: "LOG_LEVEL", value: "warn" }, { name: "APP_INSIGHTS_ENABLED", value: "true" }],\n};\n\n// --- pipeline --set overrides ---\nconst sets = [\n  "image.tag=20260421.4",\n  "env[2].name=DB_PASSWORD",           // illustrative — arrays usually come from files\n  "secrets.fromKeyVault=kv-prod-westus2",\n];\n\nconst effective = render(base, prod, sets.slice(0, 2));\nconsole.log("--- Effective config (helm template output) ---");\nconsole.log(JSON.stringify(effective, null, 2));`,
+      validationLogic: (code: string, logs: string[]) => ({
+        success:
+          code.includes("deepMerge") &&
+          code.includes("parseSet") &&
+          code.includes("render") &&
+          logs.some((l) => l.includes("replicaCount")) &&
+          logs.some((l) => l.includes("orders.driveway.com")) &&
+          logs.some((l) => l.includes("20260421")),
+        message: "Helm values overlay working — base + env overlay + --set produces exactly what helm upgrade would render.",
+      }),
+    },
+
+    // ── Lesson 36 ────────────────────────────────────────────────────────
+    {
+      title: "Azure 36: Key Vault Integration at Scale — Pipeline, CSI, App Service",
+      content: [
+        "A Key Vault full of secrets is only useful if your workloads can read them safely. In practice there are three dominant integration patterns: the `AzureKeyVault@2` **pipeline task** (build-time snapshot), the **CSI Secrets Store driver** (runtime mount in AKS with auto-rotation), and **App Service references** (declarative binding via `@Microsoft.KeyVault(...)`).",
+        "Build a recommender that picks the right Key Vault integration pattern for a given workload and explains the trade-off.",
+      ],
+      sections: [
+        {
+          tag: "concept",
+          title: "Pattern 1 — Pipeline task (build-time)",
+          body: "`AzureKeyVault@2` pulls specified secrets at pipeline time and exposes them as pipeline variables (masked in logs). You then pass them to `helm --set` or write them into a `.env` on the agent. Trade-off: **simple** and needs no cluster changes, but secrets are **snapshotted** — if you rotate the Key Vault value, nothing updates until the next deploy.",
+          badges: ["AzureKeyVault@2", "Pipelines"],
+          code: "- task: AzureKeyVault@2\n  inputs:\n    azureSubscription: 'prod-service-conn'\n    KeyVaultName: 'prod-k8s-kv-westus2'\n    SecretsFilter: 'DB-PASSWORD,API-KEY'\n    RunAsPreJob: true\n- script: |\n    helm upgrade --install orders ./chart \\\n      --set secrets.dbPassword=$(DB-PASSWORD) \\\n      --set secrets.apiKey=$(API-KEY)",
+        },
+        {
+          tag: "concept",
+          title: "Pattern 2 — CSI Secrets Store (AKS runtime)",
+          body: "The **Secrets Store CSI driver** + Azure Key Vault provider mount Key Vault secrets into pods as files or sync them into native Kubernetes Secrets. Bind the AKS workload identity to the Key Vault with RBAC, then reference the driver via a `SecretProviderClass` manifest. Trade-off: **auto-rotates** via a sync interval and keeps secrets out of the pipeline entirely, but requires a one-time cluster setup (driver + identity binding).",
+          badges: ["CSI", "AKS", "Workload Identity"],
+          code: "apiVersion: secrets-store.csi.x-k8s.io/v1\nkind: SecretProviderClass\nmetadata:\n  name: orders-kv\nspec:\n  provider: azure\n  parameters:\n    usePodIdentity: \"false\"\n    useVMManagedIdentity: \"false\"\n    clientID: <workload-identity-client-id>\n    keyvaultName: prod-k8s-kv-westus2\n    tenantId: <tenant-id>\n    objects: |\n      array:\n        - |\n          objectName: DB-PASSWORD\n          objectType: secret",
+        },
+        {
+          tag: "concept",
+          title: "Pattern 3 — App Service reference",
+          body: "For Azure App Service / Functions, skip the driver and the pipeline task entirely: set an app setting value to `@Microsoft.KeyVault(SecretUri=https://kv.vault.azure.net/secrets/DB-PASSWORD/)`. The runtime resolves the reference via the site's **managed identity** and injects the current value as an environment variable. Trade-off: **zero code, zero pipeline wiring**, but only works for App Service and Functions.",
+          badges: ["App Service", "Functions", "@Microsoft.KeyVault"],
+          code: "# application settings\nDB_PASSWORD = @Microsoft.KeyVault(SecretUri=https://prod-k8s-kv-westus2.vault.azure.net/secrets/DB-PASSWORD/)",
+        },
+        {
+          tag: "concept",
+          title: "Terraform at scale",
+          body: "Provision the vault, its RBAC role assignments, and the secrets themselves as Terraform resources. Use naming conventions (`${purpose}-k8s-kv-${env}`) so every environment has a matching vault. Grant `Key Vault Secrets User` to the pipeline's service principal and to the AKS workload identity — never to individual users.",
+          badges: ["Terraform", "IaC", "RBAC"],
+          code: "resource \"azurerm_key_vault\" \"this\" {\n  name                = \"${var.purpose}-k8s-kv-${var.env}\"\n  location            = var.location\n  resource_group_name = var.rg\n  tenant_id           = data.azurerm_client_config.current.tenant_id\n  sku_name            = \"standard\"\n  enable_rbac_authorization = true\n  purge_protection_enabled  = true\n}\n\nresource \"azurerm_role_assignment\" \"aks_read\" {\n  scope                = azurerm_key_vault.this.id\n  role_definition_name = \"Key Vault Secrets User\"\n  principal_id         = var.aks_workload_identity_principal_id\n}",
+        },
+        {
+          tag: "exercise",
+          title: "Build an integration recommender",
+          body: "Create a `KeyVaultAdvisor` that takes a `Workload { type, rotationRequired, env }` (type = `'pipeline-deploy' | 'aks-pod' | 'app-service' | 'function'`) and returns the recommended pattern with a short rationale. Log recommendations for 4 different workloads and warn if `rotationRequired` is true but the chosen pattern is snapshot-based.",
+          badges: ["Practice", "Architecture"],
+        },
+        {
+          tag: "tip",
+          title: "Always enable purge protection in prod",
+          body: "`purge_protection_enabled = true` makes soft-deleted secrets recoverable for 90 days — but more importantly it prevents an attacker (or a misfiring Terraform destroy) from *permanently* nuking the vault. You cannot turn this flag off once enabled, which is exactly the point.",
+          badges: ["Security", "Disaster Recovery"],
+        },
+        {
+          tag: "key-point",
+          title: "Quiz: Rotation vs snapshot",
+          body: "Your AKS workload reads a DB password. Ops rotates it in Key Vault. Which pattern picks up the new value without redeploying? **CSI Secrets Store** — its sync loop fetches the latest secret on the configured interval. The pipeline task pattern captured the old value at deploy time; nothing updates until the next deployment.",
+          badges: ["Quiz"],
+        },
+      ],
+      defaultCode: `// Key Vault Integration Advisor\ntype WorkloadType = "pipeline-deploy" | "aks-pod" | "app-service" | "function";\ntype Pattern = "AzureKeyVault@2-task" | "CSI-Secrets-Store" | "@Microsoft.KeyVault-reference";\n\ninterface Workload {\n  name: string;\n  type: WorkloadType;\n  env: "dev" | "uat" | "prod";\n  rotationRequired: boolean;\n}\n\ninterface Recommendation {\n  workload: string;\n  pattern: Pattern;\n  vault: string;\n  rationale: string;\n  warnings: string[];\n}\n\nclass KeyVaultAdvisor {\n  constructor(private purpose: string) {}\n\n  private vaultName(env: string): string {\n    return this.purpose + "-k8s-kv-" + env;\n  }\n\n  recommend(w: Workload): Recommendation {\n    const vault = this.vaultName(w.env);\n    let pattern: Pattern;\n    let rationale = "";\n    const warnings: string[] = [];\n\n    switch (w.type) {\n      case "aks-pod":\n        pattern = "CSI-Secrets-Store";\n        rationale = "AKS pod — mount secrets via CSI driver for auto-rotation and zero pipeline exposure.";\n        break;\n      case "app-service":\n      case "function":\n        pattern = "@Microsoft.KeyVault-reference";\n        rationale = "App Service / Functions — use declarative @Microsoft.KeyVault(...) references, resolved by managed identity.";\n        break;\n      case "pipeline-deploy":\n        pattern = "AzureKeyVault@2-task";\n        rationale = "Build-time injection via pipeline task. Secrets snapshotted at deploy time.";\n        if (w.rotationRequired)\n          warnings.push("rotation required but pattern is snapshot-based — rotated values will NOT propagate until next deploy");\n        break;\n    }\n\n    if (w.env === "prod" && w.type === "aks-pod")\n      warnings.push("ensure workload identity is bound to '" + vault + "' with role 'Key Vault Secrets User'");\n\n    return { workload: w.name, pattern, vault, rationale, warnings };\n  }\n\n  report(workloads: Workload[]): void {\n    console.log("=== Key Vault integration plan ===\\n");\n    for (const w of workloads) {\n      const rec = this.recommend(w);\n      console.log(rec.workload + "  [" + w.env + "]");\n      console.log("  pattern:   " + rec.pattern);\n      console.log("  vault:     " + rec.vault);\n      console.log("  rationale: " + rec.rationale);\n      for (const warn of rec.warnings) console.log("  WARNING:   " + warn);\n      console.log("");\n    }\n  }\n}\n\nconst advisor = new KeyVaultAdvisor("elysium-dw-apps");\nadvisor.report([\n  { name: "orders-api",          type: "aks-pod",         env: "prod", rotationRequired: true  },\n  { name: "incentives-function", type: "function",        env: "prod", rotationRequired: true  },\n  { name: "odyssey-webapp",      type: "app-service",     env: "uat",  rotationRequired: false },\n  { name: "infra-release",       type: "pipeline-deploy", env: "prod", rotationRequired: true  },\n]);`,
+      validationLogic: (code: string, logs: string[]) => ({
+        success:
+          code.includes("KeyVaultAdvisor") &&
+          code.includes("recommend") &&
+          logs.some((l) => l.includes("CSI-Secrets-Store")) &&
+          logs.some((l) => l.includes("@Microsoft.KeyVault")) &&
+          logs.some((l) => l.includes("AzureKeyVault@2")) &&
+          logs.some((l) => l.includes("WARNING")),
+        message: "Integration advisor working — now you can pick the right Key Vault pattern per workload, not a one-size-fits-all.",
       }),
     },
   ];
