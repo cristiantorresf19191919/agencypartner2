@@ -23,6 +23,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+firebase-debug.log*
+
+# tooling artifacts (screenshots, browser automation logs)
+.playwright-mcp/
+/*.png
 
 # local env files
 .env*.local
