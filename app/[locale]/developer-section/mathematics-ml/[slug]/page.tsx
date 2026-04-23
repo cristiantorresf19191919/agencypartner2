@@ -9,6 +9,11 @@ import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MML_COURSE_LESSONS, getMMLLessonById } from "@/lib/mmlCourseData";
+import {
+  ArrowBack as ArrowBackIcon,
+  ArrowForward as ArrowForwardIcon,
+  MenuBook as MenuBookIcon,
+} from "@mui/icons-material";
 import CourseSidebar from "@/components/Layout/CourseSidebar";
 import { MMLLessonRenderer } from "@/components/math-ml/MMLLessonRenderer";
 import styles from "../../challenges/ChallengesPage.module.css";
@@ -19,10 +24,19 @@ export default function MMLLessonPage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const lang = language === "es" ? "es" : "en";
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-
   const lesson = getMMLLessonById(slug);
+  const prevLesson = lesson?.prevStep
+    ? getMMLLessonById(lesson.prevStep)
+    : undefined;
+  const nextLesson = lesson?.nextStep
+    ? getMMLLessonById(lesson.nextStep)
+    : undefined;
+
+  const titleOf = (l: typeof lesson) =>
+    l ? (lang === "es" && l.titleEs ? l.titleEs : l.title) : "";
 
   if (!lesson) {
     return (
@@ -64,34 +78,54 @@ export default function MMLLessonPage() {
       <div className={playStyles.courseMain}>
         <MMLLessonRenderer lesson={lesson} />
 
-        <nav className={mmlStyles.lessonNav}>
-          {lesson.prevStep ? (
+        <nav className={mmlStyles.lessonNavFancy}>
+          {prevLesson ? (
             <Link
               href={createLocalizedPath(
-                `/developer-section/mathematics-ml/${lesson.prevStep}`
+                `/developer-section/mathematics-ml/${prevLesson.id}`
               )}
-              className={mmlStyles.lessonNavLink}
+              className={mmlStyles.lessonNavCard}
             >
-              ← Previous lesson
+              <span className={mmlStyles.lessonNavCardLabel}>
+                <ArrowBackIcon style={{ fontSize: 14 }} />
+                {lang === "es" ? "Lección anterior" : "Previous lesson"}
+              </span>
+              <span className={mmlStyles.lessonNavCardTitle}>
+                {titleOf(prevLesson)}
+              </span>
             </Link>
           ) : (
-            <span />
+            <span className={mmlStyles.lessonNavCardEmpty} />
           )}
-          {lesson.nextStep ? (
+          {nextLesson ? (
             <Link
               href={createLocalizedPath(
-                `/developer-section/mathematics-ml/${lesson.nextStep}`
+                `/developer-section/mathematics-ml/${nextLesson.id}`
               )}
-              className={mmlStyles.lessonNavLink}
+              className={`${mmlStyles.lessonNavCard} ${mmlStyles.lessonNavCardNext}`}
             >
-              Next lesson →
+              <span className={mmlStyles.lessonNavCardLabel}>
+                {lang === "es" ? "Siguiente lección" : "Next lesson"}
+                <ArrowForwardIcon style={{ fontSize: 14 }} />
+              </span>
+              <span className={mmlStyles.lessonNavCardTitle}>
+                {titleOf(nextLesson)}
+              </span>
             </Link>
           ) : (
             <Link
               href={createLocalizedPath("/developer-section/mathematics-ml")}
-              className={mmlStyles.lessonNavLink}
+              className={`${mmlStyles.lessonNavCard} ${mmlStyles.lessonNavCardNext}`}
             >
-              Back to course
+              <span className={mmlStyles.lessonNavCardLabel}>
+                <MenuBookIcon style={{ fontSize: 14 }} />
+                {lang === "es" ? "Volver al curso" : "Back to course"}
+              </span>
+              <span className={mmlStyles.lessonNavCardTitle}>
+                {lang === "es"
+                  ? "Índice de capítulos"
+                  : "Chapter index"}
+              </span>
             </Link>
           )}
         </nav>

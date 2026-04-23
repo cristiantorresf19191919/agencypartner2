@@ -13,6 +13,9 @@ import {
   ArrowForward as ArrowRight,
   School as SchoolIcon,
   ChevronRight as ChevronRightIcon,
+  AutoAwesome as AutoAwesomeIcon,
+  ViewInAr as ViewInArIcon,
+  Quiz as QuizIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
 import styles from "../challenges/ChallengesPage.module.css";
@@ -45,9 +48,29 @@ function groupByChapter(lessons: MMLLesson[]): ChapterGroup[] {
   return chapters;
 }
 
+const CHAPTER_ACCENTS: Array<{ hue: string; name: string }> = [
+  { hue: "#34D399", name: "emerald" }, // 1
+  { hue: "#60A5FA", name: "blue" },    // 2
+  { hue: "#C4B5FD", name: "violet" },  // 3
+  { hue: "#FBBF24", name: "amber" },   // 4
+  { hue: "#F472B6", name: "pink" },    // 5
+  { hue: "#22D3EE", name: "cyan" },    // 6
+  { hue: "#FB7185", name: "rose" },    // 7
+  { hue: "#2DD4BF", name: "teal" },    // 8
+  { hue: "#A78BFA", name: "indigo" },  // 9
+  { hue: "#A3E635", name: "lime" },    // 10
+  { hue: "#FB923C", name: "orange" },  // 11
+  { hue: "#E879F9", name: "fuchsia" }, // 12
+];
+
+function accentFor(n: number) {
+  return CHAPTER_ACCENTS[(n - 1) % CHAPTER_ACCENTS.length];
+}
+
 export default function MathMLLandingPage() {
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const lang = language === "es" ? "es" : "en";
   const chapters = groupByChapter(MML_COURSE_LESSONS);
   const [openChapters, setOpenChapters] = useState<Set<number>>(
     new Set(chapters.slice(0, 2).map((c) => c.number))
@@ -60,11 +83,22 @@ export default function MathMLLandingPage() {
     setOpenChapters(next);
   };
 
+  const totalViz = MML_COURSE_LESSONS.reduce(
+    (acc, l) => acc + l.visualizations.length,
+    0,
+  );
+  const totalExercises = MML_COURSE_LESSONS.reduce(
+    (acc, l) => acc + l.exercises.length,
+    0,
+  );
+
   return (
     <main className={styles.page}>
       <DeveloperHeader />
       <div className={styles.backgroundGlow} />
       <div className={styles.backgroundGrid} />
+      <div className={mmlStyles.mmlAurora} aria-hidden="true" />
+      <div className={mmlStyles.mmlAuroraSweep} aria-hidden="true" />
 
       <section className={styles.heroSection}>
         <div className={styles.pill}>
@@ -72,7 +106,7 @@ export default function MathMLLandingPage() {
           <span>{t("mml-course-pill")}</span>
         </div>
         <motion.h1
-          className={styles.title}
+          className={`${styles.title} ${mmlStyles.mmlHeroTitle}`}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -87,17 +121,25 @@ export default function MathMLLandingPage() {
         >
           {t("mml-course-subtitle")}
         </motion.p>
-        <div className={styles.heroBadges}>
-          <span className={styles.badge}>
-            <FunctionsIcon fontSize="small" />
-            Interactive Math
+        <div className={`${styles.heroBadges} ${mmlStyles.mmlHeroBadges}`}>
+          <span className={`${styles.badge} ${mmlStyles.mmlBadgeEmerald}`}>
+            <AutoAwesomeIcon fontSize="small" />
+            {lang === "es" ? "Matemáticas interactivas" : "Interactive Math"}
           </span>
-          <span className={styles.badge}>Mafs + Three.js</span>
-          <span className={styles.badge}>
+          <span className={`${styles.badge} ${mmlStyles.mmlBadgeBlue}`}>
+            <ViewInArIcon fontSize="small" />
+            {totalViz} {lang === "es" ? "visualizaciones" : "visualizations"}
+          </span>
+          <span className={`${styles.badge} ${mmlStyles.mmlBadgeViolet}`}>
+            <QuizIcon fontSize="small" />
+            {totalExercises} {lang === "es" ? "ejercicios" : "exercises"}
+          </span>
+          <span className={`${styles.badge} ${mmlStyles.mmlBadgeAmber}`}>
+            <FunctionsIcon fontSize="small" />
             {MML_COURSE_LESSONS.length} {t("course-step")}
           </span>
-          <span className={styles.badge}>
-            {chapters.length} chapters
+          <span className={`${styles.badge} ${mmlStyles.mmlBadgeGhost}`}>
+            {chapters.length} {lang === "es" ? "capítulos" : "chapters"}
           </span>
         </div>
       </section>
@@ -113,33 +155,43 @@ export default function MathMLLandingPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
           {chapters.map((chapter) => {
             const isOpen = openChapters.has(chapter.number);
+            const accent = accentFor(chapter.number);
+            const accentSoft = `${accent.hue}29`;
+            const accentGhost = `${accent.hue}12`;
             return (
-              <div key={chapter.number} className={mmlStyles.chapterAccordion}>
+              <div
+                key={chapter.number}
+                className={mmlStyles.chapterAccordion}
+                style={{
+                  ["--chapter-accent" as string]: accent.hue,
+                  ["--chapter-accent-soft" as string]: accentSoft,
+                  ["--chapter-accent-ghost" as string]: accentGhost,
+                }}
+              >
                 <button
                   type="button"
                   className={mmlStyles.chapterHeader}
                   onClick={() => toggleChapter(chapter.number)}
                   aria-expanded={isOpen}
-                  style={{
-                    width: "100%",
-                    border: "none",
-                    color: "inherit",
-                    font: "inherit",
-                    textAlign: "left",
-                  }}
                 >
                   <div className={mmlStyles.chapterName}>
                     <span className={mmlStyles.chapterNumber}>
-                      {chapter.number}
+                      {String(chapter.number).padStart(2, "0")}
                     </span>
-                    {chapter.name}
+                    <span className={mmlStyles.chapterNameText}>
+                      {chapter.name}
+                    </span>
                   </div>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 12 }}
-                  >
+                  <div className={mmlStyles.chapterHeaderRight}>
                     <span className={mmlStyles.chapterLessonCount}>
-                      {chapter.lessons.length} lesson
-                      {chapter.lessons.length !== 1 ? "s" : ""}
+                      {chapter.lessons.length}{" "}
+                      {lang === "es"
+                        ? chapter.lessons.length === 1
+                          ? "lección"
+                          : "lecciones"
+                        : chapter.lessons.length === 1
+                          ? "lesson"
+                          : "lessons"}
                     </span>
                     <ChevronRightIcon
                       className={`${mmlStyles.chapterChevron} ${
@@ -161,49 +213,78 @@ export default function MathMLLandingPage() {
                     >
                       <div className={mmlStyles.chapterLessons}>
                         <ul className={styles.grid}>
-                          {chapter.lessons.map((lesson, i) => (
-                            <motion.li
-                              key={lesson.id}
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{
-                                delay: i * 0.03,
-                                duration: 0.25,
-                              }}
-                            >
-                              <Link
-                                href={createLocalizedPath(
-                                  `/developer-section/mathematics-ml/${lesson.id}`
-                                )}
-                                className={styles.card}
+                          {chapter.lessons.map((lesson, i) => {
+                            const vizCount = lesson.visualizations.length;
+                            const exCount = lesson.exercises.length;
+                            return (
+                              <motion.li
+                                key={lesson.id}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{
+                                  delay: i * 0.03,
+                                  duration: 0.25,
+                                }}
                               >
-                                <div className={styles.cardTop}>
-                                  <span className={mmlStyles.accentStep}>
-                                    {t("course-step")} {lesson.step}
-                                  </span>
-                                </div>
-                                <h3 className={styles.cardTitle}>
-                                  {lesson.title}
-                                </h3>
-                                <p
-                                  className={styles.cardCategory}
-                                  style={{
-                                    fontSize: "13px",
-                                    color: "#6EE7B7",
-                                    marginTop: "8px",
-                                  }}
+                                <Link
+                                  href={createLocalizedPath(
+                                    `/developer-section/mathematics-ml/${lesson.id}`
+                                  )}
+                                  className={`${styles.card} ${mmlStyles.lessonCard}`}
                                 >
-                                  {lesson.content[0]
-                                    ? `${lesson.content[0].substring(0, 100)}...`
-                                    : ""}
-                                </p>
-                                <div className={styles.cardCta}>
-                                  <span>{t("course-start-lesson")}</span>
-                                  <ArrowRight className={styles.ctaArrow} />
-                                </div>
-                              </Link>
-                            </motion.li>
-                          ))}
+                                  <div className={styles.cardTop}>
+                                    <span
+                                      className={mmlStyles.lessonStepChip}
+                                    >
+                                      {t("course-step")} {lesson.step}
+                                    </span>
+                                    <div className={mmlStyles.lessonMetaChips}>
+                                      {vizCount > 0 && (
+                                        <span
+                                          className={`${mmlStyles.lessonMetaChip} ${mmlStyles.lessonMetaChipViz}`}
+                                          title={
+                                            lang === "es"
+                                              ? "Visualizaciones"
+                                              : "Visualizations"
+                                          }
+                                        >
+                                          <ViewInArIcon
+                                            style={{ fontSize: 12 }}
+                                          />
+                                          {vizCount}
+                                        </span>
+                                      )}
+                                      {exCount > 0 && (
+                                        <span
+                                          className={`${mmlStyles.lessonMetaChip} ${mmlStyles.lessonMetaChipEx}`}
+                                          title={
+                                            lang === "es"
+                                              ? "Ejercicios"
+                                              : "Exercises"
+                                          }
+                                        >
+                                          <QuizIcon style={{ fontSize: 12 }} />
+                                          {exCount}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <h3 className={styles.cardTitle}>
+                                    {lesson.title}
+                                  </h3>
+                                  <p className={mmlStyles.lessonCardExcerpt}>
+                                    {lesson.content[0]
+                                      ? `${lesson.content[0].substring(0, 120)}…`
+                                      : ""}
+                                  </p>
+                                  <div className={styles.cardCta}>
+                                    <span>{t("course-start-lesson")}</span>
+                                    <ArrowRight className={styles.ctaArrow} />
+                                  </div>
+                                </Link>
+                              </motion.li>
+                            );
+                          })}
                         </ul>
                       </div>
                     </motion.div>

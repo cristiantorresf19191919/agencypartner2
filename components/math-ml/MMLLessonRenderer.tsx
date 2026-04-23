@@ -247,6 +247,31 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
   const exerciseHeading = lang === "es" ? "Ejercicios" : "Exercises";
   const takeawaysHeading = lang === "es" ? "Puntos Clave" : "Key Takeaways";
 
+  const wordCount = content.reduce(
+    (acc, p) => acc + p.split(/\s+/).filter(Boolean).length,
+    0,
+  );
+  const readMinutes = Math.max(1, Math.round(wordCount / 220));
+  const vizCount = lesson.visualizations.length;
+  const exerciseCount = lesson.exercises.length;
+  const minLabel = lang === "es" ? "min de lectura" : "min read";
+  const vizLabel =
+    lang === "es"
+      ? vizCount === 1
+        ? "visualización"
+        : "visualizaciones"
+      : vizCount === 1
+        ? "visualization"
+        : "visualizations";
+  const exLabel =
+    lang === "es"
+      ? exerciseCount === 1
+        ? "ejercicio"
+        : "ejercicios"
+      : exerciseCount === 1
+        ? "exercise"
+        : "exercises";
+
   // Reading progress
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [progress, setProgress] = useState(0);
@@ -272,8 +297,6 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
   const isWorkedExample = (p: string) =>
     /^\s*\*\*(Worked example|Ejemplo (resuelto|trabajado))/i.test(p);
 
-  // Decide when to interleave visualizations with content for better rhythm.
-  const vizCount = lesson.visualizations.length;
   const contentCount = content.length;
   const vizInsertAfter: Array<number | null> = (() => {
     if (vizCount === 0) return content.map(() => null);
@@ -308,6 +331,25 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
       </div>
 
       <h1 className={styles.lessonTitle}>{title}</h1>
+
+      <div className={styles.lessonMetaBar} aria-hidden="false">
+        <span className={styles.lessonMetaPill}>
+          ⏱ {readMinutes} {minLabel}
+        </span>
+        {vizCount > 0 && (
+          <span className={`${styles.lessonMetaPill} ${styles.lessonMetaPillAccent}`}>
+            ◇ {vizCount} {vizLabel}
+          </span>
+        )}
+        {exerciseCount > 0 && (
+          <span className={styles.lessonMetaPill}>
+            ✓ {exerciseCount} {exLabel}
+          </span>
+        )}
+        <span className={styles.lessonMetaTrail}>
+          {lang === "es" ? "Lección" : "Lesson"} {lesson.step}
+        </span>
+      </div>
 
       {content.map((paragraph, i) => {
         const isIntro = i === 0;
