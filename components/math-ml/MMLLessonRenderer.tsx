@@ -8,6 +8,12 @@ import { AnnotatedFormula } from "./primitives/AnnotatedFormula";
 import { FormulaExplorer } from "./primitives/FormulaExplorer";
 import { RecapFlashcards } from "./primitives/RecapFlashcards";
 import { PrerequisitesRail } from "./primitives/PrerequisitesRail";
+import { TryYourOwn } from "./primitives/TryYourOwn";
+import { PredictReveal } from "./primitives/PredictReveal";
+import { SideBySideCompare } from "./primitives/SideBySideCompare";
+import { MLConnectionPanel } from "./primitives/MLConnectionPanel";
+import { VisualProof } from "./primitives/VisualProof";
+import { RealDataCompanion } from "./primitives/RealDataCompanion";
 import {
   AnalogyCard,
   PitfallCallout,
@@ -313,16 +319,18 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
   const isPitfall = (p: string) =>
     /^\s*\*\*(Pitfall|Precaución|Ten cuidado):\s*\*\*/i.test(p);
 
-  // Per-paragraph extras from optional data (annotated formulas / explorers / step solutions)
-  const extrasByParagraph = new Map<
-    number,
-    Array<{ kind: "formula" | "explorer" | "steps"; idx: number }>
-  >();
-  const pushExtra = (
-    at: number,
-    kind: "formula" | "explorer" | "steps",
-    idx: number,
-  ) => {
+  type ExtraKind =
+    | "formula"
+    | "explorer"
+    | "steps"
+    | "sandbox"
+    | "predict"
+    | "compare"
+    | "proof"
+    | "realdata";
+
+  const extrasByParagraph = new Map<number, Array<{ kind: ExtraKind; idx: number }>>();
+  const pushExtra = (at: number, kind: ExtraKind, idx: number) => {
     const list = extrasByParagraph.get(at) ?? [];
     list.push({ kind, idx });
     extrasByParagraph.set(at, list);
@@ -343,6 +351,37 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
         ? s.insertAfterParagraph
         : Math.max(0, content.length - 2);
     pushExtra(at, "steps", idx);
+  });
+  (lesson.tryYourOwn ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number"
+        ? s.insertAfterParagraph
+        : Math.max(0, content.length - 2);
+    pushExtra(at, "sandbox", idx);
+  });
+  (lesson.predictReveals ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number"
+        ? s.insertAfterParagraph
+        : Math.max(0, content.length - 2);
+    pushExtra(at, "predict", idx);
+  });
+  (lesson.compares ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number" ? s.insertAfterParagraph : 1;
+    pushExtra(at, "compare", idx);
+  });
+  (lesson.visualProofs ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number" ? s.insertAfterParagraph : 2;
+    pushExtra(at, "proof", idx);
+  });
+  (lesson.realData ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number"
+        ? s.insertAfterParagraph
+        : Math.max(0, content.length - 2);
+    pushExtra(at, "realdata", idx);
   });
 
   const contentCount = content.length;
@@ -450,6 +489,43 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
                   />
                 );
               }
+              if (ex.kind === "sandbox" && lesson.tryYourOwn?.[ex.idx]) {
+                return (
+                  <TryYourOwn key={`tyo-${i}-${k}`} spec={lesson.tryYourOwn[ex.idx]} />
+                );
+              }
+              if (ex.kind === "predict" && lesson.predictReveals?.[ex.idx]) {
+                return (
+                  <PredictReveal
+                    key={`pr-${i}-${k}`}
+                    spec={lesson.predictReveals[ex.idx]}
+                  />
+                );
+              }
+              if (ex.kind === "compare" && lesson.compares?.[ex.idx]) {
+                return (
+                  <SideBySideCompare
+                    key={`cmp-${i}-${k}`}
+                    spec={lesson.compares[ex.idx]}
+                  />
+                );
+              }
+              if (ex.kind === "proof" && lesson.visualProofs?.[ex.idx]) {
+                return (
+                  <VisualProof
+                    key={`vp-${i}-${k}`}
+                    spec={lesson.visualProofs[ex.idx]}
+                  />
+                );
+              }
+              if (ex.kind === "realdata" && lesson.realData?.[ex.idx]) {
+                return (
+                  <RealDataCompanion
+                    key={`rd-${i}-${k}`}
+                    spec={lesson.realData[ex.idx]}
+                  />
+                );
+              }
               return null;
             })}
             {vizIdx !== null && lesson.visualizations[vizIdx] && (
@@ -478,6 +554,10 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
             />
           ))}
         </section>
+      )}
+
+      {lesson.mlConnection && (
+        <MLConnectionPanel spec={lesson.mlConnection} />
       )}
 
       {lesson.exercises.length > 0 && (

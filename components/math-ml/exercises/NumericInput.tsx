@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import type { MMLNumericInput } from "@/lib/mmlTypes";
 import { MathContent } from "../MathContent";
+import { MistakeReplay } from "../primitives/MistakeReplay";
 import styles from "../MathML.module.css";
 
 interface NumericInputProps {
@@ -64,6 +65,10 @@ export function NumericInput({ exercise, onCorrect }: NumericInputProps) {
             />
           )}
         </div>
+      )}
+
+      {submitted && !isCorrect && exercise.mistakeSteps && (
+        <MistakeReplay steps={exercise.mistakeSteps} />
       )}
     </div>
   );

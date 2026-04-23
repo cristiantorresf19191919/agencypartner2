@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import type { MMLMultipleChoice } from "@/lib/mmlTypes";
 import { MathContent } from "../MathContent";
+import { MistakeReplay } from "../primitives/MistakeReplay";
 import styles from "../MathML.module.css";
 
 interface MultipleChoiceProps {
@@ -63,6 +64,10 @@ export function MultipleChoice({ exercise, onCorrect }: MultipleChoiceProps) {
         <div className={`${styles.exerciseFeedback} ${isCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect}`}>
           <MathContent text={isCorrect ? exercise.explanation : `Not quite. ${exercise.explanation}`} as="span" />
         </div>
+      )}
+
+      {submitted && !isCorrect && exercise.mistakeSteps && (
+        <MistakeReplay steps={exercise.mistakeSteps} />
       )}
     </div>
   );

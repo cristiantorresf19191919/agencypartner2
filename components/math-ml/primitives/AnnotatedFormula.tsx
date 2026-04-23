@@ -167,17 +167,28 @@ function TokenSpan({
         : styles.annotatedFormulaTokenL;
   const color = token.color ?? "#E5E7EB";
   return (
-    <span
-      ref={refCb}
-      className={`${styles.annotatedFormulaToken} ${sizeClass}`}
-      style={{
-        color,
-        textShadow: token.label
-          ? `0 0 18px ${color}55`
-          : `0 0 10px ${color}22`,
-      }}
-    >
-      {token.text}
+    <span className={styles.annotatedFormulaTokenWrap}>
+      <span
+        ref={refCb}
+        className={`${styles.annotatedFormulaToken} ${sizeClass}`}
+        style={{
+          color,
+          textShadow: token.label
+            ? `0 0 18px ${color}55`
+            : `0 0 10px ${color}22`,
+        }}
+      >
+        {token.text}
+      </span>
+      {token.shape && (
+        <span
+          className={styles.annotatedFormulaShape}
+          style={{ color: `${color}cc`, borderColor: `${color}55` }}
+          aria-label={`Shape ${token.shape}`}
+        >
+          {token.shape}
+        </span>
+      )}
     </span>
   );
 }

@@ -42,6 +42,18 @@ interface MMLExerciseBase {
   questionEs?: string;
   hintEs?: string;
   explanationEs?: string;
+  /**
+   * Optional step-by-step replay triggered when the learner answers wrong.
+   * The StepwiseSolution component renders these with the mistake step
+   * highlighted in amber.
+   */
+  mistakeSteps?: Array<{
+    latex?: string;
+    explanation: string;
+    explanationEs?: string;
+    /** When true, this is the step where a typical wrong answer diverges. */
+    highlight?: boolean;
+  }>;
 }
 
 export interface MMLMultipleChoice extends MMLExerciseBase {
@@ -109,6 +121,8 @@ export interface AnnotatedFormulaToken {
   label?: string;
   labelEs?: string;
   labelColor?: string;
+  /** Optional dimensional/shape badge rendered beneath the token, e.g. "[m×n]". */
+  shape?: string;
 }
 
 export interface AnnotatedFormulaSpec {
@@ -189,9 +203,157 @@ export interface MMLLesson {
   pitfall?: { en: string; es?: string };
   // Ids into lib/mmlConcepts.ts — rendered as a prerequisites rail at the top
   concepts?: string[];
+  // New pedagogical primitives
+  tryYourOwn?: TryYourOwnSpec[];
+  predictReveals?: PredictRevealSpec[];
+  compares?: SideBySideSpec[];
+  mlConnection?: MLConnectionSpec;
+  visualProofs?: VisualProofSpec[];
+  realData?: RealDataCompanionSpec[];
   // Optional Spanish overlays — renderer prefers these when locale is "es"
   titleEs?: string;
   chapterEs?: string;
   contentEs?: string[];
   keyTakeawaysEs?: string[];
+}
+
+/* ===================================================================
+   New pedagogical primitives (learning-depth features)
+   =================================================================== */
+
+/** TryYourOwn — wires a free-form matrix/vector input into any viz. */
+export interface TryYourOwnSpec {
+  id?: string;
+  /** Which viz re-renders with the user's numbers. Must be a key in VIZ_MAP. */
+  vizType: MMLVizType;
+  /** Base config passed to the viz (defaults, axes, etc.). */
+  baseConfig?: Record<string, unknown>;
+  /** Shape of the matrix/vector the reader enters. */
+  input:
+    | { kind: "matrix"; rows: number; cols: number; defaultMatrix?: number[][]; configKey?: string }
+    | { kind: "vector"; dim: number; defaultVector?: number[]; configKey?: string };
+  title?: string;
+  titleEs?: string;
+  description?: string;
+  descriptionEs?: string;
+  /** A short hint shown to the learner before they edit. */
+  prompt?: string;
+  promptEs?: string;
+  insertAfterParagraph?: number;
+}
+
+/** PredictReveal — show setup, collect prediction, then cascade steps. */
+export interface PredictRevealSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  setup: string; // markdown-style text describing the setup
+  setupEs?: string;
+  prediction:
+    | { kind: "numeric"; answer: number; tolerance?: number; unit?: string }
+    | { kind: "vector"; dim: number; answer: number[]; tolerance?: number }
+    | {
+        kind: "multiple-choice";
+        options: string[];
+        optionsEs?: string[];
+        correctIndex: number;
+      };
+  promptQuestion: string;
+  promptQuestionEs?: string;
+  steps: Array<{
+    latex?: string;
+    explanation: string;
+    explanationEs?: string;
+  }>;
+  insertAfterParagraph?: number;
+}
+
+/** SideBySideCompare — two viz slots driven by a shared parameter. */
+export interface SideBySideSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  description?: string;
+  descriptionEs?: string;
+  slider: {
+    key: string;
+    label: string;
+    labelEs?: string;
+    min: number;
+    max: number;
+    step?: number;
+    default: number;
+  };
+  /** Left pane and right pane each re-render their viz as the slider moves. */
+  left: {
+    label: string;
+    labelEs?: string;
+    vizType: MMLVizType;
+    /** Called with the current slider value; returns a config object for the viz. */
+    makeConfig: (t: number) => Record<string, unknown>;
+  };
+  right: {
+    label: string;
+    labelEs?: string;
+    vizType: MMLVizType;
+    makeConfig: (t: number) => Record<string, unknown>;
+  };
+  insertAfterParagraph?: number;
+}
+
+/** MLConnectionSpec — end-of-lesson "why this matters in ML" panel. */
+export interface MLConnectionSpec {
+  technique: string;
+  techniqueEs?: string;
+  summary: string;
+  summaryEs?: string;
+  codeLanguage?: "python" | "numpy" | "pytorch" | "javascript";
+  codeSnippet?: string;
+  /** One-line statement of what breaks if this concept is removed. */
+  ifRemoved?: string;
+  ifRemovedEs?: string;
+}
+
+/** VisualProofSpec — animated geometric theorem player. */
+export interface VisualProofSpec {
+  id?: string;
+  title: string;
+  titleEs?: string;
+  theorem: string; // brief statement, supports LaTeX
+  theoremEs?: string;
+  /** Predefined proof template, keeps types strict and avoids dynamic code eval. */
+  kind:
+    | "orthogonal-preserves-length"
+    | "pythagorean"
+    | "dot-product-projection"
+    | "eigenvectors-stay-on-line";
+  steps: Array<{
+    caption: string;
+    captionEs?: string;
+    /** 0..1 progress for the built-in animation player. */
+    at: number;
+  }>;
+  insertAfterParagraph?: number;
+}
+
+/** RealDataCompanionSpec — anchors a concept to a tiny built-in dataset. */
+export interface RealDataCompanionSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  description?: string;
+  descriptionEs?: string;
+  /** Which dataset to visualize. Datasets ship inside the primitive. */
+  dataset: "iris" | "housing-sample" | "gaussian-clusters";
+  /** What to show for the chosen dataset. */
+  mode:
+    | "scatter"
+    | "pca-axes"
+    | "variance-ellipse"
+    | "mean-and-spread"
+    | "regression-line";
+  /** Optional indices selecting which features/columns to plot. */
+  featureX?: number;
+  featureY?: number;
+  insertAfterParagraph?: number;
 }

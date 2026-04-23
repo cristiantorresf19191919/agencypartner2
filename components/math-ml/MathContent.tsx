@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import { ConceptChip } from "./primitives/ConceptChip";
+import { tryEvalLatex } from "./primitives/numericEval";
 
 interface MathContentProps {
   text: string;
@@ -14,6 +15,13 @@ interface MathContentProps {
 export function MathContent({ text, className, as: Tag = "p" }: MathContentProps) {
   const rendered = useMemo(() => parseContent(text), [text]);
   return <Tag className={className}>{rendered}</Tag>;
+}
+
+function formatNumeric(v: number): string {
+  if (Number.isInteger(v)) return String(v);
+  const abs = Math.abs(v);
+  if (abs >= 1000 || (abs > 0 && abs < 0.001)) return v.toExponential(3);
+  return v.toFixed(Math.min(4, Math.max(2, 4 - Math.floor(Math.log10(abs + 1e-9)))));
 }
 
 function renderKaTeX(latex: string, displayMode: boolean): string {
@@ -60,14 +68,33 @@ function parseContent(text: string): React.ReactNode[] {
         />
       );
     } else if (raw.startsWith("$") && raw.endsWith("$")) {
-      const html = renderKaTeX(raw.slice(1, -1), false);
-      nodes.push(
-        <span
-          key={key++}
-          className="mml-inline-math"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      );
+      const src = raw.slice(1, -1);
+      const html = renderKaTeX(src, false);
+      const numericValue = tryEvalLatex(src);
+      const isEvaluable =
+        numericValue !== null &&
+        Number.isFinite(numericValue) &&
+        /[+\-*/^]|\\sqrt|\\frac/.test(src);
+      if (isEvaluable) {
+        const formatted = formatNumeric(numericValue);
+        nodes.push(
+          <span
+            key={key++}
+            className="mml-inline-math mml-inline-math-numeric"
+            title={`≈ ${formatted}`}
+            data-numeric-value={formatted}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        );
+      } else {
+        nodes.push(
+          <span
+            key={key++}
+            className="mml-inline-math"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        );
+      }
     } else if (raw.startsWith("**") && raw.endsWith("**")) {
       nodes.push(<strong key={key++}>{raw.slice(2, -2)}</strong>);
     } else if (raw.startsWith("`") && raw.endsWith("`")) {
