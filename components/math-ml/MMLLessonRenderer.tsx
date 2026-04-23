@@ -4,6 +4,14 @@ import React, { useEffect, useRef, useState, useCallback, type ComponentType } f
 import dynamic from "next/dynamic";
 import { VizFrame } from "./primitives/VizFrame";
 import { ConceptGame } from "./primitives/ConceptGame";
+import { AnnotatedFormula } from "./primitives/AnnotatedFormula";
+import { FormulaExplorer } from "./primitives/FormulaExplorer";
+import { RecapFlashcards } from "./primitives/RecapFlashcards";
+import {
+  AnalogyCard,
+  PitfallCallout,
+  StepwiseSolution,
+} from "./primitives/LearningCallouts";
 import type {
   MMLLesson,
   MMLVisualization,
@@ -297,6 +305,45 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
   const isWorkedExample = (p: string) =>
     /^\s*\*\*(Worked example|Ejemplo (resuelto|trabajado))/i.test(p);
 
+  const stripMarker = (p: string) =>
+    p.replace(/^\s*\*\*(Analogy|Analogía|Pitfall|Precaución|Ten cuidado):\s*\*\*\s*/i, "");
+  const isAnalogy = (p: string) =>
+    /^\s*\*\*(Analogy|Analogía):\s*\*\*/i.test(p);
+  const isPitfall = (p: string) =>
+    /^\s*\*\*(Pitfall|Precaución|Ten cuidado):\s*\*\*/i.test(p);
+
+  // Per-paragraph extras from optional data (annotated formulas / explorers / step solutions)
+  const extrasByParagraph = new Map<
+    number,
+    Array<{ kind: "formula" | "explorer" | "steps"; idx: number }>
+  >();
+  const pushExtra = (
+    at: number,
+    kind: "formula" | "explorer" | "steps",
+    idx: number,
+  ) => {
+    const list = extrasByParagraph.get(at) ?? [];
+    list.push({ kind, idx });
+    extrasByParagraph.set(at, list);
+  };
+  (lesson.annotatedFormulas ?? []).forEach((f, idx) => {
+    const at =
+      typeof f.insertAfterParagraph === "number" ? f.insertAfterParagraph : 0;
+    pushExtra(at, "formula", idx);
+  });
+  (lesson.formulaExplorers ?? []).forEach((e, idx) => {
+    const at =
+      typeof e.insertAfterParagraph === "number" ? e.insertAfterParagraph : 1;
+    pushExtra(at, "explorer", idx);
+  });
+  (lesson.stepSolutions ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number"
+        ? s.insertAfterParagraph
+        : Math.max(0, content.length - 2);
+    pushExtra(at, "steps", idx);
+  });
+
   const contentCount = content.length;
   const vizInsertAfter: Array<number | null> = (() => {
     if (vizCount === 0) return content.map(() => null);
@@ -354,15 +401,52 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
       {content.map((paragraph, i) => {
         const isIntro = i === 0;
         const isWorked = isWorkedExample(paragraph);
+        const analogy = isAnalogy(paragraph);
+        const pitfall = isPitfall(paragraph);
+        const textForNormal = paragraph;
         const className = isIntro
           ? styles.lessonIntro
           : isWorked
             ? styles.workedExample
             : styles.lessonParagraph;
         const vizIdx = vizInsertAfter[i];
+        const extras = extrasByParagraph.get(i) ?? [];
         return (
           <React.Fragment key={`content-${i}`}>
-            <MathContent text={paragraph} as="p" className={className} />
+            {analogy ? (
+              <AnalogyCard text={stripMarker(paragraph)} />
+            ) : pitfall ? (
+              <PitfallCallout text={stripMarker(paragraph)} />
+            ) : (
+              <MathContent text={textForNormal} as="p" className={className} />
+            )}
+            {extras.map((ex, k) => {
+              if (ex.kind === "formula" && lesson.annotatedFormulas?.[ex.idx]) {
+                return (
+                  <AnnotatedFormula
+                    key={`af-${i}-${k}`}
+                    spec={lesson.annotatedFormulas[ex.idx]}
+                  />
+                );
+              }
+              if (ex.kind === "explorer" && lesson.formulaExplorers?.[ex.idx]) {
+                return (
+                  <FormulaExplorer
+                    key={`fx-${i}-${k}`}
+                    spec={lesson.formulaExplorers[ex.idx]}
+                  />
+                );
+              }
+              if (ex.kind === "steps" && lesson.stepSolutions?.[ex.idx]) {
+                return (
+                  <StepwiseSolution
+                    key={`sv-${i}-${k}`}
+                    spec={lesson.stepSolutions[ex.idx]}
+                  />
+                );
+              }
+              return null;
+            })}
             {vizIdx !== null && lesson.visualizations[vizIdx] && (
               <VisualizationBlock
                 key={`viz-${vizIdx}`}
@@ -370,7 +454,7 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
                 lang={lang}
               />
             )}
-            {!isWorked && i < content.length - 1 && (i + 1) % 3 === 0 && (
+            {!isWorked && !analogy && !pitfall && i < content.length - 1 && (i + 1) % 3 === 0 && (
               <div className={styles.lessonDivider} aria-hidden="true" />
             )}
           </React.Fragment>
@@ -412,6 +496,10 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
             ))}
           </ul>
         </aside>
+      )}
+
+      {keyTakeaways && keyTakeaways.length > 0 && (
+        <RecapFlashcards takeaways={keyTakeaways} lang={lang} />
       )}
 
       <CelebrationOverlay

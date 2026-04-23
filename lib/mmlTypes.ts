@@ -102,6 +102,73 @@ export type MMLExercise =
   | MMLSliderExplore
   | MMLDragToMatch;
 
+export interface AnnotatedFormulaToken {
+  text: string;
+  size?: "xl" | "l" | "m";
+  color?: string;
+  label?: string;
+  labelEs?: string;
+  labelColor?: string;
+}
+
+export interface AnnotatedFormulaSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  caption?: string;
+  captionEs?: string;
+  tokens: AnnotatedFormulaToken[];
+  insertAfterParagraph?: number;
+}
+
+export interface FormulaExplorerSlot {
+  key: string;
+  label: string;
+  labelEs?: string;
+  min: number;
+  max: number;
+  step?: number;
+  default: number;
+  color?: string;
+}
+
+export type FormulaExplorerKind =
+  | "linear" // m*x + b       slots: m, b
+  | "quadratic" // a*x^2 + b*x + c   slots: a, b, c
+  | "sigmoid" // 1/(1+exp(-(w*x+b)))  slots: w, b
+  | "gaussian" // exp(-((x-mu)^2)/(2*sigma^2))  slots: mu, sigma
+  | "sine" // A*sin(w*x + phi)   slots: A, w, phi
+  | "exponential" // A*exp(k*x)  slots: A, k
+  | "power"; // A*x^p          slots: A, p
+
+export interface FormulaExplorerSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  description?: string;
+  descriptionEs?: string;
+  formula: string;
+  kind: FormulaExplorerKind;
+  slots: FormulaExplorerSlot[];
+  plot?: {
+    xDomain: [number, number];
+    yDomain: [number, number];
+  };
+  insertAfterParagraph?: number;
+}
+
+export interface StepSolutionSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  steps: Array<{
+    latex?: string;
+    explanation: string;
+    explanationEs?: string;
+  }>;
+  insertAfterParagraph?: number;
+}
+
 export interface MMLLesson {
   id: string;
   step: number;
@@ -114,6 +181,12 @@ export interface MMLLesson {
   visualizations: MMLVisualization[];
   exercises: MMLExercise[];
   keyTakeaways?: string[];
+  // Optional interactive / pedagogical enrichments
+  annotatedFormulas?: AnnotatedFormulaSpec[];
+  formulaExplorers?: FormulaExplorerSpec[];
+  stepSolutions?: StepSolutionSpec[];
+  analogy?: { en: string; es?: string };
+  pitfall?: { en: string; es?: string };
   // Optional Spanish overlays — renderer prefers these when locale is "es"
   titleEs?: string;
   chapterEs?: string;

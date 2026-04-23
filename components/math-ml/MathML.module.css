@@ -2136,3 +2136,668 @@
   box-shadow: 0 0 10px rgba(16,185,129,0.9);
   flex-shrink: 0;
 }
+
+/* ===================================================================
+   ANNOTATED FORMULA — y = mx + b style hero formula with arrow labels
+   =================================================================== */
+
+.annotatedFormula {
+  margin: 32px 0;
+  padding: 28px 24px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(96,165,250,0.1) 0%, transparent 55%),
+    radial-gradient(100% 80% at 100% 100%, rgba(52,211,153,0.08) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(2,6,23,0.8), rgba(2,6,23,0.95));
+  box-shadow:
+    0 30px 80px -40px rgba(0, 0, 0, 0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+.annotatedFormulaTitle {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(226,232,240,0.55);
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.annotatedFormulaStage {
+  position: relative;
+  padding: 12px 0 60px;
+}
+
+.annotatedFormulaArrows {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.annotatedFormulaFormulaRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  font-family: "KaTeX_Math", "Times New Roman", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  flex-wrap: wrap;
+}
+
+.annotatedFormulaToken {
+  display: inline-block;
+  transition: transform 0.18s ease;
+}
+
+.annotatedFormulaToken:hover {
+  transform: translateY(-2px);
+}
+
+.annotatedFormulaTokenXL { font-size: clamp(44px, 7vw, 78px); line-height: 1; }
+.annotatedFormulaTokenL  { font-size: clamp(32px, 5.2vw, 56px); line-height: 1; }
+.annotatedFormulaTokenM  { font-size: clamp(24px, 4vw, 40px);  line-height: 1; }
+
+.annotatedFormulaLabelRow {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+
+.annotatedFormulaLabel {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  min-height: 18px;
+  white-space: nowrap;
+}
+
+.annotatedFormulaCaption {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 14px;
+  color: rgba(226,232,240,0.7);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ===================================================================
+   FORMULA EXPLORER — live sliders + formula + mini-plot
+   =================================================================== */
+
+.formulaExplorer {
+  margin: 32px 0;
+  border-radius: 18px;
+  border: 1px solid rgba(52,211,153,0.2);
+  background:
+    radial-gradient(140% 80% at 0% 0%, rgba(52,211,153,0.08), transparent 55%),
+    radial-gradient(100% 80% at 100% 100%, rgba(96,165,250,0.06), transparent 55%),
+    linear-gradient(180deg, rgba(15,23,42,0.55), rgba(2,6,23,0.35));
+  overflow: hidden;
+  box-shadow: 0 24px 60px -30px rgba(16,185,129,0.35);
+}
+
+.formulaExplorerHead {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(2,6,23,0.35);
+}
+
+.formulaExplorerTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(52,211,153,0.14);
+  border: 1px solid rgba(52,211,153,0.32);
+  color: #6EE7B7;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.formulaExplorerTitle {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ECFDF5;
+  letter-spacing: -0.01em;
+}
+
+.formulaExplorerDesc {
+  margin-top: 4px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(226,232,240,0.75);
+}
+
+.formulaExplorerBody {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 18px;
+  padding: 22px;
+  align-items: center;
+}
+
+@media (max-width: 720px) {
+  .formulaExplorerBody {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formulaExplorerFormula {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  font-family: "KaTeX_Math", "Times New Roman", Georgia, serif;
+  font-style: italic;
+  padding: 16px 0;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.35));
+  border: 1px solid rgba(255,255,255,0.05);
+  flex-wrap: wrap;
+}
+
+.formulaExplorerGlyph {
+  font-size: clamp(22px, 3vw, 32px);
+  color: rgba(236,253,245,0.9);
+  font-weight: 500;
+}
+
+.formulaExplorerValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  text-shadow: 0 0 10px currentColor;
+  transition: background 0.2s ease;
+}
+
+.formulaExplorerPlot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.35));
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.formulaExplorerPlotSvg {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  filter:
+    drop-shadow(0 0 6px rgba(52,211,153,0.45))
+    drop-shadow(0 0 1px rgba(255,255,255,0.15));
+}
+
+.formulaExplorerSliders {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formulaExplorerSlider {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(2,6,23,0.45);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.formulaExplorerSliderHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: rgba(236,253,245,0.8);
+}
+
+.formulaExplorerSliderKey {
+  font-family: "KaTeX_Math", "Times New Roman", Georgia, serif;
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 800;
+  width: 20px;
+  text-align: center;
+}
+
+.formulaExplorerSliderLabel {
+  flex: 1;
+}
+
+.formulaExplorerSliderValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.formulaExplorerRange {
+  width: 100%;
+  cursor: pointer;
+}
+
+/* ===================================================================
+   RECAP FLASHCARDS
+   =================================================================== */
+
+.flashcardsSection {
+  margin-top: 40px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(196,181,253,0.08), transparent 55%),
+    radial-gradient(100% 80% at 100% 100%, rgba(52,211,153,0.08), transparent 55%),
+    linear-gradient(180deg, rgba(15,23,42,0.55), rgba(2,6,23,0.4));
+}
+
+.flashcardsHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.flashcardsTag {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(196,181,253,0.14);
+  border: 1px solid rgba(196,181,253,0.32);
+  color: #DDD6FE;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.flashcardsTitle {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 700;
+  color: #ECFDF5;
+  letter-spacing: -0.01em;
+}
+
+.flashcardsCount {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(236,253,245,0.7);
+}
+
+.flashcardStage {
+  position: relative;
+  perspective: 1200px;
+  min-height: 180px;
+  cursor: pointer;
+  outline: none;
+}
+
+.flashcardStage:focus-visible {
+  outline: 2px solid #6EE7B7;
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+
+.flashcard {
+  border-radius: 14px;
+  padding: 28px 24px;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 40px -20px rgba(0,0,0,0.6);
+}
+
+.flashcardFront {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(52,211,153,0.12), transparent 55%),
+    linear-gradient(180deg, rgba(6,11,26,0.9), rgba(2,6,23,0.9));
+}
+
+.flashcardBack {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(96,165,250,0.14), transparent 55%),
+    linear-gradient(180deg, rgba(11,18,36,0.9), rgba(2,6,23,0.9));
+  border-color: rgba(96,165,250,0.25);
+}
+
+.flashcardSide {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  text-align: center;
+}
+
+.flashcardSideTag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(236,253,245,0.55);
+}
+
+.flashcardBody {
+  font-size: clamp(16px, 2.2vw, 20px);
+  line-height: 1.5;
+  color: #ECFDF5;
+  font-weight: 600;
+}
+
+.flashcardBack .flashcardBody {
+  font-weight: 500;
+  color: rgba(236,253,245,0.92);
+}
+
+.flashcardHint {
+  font-size: 11.5px;
+  color: rgba(148,163,184,0.7);
+  letter-spacing: 0.02em;
+}
+
+.flashcardsControls {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.flashcardsBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(52,211,153,0.35);
+  background: rgba(52,211,153,0.1);
+  color: #6EE7B7;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.2s ease;
+}
+
+.flashcardsBtn:hover {
+  transform: translateY(-1px);
+  background: rgba(52,211,153,0.2);
+}
+
+.flashcardsDots {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.flashcardsDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.flashcardsDotActive {
+  background: #34D399;
+  box-shadow: 0 0 10px rgba(52,211,153,0.8);
+  transform: scale(1.25);
+}
+
+/* ===================================================================
+   ANALOGY / PITFALL CALLOUTS
+   =================================================================== */
+
+.analogyCard,
+.pitfallCard {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 14px;
+  margin: 28px 0;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1px solid;
+  background: linear-gradient(180deg, rgba(15,23,42,0.55), rgba(2,6,23,0.4));
+}
+
+.analogyCard {
+  border-color: rgba(251,191,36,0.28);
+  box-shadow: 0 18px 40px -28px rgba(251,191,36,0.35);
+}
+
+.pitfallCard {
+  border-color: rgba(251,113,133,0.3);
+  box-shadow: 0 18px 40px -28px rgba(251,113,133,0.35);
+}
+
+.analogyIcon,
+.pitfallIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0b1220;
+  box-shadow: 0 0 18px -6px currentColor;
+  flex-shrink: 0;
+}
+
+.analogyIcon {
+  background: linear-gradient(160deg, #FBBF24, #F59E0B);
+}
+
+.pitfallIcon {
+  background: linear-gradient(160deg, #FB7185, #F43F5E);
+}
+
+.analogyLabel,
+.pitfallLabel {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.analogyLabel { color: #FCD34D; }
+.pitfallLabel { color: #FDA4AF; }
+
+.analogyText,
+.pitfallText {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(236,253,245,0.9);
+}
+
+/* ===================================================================
+   STEPWISE SOLUTION
+   =================================================================== */
+
+.stepSolver {
+  margin: 32px 0;
+  border-radius: 16px;
+  border: 1px solid rgba(96,165,250,0.25);
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(96,165,250,0.1), transparent 55%),
+    linear-gradient(180deg, rgba(15,23,42,0.55), rgba(2,6,23,0.4));
+  overflow: hidden;
+}
+
+.stepSolverHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(96,165,250,0.18);
+  background: rgba(2,6,23,0.35);
+  flex-wrap: wrap;
+}
+
+.stepSolverTag {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(96,165,250,0.14);
+  border: 1px solid rgba(96,165,250,0.32);
+  color: #BFDBFE;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.stepSolverTitle {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 700;
+  color: #ECFDF5;
+}
+
+.stepSolverProgress {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(236,253,245,0.7);
+}
+
+.stepSolverList {
+  list-style: none;
+  padding: 10px 10px 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stepSolverItem {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  padding: 14px 14px 14px 12px;
+  border-radius: 12px;
+}
+
+.stepSolverItem + .stepSolverItem {
+  border-top: 1px dashed rgba(255,255,255,0.06);
+}
+
+.stepSolverIndex {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(160deg, #60A5FA, #3B82F6);
+  color: #0b1220;
+  font-weight: 800;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px -4px rgba(96,165,250,0.6);
+}
+
+.stepSolverStepBody {
+  min-width: 0;
+}
+
+.stepSolverMath {
+  margin: 0 0 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(2,6,23,0.55);
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow-x: auto;
+}
+
+.stepSolverExplanation {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: rgba(226,232,240,0.82);
+}
+
+.stepSolverControls {
+  padding: 12px 18px 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.stepSolverBtn,
+.stepSolverBtnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.stepSolverBtn {
+  background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+  color: #0b1220;
+  border-color: transparent;
+  box-shadow: 0 10px 24px -10px rgba(96,165,250,0.6);
+}
+
+.stepSolverBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px -12px rgba(96,165,250,0.7);
+}
+
+.stepSolverBtnGhost {
+  background: rgba(255,255,255,0.04);
+  color: rgba(236,253,245,0.8);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.stepSolverBtnGhost:hover {
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-1px);
+}

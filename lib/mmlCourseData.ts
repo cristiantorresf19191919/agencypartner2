@@ -165,7 +165,10 @@ function buildMMLLessons(): MMLLesson[] {
         "Why do machine learners care? Because fitting a linear model is literally solving a system. Given training examples $(\\mathbf{x}_i, y_i)$, the least-squares regression problem asks for a weight vector $\\mathbf{w}$ such that $X\\mathbf{w} \\approx \\mathbf{y}$, where $X$ stacks the feature vectors as rows. When $X$ is square and invertible the system has a unique solution; when it is not (the common case in ML), we fall back on approximation via the *normal equations* — still a linear system.",
         "Every linear system has one of three possible **outcomes**: a unique solution, no solution, or infinitely many solutions. Geometrically in 2D, two lines can meet at a single point (unique), be parallel and never meet (none), or coincide entirely (infinite). This trichotomy generalizes perfectly to higher dimensions and is the reason we care about concepts like **rank** and **consistency** later on.",
         "A compact way to write a linear system is $A\\mathbf{x} = \\mathbf{b}$, where $A$ is the **coefficient matrix**, $\\mathbf{x}$ is the vector of unknowns, and $\\mathbf{b}$ is the constants vector. This notation is not just shorthand — it reveals structure. Many properties of the solution set (existence, uniqueness) can be read off from $A$ alone, before we ever start solving. That is the power of moving from equations to matrices.",
+        "**Analogy:** Think of $A\\mathbf{x} = \\mathbf{b}$ as a **recipe card**: $A$ lists the ingredient ratios (how much flour, sugar, butter each mixing column contributes), $\\mathbf{x}$ is how many scoops of each you use, and $\\mathbf{b}$ is the final mixture you want. Solving the system means asking: *given the ratios and the target mix, how many scoops of each do I need?*",
+        "Every line in 2D can be written in **slope-intercept form** $y = mx + b$. Drag the sliders below to see how changing the slope $m$ and the intercept $b$ rotates and shifts the line. When you have *two* such lines, their linear system asks where they cross.",
         "**Worked example — a unique solution:** Solve $2x + 3y = 7$ and $x - y = 1$. From the second equation, $x = y + 1$. Substituting: $2(y+1) + 3y = 7 \\Rightarrow 5y + 2 = 7 \\Rightarrow y = 1$, so $x = 2$. The unique intersection point is $(2, 1)$ — check: $2\\cdot 2 + 3\\cdot 1 = 7$ ✓ and $2 - 1 = 1$ ✓.",
+        "**Pitfall:** When two rows of $A$ are **proportional** (one is a constant multiple of the other), the system is either redundant (infinitely many solutions) or inconsistent (none) — *never* unique. Before you start eliminating, glance at the rows: if you can scale one into another, no unique answer exists. This is your first rank check.",
         "**Worked example — no solution (parallel lines):** Consider $x + y = 2$ and $2x + 2y = 5$. The second equation is $2(x+y) = 5$, i.e. $x + y = 2.5$. But the first says $x + y = 2$. These cannot both hold, so the system is **inconsistent** — geometrically two parallel lines that never meet.",
         "**ML connection — normal equations:** For the regression system $X\\mathbf{w} = \\mathbf{y}$ with $X \\in \\mathbb{R}^{100 \\times 5}$, there are 100 equations but only 5 unknowns — usually no exact solution exists. The normal equations $X^\\top X \\mathbf{w} = X^\\top \\mathbf{y}$ are a *square* $5\\times 5$ linear system whose unique solution (when $X$ has full column rank) is the least-squares fit.",
         "Solving a system by hand usually means **Gaussian elimination**: repeated row operations that simplify $A$ into an upper-triangular form, followed by back-substitution. We will formalize this in the next lesson. The key takeaway for now: a linear system is a geometric intersection problem, a matrix equation, and a solvable algorithmic puzzle — three viewpoints on the same object.",
@@ -236,6 +239,129 @@ function buildMMLLessons(): MMLLesson[] {
         "Un sistema lineal $A\mathbf{x}=\mathbf{b}$ tiene 0, 1 o infinitas soluciones.",
         "Geométricamente, cada ecuación es un hiperplano; las soluciones son su intersección.",
         "La regresión lineal y muchos métodos de ML se reducen a resolver (o aproximar) un sistema lineal.",
+      ],
+      annotatedFormulas: [
+        {
+          id: "lin-sys-axb",
+          title: "Anatomy of a linear system",
+          titleEs: "Anatomía de un sistema lineal",
+          insertAfterParagraph: 3,
+          caption:
+            "Read the equation left-to-right: a transformation A applied to an unknown x produces the target b.",
+          captionEs:
+            "Lee la ecuación de izquierda a derecha: una transformación A aplicada a una incógnita x produce el objetivo b.",
+          tokens: [
+            {
+              text: "A",
+              size: "xl",
+              color: "#34D399",
+              label: "Coefficient matrix",
+              labelEs: "Matriz de coeficientes",
+            },
+            { text: "·", size: "l", color: "#64748B" },
+            {
+              text: "x",
+              size: "xl",
+              color: "#60A5FA",
+              label: "Unknowns",
+              labelEs: "Incógnitas",
+            },
+            { text: "=", size: "xl", color: "#E5E7EB" },
+            {
+              text: "b",
+              size: "xl",
+              color: "#FBBF24",
+              label: "Constants",
+              labelEs: "Constantes",
+            },
+          ],
+        },
+      ],
+      formulaExplorers: [
+        {
+          id: "lin-sys-slope",
+          title: "Slope-intercept playground",
+          titleEs: "Laboratorio pendiente-intercepto",
+          description:
+            "Drag $m$ to rotate the line, $b$ to shift it vertically. Each setting is *one* equation of a 2D linear system.",
+          descriptionEs:
+            "Arrastra $m$ para rotar la recta, $b$ para desplazarla verticalmente. Cada ajuste es *una* ecuación de un sistema lineal 2D.",
+          formula: "y = {m}·x + {b}",
+          kind: "linear",
+          insertAfterParagraph: 5,
+          slots: [
+            {
+              key: "m",
+              label: "slope (rise over run)",
+              labelEs: "pendiente (subida/avance)",
+              min: -3,
+              max: 3,
+              step: 0.05,
+              default: 1,
+              color: "#60A5FA",
+            },
+            {
+              key: "b",
+              label: "y-intercept (where line crosses y-axis)",
+              labelEs: "intercepto y (dónde la recta cruza el eje y)",
+              min: -4,
+              max: 4,
+              step: 0.1,
+              default: 0,
+              color: "#A3E635",
+            },
+          ],
+          plot: {
+            xDomain: [-5, 5],
+            yDomain: [-5, 5],
+          },
+        },
+      ],
+      stepSolutions: [
+        {
+          id: "lin-sys-unique-steps",
+          title: "Solve 2x + 3y = 7,  x − y = 1 step by step",
+          titleEs: "Resuelve 2x + 3y = 7,  x − y = 1 paso a paso",
+          insertAfterParagraph: 6,
+          steps: [
+            {
+              latex: "x - y = 1 \\;\\Rightarrow\\; x = y + 1",
+              explanation:
+                "Isolate $x$ from the simpler second equation — we'll substitute it into the first.",
+              explanationEs:
+                "Despeja $x$ de la ecuación más simple — la sustituiremos en la primera.",
+            },
+            {
+              latex:
+                "2(y + 1) + 3y = 7 \\;\\Rightarrow\\; 5y + 2 = 7",
+              explanation:
+                "Substitute the expression for $x$ into the first equation and collect like terms.",
+              explanationEs:
+                "Sustituye la expresión de $x$ en la primera ecuación y agrupa términos semejantes.",
+            },
+            {
+              latex: "5y = 5 \\;\\Rightarrow\\; y = 1",
+              explanation:
+                "Solve the one-variable equation — we now know $y$.",
+              explanationEs:
+                "Resuelve la ecuación de una variable — ya conocemos $y$.",
+            },
+            {
+              latex: "x = y + 1 = 2",
+              explanation:
+                "Plug $y$ back into the isolated expression to get $x$.",
+              explanationEs:
+                "Sustituye $y$ en la expresión despejada para obtener $x$.",
+            },
+            {
+              latex: "(x, y) = (2, 1)",
+              explanation:
+                "Verify: $2(2) + 3(1) = 7$ ✓ and $2 - 1 = 1$ ✓. The two lines intersect uniquely at $(2, 1)$.",
+              explanationEs:
+                "Verifica: $2(2) + 3(1) = 7$ ✓ y $2 - 1 = 1$ ✓. Las dos rectas se cortan de forma única en $(2, 1)$.",
+            },
+          ],
+        },
       ],
     },
 
@@ -1678,6 +1804,7 @@ function buildMMLLessons(): MMLLesson[] {
       chapterNumber: 4,
       content: [
         "An **eigenvector** of a square matrix $A$ is a non-zero vector $\\mathbf{v}$ that $A$ stretches without rotating: $A\\mathbf{v} = \\lambda \\mathbf{v}$ for some scalar $\\lambda$, the corresponding **eigenvalue**. Eigenvectors are the *invariant directions* of the map: every other vector gets bent by $A$, but these lie along axes that $A$ merely scales.",
+        "**Analogy:** Picture a **spinning globe**: everything on its surface swirls except the two points on the axis, which stay put. Those axis points are eigenvectors of the rotation, and their eigenvalue is $1$ (they don't stretch). Most transformations have multiple such special axes, and each comes with a stretch factor $\\lambda$.",
         "To find them algebraically, rewrite $A\\mathbf{v} = \\lambda \\mathbf{v}$ as $(A - \\lambda I)\\mathbf{v} = \\mathbf{0}$. For a non-trivial $\\mathbf{v}$ to exist, $A - \\lambda I$ must be singular, i.e., $\\det(A - \\lambda I) = 0$. This equation in $\\lambda$ is the **characteristic polynomial** — a polynomial of degree $n$ whose roots are the eigenvalues. For each root $\\lambda$, the corresponding eigenvectors span the **eigenspace** $\\ker(A - \\lambda I)$.",
         "Eigenvalues can be real or complex, distinct or repeated. A $2\\times 2$ rotation matrix has complex eigenvalues $e^{\\pm i\\theta}$ — it has no real invariant direction other than the origin. A **diagonalizable** matrix has $n$ linearly independent eigenvectors that form a basis; in that basis, $A$ acts by pure scaling. A **defective** matrix (like $\\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$) has fewer independent eigenvectors than its size — it cannot be fully diagonalized and needs Jordan form.",
         "Symmetric real matrices enjoy a remarkable guarantee called the **spectral theorem**: all eigenvalues are real, eigenvectors from different eigenspaces are orthogonal, and the matrix can be diagonalized by an orthonormal basis: $A = QDQ^\\top$ with $Q$ orthogonal and $D$ diagonal. This is the cleanest possible factorization, and it is why covariance matrices, Hessians, and Laplacians are such tractable objects.",
@@ -1751,6 +1878,47 @@ function buildMMLLessons(): MMLLesson[] {
         "Los autovectores son direcciones invariantes de un mapa lineal; los autovalores dicen cuánto se escalan.",
         "El polinomio característico $\det(A - \lambda I) = 0$ encuentra los autovalores.",
         "Las matrices simétricas se diagonalizan en una base ortonormal — el núcleo del PCA y los métodos espectrales.",
+      ],
+      annotatedFormulas: [
+        {
+          id: "eigen-eq",
+          title: "The eigenvalue equation",
+          titleEs: "La ecuación de autovalores",
+          insertAfterParagraph: 0,
+          caption:
+            "Applying A to v produces the same vector v — only scaled by λ. No rotation, no bending.",
+          captionEs:
+            "Aplicar A a v produce el mismo vector v — solo escalado por λ. Sin rotación, sin curvatura.",
+          tokens: [
+            {
+              text: "A",
+              size: "xl",
+              color: "#34D399",
+              label: "Matrix (transformation)",
+              labelEs: "Matriz (transformación)",
+            },
+            {
+              text: "v",
+              size: "xl",
+              color: "#60A5FA",
+              label: "Eigenvector (direction)",
+              labelEs: "Autovector (dirección)",
+            },
+            { text: "=", size: "xl", color: "#E5E7EB" },
+            {
+              text: "λ",
+              size: "xl",
+              color: "#FBBF24",
+              label: "Eigenvalue (stretch factor)",
+              labelEs: "Autovalor (factor de estiramiento)",
+            },
+            {
+              text: "v",
+              size: "xl",
+              color: "#60A5FA",
+            },
+          ],
+        },
       ],
     },
 
@@ -1940,6 +2108,7 @@ function buildMMLLessons(): MMLLesson[] {
       content: [
         "The **singular value decomposition** (SVD) factors *any* matrix $A \\in \\mathbb{R}^{m\\times n}$ as $A = U\\Sigma V^\\top$, where $U \\in \\mathbb{R}^{m\\times m}$ and $V \\in \\mathbb{R}^{n\\times n}$ are orthogonal and $\\Sigma$ is a (rectangular) diagonal matrix with non-negative entries $\\sigma_1 \\geq \\sigma_2 \\geq \\dots \\geq 0$ called the **singular values**. Unlike eigendecomposition, SVD applies to rectangular and singular matrices — there is no 'diagonalizability' condition to worry about.",
         "Geometrically, every linear map factors as **rotate, scale, rotate**. $V^\\top$ rotates input space to align with the data's principal axes, $\\Sigma$ stretches each axis independently (possibly flattening some to zero), and $U$ rotates to output space. This decomposition is why SVD is so powerful: it reveals the intrinsic geometric action of any matrix.",
+        "**Pitfall:** Do *not* confuse singular values with eigenvalues. Singular values are always **real and non-negative**; eigenvalues of a non-symmetric real matrix can be **complex**. For a symmetric positive semi-definite matrix they coincide, but in general $\\sigma_i = \\sqrt{\\lambda_i(A^\\top A)}$, *not* $\\lambda_i(A)$. Mixing them up is one of the most common mistakes in numerical linear algebra.",
         "Singular values relate to eigenvalues: the $\\sigma_i$ are the square roots of the eigenvalues of $A^\\top A$ (or of $AA^\\top$). The columns of $V$ are the corresponding eigenvectors of $A^\\top A$ (right singular vectors); the columns of $U$ are the eigenvectors of $AA^\\top$ (left singular vectors). For symmetric matrices, SVD and eigendecomposition coincide up to sign.",
         "Many matrix diagnostics are read directly off the singular values. The **rank** of $A$ equals the number of non-zero singular values. The **condition number** $\\kappa(A) = \\sigma_1 / \\sigma_r$ measures numerical sensitivity — a large condition number means small input errors blow up. The **spectral norm** is $\\sigma_1$, and the **Frobenius norm** is $\\sqrt{\\sum \\sigma_i^2}$.",
         "**Worked example — SVD of a 2×2 matrix:** For $A = \\begin{pmatrix}3 & 0\\\\0 & 2\\end{pmatrix}$ (already diagonal, positive), the SVD is trivial: $U = I$, $\\Sigma = \\begin{pmatrix}3 & 0\\\\0 & 2\\end{pmatrix}$, $V = I$. Singular values $\\{3, 2\\}$; both $U, V$ are the identity. Any diagonal matrix with non-negative entries is its own SVD.",
@@ -2021,6 +2190,43 @@ function buildMMLLessons(): MMLLesson[] {
         "La SVD factoriza cualquier matriz como $A = U\Sigma V^\top$ — rotar, escalar, rotar.",
         "Los valores singulares revelan el rango, el número de condición y las normas matriciales.",
         "La SVD impulsa PCA, pseudo-inversa, aproximación de bajo rango y sistemas de recomendación.",
+      ],
+      annotatedFormulas: [
+        {
+          id: "svd-factorization",
+          title: "The SVD factorization",
+          titleEs: "La factorización SVD",
+          insertAfterParagraph: 0,
+          caption:
+            "Every linear map, no matter how oblique, is a rotation, then a scaling, then another rotation.",
+          captionEs:
+            "Todo mapa lineal, por oblicuo que sea, es una rotación, luego un escalado y luego otra rotación.",
+          tokens: [
+            { text: "A", size: "xl", color: "#ECFDF5" },
+            { text: "=", size: "xl", color: "#E5E7EB" },
+            {
+              text: "U",
+              size: "xl",
+              color: "#60A5FA",
+              label: "Rotation in output space",
+              labelEs: "Rotación en el espacio de salida",
+            },
+            {
+              text: "Σ",
+              size: "xl",
+              color: "#FBBF24",
+              label: "Diagonal stretches (σᵢ ≥ 0)",
+              labelEs: "Estiramientos diagonales (σᵢ ≥ 0)",
+            },
+            {
+              text: "Vᵀ",
+              size: "xl",
+              color: "#34D399",
+              label: "Rotation in input space",
+              labelEs: "Rotación en el espacio de entrada",
+            },
+          ],
+        },
       ],
     },
 
