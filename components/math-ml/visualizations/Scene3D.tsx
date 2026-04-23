@@ -23,13 +23,14 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
   const showGrid = cfg.showGrid ?? true;
   const showAxes = cfg.showAxes ?? true;
   const cameraPosition = cfg.cameraPosition ?? [5, 4, 6];
-  const background = cfg.background ?? "rgba(15, 23, 42, 0.55)";
-  const border = cfg.border ?? "1px solid rgba(16, 185, 129, 0.18)";
+  const background = cfg.background ?? "transparent";
+  const border = cfg.border ?? "1px solid rgba(16, 185, 129, 0.22)";
 
   return (
     <div
       style={{
-        borderRadius: 12,
+        position: "relative",
+        borderRadius: 14,
         overflow: "hidden",
         border,
         background,
@@ -37,11 +38,24 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
         width: "100%",
       }}
     >
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "radial-gradient(120% 80% at 20% 10%, rgba(16,185,129,0.22) 0%, rgba(16,185,129,0) 55%), radial-gradient(100% 70% at 85% 90%, rgba(96,165,250,0.18) 0%, rgba(96,165,250,0) 60%), linear-gradient(180deg, #0b1224 0%, #040814 100%)",
+          pointerEvents: "none",
+        }}
+      />
       <Canvas
         camera={{ position: cameraPosition, fov: 50, near: 0.1, far: 100 }}
         dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, toneMapping: 0 }}
+        flat
+        style={{ position: "relative" }}
       >
+        <color attach="background" args={["#060b1a"]} />
         <ambientLight intensity={0.65} />
         <directionalLight position={[6, 8, 6]} intensity={0.9} />
         <directionalLight position={[-6, -4, -6]} intensity={0.25} />
@@ -75,6 +89,16 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
           maxDistance={30}
         />
       </Canvas>
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          background:
+            "radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(2, 6, 23, 0.45) 100%)",
+        }}
+      />
     </div>
   );
 }

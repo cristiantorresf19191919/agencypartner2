@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, type ComponentType } from "react";
+import React, { useEffect, useRef, useState, useCallback, type ComponentType } from "react";
 import dynamic from "next/dynamic";
 import type {
   MMLLesson,
@@ -80,6 +80,10 @@ const KernelProjection3D = dynamic(
   () => import("./visualizations/KernelProjection3D"),
   { ssr: false }
 ) as VizComponent;
+const SVDFlow = dynamic(
+  () => import("./visualizations/SVDFlow"),
+  { ssr: false }
+) as VizComponent;
 
 // eigenspace-3d reuses VectorPlot3D (eigenvectors passed as vector configs)
 // svd-3d reuses MatrixTransform3D
@@ -99,6 +103,7 @@ const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "eigenspace-3d": VectorPlot3D,
   "pca-3d": PCAScene,
   "svd-3d": MatrixTransform3D,
+  "svd-flow": SVDFlow,
   "kernel-projection-3d": KernelProjection3D,
 };
 
@@ -242,26 +247,93 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
   const exerciseHeading = lang === "es" ? "Ejercicios" : "Exercises";
   const takeawaysHeading = lang === "es" ? "Puntos Clave" : "Key Takeaways";
 
+  // Reading progress
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const el = rootRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight || 0;
+      const total = Math.max(1, rect.height - vh);
+      const scrolled = Math.min(total, Math.max(0, -rect.top));
+      setProgress(scrolled / total);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  const isWorkedExample = (p: string) =>
+    /^\s*\*\*(Worked example|Ejemplo (resuelto|trabajado))/i.test(p);
+
+  // Decide when to interleave visualizations with content for better rhythm.
+  const vizCount = lesson.visualizations.length;
+  const contentCount = content.length;
+  const vizInsertAfter: Array<number | null> = (() => {
+    if (vizCount === 0) return content.map(() => null);
+    if (vizCount === 1) {
+      const insertAt = Math.min(
+        contentCount - 1,
+        Math.max(1, Math.floor(contentCount / 2)),
+      );
+      return content.map((_, i) => (i === insertAt ? 0 : null));
+    }
+    // Spread viz across the body, final ones at the end
+    const stride = Math.max(1, Math.floor(contentCount / vizCount));
+    const map: Array<number | null> = content.map(() => null);
+    for (let k = 0; k < vizCount; k++) {
+      const pos = Math.min(contentCount - 1, (k + 1) * stride - 1);
+      map[pos] = k;
+    }
+    return map;
+  })();
+
   return (
-    <div className={styles.lessonContent}>
+    <div className={styles.lessonContent} ref={rootRef}>
+      <div className={styles.readingProgress} aria-hidden="true">
+        <div
+          className={styles.readingProgressFill}
+          style={{ transform: `scaleX(${progress})` }}
+        />
+      </div>
+
       <div className={styles.chapterBadge}>
         {chapterPrefix} {lesson.chapterNumber} — {chapter}
       </div>
 
       <h1 className={styles.lessonTitle}>{title}</h1>
 
-      {content.map((paragraph, i) => (
-        <MathContent
-          key={`content-${i}`}
-          text={paragraph}
-          as="p"
-          className={styles.lessonParagraph}
-        />
-      ))}
-
-      {lesson.visualizations.map((viz, i) => (
-        <VisualizationBlock key={`viz-${i}`} viz={viz} lang={lang} />
-      ))}
+      {content.map((paragraph, i) => {
+        const isIntro = i === 0;
+        const isWorked = isWorkedExample(paragraph);
+        const className = isIntro
+          ? styles.lessonIntro
+          : isWorked
+            ? styles.workedExample
+            : styles.lessonParagraph;
+        const vizIdx = vizInsertAfter[i];
+        return (
+          <React.Fragment key={`content-${i}`}>
+            <MathContent text={paragraph} as="p" className={className} />
+            {vizIdx !== null && lesson.visualizations[vizIdx] && (
+              <VisualizationBlock
+                key={`viz-${vizIdx}`}
+                viz={lesson.visualizations[vizIdx]}
+                lang={lang}
+              />
+            )}
+            {!isWorked && i < content.length - 1 && (i + 1) % 3 === 0 && (
+              <div className={styles.lessonDivider} aria-hidden="true" />
+            )}
+          </React.Fragment>
+        );
+      })}
 
       {lesson.exercises.length > 0 && (
         <section className={styles.exerciseSection}>

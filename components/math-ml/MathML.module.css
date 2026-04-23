@@ -23,29 +23,84 @@
 }
 
 .vizContainer {
-  margin: 24px 0;
-  border-radius: 12px;
+  position: relative;
+  margin: 32px 0;
+  border-radius: 18px;
   overflow: hidden;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  background: rgba(16, 185, 129, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0) 50%),
+    radial-gradient(100% 80% at 100% 100%, rgba(96, 165, 250, 0.07) 0%, rgba(96, 165, 250, 0) 55%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.55) 0%, rgba(2, 6, 23, 0.35) 100%);
+  box-shadow:
+    0 24px 60px -24px rgba(2, 6, 23, 0.75),
+    0 0 0 1px rgba(16, 185, 129, 0.06) inset,
+    0 0 60px -20px rgba(16, 185, 129, 0.25);
 }
 
-.vizTitle {
-  padding: 12px 16px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #10B981;
-}
-
-.vizDescription {
-  padding: 0 16px 8px;
-  font-size: 13px;
+.vizContainer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, black 30%, transparent 80%);
   opacity: 0.7;
 }
 
+.vizContainer::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.45), rgba(96, 165, 250, 0.25) 40%, transparent 70%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0.85;
+}
+
+.vizTitle {
+  position: relative;
+  padding: 16px 20px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #6EE7B7;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vizTitle::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #10B981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.9);
+}
+
+.vizDescription {
+  position: relative;
+  padding: 6px 20px 10px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(226, 232, 240, 0.78);
+}
+
 .vizBody {
+  position: relative;
   min-height: 300px;
-  padding: 16px;
+  padding: 16px 20px 20px;
 }
 
 .vizBody > * {
@@ -276,40 +331,63 @@
 }
 
 .takeaways {
-  margin-top: 32px;
-  padding: 20px 24px;
-  border-radius: 12px;
-  background: rgba(16, 185, 129, 0.06);
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  position: relative;
+  margin-top: 40px;
+  padding: 24px 28px;
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0) 55%),
+    linear-gradient(180deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.03));
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  box-shadow: 0 20px 50px -28px rgba(16, 185, 129, 0.5);
 }
 
 .takeawaysTitle {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 700;
-  color: #10B981;
-  margin-bottom: 12px;
+  color: #6EE7B7;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.takeawaysTitle::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #10B981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
 }
 
 .takeawaysList {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .takeawayItem {
-  padding: 6px 0;
-  font-size: 14px;
-  line-height: 1.5;
+  padding: 8px 0;
+  font-size: 15.5px;
+  line-height: 1.65;
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  color: rgba(236, 253, 245, 0.92);
 }
 
 .takeawayBullet {
   color: #10B981;
   flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+  margin-top: 2px;
 }
 
 .slider {
@@ -326,23 +404,137 @@
 }
 
 .lessonContent {
-  max-width: 800px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 36px 24px 80px;
+  font-feature-settings: "kern", "liga", "calt";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .lessonTitle {
-  font-size: 28px;
+  font-size: clamp(32px, 3.4vw, 44px);
   font-weight: 800;
-  margin-bottom: 24px;
-  line-height: 1.3;
+  margin: 8px 0 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ECFDF5 0%, #A7F3D0 60%, #6EE7B7 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+.lessonIntro {
+  font-size: 18px;
+  line-height: 1.7;
+  color: rgba(226, 232, 240, 0.95);
+  margin: 0 0 28px;
+  padding: 0 0 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
 }
 
 .lessonParagraph {
+  font-size: 17px;
+  line-height: 1.78;
+  margin: 0 0 22px;
+  color: rgba(226, 232, 240, 0.82);
+  text-wrap: pretty;
+}
+
+.lessonParagraph strong {
+  color: #ECFDF5;
+  font-weight: 700;
+}
+
+.lessonParagraph em {
+  color: #A7F3D0;
+  font-style: italic;
+}
+
+/* Drop cap on the first paragraph */
+.lessonIntro::first-letter {
+  font-size: 56px;
+  font-weight: 800;
+  float: left;
+  margin: 4px 12px 0 0;
+  line-height: 0.9;
+  color: #10B981;
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Worked-example callout — paragraphs that begin with "**Worked example" */
+.workedExample {
+  position: relative;
+  margin: 28px 0;
+  padding: 20px 24px 20px 56px;
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(96, 165, 250, 0.08), rgba(96, 165, 250, 0.02));
+  border: 1px solid rgba(96, 165, 250, 0.22);
   font-size: 16px;
-  line-height: 1.75;
-  margin-bottom: 16px;
-  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.72;
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.workedExample::before {
+  content: "∑";
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(96, 165, 250, 0.18);
+  color: #BFDBFE;
+  font-size: 16px;
+  font-weight: 800;
+  font-family: "KaTeX_Math", Georgia, serif;
+  box-shadow: 0 0 16px -4px rgba(96, 165, 250, 0.6);
+}
+
+.workedExample strong {
+  color: #DBEAFE;
+}
+
+.workedExample em {
+  color: #BFDBFE;
+}
+
+/* Section divider between content chunks */
+.lessonDivider {
+  height: 1px;
+  margin: 32px auto;
+  max-width: 200px;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
+}
+
+/* Reading progress bar */
+.readingProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(148, 163, 184, 0.08);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.readingProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #6EE7B7, #3B82F6);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.7);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* KaTeX block-math breathing room */
+:global(.mml-block-math) {
+  margin: 20px 0 !important;
+  padding: 4px 0;
 }
 
 .chapterAccordion {
@@ -440,6 +632,247 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
+/* ---- Scrub bar (SVDFlow + future scrubbable viz) ---- */
+.scrubBar {
+  --scrub-accent: #10B981;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.6), rgba(2, 6, 23, 0.55));
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.scrubPlay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: radial-gradient(80% 80% at 50% 20%, rgba(16, 185, 129, 0.28), rgba(16, 185, 129, 0.08));
+  color: #ECFDF5;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px -6px rgba(16, 185, 129, 0.45);
+}
+
+.scrubPlay:hover {
+  transform: translateY(-1px);
+  background: radial-gradient(80% 80% at 50% 20%, rgba(16, 185, 129, 0.42), rgba(16, 185, 129, 0.12));
+}
+
+.scrubPlay:active {
+  transform: scale(0.96);
+}
+
+.scrubTrackWrap {
+  position: relative;
+  flex: 1;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.scrubTrack {
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 6px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.18);
+  overflow: visible;
+}
+
+.scrubFill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--scrub-accent), #6EE7B7);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.65);
+  transition: width 0.05s linear;
+}
+
+.scrubPhaseTick {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 999px;
+  border: 2px solid rgba(15, 23, 42, 0.9);
+  background: #CBD5E1;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scrubPhaseTick:hover {
+  background: var(--scrub-accent);
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+}
+
+.scrubRange {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.scrubPhaseLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6EE7B7;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.scrubPhaseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--scrub-accent);
+  box-shadow: 0 0 8px var(--scrub-accent);
+}
+
+/* ---- SVDFlow-specific ---- */
+.svdFlowWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.svdCanvasWrap {
+  position: relative;
+  height: 460px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  background:
+    radial-gradient(140% 90% at 30% 10%, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0) 55%),
+    radial-gradient(100% 80% at 85% 95%, rgba(96, 165, 250, 0.22) 0%, rgba(96, 165, 250, 0) 60%),
+    linear-gradient(180deg, #0b1224 0%, #040814 100%);
+  box-shadow: 0 26px 60px -22px rgba(2, 6, 23, 0.85), inset 0 0 0 1px rgba(16, 185, 129, 0.1);
+}
+
+.svdVignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(130% 100% at 50% 50%, transparent 50%, rgba(2, 6, 23, 0.55) 100%);
+  mix-blend-mode: multiply;
+}
+
+.svdGlow {
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(60% 45% at 50% 50%, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0) 70%);
+  mix-blend-mode: screen;
+  filter: blur(18px);
+  opacity: 0.9;
+}
+
+.svdOverlayTopLeft {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.svdMatrixChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(2, 6, 23, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(8px);
+  color: #E2E8F0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+
+.svdMatrixChipLabel {
+  color: #6EE7B7;
+  font-weight: 700;
+}
+
+.svdMatrixChipGrid {
+  display: inline-grid;
+  grid-template-columns: auto;
+  gap: 2px;
+  border-left: 2px solid rgba(110, 231, 183, 0.6);
+  border-right: 2px solid rgba(110, 231, 183, 0.6);
+  padding: 2px 8px;
+}
+
+.svdMatrixRow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 28px;
+  gap: 8px;
+}
+
+.svdMatrixCell {
+  text-align: right;
+  color: #CBD5E1;
+}
+
+.svdSigmaChip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.78);
+  border: 1px solid currentColor;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  box-shadow: 0 0 12px -2px currentColor;
+  white-space: nowrap;
+}
+
+.vizCaption {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02));
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vizCaptionHead {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6EE7B7;
+}
+
 @media (max-width: 768px) {
   .lessonContent {
     padding: 16px;
@@ -447,7 +880,7 @@
 
   .vizBody {
     min-height: 250px;
-    padding: 8px;
+    padding: 12px;
   }
 
   .vizBody3D {
@@ -460,5 +893,20 @@
 
   .numberInput {
     width: 64px;
+  }
+
+  .svdCanvasWrap {
+    height: 360px;
+  }
+
+  .scrubBar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .scrubPhaseLabel {
+    order: 3;
+    width: 100%;
+    justify-content: center;
   }
 }

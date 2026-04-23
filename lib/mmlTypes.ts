@@ -14,6 +14,7 @@ export type MMLVizType =
   | "eigenspace-3d"
   | "pca-3d"
   | "svd-3d"
+  | "svd-flow"
   | "kernel-projection-3d";
 
 export interface MMLVisualization {

@@ -1949,21 +1949,24 @@ function buildMMLLessons(): MMLLesson[] {
       ],
       visualizations: [
         {
-          type: "svd-3d",
-          title: "SVD: rotate → scale → rotate",
-          description: "Every matrix decomposes into three simple operations: a rotation, axis-aligned scaling, and another rotation.",
+          type: "svd-flow",
+          title: "SVD — rotate → stretch → rotate",
+          titleEs: "SVD — rotar → estirar → rotar",
+          description: "Scrub through each stage. The dashed circle is the input; the glowing ellipse is $A\\mathbf{x}$. $\\sigma_1, \\sigma_2$ are the stretch factors.",
+          descriptionEs: "Desliza por cada etapa. El círculo punteado es la entrada; la elipse brillante es $A\\mathbf{x}$. $\\sigma_1, \\sigma_2$ son los factores de estiramiento.",
           config: {
             matrix: [
-              [2, 1, 0],
-              [1, 2, 0],
-              [0, 0, 0.5],
+              [2, 1],
+              [1, 2],
             ],
           },
         },
         {
           type: "matrix-transform-2d",
-          title: "SVD of a 2D matrix",
+          title: "SVD of a 2D matrix (direct view)",
+          titleEs: "SVD de una matriz 2D (vista directa)",
           description: "Here $A = U\\Sigma V^\\top$ maps a unit circle to an ellipse whose axes lengths are the singular values.",
+          descriptionEs: "Aquí $A = U\\Sigma V^\\top$ mapea un círculo unitario a una elipse cuyos ejes miden los valores singulares.",
           config: {
             matrix: [
               [2, 1],
