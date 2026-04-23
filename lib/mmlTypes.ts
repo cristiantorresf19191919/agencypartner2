@@ -20,6 +20,8 @@ export interface MMLVisualization {
   type: MMLVizType;
   title?: string;
   description?: string;
+  titleEs?: string;
+  descriptionEs?: string;
   config: Record<string, unknown>;
 }
 
@@ -36,12 +38,16 @@ interface MMLExerciseBase {
   question: string;
   hint?: string;
   explanation: string;
+  questionEs?: string;
+  hintEs?: string;
+  explanationEs?: string;
 }
 
 export interface MMLMultipleChoice extends MMLExerciseBase {
   type: "multiple-choice";
   options: string[];
   correctIndex: number;
+  optionsEs?: string[];
 }
 
 export interface MMLNumericInput extends MMLExerciseBase {
@@ -107,4 +113,9 @@ export interface MMLLesson {
   visualizations: MMLVisualization[];
   exercises: MMLExercise[];
   keyTakeaways?: string[];
+  // Optional Spanish overlays — renderer prefers these when locale is "es"
+  titleEs?: string;
+  chapterEs?: string;
+  contentEs?: string[];
+  keyTakeawaysEs?: string[];
 }

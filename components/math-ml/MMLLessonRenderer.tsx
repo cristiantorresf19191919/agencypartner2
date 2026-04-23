@@ -11,7 +11,12 @@ import type {
 import { MathContent } from "./MathContent";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
+import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "./MathML.module.css";
+
+function pickLang<T>(lang: string, es: T | undefined, en: T): T {
+  return lang === "es" && es !== undefined ? es : en;
+}
 
 // --- Dynamically imported visualization components (ssr: false) ---
 // Mafs (2D) and react-three-fiber (3D) both need browser APIs.
@@ -126,9 +131,10 @@ const DragToMatch = dynamic(
 // --- VisualizationBlock ---
 interface VisualizationBlockProps {
   viz: MMLVisualization;
+  lang: string;
 }
 
-function VisualizationBlock({ viz }: VisualizationBlockProps) {
+function VisualizationBlock({ viz, lang }: VisualizationBlockProps) {
   const Component = VIZ_MAP[viz.type];
   const is3D = viz.type.includes("3d");
   const bodyClass = is3D
@@ -139,12 +145,15 @@ function VisualizationBlock({ viz }: VisualizationBlockProps) {
     return null;
   }
 
+  const title = pickLang(lang, viz.titleEs, viz.title);
+  const description = pickLang(lang, viz.descriptionEs, viz.description);
+
   return (
     <div className={styles.vizContainer}>
-      {viz.title && <div className={styles.vizTitle}>{viz.title}</div>}
-      {viz.description && (
+      {title && <div className={styles.vizTitle}>{title}</div>}
+      {description && (
         <div className={styles.vizDescription}>
-          <MathContent text={viz.description} as="span" />
+          <MathContent text={description} as="span" />
         </div>
       )}
       <div className={bodyClass}>
@@ -158,22 +167,38 @@ function VisualizationBlock({ viz }: VisualizationBlockProps) {
 interface ExerciseBlockProps {
   exercise: MMLExercise;
   onCorrect: () => void;
+  lang: string;
 }
 
-function ExerciseBlock({ exercise, onCorrect }: ExerciseBlockProps) {
-  switch (exercise.type) {
+function localizeExercise(exercise: MMLExercise, lang: string): MMLExercise {
+  if (lang !== "es") return exercise;
+  const base = {
+    ...exercise,
+    question: exercise.questionEs ?? exercise.question,
+    hint: exercise.hintEs ?? exercise.hint,
+    explanation: exercise.explanationEs ?? exercise.explanation,
+  };
+  if (exercise.type === "multiple-choice" && exercise.optionsEs) {
+    return { ...base, options: exercise.optionsEs } as MMLExercise;
+  }
+  return base as MMLExercise;
+}
+
+function ExerciseBlock({ exercise, onCorrect, lang }: ExerciseBlockProps) {
+  const localized = localizeExercise(exercise, lang);
+  switch (localized.type) {
     case "multiple-choice":
-      return <MultipleChoice exercise={exercise} onCorrect={onCorrect} />;
+      return <MultipleChoice exercise={localized} onCorrect={onCorrect} />;
     case "numeric-input":
-      return <NumericInput exercise={exercise} onCorrect={onCorrect} />;
+      return <NumericInput exercise={localized} onCorrect={onCorrect} />;
     case "matrix-input":
-      return <MatrixInput exercise={exercise} onCorrect={onCorrect} />;
+      return <MatrixInput exercise={localized} onCorrect={onCorrect} />;
     case "vector-input":
-      return <VectorInput exercise={exercise} onCorrect={onCorrect} />;
+      return <VectorInput exercise={localized} onCorrect={onCorrect} />;
     case "slider-explore":
-      return <SliderExplore exercise={exercise} onCorrect={onCorrect} />;
+      return <SliderExplore exercise={localized} onCorrect={onCorrect} />;
     case "drag-to-match":
-      return <DragToMatch exercise={exercise} onCorrect={onCorrect} />;
+      return <DragToMatch exercise={localized} onCorrect={onCorrect} />;
     default:
       return null;
   }
@@ -186,6 +211,8 @@ export interface MMLLessonRendererProps {
 
 export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
   const { celebration, celebrate, onComplete } = useCelebration();
+  const { language } = useLanguage();
+  const lang = language === "es" ? "es" : "en";
   const [completedIndexes, setCompletedIndexes] = useState<Set<number>>(
     new Set()
   );
@@ -207,15 +234,23 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
   // it's kept in state for future progress features.
   void completedIndexes;
 
+  const title = pickLang(lang, lesson.titleEs, lesson.title);
+  const chapter = pickLang(lang, lesson.chapterEs, lesson.chapter);
+  const content = pickLang(lang, lesson.contentEs, lesson.content);
+  const keyTakeaways = pickLang(lang, lesson.keyTakeawaysEs, lesson.keyTakeaways);
+  const chapterPrefix = lang === "es" ? "Cap." : "Ch.";
+  const exerciseHeading = lang === "es" ? "Ejercicios" : "Exercises";
+  const takeawaysHeading = lang === "es" ? "Puntos Clave" : "Key Takeaways";
+
   return (
     <div className={styles.lessonContent}>
       <div className={styles.chapterBadge}>
-        Ch. {lesson.chapterNumber} — {lesson.chapter}
+        {chapterPrefix} {lesson.chapterNumber} — {chapter}
       </div>
 
-      <h1 className={styles.lessonTitle}>{lesson.title}</h1>
+      <h1 className={styles.lessonTitle}>{title}</h1>
 
-      {lesson.content.map((paragraph, i) => (
+      {content.map((paragraph, i) => (
         <MathContent
           key={`content-${i}`}
           text={paragraph}
@@ -225,27 +260,28 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
       ))}
 
       {lesson.visualizations.map((viz, i) => (
-        <VisualizationBlock key={`viz-${i}`} viz={viz} />
+        <VisualizationBlock key={`viz-${i}`} viz={viz} lang={lang} />
       ))}
 
       {lesson.exercises.length > 0 && (
         <section className={styles.exerciseSection}>
-          <h2 className={styles.exerciseSectionTitle}>Exercises</h2>
+          <h2 className={styles.exerciseSectionTitle}>{exerciseHeading}</h2>
           {lesson.exercises.map((exercise, i) => (
             <ExerciseBlock
               key={`exercise-${i}`}
               exercise={exercise}
               onCorrect={() => handleExerciseCorrect(i)}
+              lang={lang}
             />
           ))}
         </section>
       )}
 
-      {lesson.keyTakeaways && lesson.keyTakeaways.length > 0 && (
+      {keyTakeaways && keyTakeaways.length > 0 && (
         <aside className={styles.takeaways}>
-          <div className={styles.takeawaysTitle}>Key Takeaways</div>
+          <div className={styles.takeawaysTitle}>{takeawaysHeading}</div>
           <ul className={styles.takeawaysList}>
-            {lesson.keyTakeaways.map((takeaway, i) => (
+            {keyTakeaways.map((takeaway, i) => (
               <li key={`takeaway-${i}`} className={styles.takeawayItem}>
                 <span className={styles.takeawayBullet}>•</span>
                 <MathContent text={takeaway} as="span" />

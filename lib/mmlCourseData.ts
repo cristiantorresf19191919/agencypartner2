@@ -18,7 +18,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Why Math for Machine Learning",
+      titleEs: "Por qué necesitamos matemáticas para Machine Learning",
       chapter: "Introduction and Motivation",
+      chapterEs: "Introducción y motivación",
       chapterNumber: 1,
       content: [
         "Machine learning is, at its core, a **mathematical conversation with data**. When you train a neural network, fit a regression model, or cluster a dataset, you are really asking a question in the language of linear algebra, calculus, probability, and optimization. Without that language, the field collapses into a pile of opaque APIs: you can call `model.fit(X, y)` but you cannot reason about *why* it works, *when* it breaks, or *how* to fix it.",
@@ -29,11 +31,22 @@ function buildMMLLessons(): MMLLesson[] {
         "**Worked example — one step of gradient descent:** For loss $L(w) = w^2$, the derivative is $L'(w) = 2w$. Starting at $w_0 = 3$ with learning rate $\\eta = 0.1$, one step gives $w_1 = w_0 - \\eta L'(w_0) = 3 - 0.1 \\cdot 6 = 2.4$. Repeat: $w_2 = 2.4 - 0.1 \\cdot 4.8 = 1.92$. The parameter is marching toward the minimum at $w = 0$ — calculus in action.",
         "A final word on mindset. The math here is not a gatekeeping ritual — it is a **toolbox**. You do not need to memorize proofs to use the tools, but you do need enough intuition to pick the right one. Throughout this course we pair each concept with a visualization, an interactive exercise, and a concrete ML connection, so the symbols stay tethered to the problems they solve.",
       ],
+      contentEs: [
+        "El machine learning es, en esencia, una **conversación matemática con datos**. Cuando entrenas una red neuronal, ajustas un modelo de regresión o agrupas un conjunto de datos, en realidad estás formulando una pregunta en el lenguaje del álgebra lineal, el cálculo, la probabilidad y la optimización. Sin ese lenguaje, el campo se reduce a un montón de APIs opacas: puedes llamar a `model.fit(X, y)`, pero no puedes razonar sobre *por qué* funciona, *cuándo* se rompe o *cómo* arreglarlo.",
+        "Los cuatro pilares matemáticos que encontrarás en este curso se corresponden casi uno a uno con ideas de ML. El **álgebra lineal** nos da vectores y matrices — la representación natural de características, pesos e imágenes. La **geometría analítica** equipa a esos vectores con distancia, ángulo y proyección, que son la base de la similitud, la pérdida y la regularización. Las **descomposiciones matriciales** (autovalores, SVD, PCA) abren la reducción de dimensión y la estabilidad numérica. Finalmente, el **cálculo vectorial** convierte el aprendizaje en un problema de optimización: cada paso del descenso por gradiente es una derivada direccional de una función de pérdida.",
+        "Considera un ejemplo simple: la regresión lineal. El modelo es $\\hat{y} = \\mathbf{w}^\\top \\mathbf{x} + b$. Solo para escribir esto necesitamos **vectores** ($\\mathbf{x}$, $\\mathbf{w}$), el **producto punto** ($\\mathbf{w}^\\top \\mathbf{x}$), una **función de pérdida** (error cuadrático) y una forma de **minimizarla** (ya sea una solución cerrada mediante la pseudo-inversa o un método iterativo del gradiente). Cada uno de esos ingredientes es un capítulo de este libro.",
+        "La probabilidad y la estadística merecen una mención especial. El machine learning es en gran medida el arte de tomar decisiones bajo incertidumbre: no vemos el verdadero proceso generador de datos, solo muestras. Conceptos como *variables aleatorias*, *verosimilitud*, *regla de Bayes* y *pérdida esperada* son los que distinguen a un aprendiz riguroso de una máquina de ajuste de curvas. Capítulos posteriores introducirán estas herramientas para construir regresión lineal, PCA, mezclas gaussianas y SVM desde primeros principios.",
+        "**Ejemplo trabajado — una predicción de regresión lineal:** Supón $\\mathbf{w} = (2, -1)$, $b = 0.5$ y un único punto $\\mathbf{x} = (3, 4)$. La predicción es $\\hat{y} = \\mathbf{w}^\\top \\mathbf{x} + b = 2\\cdot 3 + (-1)\\cdot 4 + 0.5 = 6 - 4 + 0.5 = 2.5$. Cada pieza — el producto punto, la suma, la elección de $\\mathbf{w}$ — proviene del álgebra lineal y la optimización trabajando juntas.",
+        "**Ejemplo trabajado — un paso de descenso por gradiente:** Para la pérdida $L(w) = w^2$, la derivada es $L'(w) = 2w$. Partiendo de $w_0 = 3$ con tasa de aprendizaje $\\eta = 0.1$, un paso da $w_1 = w_0 - \\eta L'(w_0) = 3 - 0.1 \\cdot 6 = 2.4$. Repite: $w_2 = 2.4 - 0.1 \\cdot 4.8 = 1.92$. El parámetro avanza hacia el mínimo en $w = 0$ — cálculo en acción.",
+        "Una palabra final sobre la actitud. Las matemáticas aquí no son un ritual de guardabarreras — son una **caja de herramientas**. No necesitas memorizar demostraciones para usar las herramientas, pero sí necesitas suficiente intuición para escoger la correcta. A lo largo del curso emparejamos cada concepto con una visualización, un ejercicio interactivo y una conexión concreta con ML, para que los símbolos nunca se desliguen de los problemas que resuelven.",
+      ],
       visualizations: [
         {
           type: "function-plot",
           title: "A loss landscape in one dimension",
+          titleEs: "Un paisaje de pérdida en una dimensión",
           description: "Learning is optimization. Here the curve $L(w) = w^2$ shows a convex loss; training moves the parameter $w$ toward the minimum at $w = 0$.",
+          descriptionEs: "Aprender es optimizar. Aquí la curva $L(w) = w^2$ muestra una pérdida convexa; el entrenamiento mueve el parámetro $w$ hacia el mínimo en $w = 0$.",
           config: {
             fn: "x^2",
             domain: [-3, 3],
@@ -43,7 +56,9 @@ function buildMMLLessons(): MMLLesson[] {
         {
           type: "vector-2d",
           title: "Features as vectors",
+          titleEs: "Características como vectores",
           description: "A data point with two features is just a 2D vector. ML algorithms manipulate millions of these at once.",
+          descriptionEs: "Un punto de datos con dos características es simplemente un vector 2D. Los algoritmos de ML manipulan millones de estos a la vez.",
           config: {
             vectors: [[3, 2], [1, -1], [-2, 2]],
             labels: ["x₁", "x₂", "x₃"],
@@ -55,19 +70,29 @@ function buildMMLLessons(): MMLLesson[] {
         {
           type: "multiple-choice",
           question: "Which mathematical area most directly describes how a neural network updates its weights during training?",
+          questionEs: "¿Qué área matemática describe más directamente cómo una red neuronal actualiza sus pesos durante el entrenamiento?",
           options: [
             "Graph theory",
             "Vector calculus (gradients and partial derivatives)",
             "Number theory",
             "Set theory only",
           ],
+          optionsEs: [
+            "Teoría de grafos",
+            "Cálculo vectorial (gradientes y derivadas parciales)",
+            "Teoría de números",
+            "Solo teoría de conjuntos",
+          ],
           correctIndex: 1,
           hint: "Training minimizes a loss function by taking small steps in a direction that reduces it.",
+          hintEs: "El entrenamiento minimiza una función de pérdida dando pequeños pasos en una dirección que la reduce.",
           explanation: "Gradient descent relies on **vector calculus**: the gradient $\\nabla L$ tells us the direction of steepest ascent, and we step in the opposite direction. Linear algebra represents the weights, but the *update rule itself* is calculus.",
+          explanationEs: "El descenso por gradiente se apoya en el **cálculo vectorial**: el gradiente $\\nabla L$ nos dice la dirección de mayor ascenso, y nos movemos en la dirección opuesta. El álgebra lineal representa los pesos, pero la *regla de actualización en sí* es cálculo.",
         },
         {
           type: "drag-to-match",
           question: "Match each ML idea to its underlying mathematical pillar.",
+          questionEs: "Empareja cada idea de ML con su pilar matemático subyacente.",
           leftItems: [
             "PCA (finding principal directions)",
             "Gradient descent",
@@ -87,26 +112,42 @@ function buildMMLLessons(): MMLLesson[] {
             [3, 3],
           ],
           hint: "Each pillar shows up in a specific algorithmic role.",
+          hintEs: "Cada pilar aparece en un rol algorítmico específico.",
           explanation: "PCA diagonalizes a covariance matrix (decomposition), gradient descent differentiates a loss (calculus), Bayesian methods reason with distributions (probability), and feature vectors live in linear-algebra land.",
+          explanationEs: "PCA diagonaliza una matriz de covarianza (descomposición), el descenso por gradiente deriva una pérdida (cálculo), los métodos bayesianos razonan con distribuciones (probabilidad) y los vectores de características viven en el reino del álgebra lineal.",
         },
         {
           type: "multiple-choice",
           question: "Why is it not enough to 'just use libraries' without understanding the math?",
+          questionEs: "¿Por qué no basta con 'simplemente usar librerías' sin entender las matemáticas?",
           options: [
             "Libraries are often incorrect.",
             "Without math you cannot diagnose failures, pick appropriate models, or adapt methods to new problems.",
             "Math is required to run the code at all.",
             "There is no real reason — libraries are sufficient.",
           ],
+          optionsEs: [
+            "Las librerías suelen ser incorrectas.",
+            "Sin matemáticas no puedes diagnosticar fallos, elegir modelos adecuados ni adaptar métodos a problemas nuevos.",
+            "Las matemáticas son necesarias para ejecutar el código.",
+            "No hay razón real — las librerías son suficientes.",
+          ],
           correctIndex: 1,
           hint: "Think about what happens when your model underfits, diverges, or gives strange predictions.",
+          hintEs: "Piensa en qué pasa cuando tu modelo subajusta, diverge o da predicciones extrañas.",
           explanation: "Libraries are excellent at *executing* known recipes. Mathematical literacy is what lets you **debug, extend, and choose between** them — exactly the skills separating practitioners from power users.",
+          explanationEs: "Las librerías son excelentes *ejecutando* recetas conocidas. La alfabetización matemática es lo que te permite **depurar, extender y elegir** entre ellas — exactamente las habilidades que distinguen a un practicante de un usuario avanzado.",
         },
       ],
       keyTakeaways: [
         "ML rests on four pillars: linear algebra, analytic geometry, matrix decompositions, and vector calculus, plus probability.",
         "Every ML algorithm can be traced back to concrete mathematical objects — vectors, matrices, functions, and distributions.",
         "Math is a toolbox for diagnosis and design, not just theory for its own sake.",
+      ],
+      keyTakeawaysEs: [
+        "El ML descansa sobre cuatro pilares: álgebra lineal, geometría analítica, descomposiciones matriciales y cálculo vectorial, más probabilidad.",
+        "Todo algoritmo de ML puede rastrearse hasta objetos matemáticos concretos: vectores, matrices, funciones y distribuciones.",
+        "Las matemáticas son una caja de herramientas para diagnóstico y diseño, no teoría por la teoría.",
       ],
     },
 
@@ -115,7 +156,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Systems of Linear Equations",
+      titleEs: "Sistemas de Ecuaciones Lineales",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "A **system of linear equations** is a collection of equations in which each unknown appears only to the first power and is never multiplied by another unknown. A familiar example is $2x + 3y = 7$ and $x - y = 1$. The word *linear* means each equation traces out a flat object: a line in two dimensions, a plane in three, and a **hyperplane** in higher dimensions.",
@@ -189,6 +232,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Geometrically, each equation is a hyperplane; solutions are their intersection.",
         "Linear regression and many ML methods reduce to solving (or approximating) a linear system.",
       ],
+      keyTakeawaysEs: [
+        "Un sistema lineal $A\mathbf{x}=\mathbf{b}$ tiene 0, 1 o infinitas soluciones.",
+        "Geométricamente, cada ecuación es un hiperplano; las soluciones son su intersección.",
+        "La regresión lineal y muchos métodos de ML se reducen a resolver (o aproximar) un sistema lineal.",
+      ],
     },
 
     // =========================================================================
@@ -196,7 +244,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Matrices",
+      titleEs: "Matrices",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "A **matrix** is a rectangular array of numbers arranged into rows and columns. We denote an $m \\times n$ matrix as $A \\in \\mathbb{R}^{m \\times n}$, where $m$ is the number of rows and $n$ is the number of columns. The entry in row $i$ and column $j$ is written $a_{ij}$. In machine learning, a dataset with $m$ examples and $n$ features is usually stored as such a matrix — often called the **design matrix**.",
@@ -281,6 +331,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Matrix multiplication is associative and distributive but **not commutative**.",
         "Special matrices — identity, diagonal, symmetric, orthogonal — each have properties that simplify ML algorithms.",
       ],
+      keyTakeawaysEs: [
+        "Una matriz es a la vez un contenedor de datos y una transformación lineal.",
+        "La multiplicación de matrices es asociativa y distributiva pero **no conmutativa**.",
+        "Las matrices especiales —identidad, diagonal, simétrica, ortogonal— tienen propiedades que simplifican los algoritmos de ML.",
+      ],
     },
 
     // =========================================================================
@@ -288,7 +343,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Solving Systems of Linear Equations",
+      titleEs: "Resolución de Sistemas de Ecuaciones Lineales",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "Now that we have matrices, we can formalize how to *solve* $A\\mathbf{x} = \\mathbf{b}$. The canonical algorithm is **Gaussian elimination**. The idea: apply a sequence of **elementary row operations** to reduce $A$ (augmented with $\\mathbf{b}$) to an upper-triangular form called **row-echelon form**, then back-substitute. The three legal operations are swapping two rows, scaling a row by a non-zero constant, and adding a multiple of one row to another.",
@@ -356,6 +413,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Solutions have the form $\\mathbf{x}_p + \\mathbf{x}_h$: a particular solution plus the null space.",
         "Real solvers use LU or QR decompositions for numerical stability and efficiency.",
       ],
+      keyTakeawaysEs: [
+        "La eliminación gaussiana + sustitución hacia atrás resuelve cualquier sistema lineal o demuestra que es inconsistente.",
+        "Las soluciones tienen la forma $\mathbf{x}_p + \mathbf{x}_h$: una solución particular más el espacio nulo.",
+        "Los resolvedores reales usan descomposiciones LU o QR por estabilidad numérica y eficiencia.",
+      ],
     },
 
     // =========================================================================
@@ -363,7 +425,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Vector Spaces",
+      titleEs: "Espacios Vectoriales",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "So far we have worked with concrete vectors in $\\mathbb{R}^n$. The true power of linear algebra, however, comes from abstracting: a **vector space** over the real numbers is any set $V$ equipped with an addition and a scalar multiplication that satisfy eight familiar axioms (associativity, commutativity of addition, existence of a zero vector, existence of additive inverses, compatibility of scalar multiplication, two distributive laws, and the identity $1 \\cdot \\mathbf{v} = \\mathbf{v}$).",
@@ -449,6 +513,11 @@ function buildMMLLessons(): MMLLesson[] {
         "A subspace must contain $\\mathbf{0}$ and be closed under the operations.",
         "Every matrix has a column space and a null space; their dimensions sum to $n$ (rank-nullity).",
       ],
+      keyTakeawaysEs: [
+        "Un espacio vectorial es todo conjunto con suma y multiplicación escalar que cumple 8 axiomas.",
+        "Un subespacio debe contener $\mathbf{0}$ y ser cerrado bajo las operaciones.",
+        "Toda matriz tiene un espacio columna y un espacio nulo; sus dimensiones suman $n$ (rango-nulidad).",
+      ],
     },
 
     // =========================================================================
@@ -456,7 +525,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Linear Independence",
+      titleEs: "Independencia Lineal",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "A set of vectors $\\{\\mathbf{v}_1, \\mathbf{v}_2, \\dots, \\mathbf{v}_k\\}$ is **linearly independent** if the only way to form the zero vector as $\\lambda_1 \\mathbf{v}_1 + \\lambda_2 \\mathbf{v}_2 + \\dots + \\lambda_k \\mathbf{v}_k = \\mathbf{0}$ is with all $\\lambda_i = 0$. If any non-trivial combination gives zero, the vectors are **linearly dependent** and (at least) one is a redundant combination of the others.",
@@ -542,6 +613,11 @@ function buildMMLLessons(): MMLLesson[] {
         "You can test independence by counting pivots of the matrix whose columns are the vectors.",
         "Dependent features cause multicollinearity and non-unique regression solutions.",
       ],
+      keyTakeawaysEs: [
+        "Los vectores son independientes sii la única combinación que da $\mathbf{0}$ es la trivial.",
+        "Puedes comprobar independencia contando los pivotes de la matriz cuyas columnas son los vectores.",
+        "Las características dependientes causan multicolinealidad y soluciones de regresión no únicas.",
+      ],
     },
 
     // =========================================================================
@@ -549,7 +625,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Basis and Rank",
+      titleEs: "Base y Rango",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "A **basis** of a vector space $V$ is a set of vectors that is both **linearly independent** and **spanning** — every vector in $V$ can be written as a unique linear combination of basis elements. Every basis of a given finite-dimensional space has the same number of vectors, and that number is the **dimension** of the space. This is remarkable: dimension does not depend on which basis you chose, only on the space itself.",
@@ -619,6 +697,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The rank of a matrix equals the dimension of its column (or row) space.",
         "Rank governs uniqueness of solutions in regression and the effective capacity of learned representations.",
       ],
+      keyTakeawaysEs: [
+        "Una base es un conjunto independiente maximal; su tamaño es la dimensión.",
+        "El rango de una matriz es la dimensión de su espacio columna (o fila).",
+        "El rango gobierna la unicidad de soluciones en regresión y la capacidad efectiva de las representaciones aprendidas.",
+      ],
     },
 
     // =========================================================================
@@ -626,7 +709,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Linear Mappings",
+      titleEs: "Aplicaciones Lineales",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "A **linear mapping** (or linear transformation) between vector spaces $V$ and $W$ is a function $T : V \\to W$ that respects both vector operations: for all $\\mathbf{u}, \\mathbf{v} \\in V$ and scalars $\\lambda$, $T(\\mathbf{u} + \\mathbf{v}) = T(\\mathbf{u}) + T(\\mathbf{v})$ and $T(\\lambda \\mathbf{v}) = \\lambda T(\\mathbf{v})$. Geometrically, linear maps send lines through the origin to lines through the origin; parallel lines remain parallel; the origin stays fixed.",
@@ -707,6 +792,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Every linear map has a kernel and an image; their dimensions sum to the domain dimension.",
         "Similar matrices $A' = P^{-1}AP$ describe the same map in different bases and share invariants like rank and eigenvalues.",
       ],
+      keyTakeawaysEs: [
+        "Las aplicaciones lineales preservan la suma de vectores y la multiplicación escalar; se representan mediante matrices.",
+        "Toda aplicación lineal tiene un núcleo y una imagen; sus dimensiones suman la dimensión del dominio.",
+        "Las matrices semejantes $A' = P^{-1}AP$ describen el mismo mapa en distintas bases y comparten invariantes como rango y autovalores.",
+      ],
     },
 
     // =========================================================================
@@ -714,7 +804,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Affine Spaces",
+      titleEs: "Espacios Afines",
       chapter: "Linear Algebra",
+      chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
         "An **affine space** is, roughly, a vector space that has forgotten where its origin is. Formally, an affine subspace of a vector space $V$ is a set of the form $\\mathbf{x}_0 + U = \\{\\mathbf{x}_0 + \\mathbf{u} : \\mathbf{u} \\in U\\}$, where $\\mathbf{x}_0$ is any point and $U$ is a linear subspace. When $\\mathbf{x}_0 = \\mathbf{0}$, the affine subspace coincides with $U$ itself; otherwise, it is a **translate** of $U$ that need not pass through the origin.",
@@ -794,6 +886,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Affine maps have the form $A\\mathbf{x} + \\mathbf{t}$ — linear plus translation.",
         "Linear regression with bias, neural-net layers, and SVM boundaries are all affine objects.",
       ],
+      keyTakeawaysEs: [
+        "Un subespacio afín es un subespacio lineal trasladado: $\mathbf{x}_0 + U$.",
+        "Las aplicaciones afines tienen la forma $A\mathbf{x} + \mathbf{t}$ — lineal más traslación.",
+        "La regresión lineal con sesgo, las capas de redes neuronales y las fronteras de SVM son todos objetos afines.",
+      ],
     },
 
     // =========================================================================
@@ -801,7 +898,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Norms",
+      titleEs: "Normas",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "A **norm** on a vector space $V$ is a function $\\|\\cdot\\| : V \\to \\mathbb{R}_{\\geq 0}$ that assigns each vector a non-negative length. Formally, it must satisfy three axioms: **absolute homogeneity** ($\\|\\lambda \\mathbf{v}\\| = |\\lambda| \\cdot \\|\\mathbf{v}\\|$), the **triangle inequality** ($\\|\\mathbf{u} + \\mathbf{v}\\| \\leq \\|\\mathbf{u}\\| + \\|\\mathbf{v}\\|$), and **positive definiteness** ($\\|\\mathbf{v}\\| = 0 \\iff \\mathbf{v} = \\mathbf{0}$).",
@@ -866,6 +965,11 @@ function buildMMLLessons(): MMLLesson[] {
         "$L_1$, $L_2$, and $L_\\infty$ are the workhorses; their unit balls have distinctive shapes.",
         "Regularization picks a norm, and that choice changes the geometry of solutions (sparse vs. smooth).",
       ],
+      keyTakeawaysEs: [
+        "Una norma asigna una longitud no negativa que cumple homogeneidad, desigualdad triangular y definida positiva.",
+        "$L_1$, $L_2$ y $L_\infty$ son las normas más usadas; sus bolas unidad tienen formas distintivas.",
+        "La regularización elige una norma, y esa elección cambia la geometría de las soluciones (dispersa vs. suave).",
+      ],
     },
 
     // =========================================================================
@@ -873,7 +977,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Inner Products",
+      titleEs: "Productos Internos",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "An **inner product** $\\langle \\cdot, \\cdot \\rangle : V \\times V \\to \\mathbb{R}$ is a function that eats two vectors and returns a scalar, satisfying three properties: **symmetry** ($\\langle \\mathbf{u}, \\mathbf{v}\\rangle = \\langle \\mathbf{v}, \\mathbf{u}\\rangle$), **linearity** in each argument, and **positive definiteness** ($\\langle \\mathbf{v}, \\mathbf{v}\\rangle \\geq 0$, with equality iff $\\mathbf{v} = \\mathbf{0}$). The most familiar example is the **dot product**: $\\langle \\mathbf{u}, \\mathbf{v}\\rangle = \\mathbf{u}^\\top \\mathbf{v} = \\sum_i u_i v_i$.",
@@ -946,6 +1052,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Every inner product induces a norm via $\\|\\mathbf{v}\\| = \\sqrt{\\langle \\mathbf{v}, \\mathbf{v}\\rangle}$.",
         "Cosine similarity and kernel methods in ML are direct applications of inner products.",
       ],
+      keyTakeawaysEs: [
+        "Un producto interno generaliza el producto punto: simétrico, bilineal, definido positivo.",
+        "Todo producto interno induce una norma vía $\|\mathbf{v}\| = \sqrt{\langle \mathbf{v}, \mathbf{v}\rangle}$.",
+        "La similitud del coseno y los métodos de kernel en ML son aplicaciones directas de los productos internos.",
+      ],
     },
 
     // =========================================================================
@@ -953,7 +1064,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Lengths and Distances",
+      titleEs: "Longitudes y Distancias",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "Once we have a norm, we automatically get a **distance** between any two points: $d(\\mathbf{u}, \\mathbf{v}) = \\|\\mathbf{u} - \\mathbf{v}\\|$. The distance inherits all the good behavior of the norm — non-negativity, symmetry, the triangle inequality — so every normed space is also a **metric space**. And because every inner product induces a norm, every inner-product space automatically comes with a notion of distance.",
@@ -1018,6 +1131,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Different metrics (Euclidean, Manhattan, Mahalanobis) encode different geometries.",
         "High-dimensional and unstandardized data require careful distance choice and preprocessing.",
       ],
+      keyTakeawaysEs: [
+        "La distancia es inducida por una norma: $d(\mathbf{u}, \mathbf{v}) = \|\mathbf{u} - \mathbf{v}\|$.",
+        "Distintas métricas (euclidiana, Manhattan, Mahalanobis) codifican geometrías distintas.",
+        "Datos de alta dimensión o sin estandarizar exigen elegir cuidadosamente la distancia y preprocesar.",
+      ],
     },
 
     // =========================================================================
@@ -1025,7 +1143,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Angles and Orthogonality",
+      titleEs: "Ángulos y Ortogonalidad",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "From an inner product we can extract the **angle** between two non-zero vectors via $\\cos\\theta = \\frac{\\langle \\mathbf{u}, \\mathbf{v}\\rangle}{\\|\\mathbf{u}\\| \\cdot \\|\\mathbf{v}\\|}$. Cauchy–Schwarz guarantees this ratio lies in $[-1, 1]$, so $\\theta \\in [0, \\pi]$ is well-defined. When $\\theta = 0$ the vectors are parallel and pointing the same way; when $\\theta = \\pi$ they are anti-parallel; when $\\theta = \\pi/2$ they are **orthogonal**.",
@@ -1101,6 +1221,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Orthogonal vectors have zero inner product; orthogonal matrices preserve lengths and angles.",
         "Cosine similarity and attention mechanisms use this geometry at the heart of modern ML.",
       ],
+      keyTakeawaysEs: [
+        "$\cos\theta = \langle \mathbf{u}, \mathbf{v}\rangle / (\|\mathbf{u}\|\|\mathbf{v}\|)$ define el ángulo entre vectores.",
+        "Los vectores ortogonales tienen producto interno cero; las matrices ortogonales preservan longitudes y ángulos.",
+        "La similitud del coseno y los mecanismos de atención usan esta geometría en el corazón del ML moderno.",
+      ],
     },
 
     // =========================================================================
@@ -1108,7 +1233,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Orthonormal Basis",
+      titleEs: "Base Ortonormal",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "A set of vectors $\\{\\mathbf{b}_1, \\dots, \\mathbf{b}_n\\}$ is **orthonormal** if each has unit length ($\\|\\mathbf{b}_i\\| = 1$) and any two are orthogonal ($\\langle \\mathbf{b}_i, \\mathbf{b}_j\\rangle = 0$ for $i \\neq j$). Compactly, $\\langle \\mathbf{b}_i, \\mathbf{b}_j\\rangle = \\delta_{ij}$ (the Kronecker delta). An **orthonormal basis** is a basis that happens to be orthonormal — the best possible coordinate system.",
@@ -1182,6 +1309,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Gram–Schmidt constructs an ONB from any basis and underlies the QR decomposition.",
         "Orthogonal matrices preserve inner products and are numerically stable.",
       ],
+      keyTakeawaysEs: [
+        "Ortonormal significa longitud unidad y ortogonales entre sí — el sistema de coordenadas más amigable.",
+        "Gram–Schmidt construye una base ortonormal a partir de cualquier base y fundamenta la descomposición QR.",
+        "Las matrices ortogonales preservan productos internos y son numéricamente estables.",
+      ],
     },
 
     // =========================================================================
@@ -1189,7 +1321,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Orthogonal Complement",
+      titleEs: "Complemento Ortogonal",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "Given a subspace $U$ of an inner-product space $V$, its **orthogonal complement** is the set $U^\\perp = \\{\\mathbf{v} \\in V : \\langle \\mathbf{v}, \\mathbf{u}\\rangle = 0 \\text{ for all } \\mathbf{u} \\in U\\}$ — every vector that is orthogonal to every vector in $U$. This is itself a subspace, and it is the 'leftover' directions that $U$ misses.",
@@ -1259,6 +1393,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Every vector splits uniquely as $\\mathbf{v}_U + \\mathbf{v}_{U^\\perp}$, and dimensions add.",
         "Row space and null space are orthogonal complements — the geometric heart of least squares.",
       ],
+      keyTakeawaysEs: [
+        "$U^\perp$ es el conjunto de vectores ortogonales a todo elemento de $U$; es a su vez un subespacio.",
+        "Todo vector se descompone de forma única como $\mathbf{v}_U + \mathbf{v}_{U^\perp}$, y las dimensiones se suman.",
+        "El espacio fila y el espacio nulo son complementos ortogonales — el corazón geométrico de mínimos cuadrados.",
+      ],
     },
 
     // =========================================================================
@@ -1266,7 +1405,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Orthogonal Projections",
+      titleEs: "Proyecciones Ortogonales",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "An **orthogonal projection** onto a subspace $U$ is the linear map $\\pi_U : V \\to V$ that sends each vector $\\mathbf{v}$ to its unique best approximation by an element of $U$ — the vector $\\mathbf{u}^* \\in U$ minimizing $\\|\\mathbf{v} - \\mathbf{u}\\|$. By the orthogonal decomposition theorem, this $\\mathbf{u}^*$ is exactly the $U$-component of $\\mathbf{v}$.",
@@ -1336,6 +1477,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Projection matrices are symmetric and idempotent: $P^\\top = P$ and $P^2 = P$.",
         "Least squares, PCA, and many ML techniques are orthogonal projections.",
       ],
+      keyTakeawaysEs: [
+        "$\pi_U(\mathbf{v})$ es el punto de $U$ más cercano a $\mathbf{v}$; el residual está en $U^\perp$.",
+        "Las matrices de proyección son simétricas e idempotentes: $P^\top = P$ y $P^2 = P$.",
+        "Mínimos cuadrados, PCA y muchas técnicas de ML son proyecciones ortogonales.",
+      ],
     },
 
     // =========================================================================
@@ -1343,7 +1489,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Rotations",
+      titleEs: "Rotaciones",
       chapter: "Analytic Geometry",
+      chapterEs: "Geometría Analítica",
       chapterNumber: 3,
       content: [
         "A **rotation** is a linear transformation that preserves lengths, angles, and orientation. In $\\mathbb{R}^2$, rotation by angle $\\theta$ counterclockwise is the matrix $R_\\theta = \\begin{pmatrix}\\cos\\theta & -\\sin\\theta \\\\ \\sin\\theta & \\cos\\theta\\end{pmatrix}$. Its columns are unit vectors 90° apart; it satisfies $R^\\top R = I$ and $\\det R = +1$ (the $+1$ is what distinguishes rotations from reflections, which have $\\det = -1$).",
@@ -1424,6 +1572,11 @@ function buildMMLLessons(): MMLLesson[] {
         "2D rotations commute and form $SO(2)$; 3D rotations do not commute.",
         "Rotations appear in PCA, RoPE embeddings, and normalizing flows in modern ML.",
       ],
+      keyTakeawaysEs: [
+        "Una rotación es una matriz ortogonal con $\det = +1$ — preserva longitudes, ángulos y orientación.",
+        "Las rotaciones 2D conmutan y forman $SO(2)$; las rotaciones 3D no conmutan.",
+        "Las rotaciones aparecen en PCA, embeddings RoPE y normalizing flows del ML moderno.",
+      ],
     },
 
     // =========================================================================
@@ -1431,7 +1584,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Determinant and Trace",
+      titleEs: "Determinante y Traza",
       chapter: "Matrix Decompositions",
+      chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
         "The **determinant** $\\det(A)$ of a square matrix is a single scalar that captures the **signed volume scaling factor** of the linear map $\\mathbf{x} \\mapsto A\\mathbf{x}$. If $\\det(A) = 3$, the map triples areas (in 2D) or volumes (in 3D). If $\\det(A) < 0$, it reverses orientation (like a reflection). If $\\det(A) = 0$, the map collapses space — volumes become zero because the image is lower-dimensional.",
@@ -1505,6 +1660,11 @@ function buildMMLLessons(): MMLLesson[] {
         "$\\text{tr}(A)$ sums the diagonal and is cyclically invariant: $\\text{tr}(AB) = \\text{tr}(BA)$.",
         "Determinant = product of eigenvalues; trace = sum of eigenvalues.",
       ],
+      keyTakeawaysEs: [
+        "$\det(A)$ mide el escalado de volumen con signo; $A$ es invertible sii $\det(A) \neq 0$.",
+        "$\text{tr}(A)$ suma la diagonal y es invariante cíclica: $\text{tr}(AB) = \text{tr}(BA)$.",
+        "Determinante = producto de autovalores; traza = suma de autovalores.",
+      ],
     },
 
     // =========================================================================
@@ -1512,7 +1672,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Eigenvalues and Eigenvectors",
+      titleEs: "Autovalores y Autovectores",
       chapter: "Matrix Decompositions",
+      chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
         "An **eigenvector** of a square matrix $A$ is a non-zero vector $\\mathbf{v}$ that $A$ stretches without rotating: $A\\mathbf{v} = \\lambda \\mathbf{v}$ for some scalar $\\lambda$, the corresponding **eigenvalue**. Eigenvectors are the *invariant directions* of the map: every other vector gets bent by $A$, but these lie along axes that $A$ merely scales.",
@@ -1585,6 +1747,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The characteristic polynomial $\\det(A - \\lambda I) = 0$ finds eigenvalues.",
         "Symmetric matrices diagonalize in an orthonormal basis — the core of PCA and spectral methods.",
       ],
+      keyTakeawaysEs: [
+        "Los autovectores son direcciones invariantes de un mapa lineal; los autovalores dicen cuánto se escalan.",
+        "El polinomio característico $\det(A - \lambda I) = 0$ encuentra los autovalores.",
+        "Las matrices simétricas se diagonalizan en una base ortonormal — el núcleo del PCA y los métodos espectrales.",
+      ],
     },
 
     // =========================================================================
@@ -1592,7 +1759,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Cholesky Decomposition",
+      titleEs: "Descomposición de Cholesky",
       chapter: "Matrix Decompositions",
+      chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
         "The **Cholesky decomposition** factors a symmetric positive definite (SPD) matrix $A$ as $A = LL^\\top$, where $L$ is lower triangular with positive diagonal entries. It is essentially the 'square root' of an SPD matrix — analogous to writing a positive number as $x = (\\sqrt{x})^2$.",
@@ -1663,6 +1832,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Solves systems in $O(n^3/3)$ — half the cost of LU — and tests positive definiteness as a side effect.",
         "Enables fast Gaussian sampling and log-determinant computation in Bayesian ML.",
       ],
+      keyTakeawaysEs: [
+        "Cholesky: $A = LL^\top$ para $A$ simétrica definida positiva; $L$ es triangular inferior.",
+        "Resuelve sistemas en $O(n^3/3)$ — la mitad del coste de LU — y prueba definida positiva como efecto secundario.",
+        "Permite muestreo gaussiano rápido y cálculo del logaritmo del determinante en ML bayesiano.",
+      ],
     },
 
     // =========================================================================
@@ -1670,7 +1844,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Eigendecomposition and Diagonalization",
+      titleEs: "Descomposición Espectral y Diagonalización",
       chapter: "Matrix Decompositions",
+      chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
         "A square matrix $A$ is **diagonalizable** if it can be written as $A = PDP^{-1}$, where $D$ is diagonal and $P$ is invertible. The columns of $P$ are eigenvectors of $A$ and the diagonal entries of $D$ are the corresponding eigenvalues. This decomposition expresses the linear map in the *eigenbasis*, where it becomes pure per-axis scaling.",
@@ -1745,6 +1921,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Symmetric matrices diagonalize orthogonally: $A = QDQ^\\top$.",
         "Matrix powers, exponentials, and functions all simplify in the eigenbasis.",
       ],
+      keyTakeawaysEs: [
+        "La diagonalización $A = PDP^{-1}$ expresa un mapa como escalado en la base de autovectores.",
+        "Las matrices simétricas se diagonalizan ortogonalmente: $A = QDQ^\top$.",
+        "Potencias, exponenciales y funciones de matrices se simplifican en la base de autovectores.",
+      ],
     },
 
     // =========================================================================
@@ -1752,7 +1933,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Singular Value Decomposition",
+      titleEs: "Descomposición en Valores Singulares (SVD)",
       chapter: "Matrix Decompositions",
+      chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
         "The **singular value decomposition** (SVD) factors *any* matrix $A \\in \\mathbb{R}^{m\\times n}$ as $A = U\\Sigma V^\\top$, where $U \\in \\mathbb{R}^{m\\times m}$ and $V \\in \\mathbb{R}^{n\\times n}$ are orthogonal and $\\Sigma$ is a (rectangular) diagonal matrix with non-negative entries $\\sigma_1 \\geq \\sigma_2 \\geq \\dots \\geq 0$ called the **singular values**. Unlike eigendecomposition, SVD applies to rectangular and singular matrices — there is no 'diagonalizability' condition to worry about.",
@@ -1831,6 +2014,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Singular values reveal rank, condition number, and matrix norms.",
         "SVD powers PCA, pseudo-inverse, low-rank approximation, and recommender systems.",
       ],
+      keyTakeawaysEs: [
+        "La SVD factoriza cualquier matriz como $A = U\Sigma V^\top$ — rotar, escalar, rotar.",
+        "Los valores singulares revelan el rango, el número de condición y las normas matriciales.",
+        "La SVD impulsa PCA, pseudo-inversa, aproximación de bajo rango y sistemas de recomendación.",
+      ],
     },
 
     // =========================================================================
@@ -1838,7 +2026,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Matrix Approximation",
+      titleEs: "Aproximación de Matrices",
       chapter: "Matrix Decompositions",
+      chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
         "Given a matrix $A$ of rank $r$, the **best rank-$k$ approximation** (for $k < r$) is the matrix $A_k$ that minimizes $\\|A - A_k\\|$ among all rank-$k$ matrices. The answer is a celebrated result: the **Eckart–Young theorem** says $A_k = \\sum_{i=1}^k \\sigma_i \\mathbf{u}_i \\mathbf{v}_i^\\top$ — just keep the top $k$ singular values and corresponding singular vectors from the full SVD.",
@@ -1905,6 +2095,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Approximation error equals the discarded singular values' norm.",
         "Low-rank approximation powers compression, PCA, and parameter-efficient fine-tuning (LoRA).",
       ],
+      keyTakeawaysEs: [
+        "La mejor aproximación de rango $k$ la dan los $k$ primeros términos de la SVD (Eckart–Young).",
+        "El error de aproximación es igual a la norma de los valores singulares descartados.",
+        "La aproximación de bajo rango impulsa compresión, PCA y fine-tuning eficiente en parámetros (LoRA).",
+      ],
     },
 
     // =========================================================================
@@ -1912,7 +2107,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Matrix Phylogeny",
+      titleEs: "Filogenia de Matrices",
       chapter: "Matrix Decompositions",
+      chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
         "Let's step back and organize the decompositions you have met into a **phylogeny** — a family tree of matrix factorizations, each specialized for different matrix classes. The most general factorizations apply to the broadest set of matrices; the most specialized exploit extra structure for speed or insight.",
@@ -1985,6 +2182,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Pick the most specific decomposition your matrix structure allows — it's faster and more stable.",
         "SVD is the universal fallback when structure is unknown or conditioning is poor.",
       ],
+      keyTakeawaysEs: [
+        "Las descomposiciones forman una jerarquía: SVD (la más general) → QR → descomposición espectral → Cholesky (la más especializada).",
+        "Elige la descomposición más específica que permita la estructura de tu matriz — es más rápida y estable.",
+        "La SVD es el recurso universal cuando la estructura es desconocida o el condicionamiento es pobre.",
+      ],
     },
 
     // =========================================================================
@@ -1992,7 +2194,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Differentiation of Univariate Functions",
+      titleEs: "Derivación de Funciones Univariadas",
       chapter: "Vector Calculus",
+      chapterEs: "Cálculo Vectorial",
       chapterNumber: 5,
       content: [
         "The **derivative** $f'(x)$ of a function $f : \\mathbb{R} \\to \\mathbb{R}$ measures its instantaneous rate of change at $x$. Formally, $f'(x) = \\lim_{h \\to 0} \\frac{f(x + h) - f(x)}{h}$. Geometrically, it is the slope of the **tangent line** to the graph of $f$ at the point $(x, f(x))$.",
@@ -2062,6 +2266,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Linearity, product rule, and chain rule handle almost all elementary functions.",
         "Derivatives identify extrema ($f'=0$) and diagnose concavity via $f''$.",
       ],
+      keyTakeawaysEs: [
+        "$f'(x)$ es la pendiente de la recta tangente; el límite de los cocientes incrementales.",
+        "Linealidad, regla del producto y regla de la cadena resuelven casi todas las funciones elementales.",
+        "Las derivadas identifican extremos ($f'=0$) y diagnostican concavidad vía $f''$.",
+      ],
     },
 
     // =========================================================================
@@ -2069,7 +2278,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Partial Derivatives and Gradients",
+      titleEs: "Derivadas Parciales y Gradientes",
       chapter: "Vector Calculus",
+      chapterEs: "Cálculo Vectorial",
       chapterNumber: 5,
       content: [
         "For a function $f : \\mathbb{R}^n \\to \\mathbb{R}$ of several variables, the **partial derivative** $\\frac{\\partial f}{\\partial x_i}$ is the rate of change of $f$ as $x_i$ varies while all other variables are held fixed. Computationally, you differentiate $f$ treating every variable but $x_i$ as a constant.",
@@ -2143,6 +2354,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The gradient packages them into a vector pointing in the direction of steepest ascent.",
         "Critical points where $\\nabla f = \\mathbf{0}$ include minima, maxima, and (often) saddles.",
       ],
+      keyTakeawaysEs: [
+        "Las derivadas parciales miden la tasa de cambio a lo largo de un único eje coordenado.",
+        "El gradiente las empaqueta en un vector que apunta en la dirección de máximo ascenso.",
+        "Los puntos críticos donde $\nabla f = \mathbf{0}$ incluyen mínimos, máximos y (con frecuencia) puntos de silla.",
+      ],
     },
 
     // =========================================================================
@@ -2150,7 +2366,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Gradients of Vector-Valued Functions",
+      titleEs: "Gradientes de Funciones Vectoriales",
       chapter: "Vector Calculus",
+      chapterEs: "Cálculo Vectorial",
       chapterNumber: 5,
       content: [
         "When $f : \\mathbb{R}^n \\to \\mathbb{R}^m$ maps vectors to vectors, the analog of the gradient is a matrix called the **Jacobian**, $J_f = \\frac{\\partial f}{\\partial \\mathbf{x}} \\in \\mathbb{R}^{m \\times n}$. Its $(i,j)$ entry is $\\frac{\\partial f_i}{\\partial x_j}$ — the sensitivity of the $i$-th output component to the $j$-th input. Row $i$ is the gradient of $f_i$ transposed.",
@@ -2216,6 +2434,11 @@ function buildMMLLessons(): MMLLesson[] {
         "It is the best local linear approximation: $f(\\mathbf{x}+\\Delta) \\approx f(\\mathbf{x}) + J_f \\Delta$.",
         "Chain rule: Jacobians of compositions multiply — the basis of backpropagation.",
       ],
+      keyTakeawaysEs: [
+        "El jacobiano $J_f \in \mathbb{R}^{m\times n}$ reúne todas las derivadas parciales de una aplicación vectorial.",
+        "Es la mejor aproximación lineal local: $f(\mathbf{x}+\Delta) \approx f(\mathbf{x}) + J_f \Delta$.",
+        "Regla de la cadena: los jacobianos de composiciones se multiplican — la base de la retropropagación.",
+      ],
     },
 
     // =========================================================================
@@ -2223,7 +2446,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Gradients of Matrices",
+      titleEs: "Gradientes de Matrices",
       chapter: "Vector Calculus",
+      chapterEs: "Cálculo Vectorial",
       chapterNumber: 5,
       content: [
         "In ML, loss functions often depend on whole **matrices** of parameters (think weight matrices in a neural net layer). The gradient with respect to a matrix is just another matrix: $\\frac{\\partial L}{\\partial W} \\in \\mathbb{R}^{m \\times n}$ has the same shape as $W$, with entry $(i,j)$ giving $\\frac{\\partial L}{\\partial w_{ij}}$.",
@@ -2284,6 +2509,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Identities like $\\nabla_{\\mathbf{x}}(\\mathbf{x}^\\top A \\mathbf{x}) = (A+A^\\top)\\mathbf{x}$ shortcut derivations.",
         "Neural-net weight gradients are outer products $\\delta \\mathbf{x}^\\top$ — the core of backprop.",
       ],
+      keyTakeawaysEs: [
+        "Los gradientes matriciales tienen la misma forma que el parámetro matricial.",
+        "Identidades como $\nabla_{\mathbf{x}}(\mathbf{x}^\top A \mathbf{x}) = (A+A^\top)\mathbf{x}$ atajan las derivaciones.",
+        "Los gradientes de pesos de redes neuronales son productos externos $\delta \mathbf{x}^\top$ — el núcleo de backprop.",
+      ],
     },
 
     // =========================================================================
@@ -2291,7 +2521,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Backpropagation and Automatic Differentiation",
+      titleEs: "Retropropagación y Diferenciación Automática",
       chapter: "Vector Calculus",
+      chapterEs: "Cálculo Vectorial",
       chapterNumber: 5,
       content: [
         "**Backpropagation** is the chain rule, applied efficiently to a **computational graph** — a directed acyclic graph where each node is a primitive operation and edges carry intermediate values. To compute $\\nabla_\\theta L$, we start from the loss at the top and walk the graph in reverse, multiplying by each operation's local Jacobian as we go. The cost is roughly twice the forward pass, regardless of how many parameters there are.",
@@ -2355,6 +2587,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Each layer contributes a vector-Jacobian product — never a full Jacobian — making gradients scale linearly in graph size.",
         "Watch for vanishing/exploding gradients; architectural choices (ReLU, residuals, clipping) mitigate them.",
       ],
+      keyTakeawaysEs: [
+        "Backprop es diferenciación automática en modo reverso: regla de la cadena aplicada de derecha a izquierda sobre un grafo computacional.",
+        "Cada capa aporta un producto vector-jacobiano — nunca un jacobiano completo — haciendo que los gradientes escalen linealmente con el tamaño del grafo.",
+        "Cuidado con los gradientes que se desvanecen o explotan; decisiones arquitectónicas (ReLU, residuos, clipping) los mitigan.",
+      ],
     },
 
     // =========================================================================
@@ -2362,7 +2599,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Higher-Order Derivatives",
+      titleEs: "Derivadas de Orden Superior",
       chapter: "Vector Calculus",
+      chapterEs: "Cálculo Vectorial",
       chapterNumber: 5,
       content: [
         "Taking the derivative of a derivative gives **higher-order derivatives**. In 1D, $f''(x)$ measures **curvature** — how fast the slope is itself changing. Large positive $f''$ means the function curves up sharply (a narrow bowl), small $f''$ means gentle curvature (a wide bowl), and negative $f''$ means curving down (a hill).",
@@ -2436,6 +2675,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Positive/negative definite Hessian ⟹ local min/max; indefinite ⟹ saddle.",
         "The condition number of $H$ controls optimization difficulty — Newton's method inverts it to fix ill-conditioning.",
       ],
+      keyTakeawaysEs: [
+        "El hessiano es la matriz de segundas derivadas parciales; es simétrico para funciones suaves.",
+        "Hessiano definido positivo/negativo ⟹ mínimo/máximo local; indefinido ⟹ punto de silla.",
+        "El número de condición de $H$ controla la dificultad de optimización — el método de Newton lo invierte para corregir el mal condicionamiento.",
+      ],
     },
 
     // =========================================================================
@@ -2443,7 +2687,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Linearization and Taylor Series",
+      titleEs: "Linealización y Series de Taylor",
       chapter: "Vector Calculus",
+      chapterEs: "Cálculo Vectorial",
       chapterNumber: 5,
       content: [
         "A **Taylor series** approximates a smooth function by a polynomial. Near a point $a$, the $k$-th order approximation is $f(x) \\approx f(a) + f'(a)(x - a) + \\frac{f''(a)}{2!}(x-a)^2 + \\dots + \\frac{f^{(k)}(a)}{k!}(x - a)^k$. The **first-order** approximation is the tangent line (linearization); the **second-order** version is a parabola tangent to the function at $a$.",
@@ -2514,6 +2760,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Linearization uses gradient; quadratic approximation adds the Hessian.",
         "Taylor approximations underlie gradient descent, Newton, Kalman filters, and Laplace approximations.",
       ],
+      keyTakeawaysEs: [
+        "Las series de Taylor aproximan una función suave por un polinomio alrededor de un punto.",
+        "La linealización usa el gradiente; la aproximación cuadrática añade el hessiano.",
+        "Las aproximaciones de Taylor fundamentan el descenso por gradiente, Newton, filtros de Kalman y aproximaciones de Laplace.",
+      ],
     },
 
     // =========================================================================
@@ -2521,7 +2772,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Probability Spaces",
+      titleEs: "Espacios de Probabilidad",
       chapter: "Probability and Distributions",
+      chapterEs: "Probabilidad y Distribuciones",
       chapterNumber: 6,
       content: [
         "A **probability space** is a mathematical stage for reasoning about uncertainty. It consists of three ingredients: a **sample space** $\\Omega$ (the set of all possible outcomes), a collection $\\mathcal{F}$ of **events** (subsets of $\\Omega$ we want to assign probabilities to), and a **probability measure** $P$ that assigns a number in $[0, 1]$ to each event. Together, $(\\Omega, \\mathcal{F}, P)$ axiomatize the notion of chance.",
@@ -2579,6 +2832,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Random variables transport probability to $\\mathbb{R}$; we usually care about their distribution.",
         "Independence means joint probability factorizes: $P(A \\cap B) = P(A) P(B)$.",
       ],
+      keyTakeawaysEs: [
+        "Un espacio de probabilidad es $(\Omega, \mathcal{F}, P)$: resultados, eventos y una medida que cumple los axiomas de Kolmogorov.",
+        "Las variables aleatorias trasladan probabilidad a $\mathbb{R}$; normalmente nos importa su distribución.",
+        "La independencia significa que la probabilidad conjunta se factoriza: $P(A \cap B) = P(A) P(B)$.",
+      ],
     },
 
     // =========================================================================
@@ -2586,7 +2844,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Discrete and Continuous Probabilities",
+      titleEs: "Probabilidades Discretas y Continuas",
       chapter: "Probability and Distributions",
+      chapterEs: "Probabilidad y Distribuciones",
       chapterNumber: 6,
       content: [
         "Random variables come in two flavors. A **discrete** random variable takes values in a finite or countable set (like $\\{1, 2, 3, 4, 5, 6\\}$ or $\\mathbb{N}$) and is described by a **probability mass function** (PMF): $p(x) = P(X = x)$. Mass functions satisfy $p(x) \\geq 0$ and $\\sum_x p(x) = 1$ — probability is distributed across discrete points.",
@@ -2654,6 +2914,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The CDF $F(x) = P(X \\leq x)$ exists for both and is universally useful.",
         "Densities are rates — they can exceed 1; only integrals give probabilities.",
       ],
+      keyTakeawaysEs: [
+        "Las distribuciones discretas usan PMF (probabilidades en puntos); las continuas usan PDF (probabilidades por unidad).",
+        "La CDF $F(x) = P(X \leq x)$ existe para ambas y es universalmente útil.",
+        "Las densidades son tasas — pueden superar 1; solo las integrales dan probabilidades.",
+      ],
     },
 
     // =========================================================================
@@ -2661,7 +2926,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Sum Rule, Product Rule, Bayes' Theorem",
+      titleEs: "Regla de la Suma, Regla del Producto, Teorema de Bayes",
       chapter: "Probability and Distributions",
+      chapterEs: "Probabilidad y Distribuciones",
       chapterNumber: 6,
       content: [
         "Three rules underpin all of probability. The **sum rule** (or marginalization): $p(x) = \\sum_y p(x, y)$ (or $\\int p(x, y) \\, dy$ in the continuous case). Given a joint distribution, you recover a marginal by summing/integrating out the other variable. This is how we go from 'full knowledge' to 'knowledge about $X$ alone'.",
@@ -2726,6 +2993,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Bayes: posterior ∝ likelihood × prior. The evidence normalizes.",
         "Base-rate fallacies are everywhere — always apply Bayes, don't trust raw test accuracies.",
       ],
+      keyTakeawaysEs: [
+        "La regla de la suma marginaliza; la regla del producto factoriza conjuntas; Bayes invierte condicionales.",
+        "Bayes: posterior ∝ verosimilitud × prior. La evidencia normaliza.",
+        "Las falacias de tasa base están por todas partes — aplica siempre Bayes, no confíes en precisiones crudas.",
+      ],
     },
 
     // =========================================================================
@@ -2733,7 +3005,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Summary Statistics and Independence",
+      titleEs: "Estadísticos Resumen e Independencia",
       chapter: "Probability and Distributions",
+      chapterEs: "Probabilidad y Distribuciones",
       chapterNumber: 6,
       content: [
         "Distributions are high-dimensional objects, but we often compress them into a few **summary statistics**. The **expected value** (mean) $\\mathbb{E}[X] = \\sum_x x\\, p(x)$ (or $\\int x\\, p(x)\\, dx$) gives the long-run average. Expectation is **linear**: $\\mathbb{E}[aX + bY + c] = a\\mathbb{E}[X] + b\\mathbb{E}[Y] + c$ — no independence required. This linearity is the single most-used identity in probabilistic ML.",
@@ -2791,6 +3065,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Expectation is linear; variance is not (it squares scaling factors).",
         "Covariance matrices are symmetric PSD; independence implies zero covariance but not conversely.",
       ],
+      keyTakeawaysEs: [
+        "Media, varianza, covarianza y correlación resumen distribuciones.",
+        "La esperanza es lineal; la varianza no lo es (eleva al cuadrado los factores de escalado).",
+        "Las matrices de covarianza son simétricas semidefinidas positivas; la independencia implica covarianza cero pero no al revés.",
+      ],
     },
 
     // =========================================================================
@@ -2798,7 +3077,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Gaussian Distribution",
+      titleEs: "Distribución Gaussiana",
       chapter: "Probability and Distributions",
+      chapterEs: "Probabilidad y Distribuciones",
       chapterNumber: 6,
       content: [
         "The **Gaussian** (or **Normal**) distribution is the most important distribution in statistics and ML. A univariate Gaussian has density $p(x) = \\frac{1}{\\sqrt{2\\pi \\sigma^2}} \\exp\\left(-\\frac{(x - \\mu)^2}{2\\sigma^2}\\right)$, parameterized by mean $\\mu$ and variance $\\sigma^2$. Its classic bell shape: symmetric around $\\mu$, inflection points at $\\mu \\pm \\sigma$, and roughly 99.7% of mass within $\\mu \\pm 3\\sigma$.",
@@ -2862,6 +3143,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Gaussians are closed under affine transforms, sums, marginals, and conditionals.",
         "Gaussians underlie linear regression, VAEs, diffusion models, and GPs.",
       ],
+      keyTakeawaysEs: [
+        "Gaussiana univariada: $\mu, \sigma^2$; multivariada: $\boldsymbol\mu, \Sigma$ con curvas de nivel elipsoidales.",
+        "Las gaussianas son cerradas bajo transformaciones afines, sumas, marginales y condicionales.",
+        "Las gaussianas están detrás de la regresión lineal, los VAEs, los modelos de difusión y los procesos gaussianos.",
+      ],
     },
 
     // =========================================================================
@@ -2869,7 +3155,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Conjugacy and Exponential Family",
+      titleEs: "Conjugación y Familia Exponencial",
       chapter: "Probability and Distributions",
+      chapterEs: "Probabilidad y Distribuciones",
       chapterNumber: 6,
       content: [
         "In Bayesian inference, we update a prior $p(\\theta)$ with a likelihood $p(\\mathcal{D} \\mid \\theta)$ to get a posterior $p(\\theta \\mid \\mathcal{D}) \\propto p(\\mathcal{D} \\mid \\theta)p(\\theta)$. The posterior is generally messy — but for certain **conjugate** prior-likelihood pairs, the posterior has the same functional form as the prior. This turns inference from integral calculus into parameter arithmetic.",
@@ -2943,6 +3231,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The exponential family unifies many common distributions via sufficient statistics.",
         "GLMs, variational inference, and energy-based models all sit inside this framework.",
       ],
+      keyTakeawaysEs: [
+        "Los priors conjugados producen posteriores de la misma familia — la inferencia se reduce a actualizar parámetros.",
+        "La familia exponencial unifica muchas distribuciones comunes mediante estadísticos suficientes.",
+        "Los GLM, la inferencia variacional y los modelos basados en energía viven dentro de este marco.",
+      ],
     },
 
     // =========================================================================
@@ -2950,7 +3243,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Change of Variables",
+      titleEs: "Cambio de Variables",
       chapter: "Probability and Distributions",
+      chapterEs: "Probabilidad y Distribuciones",
       chapterNumber: 6,
       content: [
         "Given a random variable $X$ with density $p_X$, what is the density of $Y = f(X)$? The answer is the **change of variables formula**: for a smooth, invertible $f$, $p_Y(y) = p_X(f^{-1}(y)) \\left| \\frac{df^{-1}}{dy} \\right|$. The Jacobian factor accounts for how $f$ stretches or compresses probability density — concentrations of probability move with the inverse stretch.",
@@ -3013,6 +3308,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The Jacobian corrects for the volume scaling of $f$.",
         "Normalizing flows chain invertible transforms, summing log-det-Jacobians for tractable density estimation.",
       ],
+      keyTakeawaysEs: [
+        "Cuando $Y = f(X)$ con $f$ invertible, $p_Y(\mathbf{y}) = p_X(\mathbf{x}) / |\det J_f|$.",
+        "El jacobiano corrige el escalado de volumen de $f$.",
+        "Los normalizing flows encadenan transformaciones invertibles, sumando logaritmos de determinantes de jacobianos para estimar densidades de forma tratable.",
+      ],
     },
 
     // =========================================================================
@@ -3020,7 +3320,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Gradient Descent",
+      titleEs: "Descenso por Gradiente",
       chapter: "Continuous Optimization",
+      chapterEs: "Optimización Continua",
       chapterNumber: 7,
       content: [
         "**Gradient descent** is the simplest and most-used continuous optimization algorithm: to minimize a differentiable $f(\\mathbf{x})$, start at some $\\mathbf{x}_0$ and iteratively update $\\mathbf{x}_{k+1} = \\mathbf{x}_k - \\eta \\nabla f(\\mathbf{x}_k)$, where $\\eta > 0$ is the **learning rate**. Each step moves in the direction of steepest descent — the negative gradient — by an amount scaled by $\\eta$.",
@@ -3094,6 +3396,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Momentum, Adam, and SGD variants address ill-conditioning and stochasticity.",
         "SGD's noise acts as a regularizer, often improving generalization.",
       ],
+      keyTakeawaysEs: [
+        "El descenso por gradiente avanza en la dirección del gradiente negativo; la tasa de aprendizaje equilibra estabilidad y velocidad.",
+        "Momentum, Adam y variantes de SGD abordan el mal condicionamiento y la estocasticidad.",
+        "El ruido de SGD actúa como regularizador y suele mejorar la generalización.",
+      ],
     },
 
     // =========================================================================
@@ -3101,7 +3408,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Constrained Optimization and Lagrange Multipliers",
+      titleEs: "Optimización con Restricciones y Multiplicadores de Lagrange",
       chapter: "Continuous Optimization",
+      chapterEs: "Optimización Continua",
       chapterNumber: 7,
       content: [
         "Real optimization problems often come with **constraints**: minimize $f(\\mathbf{x})$ subject to $g_i(\\mathbf{x}) = 0$ (equality) or $h_j(\\mathbf{x}) \\leq 0$ (inequality). Constraints restrict the feasible region, and the unconstrained optimum may lie outside it. The minimum on the feasible set may be anywhere — interior, on the boundary of one constraint, or at the intersection of several.",
@@ -3166,6 +3475,11 @@ function buildMMLLessons(): MMLLesson[] {
         "KKT conditions generalize this to inequality constraints; complementary slackness implies sparsity in SVMs.",
         "Duality provides bounds, alternative formulations, and the kernel trick in ML.",
       ],
+      keyTakeawaysEs: [
+        "El lagrangiano $\mathcal{L} = f + \lambda g$ convierte problemas con restricciones de igualdad en problemas de puntos estacionarios sin restricciones.",
+        "Las condiciones KKT generalizan esto a restricciones de desigualdad; el principio de holgura complementaria implica esparsidad en SVMs.",
+        "La dualidad proporciona cotas, formulaciones alternativas y el truco del kernel en ML.",
+      ],
     },
 
     // =========================================================================
@@ -3173,7 +3487,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Convex Optimization",
+      titleEs: "Optimización Convexa",
       chapter: "Continuous Optimization",
+      chapterEs: "Optimización Continua",
       chapterNumber: 7,
       content: [
         "A set $C$ is **convex** if for any $\\mathbf{x}, \\mathbf{y} \\in C$ and $t \\in [0, 1]$, the convex combination $t\\mathbf{x} + (1-t)\\mathbf{y}$ is also in $C$ — the line segment between any two points stays inside. A function $f$ is **convex** if $f(t\\mathbf{x} + (1-t)\\mathbf{y}) \\leq tf(\\mathbf{x}) + (1-t)f(\\mathbf{y})$: the graph lies below every chord connecting two points.",
@@ -3251,6 +3567,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Least squares, logistic regression, SVMs, Lasso, and Ridge are all convex problems.",
         "Neural nets are non-convex, but over-parameterization and SGD often yield benign landscapes in practice.",
       ],
+      keyTakeawaysEs: [
+        "Los conjuntos y funciones convexos tienen la 'propiedad de la cuerda'; todo mínimo local es global.",
+        "Mínimos cuadrados, regresión logística, SVMs, Lasso y Ridge son todos problemas convexos.",
+        "Las redes neuronales son no convexas, pero la sobre-parametrización y SGD suelen dar paisajes benignos en la práctica.",
+      ],
     },
 
     // =========================================================================
@@ -3258,7 +3579,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Data, Models, and Learning",
+      titleEs: "Datos, Modelos y Aprendizaje",
       chapter: "When Models Meet Data",
+      chapterEs: "Cuando los Modelos Encuentran los Datos",
       chapterNumber: 8,
       content: [
         "The previous seven chapters built a mathematical toolbox. Chapter 8 turns the key and opens the door to **machine learning proper**. Three ingredients recur in every ML pipeline: **data** (a set of observations $\\mathcal{D} = \\{(\\mathbf{x}_n, y_n)\\}_{n=1}^{N}$), a **model** (a parametric function family $f_\\theta : \\mathcal{X} \\to \\mathcal{Y}$), and a **learning principle** (a rule for picking $\\theta$ from $\\mathcal{D}$). Supervised learning, which we focus on next, asks: given labeled data, find $\\theta$ so that $f_\\theta(\\mathbf{x}) \\approx y$ on future inputs.",
@@ -3344,6 +3667,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Expected risk $\\neq$ empirical risk; the gap is the generalization gap.",
         "Bias-variance decomposition explains why more capacity is not always better.",
       ],
+      keyTakeawaysEs: [
+        "ML = datos + modelo + principio de aprendizaje; ERM minimiza la pérdida media de entrenamiento.",
+        "Riesgo esperado $\neq$ riesgo empírico; la brecha es el gap de generalización.",
+        "La descomposición sesgo-varianza explica por qué más capacidad no siempre es mejor.",
+      ],
     },
 
     // =========================================================================
@@ -3351,7 +3679,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Parameter Estimation (MLE and MAP)",
+      titleEs: "Estimación de Parámetros (MLE y MAP)",
       chapter: "When Models Meet Data",
+      chapterEs: "Cuando los Modelos Encuentran los Datos",
       chapterNumber: 8,
       content: [
         "Probabilistic models recast learning as **parameter estimation**. Assume the data is generated by $p(y \\mid \\mathbf{x}, \\theta)$ — a family of distributions indexed by $\\theta$. Given i.i.d. samples $\\mathcal{D}$, the **likelihood** is $p(\\mathcal{D} \\mid \\theta) = \\prod_n p(y_n \\mid \\mathbf{x}_n, \\theta)$. It is the probability the model assigns to the data as a function of the parameters.",
@@ -3425,6 +3755,11 @@ function buildMMLLessons(): MMLLesson[] {
         "MAP adds a log-prior; Gaussian prior $\\leftrightarrow$ Ridge, Laplace prior $\\leftrightarrow$ Lasso.",
         "Both give point estimates; full Bayesian inference keeps the posterior and propagates uncertainty.",
       ],
+      keyTakeawaysEs: [
+        "MLE elige el $\theta$ que hace más probables los datos; para gaussianas con varianza conocida, coincide con mínimos cuadrados.",
+        "MAP añade un log-prior; prior gaussiano $\leftrightarrow$ Ridge, prior Laplace $\leftrightarrow$ Lasso.",
+        "Ambos dan estimaciones puntuales; la inferencia bayesiana completa conserva el posterior y propaga la incertidumbre.",
+      ],
     },
 
     // =========================================================================
@@ -3432,7 +3767,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Probabilistic Modeling and Model Selection",
+      titleEs: "Modelado Probabilístico y Selección de Modelos",
       chapter: "When Models Meet Data",
+      chapterEs: "Cuando los Modelos Encuentran los Datos",
       chapterNumber: 8,
       content: [
         "Once you accept a probabilistic view, *every* modeling decision — the functional form, the noise distribution, the prior — is a modeling assumption that can be compared against alternatives. **Model selection** is the task of choosing among candidate models $\\mathcal{M}_1, \\mathcal{M}_2, \\ldots$ based on how well each explains the data without overfitting.",
@@ -3514,6 +3851,11 @@ function buildMMLLessons(): MMLLesson[] {
         "BIC and AIC are tractable likelihood-plus-penalty approximations used for model comparison.",
         "Cross-validation directly estimates generalization; Bayesian model averaging avoids picking a single model.",
       ],
+      keyTakeawaysEs: [
+        "La evidencia bayesiana marginaliza sobre los parámetros e implementa de forma natural la navaja de Occam.",
+        "BIC y AIC son aproximaciones tratables del tipo verosimilitud más penalización usadas para comparar modelos.",
+        "La validación cruzada estima directamente la generalización; el promedio bayesiano de modelos evita quedarse con un solo modelo.",
+      ],
     },
 
     // =========================================================================
@@ -3521,7 +3863,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Linear Regression: Problem Formulation",
+      titleEs: "Regresión Lineal: Formulación del Problema",
       chapter: "Linear Regression",
+      chapterEs: "Regresión Lineal",
       chapterNumber: 9,
       content: [
         "**Linear regression** is the first and most important supervised learning algorithm. The model asserts that the target $y$ is a linear function of features $\\mathbf{x} \\in \\mathbb{R}^D$ plus Gaussian noise: $$y = \\mathbf{x}^\\top \\boldsymbol\\beta + \\varepsilon, \\quad \\varepsilon \\sim \\mathcal{N}(0, \\sigma^2).$$ Given training data $\\{(\\mathbf{x}_n, y_n)\\}$, we stack features into the **design matrix** $X \\in \\mathbb{R}^{N \\times D}$ and targets into $\\mathbf{y} \\in \\mathbb{R}^N$, giving the matrix form $\\mathbf{y} = X\\boldsymbol\\beta + \\boldsymbol\\varepsilon$.",
@@ -3592,6 +3936,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Least squares = MLE under Gaussian noise; feature maps $\\boldsymbol\\phi(\\mathbf{x})$ extend it to non-linear problems.",
         "Ridge and Lasso regularize by adding $\\ell_2$ or $\\ell_1$ penalties; both correspond to MAP with specific priors.",
       ],
+      keyTakeawaysEs: [
+        "Regresión lineal: $\mathbf{y} = X\boldsymbol\beta + \boldsymbol\varepsilon$; solución cerrada $\hat{\boldsymbol\beta} = (X^\top X)^{-1} X^\top \mathbf{y}$.",
+        "Mínimos cuadrados = MLE bajo ruido gaussiano; las transformaciones $\boldsymbol\phi(\mathbf{x})$ lo extienden a problemas no lineales.",
+        "Ridge y Lasso regularizan añadiendo penalizaciones $\ell_2$ o $\ell_1$; ambos corresponden a MAP con priors específicos.",
+      ],
     },
 
     // =========================================================================
@@ -3599,7 +3948,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Bayesian Linear Regression",
+      titleEs: "Regresión Lineal Bayesiana",
       chapter: "Linear Regression",
+      chapterEs: "Regresión Lineal",
       chapterNumber: 9,
       content: [
         "**Bayesian linear regression** treats the weights $\\boldsymbol\\beta$ as a *random variable* rather than an unknown constant. We start with a prior $p(\\boldsymbol\\beta) = \\mathcal{N}(\\mathbf{0}, \\Sigma_0)$, observe data, and apply Bayes' rule to obtain the **posterior** $p(\\boldsymbol\\beta \\mid \\mathcal{D})$. The payoff: instead of a single point estimate, we get a full distribution over weights that quantifies uncertainty.",
@@ -3672,6 +4023,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Posterior mean = ridge solution; posterior covariance encodes parameter uncertainty.",
         "Predictive variance = parameter uncertainty + noise; shrinks to $\\sigma^2$ with enough data.",
       ],
+      keyTakeawaysEs: [
+        "Prior gaussiano + verosimilitud gaussiana $\Rightarrow$ posterior gaussiano $\mathcal{N}(\boldsymbol\mu_N, \Sigma_N)$, conjugado y con forma cerrada.",
+        "La media posterior = solución ridge; la covarianza posterior codifica la incertidumbre en los parámetros.",
+        "Varianza predictiva = incertidumbre de parámetros + ruido; se reduce a $\sigma^2$ con datos suficientes.",
+      ],
     },
 
     // =========================================================================
@@ -3679,7 +4035,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "Maximum Likelihood as Orthogonal Projection",
+      titleEs: "Máxima Verosimilitud como Proyección Ortogonal",
       chapter: "Linear Regression",
+      chapterEs: "Regresión Lineal",
       chapterNumber: 9,
       content: [
         "Every algebraic formula has a geometric story. For linear regression, the story is strikingly elegant: **least squares is orthogonal projection**. The fitted values $\\hat{\\mathbf{y}} = X\\hat{\\boldsymbol\\beta}$ are the projection of $\\mathbf{y}$ onto the **column space** of $X$ — the subspace of $\\mathbb{R}^N$ reachable by linear combinations of the feature columns.",
@@ -3754,6 +4112,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The hat matrix $P = X(X^\\top X)^{-1} X^\\top$ is symmetric and idempotent; its trace is the model's effective dimension.",
         "Residuals are orthogonal to features — this is the normal equations in geometric form.",
       ],
+      keyTakeawaysEs: [
+        "El ajuste por mínimos cuadrados es la proyección ortogonal de $\mathbf{y}$ sobre el espacio columna de $X$.",
+        "La hat matrix $P = X(X^\top X)^{-1} X^\top$ es simétrica e idempotente; su traza es la dimensión efectiva del modelo.",
+        "Los residuales son ortogonales a las características — esto son las ecuaciones normales en forma geométrica.",
+      ],
     },
 
     // =========================================================================
@@ -3761,7 +4124,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "PCA: Maximum Variance Perspective",
+      titleEs: "PCA: Perspectiva de Máxima Varianza",
       chapter: "Principal Component Analysis",
+      chapterEs: "Análisis de Componentes Principales",
       chapterNumber: 10,
       content: [
         "**Principal Component Analysis (PCA)** is the most-used dimensionality reduction technique and a perfect payoff for everything learned in linear algebra. Given data $\\mathbf{x}_1, \\ldots, \\mathbf{x}_N \\in \\mathbb{R}^D$, PCA seeks an orthonormal basis of directions (**principal components**) such that projecting onto the first $k$ captures as much variance as possible. The result: a compact, decorrelated representation of high-dimensional data.",
@@ -3827,6 +4192,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Equivalent formulations: max variance or min reconstruction error; both give the same solution.",
         "SVD of $X$ is the numerically stable route: right singular vectors are principal components.",
       ],
+      keyTakeawaysEs: [
+        "PCA encuentra direcciones ortogonales de máxima varianza — autovectores de la matriz de covarianza, en orden decreciente de autovalor.",
+        "Formulaciones equivalentes: máxima varianza o mínimo error de reconstrucción; ambas dan la misma solución.",
+        "La SVD de $X$ es la vía numéricamente estable: los vectores singulares derechos son las componentes principales.",
+      ],
     },
 
     // =========================================================================
@@ -3834,7 +4204,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "PCA in Practice",
+      titleEs: "PCA en la Práctica",
       chapter: "Principal Component Analysis",
+      chapterEs: "Análisis de Componentes Principales",
       chapterNumber: 10,
       content: [
         "Running PCA on real data requires a handful of practical steps that textbook treatments sometimes skip. First, **center** the data by subtracting the mean: $\\tilde{\\mathbf{x}}_n = \\mathbf{x}_n - \\bar{\\mathbf{x}}$. Without centering, the first 'principal component' will simply point toward the mean, not toward the direction of real variation. Second, usually **standardize** (divide each feature by its standard deviation) when features live on different scales — otherwise PCA is dominated by whichever feature happens to have the largest range.",
@@ -3903,6 +4275,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Use scree plots or cumulative explained variance to pick $k$; for visualization, $k = 2$ or $3$.",
         "Prefer SVD of $X$ (or randomized SVD) over forming $X^\\top X$ when $D$ is large.",
       ],
+      keyTakeawaysEs: [
+        "Centra siempre los datos (y normalmente estandarízalos) antes de PCA.",
+        "Usa scree plots o varianza explicada acumulada para elegir $k$; para visualización, $k = 2$ o $3$.",
+        "Prefiere la SVD de $X$ (o SVD aleatorizada) a formar $X^\top X$ cuando $D$ es grande.",
+      ],
     },
 
     // =========================================================================
@@ -3910,7 +4287,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "GMM and EM Algorithm",
+      titleEs: "GMM y el Algoritmo EM",
       chapter: "Gaussian Mixture Models",
+      chapterEs: "Modelos de Mezclas Gaussianas",
       chapterNumber: 11,
       content: [
         "A **Gaussian Mixture Model (GMM)** assumes the data is generated by $K$ underlying clusters, each Gaussian with its own mean and covariance: $$p(\\mathbf{x}) = \\sum_{k=1}^{K} \\pi_k\\, \\mathcal{N}(\\mathbf{x}; \\boldsymbol\\mu_k, \\Sigma_k),$$ where $\\pi_k \\geq 0$ and $\\sum_k \\pi_k = 1$ are **mixture weights**. GMMs are *soft-clustering* — each point has a probability of belonging to each cluster, not a hard label. They generalize $k$-means (which is roughly a GMM with shared spherical covariances) and are the go-to tool for density estimation and model-based clustering.",
@@ -3992,6 +4371,11 @@ function buildMMLLessons(): MMLLesson[] {
         "EM alternates E-step (compute responsibilities) and M-step (weighted MLE updates); monotonically increases likelihood.",
         "EM converges to a local optimum — seed carefully and regularize covariances to avoid singularities.",
       ],
+      keyTakeawaysEs: [
+        "GMM: $p(\mathbf{x}) = \sum_k \pi_k \mathcal{N}(\mathbf{x}; \boldsymbol\mu_k, \Sigma_k)$ — un modelo de densidad con clustering suave.",
+        "EM alterna paso E (calcular responsabilidades) y paso M (actualizaciones MLE ponderadas); aumenta monótonamente la verosimilitud.",
+        "EM converge a un óptimo local — inicializa con cuidado y regulariza las covarianzas para evitar singularidades.",
+      ],
     },
 
     // =========================================================================
@@ -3999,7 +4383,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "GMM: Latent Variable Perspective",
+      titleEs: "GMM: Perspectiva de Variables Latentes",
       chapter: "Gaussian Mixture Models",
+      chapterEs: "Modelos de Mezclas Gaussianas",
       chapterNumber: 11,
       content: [
         "The cleanest way to derive GMMs and EM is via **latent variables**. Introduce a categorical latent $z_n \\in \\{1, \\ldots, K\\}$ for each data point, with prior $p(z_n = k) = \\pi_k$. Conditional on $z_n = k$, the observation is Gaussian: $p(\\mathbf{x}_n \\mid z_n = k) = \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k)$. Marginalizing out $z_n$ recovers the mixture density $p(\\mathbf{x}_n) = \\sum_k \\pi_k \\mathcal{N}(\\mathbf{x}_n; \\boldsymbol\\mu_k, \\Sigma_k)$.",
@@ -4085,6 +4471,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Responsibilities $r_{nk} = p(z_n = k \\mid \\mathbf{x}_n)$ are Bayesian posteriors over cluster membership.",
         "The latent-variable view generalizes EM to HMMs, PPCA, VAEs, and beyond.",
       ],
+      keyTakeawaysEs: [
+        "Los GMM son modelos de variables latentes: un indicador oculto de cluster $z_n$ elige qué gaussiana genera cada punto.",
+        "Las responsabilidades $r_{nk} = p(z_n = k \mid \mathbf{x}_n)$ son posteriores bayesianos sobre la pertenencia al cluster.",
+        "La vista de variables latentes generaliza EM a HMMs, PPCA, VAEs y más.",
+      ],
     },
 
     // =========================================================================
@@ -4092,7 +4483,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "SVM: Separating Hyperplanes and Margins",
+      titleEs: "SVM: Hiperplanos Separadores y Márgenes",
       chapter: "Support Vector Machines",
+      chapterEs: "Máquinas de Vectores de Soporte",
       chapterNumber: 12,
       content: [
         "**Support Vector Machines (SVMs)** solve binary classification by finding the **maximum-margin hyperplane** that separates two classes. Given labeled data $\\{(\\mathbf{x}_n, y_n)\\}$ with $y_n \\in \\{-1, +1\\}$, a hyperplane $\\mathbf{w}^\\top \\mathbf{x} + b = 0$ classifies by the sign of $\\mathbf{w}^\\top \\mathbf{x} + b$. Many hyperplanes may separate the classes, but SVMs pick a specific one: the one whose distance to the nearest point of either class is largest.",
@@ -4163,6 +4556,11 @@ function buildMMLLessons(): MMLLesson[] {
         "Soft-margin allows violations with hyperparameter $C$; dual form depends only on inner products.",
         "The solution is sparse — only support vectors (points on or inside the margin) have $\\alpha_n > 0$.",
       ],
+      keyTakeawaysEs: [
+        "SVM: clasificador de máximo margen, resolviendo un QP convexo para $\mathbf{w}, b$ con margen $1/\|\mathbf{w}\|$.",
+        "El margen blando permite violaciones con el hiperparámetro $C$; la forma dual depende solo de productos internos.",
+        "La solución es dispersa — solo los vectores de soporte (puntos sobre o dentro del margen) tienen $\alpha_n > 0$.",
+      ],
     },
 
     // =========================================================================
@@ -4170,7 +4568,9 @@ function buildMMLLessons(): MMLLesson[] {
     // =========================================================================
     {
       title: "SVM: Kernels",
+      titleEs: "SVM: Kernels",
       chapter: "Support Vector Machines",
+      chapterEs: "Máquinas de Vectores de Soporte",
       chapterNumber: 12,
       content: [
         "Linear SVMs can only draw straight decision boundaries — yet most interesting data is non-linearly separable. The **kernel trick** turns linear SVMs into universal classifiers without ever computing features explicitly. The insight comes from the dual: it depends on $\\mathbf{x}_n$ only via inner products $\\mathbf{x}_n^\\top \\mathbf{x}_m$. Replace every such inner product with a **kernel function** $k(\\mathbf{x}_n, \\mathbf{x}_m)$, and you are implicitly operating in a different feature space $\\boldsymbol\\phi(\\mathbf{x})$ such that $k(\\mathbf{x}, \\mathbf{x}') = \\boldsymbol\\phi(\\mathbf{x})^\\top \\boldsymbol\\phi(\\mathbf{x}')$ — without ever computing $\\boldsymbol\\phi$.",
@@ -4247,6 +4647,11 @@ function buildMMLLessons(): MMLLesson[] {
         "The kernel trick replaces $\\mathbf{x}_n^\\top \\mathbf{x}_m$ with $k(\\mathbf{x}_n, \\mathbf{x}_m)$ — implicit feature lifting without explicit computation.",
         "Valid kernels are symmetric and PSD (Mercer); common choices: linear, polynomial, RBF, sigmoid.",
         "RBF SVMs with cross-validated $(C, \\sigma)$ are a strong non-linear baseline; scale with Nystrom or random features.",
+      ],
+      keyTakeawaysEs: [
+        "El truco del kernel reemplaza $\mathbf{x}_n^\top \mathbf{x}_m$ por $k(\mathbf{x}_n, \mathbf{x}_m)$ — elevación implícita de características sin calcularlas explícitamente.",
+        "Los kernels válidos son simétricos y PSD (Mercer); elecciones comunes: lineal, polinomial, RBF, sigmoide.",
+        "Los SVM RBF con $(C, \sigma)$ validados por cross-validation son una línea base no lineal fuerte; escalan con Nyström o características aleatorias.",
       ],
     },
   ];
