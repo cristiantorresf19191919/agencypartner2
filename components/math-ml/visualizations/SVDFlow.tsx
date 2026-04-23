@@ -5,6 +5,8 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Line, Grid, Html } from "@react-three/drei";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ScrubBar, type ScrubPhase } from "../primitives/ScrubBar";
+import { CinematicEffects } from "../primitives/CinematicEffects";
+import { useVizFullscreen } from "../primitives/VizFullscreenContext";
 import { MathContent } from "../MathContent";
 import styles from "../MathML.module.css";
 
@@ -266,6 +268,7 @@ function PhaseCaption({
 export default function SVDFlow({ config }: Props) {
   const { language } = useLanguage();
   const lang = language === "es" ? "es" : "en";
+  const isFullscreen = useVizFullscreen();
   const cfg = (config ?? {}) as SVDFlowConfig;
   const A = cfg.matrix ?? [
     [2, 1],
@@ -340,13 +343,13 @@ export default function SVDFlow({ config }: Props) {
   ];
 
   return (
-    <div className={styles.svdFlowWrap}>
-      <div className={styles.svdCanvasWrap}>
+    <div className={`${styles.svdFlowWrap} ${isFullscreen ? styles.svdFlowWrapFullscreen : ""}`}>
+      <div className={`${styles.svdCanvasWrap} ${isFullscreen ? styles.svdCanvasWrapFullscreen : ""}`}>
         {mounted && (
         <Canvas
           camera={{ position: [0, 0, 7.5], fov: 42, near: 0.1, far: 100 }}
           dpr={[1, 2]}
-          gl={{ antialias: true, toneMapping: 0, preserveDrawingBuffer: false }}
+          gl={{ antialias: true, toneMapping: 0, preserveDrawingBuffer: false, alpha: false }}
           flat
         >
           <color attach="background" args={["#060b1a"]} />
@@ -503,6 +506,8 @@ export default function SVDFlow({ config }: Props) {
             enableZoom={false}
             makeDefault
           />
+
+          <CinematicEffects preset={isFullscreen ? "flagship" : "flagship"} />
         </Canvas>
         )}
 

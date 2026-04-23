@@ -8,6 +8,7 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { MathContent } from "../MathContent";
+import { VizFullscreenContext } from "./VizFullscreenContext";
 import styles from "../MathML.module.css";
 
 interface VizFrameProps {
@@ -42,64 +43,72 @@ export function VizFrame({
   }, [fullscreen]);
 
   return (
-    <>
-      {fullscreen && (
-        <motion.div
-          className={styles.vizFullscreenBackdrop}
-          aria-hidden="true"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setFullscreen(false)}
-        />
-      )}
-    <div
-      className={`${styles.vizContainer} ${fullscreen ? styles.vizContainerFullscreen : ""}`}
-    >
-      <div className={styles.vizHeader}>
-        <div className={styles.vizHeaderText}>
-          {title && <div className={styles.vizTitle}>{title}</div>}
-          {description && (
-            <div className={styles.vizDescription}>
-              <MathContent text={description} as="span" />
-            </div>
-          )}
-        </div>
-        <button
-          type="button"
-          className={styles.vizFullscreenBtn}
-          onClick={() => setFullscreen((v) => !v)}
-          aria-label={fullscreen ? "Exit fullscreen" : fullscreenLabel}
-          title={fullscreen ? "Exit fullscreen (Esc)" : fullscreenLabel}
-        >
-          {fullscreen ? (
-            <FullscreenExitIcon fontSize="small" />
-          ) : (
-            <FullscreenIcon fontSize="small" />
-          )}
-        </button>
-      </div>
-
-      <div className={bodyClassName}>{children}</div>
-
+    <VizFullscreenContext.Provider value={fullscreen}>
       <AnimatePresence>
         {fullscreen && (
-          <motion.button
-            type="button"
-            className={styles.vizFullscreenCloseFloating}
+          <motion.div
+            key="viz-backdrop"
+            className={styles.vizFullscreenBackdrop}
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
             onClick={() => setFullscreen(false)}
-            aria-label="Close fullscreen"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-          >
-            <CloseIcon fontSize="small" />
-            <span className={styles.vizCloseHint}>ESC</span>
-          </motion.button>
+          />
         )}
       </AnimatePresence>
-    </div>
-    </>
+      <div
+        className={`${styles.vizContainer} ${fullscreen ? styles.vizContainerFullscreen : ""}`}
+      >
+        <div className={styles.vizHeader}>
+          <div className={styles.vizHeaderText}>
+            {title && <div className={styles.vizTitle}>{title}</div>}
+            {description && (
+              <div className={styles.vizDescription}>
+                <MathContent text={description} as="span" />
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            className={styles.vizFullscreenBtn}
+            onClick={() => setFullscreen((v) => !v)}
+            aria-label={fullscreen ? "Exit fullscreen" : fullscreenLabel}
+            title={fullscreen ? "Exit fullscreen (Esc)" : fullscreenLabel}
+          >
+            {fullscreen ? (
+              <FullscreenExitIcon fontSize="small" />
+            ) : (
+              <FullscreenIcon fontSize="small" />
+            )}
+          </button>
+        </div>
+
+        <div className={`${bodyClassName ?? ""} ${fullscreen ? styles.vizBodyFullscreen : ""}`}>
+          {children}
+        </div>
+
+        <AnimatePresence>
+          {fullscreen && (
+            <motion.button
+              key="viz-close"
+              type="button"
+              className={styles.vizFullscreenCloseFloating}
+              onClick={() => setFullscreen(false)}
+              aria-label="Close fullscreen"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.18 }}
+            >
+              <CloseIcon fontSize="small" />
+              <span className={styles.vizCloseHint}>ESC</span>
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
+    </VizFullscreenContext.Provider>
   );
 }
 

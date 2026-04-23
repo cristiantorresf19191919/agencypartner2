@@ -3,6 +3,8 @@
 import React from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid } from "@react-three/drei";
+import { useVizFullscreen } from "../primitives/VizFullscreenContext";
+import { CinematicEffects } from "../primitives/CinematicEffects";
 
 interface Scene3DConfig {
   showGrid?: boolean;
@@ -26,6 +28,8 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
   const background = cfg.background ?? "transparent";
   const border = cfg.border ?? "1px solid rgba(16, 185, 129, 0.22)";
 
+  const isFullscreen = useVizFullscreen();
+
   return (
     <div
       style={{
@@ -34,7 +38,8 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
         overflow: "hidden",
         border,
         background,
-        height,
+        height: isFullscreen ? "100%" : height,
+        minHeight: isFullscreen ? "calc(100vh - 220px)" : undefined,
         width: "100%",
       }}
     >
@@ -51,7 +56,7 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
       <Canvas
         camera={{ position: cameraPosition, fov: 50, near: 0.1, far: 100 }}
         dpr={[1, 2]}
-        gl={{ antialias: true, toneMapping: 0 }}
+        gl={{ antialias: true, toneMapping: 0, alpha: false }}
         flat
         style={{ position: "relative" }}
       >
@@ -88,6 +93,8 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
           minDistance={2}
           maxDistance={30}
         />
+
+        <CinematicEffects preset={isFullscreen ? "flagship" : "bold"} />
       </Canvas>
       <div
         aria-hidden="true"
@@ -96,7 +103,7 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
           inset: 0,
           pointerEvents: "none",
           background:
-            "radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(2, 6, 23, 0.45) 100%)",
+            "radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(2, 6, 23, 0.55) 100%)",
         }}
       />
     </div>
