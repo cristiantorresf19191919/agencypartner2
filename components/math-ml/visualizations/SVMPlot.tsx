@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import { Mafs, Coordinates, Plot, Point, Line } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -91,19 +92,15 @@ export default function SVMPlot({ config }: Props) {
     return m < 1.05;
   });
 
+  const height = useMafsHeight(360);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
+    <>
+    <MafsStage accent="emerald">
       <Mafs
         viewBox={{ x: viewBox.x ?? [-4, 4], y: viewBox.y ?? [-4, 4] }}
         preserveAspectRatio="contain"
-        height={360}
+        height={height}
       >
         <Coordinates.Cartesian />
 
@@ -131,14 +128,18 @@ export default function SVMPlot({ config }: Props) {
         {/* explicit ref to Line so import is used even in odd configs */}
         {false && <Line.Segment point1={[0, 0]} point2={[1, 1]} color={EMERALD} />}
       </Mafs>
+    </MafsStage>
       <div
         style={{
           padding: "10px 14px",
+          marginTop: 8,
+          borderRadius: 10,
           display: "flex",
           alignItems: "center",
           gap: 12,
           flexWrap: "wrap",
-          borderTop: "1px solid rgba(16, 185, 129, 0.15)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          background: "rgba(15, 23, 42, 0.45)",
           fontSize: 13,
           color: "rgba(255,255,255,0.82)",
           fontVariantNumeric: "tabular-nums",
@@ -151,6 +152,6 @@ export default function SVMPlot({ config }: Props) {
           margin ≈ {(1 / Math.max(Math.hypot(w[0], w[1]), 1e-6)).toFixed(2)}
         </span>
       </div>
-    </div>
+    </>
   );
 }

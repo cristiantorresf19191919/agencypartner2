@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { Mafs, Coordinates, Point, Ellipse } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const PALETTE = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#A78BFA"];
 
@@ -113,19 +114,15 @@ export default function GMMPlot({ config }: Props) {
     return { means: m, variances: v, responsibilities: r };
   }, [points, initialMeans, initialVars, iteration, K]);
 
+  const height = useMafsHeight(380);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
+    <>
+    <MafsStage accent="violet">
       <Mafs
         viewBox={{ x: viewBox.x ?? [-4, 4], y: viewBox.y ?? [-4, 4] }}
         preserveAspectRatio="contain"
-        height={380}
+        height={height}
       >
         <Coordinates.Cartesian />
 
@@ -169,14 +166,18 @@ export default function GMMPlot({ config }: Props) {
           <Point key={`mu-${k}`} x={m[0]} y={m[1]} color={PALETTE[k % PALETTE.length]} />
         ))}
       </Mafs>
+    </MafsStage>
       <div
         style={{
           padding: "10px 14px",
+          marginTop: 8,
+          borderRadius: 10,
           display: "flex",
           alignItems: "center",
           gap: 12,
           flexWrap: "wrap",
-          borderTop: "1px solid rgba(16, 185, 129, 0.15)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          background: "rgba(15, 23, 42, 0.45)",
           fontSize: 13,
           color: "rgba(255,255,255,0.82)",
         }}
@@ -203,7 +204,7 @@ export default function GMMPlot({ config }: Props) {
         </button>
         <span style={{ opacity: 0.7 }}>K = {K}</span>
       </div>
-    </div>
+    </>
   );
 }
 

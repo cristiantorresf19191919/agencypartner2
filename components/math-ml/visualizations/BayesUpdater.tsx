@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { Mafs, Coordinates, Plot, Text } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -70,16 +71,12 @@ export default function BayesUpdater({ config }: Props) {
     Math.max(gaussianPdf(mu0, mu0, sigma0), gaussianPdf(mu, mu, sigma)) * 1.15
   );
 
+  const height = useMafsHeight(320);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
-      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio="contain" height={320}>
+    <>
+    <MafsStage accent="violet">
+      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio="contain" height={height}>
         <Coordinates.Cartesian />
         <Plot.OfX y={priorPdf} domain={domain} color={BLUE} style="dashed" />
         <Plot.OfX y={postPdf} domain={domain} color={EMERALD} />
@@ -92,14 +89,18 @@ export default function BayesUpdater({ config }: Props) {
           {`μ=${mu.toFixed(2)}, σ=${sigma.toFixed(2)}`}
         </Text>
       </Mafs>
+    </MafsStage>
       <div
         style={{
           padding: "10px 14px",
+          marginTop: 8,
+          borderRadius: 10,
           display: "flex",
           alignItems: "center",
           gap: 12,
           flexWrap: "wrap",
-          borderTop: "1px solid rgba(16, 185, 129, 0.15)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          background: "rgba(15, 23, 42, 0.45)",
           fontSize: 13,
           color: "rgba(255,255,255,0.82)",
         }}
@@ -128,7 +129,7 @@ export default function BayesUpdater({ config }: Props) {
           Reset
         </button>
       </div>
-    </div>
+    </>
   );
 }
 

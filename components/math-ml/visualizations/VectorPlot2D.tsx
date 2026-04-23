@@ -3,6 +3,7 @@
 import React from "react";
 import { Mafs, Coordinates, Vector, Point, Line, Text } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -38,19 +39,14 @@ export default function VectorPlot2D({ config }: Props) {
     [0, 0]
   );
 
+  const height = useMafsHeight(360);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
+    <MafsStage accent="emerald">
       <Mafs
         viewBox={{ x: viewBox.x ?? [-6, 6], y: viewBox.y ?? [-6, 6] }}
         preserveAspectRatio="contain"
-        height={360}
+        height={height}
       >
         <Coordinates.Cartesian />
 
@@ -92,6 +88,6 @@ export default function VectorPlot2D({ config }: Props) {
           </>
         )}
       </Mafs>
-    </div>
+    </MafsStage>
   );
 }

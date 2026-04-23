@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { Mafs, Coordinates, Plot, Line, Point } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const AMBER = "#F59E0B";
@@ -79,19 +80,15 @@ export default function GradientField({ config }: Props) {
     return pts;
   }, [grad, lr, steps, start, showTraj]);
 
+  const height = useMafsHeight(360);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
+    <>
+    <MafsStage accent="emerald">
       <Mafs
         viewBox={{ x: viewBox.x ?? [-4, 4], y: viewBox.y ?? [-4, 4] }}
         preserveAspectRatio="contain"
-        height={360}
+        height={height}
       >
         <Coordinates.Cartesian />
         <Plot.VectorField xy={fieldFn} step={0.6} color={EMERALD} />
@@ -115,14 +112,18 @@ export default function GradientField({ config }: Props) {
           <Point x={trajectory[0][0]} y={trajectory[0][1]} color={RED} />
         )}
       </Mafs>
+    </MafsStage>
       <div
         style={{
           padding: "10px 14px",
+          marginTop: 8,
+          borderRadius: 10,
           display: "flex",
           alignItems: "center",
           gap: 12,
           flexWrap: "wrap",
-          borderTop: "1px solid rgba(16, 185, 129, 0.15)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          background: "rgba(15, 23, 42, 0.45)",
           fontSize: 13,
           color: "rgba(255,255,255,0.82)",
         }}
@@ -140,6 +141,6 @@ export default function GradientField({ config }: Props) {
           />
         </label>
       </div>
-    </div>
+    </>
   );
 }

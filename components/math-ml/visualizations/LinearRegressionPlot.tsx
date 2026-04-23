@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import { Mafs, Coordinates, Plot, Point, Line } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -68,19 +69,15 @@ export default function LinearRegressionPlot({ config }: Props) {
     return s / pts.length;
   }, [pts, slope, intercept]);
 
+  const height = useMafsHeight(360);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
+    <>
+    <MafsStage accent="blue">
       <Mafs
         viewBox={{ x: viewBox.x ?? [-5, 5], y: viewBox.y ?? [-5, 5] }}
         preserveAspectRatio="contain"
-        height={360}
+        height={height}
       >
         <Coordinates.Cartesian />
         <Plot.OfX y={fitLine} domain={viewBox.x ?? [-5, 5]} color={EMERALD} />
@@ -99,14 +96,18 @@ export default function LinearRegressionPlot({ config }: Props) {
           <Point key={`pt-${i}`} x={p[0]} y={p[1]} color={BLUE} />
         ))}
       </Mafs>
+    </MafsStage>
       <div
         style={{
           padding: "10px 14px",
+          marginTop: 8,
+          borderRadius: 10,
           display: "flex",
           alignItems: "center",
           gap: 16,
           flexWrap: "wrap",
-          borderTop: "1px solid rgba(16, 185, 129, 0.15)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          background: "rgba(15, 23, 42, 0.45)",
           fontSize: 13,
           color: "rgba(255,255,255,0.82)",
           fontVariantNumeric: "tabular-nums",
@@ -118,6 +119,6 @@ export default function LinearRegressionPlot({ config }: Props) {
         <span style={{ color: AMBER }}>MSE = {mse.toFixed(3)}</span>
         <span style={{ opacity: 0.7 }}>{pts.length} points</span>
       </div>
-    </div>
+    </>
   );
 }

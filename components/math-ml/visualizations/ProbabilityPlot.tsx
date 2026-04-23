@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { Mafs, Coordinates, Plot } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -89,27 +90,27 @@ export default function ProbabilityPlot({ config }: Props) {
     yMax = Math.max(0.5, 1 / (sigma * Math.sqrt(2 * Math.PI)) + 0.1);
   }
 
+  const height = useMafsHeight(320);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
-      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio="contain" height={320}>
+    <>
+    <MafsStage accent="violet">
+      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio="contain" height={height}>
         <Coordinates.Cartesian />
         <Plot.OfX y={pdf} domain={domain} color={EMERALD} />
         <Plot.Inequality y={{ "<": pdf, ">": () => 0 }} color={EMERALD} fillOpacity={0.15} />
       </Mafs>
+    </MafsStage>
       <div
         style={{
           padding: "10px 14px",
+          marginTop: 8,
+          borderRadius: 10,
           display: "flex",
           flexDirection: "column",
           gap: 8,
-          borderTop: "1px solid rgba(16, 185, 129, 0.15)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          background: "rgba(15, 23, 42, 0.45)",
           fontSize: 13,
           color: "rgba(255,255,255,0.82)",
         }}
@@ -137,7 +138,7 @@ export default function ProbabilityPlot({ config }: Props) {
         )}
         <span style={{ color: BLUE, opacity: 0.75 }}>Distribution: {dist}</span>
       </div>
-    </div>
+    </>
   );
 }
 

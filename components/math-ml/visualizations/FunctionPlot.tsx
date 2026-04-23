@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import { Mafs, Coordinates, Plot, Point, Text, useMovablePoint } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -122,16 +123,11 @@ export default function FunctionPlot({ config }: Props) {
     return acc;
   };
 
+  const height = useMafsHeight(360);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
-      <Mafs viewBox={{ x: domain, y: [-5, 5] }} preserveAspectRatio="contain" height={360}>
+    <MafsStage accent="blue">
+      <Mafs viewBox={{ x: domain, y: [-5, 5] }} preserveAspectRatio="contain" height={height}>
         <Coordinates.Cartesian />
         <Plot.OfX y={f} domain={domain} color={BLUE} />
         {showTangent && (
@@ -146,6 +142,6 @@ export default function FunctionPlot({ config }: Props) {
           {`a=${ax.toFixed(2)}`}
         </Text>
       </Mafs>
-    </div>
+    </MafsStage>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Mafs, Coordinates, Circle, Polygon, Text } from "mafs";
 import "mafs/core.css";
+import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -47,16 +48,12 @@ export default function NormBalls({ config }: Props) {
     [r, -r],
   ];
 
+  const height = useMafsHeight(340);
+
   return (
-    <div
-      style={{
-        borderRadius: 12,
-        overflow: "hidden",
-        border: "1px solid rgba(16, 185, 129, 0.18)",
-        background: "rgba(15, 23, 42, 0.35)",
-      }}
-    >
-      <Mafs viewBox={{ x: [-2, 2], y: [-2, 2] }} preserveAspectRatio="contain" height={340}>
+    <>
+    <MafsStage accent="amber">
+      <Mafs viewBox={{ x: [-2, 2], y: [-2, 2] }} preserveAspectRatio="contain" height={height}>
         <Coordinates.Cartesian />
         {active.l1 && (
           <>
@@ -83,13 +80,17 @@ export default function NormBalls({ config }: Props) {
           </>
         )}
       </Mafs>
+    </MafsStage>
       <div
         style={{
           display: "flex",
           gap: 10,
           padding: "10px 14px",
+          marginTop: 8,
+          borderRadius: 10,
           flexWrap: "wrap",
-          borderTop: "1px solid rgba(16, 185, 129, 0.15)",
+          border: "1px solid rgba(16, 185, 129, 0.18)",
+          background: "rgba(15, 23, 42, 0.45)",
         }}
       >
         {(["l1", "l2", "linf"] as NormKey[]).map((k) => {
@@ -115,6 +116,6 @@ export default function NormBalls({ config }: Props) {
           );
         })}
       </div>
-    </div>
+    </>
   );
 }
