@@ -187,6 +187,8 @@ export interface MMLLesson {
   stepSolutions?: StepSolutionSpec[];
   analogy?: { en: string; es?: string };
   pitfall?: { en: string; es?: string };
+  // Ids into lib/mmlConcepts.ts — rendered as a prerequisites rail at the top
+  concepts?: string[];
   // Optional Spanish overlays — renderer prefers these when locale is "es"
   titleEs?: string;
   chapterEs?: string;

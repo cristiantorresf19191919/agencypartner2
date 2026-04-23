@@ -161,8 +161,8 @@ function buildMMLLessons(): MMLLesson[] {
       chapterEs: "Álgebra Lineal",
       chapterNumber: 2,
       content: [
-        "A **system of linear equations** is a collection of equations in which each unknown appears only to the first power and is never multiplied by another unknown. A familiar example is $2x + 3y = 7$ and $x - y = 1$. The word *linear* means each equation traces out a flat object: a line in two dimensions, a plane in three, and a **hyperplane** in higher dimensions.",
-        "Why do machine learners care? Because fitting a linear model is literally solving a system. Given training examples $(\\mathbf{x}_i, y_i)$, the least-squares regression problem asks for a weight vector $\\mathbf{w}$ such that $X\\mathbf{w} \\approx \\mathbf{y}$, where $X$ stacks the feature vectors as rows. When $X$ is square and invertible the system has a unique solution; when it is not (the common case in ML), we fall back on approximation via the *normal equations* — still a linear system.",
+        "A **system of linear equations** is a collection of equations in which each unknown appears only to the first power and is never multiplied by another unknown. A familiar example is $2x + 3y = 7$ and $x - y = 1$. The word *linear* means each equation traces out a flat object: a line in two dimensions, a plane in three, and a [[hyperplane]] in higher dimensions.",
+        "Why do machine learners care? Because fitting a linear model is literally solving a system. Given training examples $(\\mathbf{x}_i, y_i)$, the least-squares regression problem asks for a weight [[vector]] $\\mathbf{w}$ such that $X\\mathbf{w} \\approx \\mathbf{y}$, where $X$ is a [[matrix]] stacking the feature vectors as rows. When $X$ is square and invertible the system has a unique solution; when it is not (the common case in ML), we fall back on approximation via the *normal equations* — still a linear system.",
         "Every linear system has one of three possible **outcomes**: a unique solution, no solution, or infinitely many solutions. Geometrically in 2D, two lines can meet at a single point (unique), be parallel and never meet (none), or coincide entirely (infinite). This trichotomy generalizes perfectly to higher dimensions and is the reason we care about concepts like **rank** and **consistency** later on.",
         "A compact way to write a linear system is $A\\mathbf{x} = \\mathbf{b}$, where $A$ is the **coefficient matrix**, $\\mathbf{x}$ is the vector of unknowns, and $\\mathbf{b}$ is the constants vector. This notation is not just shorthand — it reveals structure. Many properties of the solution set (existence, uniqueness) can be read off from $A$ alone, before we ever start solving. That is the power of moving from equations to matrices.",
         "**Analogy:** Think of $A\\mathbf{x} = \\mathbf{b}$ as a **recipe card**: $A$ lists the ingredient ratios (how much flour, sugar, butter each mixing column contributes), $\\mathbf{x}$ is how many scoops of each you use, and $\\mathbf{b}$ is the final mixture you want. Solving the system means asking: *given the ratios and the target mix, how many scoops of each do I need?*",
@@ -240,6 +240,7 @@ function buildMMLLessons(): MMLLesson[] {
         "Geométricamente, cada ecuación es un hiperplano; las soluciones son su intersección.",
         "La regresión lineal y muchos métodos de ML se reducen a resolver (o aproximar) un sistema lineal.",
       ],
+      concepts: ["vector", "matrix", "hyperplane", "linear-combination"],
       annotatedFormulas: [
         {
           id: "lin-sys-axb",
@@ -1803,9 +1804,9 @@ function buildMMLLessons(): MMLLesson[] {
       chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
-        "An **eigenvector** of a square matrix $A$ is a non-zero vector $\\mathbf{v}$ that $A$ stretches without rotating: $A\\mathbf{v} = \\lambda \\mathbf{v}$ for some scalar $\\lambda$, the corresponding **eigenvalue**. Eigenvectors are the *invariant directions* of the map: every other vector gets bent by $A$, but these lie along axes that $A$ merely scales.",
+        "An **eigenvector** of a square [[matrix]] $A$ is a non-zero [[vector]] $\\mathbf{v}$ that $A$ stretches without rotating: $A\\mathbf{v} = \\lambda \\mathbf{v}$ for some scalar $\\lambda$, the corresponding **eigenvalue**. Eigenvectors are the *invariant directions* of the map: every other vector gets bent by $A$, but these lie along axes that $A$ merely scales.",
         "**Analogy:** Picture a **spinning globe**: everything on its surface swirls except the two points on the axis, which stay put. Those axis points are eigenvectors of the rotation, and their eigenvalue is $1$ (they don't stretch). Most transformations have multiple such special axes, and each comes with a stretch factor $\\lambda$.",
-        "To find them algebraically, rewrite $A\\mathbf{v} = \\lambda \\mathbf{v}$ as $(A - \\lambda I)\\mathbf{v} = \\mathbf{0}$. For a non-trivial $\\mathbf{v}$ to exist, $A - \\lambda I$ must be singular, i.e., $\\det(A - \\lambda I) = 0$. This equation in $\\lambda$ is the **characteristic polynomial** — a polynomial of degree $n$ whose roots are the eigenvalues. For each root $\\lambda$, the corresponding eigenvectors span the **eigenspace** $\\ker(A - \\lambda I)$.",
+        "To find them algebraically, rewrite $A\\mathbf{v} = \\lambda \\mathbf{v}$ as $(A - \\lambda I)\\mathbf{v} = \\mathbf{0}$. For a non-trivial $\\mathbf{v}$ to exist, $A - \\lambda I$ must be singular, i.e., its [[determinant]] is zero: $\\det(A - \\lambda I) = 0$. This equation in $\\lambda$ is the **characteristic polynomial** — a polynomial of degree $n$ whose roots are the eigenvalues. For each root $\\lambda$, the corresponding eigenvectors span the **eigenspace** $\\ker(A - \\lambda I)$.",
         "Eigenvalues can be real or complex, distinct or repeated. A $2\\times 2$ rotation matrix has complex eigenvalues $e^{\\pm i\\theta}$ — it has no real invariant direction other than the origin. A **diagonalizable** matrix has $n$ linearly independent eigenvectors that form a basis; in that basis, $A$ acts by pure scaling. A **defective** matrix (like $\\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$) has fewer independent eigenvectors than its size — it cannot be fully diagonalized and needs Jordan form.",
         "Symmetric real matrices enjoy a remarkable guarantee called the **spectral theorem**: all eigenvalues are real, eigenvectors from different eigenspaces are orthogonal, and the matrix can be diagonalized by an orthonormal basis: $A = QDQ^\\top$ with $Q$ orthogonal and $D$ diagonal. This is the cleanest possible factorization, and it is why covariance matrices, Hessians, and Laplacians are such tractable objects.",
         "**Worked example — eigenvalues of a triangular matrix:** For $A = \\begin{pmatrix}2 & 1\\\\0 & 3\\end{pmatrix}$, the characteristic polynomial is $\\det(A - \\lambda I) = (2 - \\lambda)(3 - \\lambda) - 0 = 0$, giving $\\lambda_1 = 2, \\lambda_2 = 3$. For upper/lower triangular matrices, the eigenvalues are simply the diagonal entries.",
@@ -1879,6 +1880,7 @@ function buildMMLLessons(): MMLLesson[] {
         "El polinomio característico $\det(A - \lambda I) = 0$ encuentra los autovalores.",
         "Las matrices simétricas se diagonalizan en una base ortonormal — el núcleo del PCA y los métodos espectrales.",
       ],
+      concepts: ["matrix", "vector", "determinant", "linear-map", "orthogonal"],
       annotatedFormulas: [
         {
           id: "eigen-eq",
@@ -2106,7 +2108,7 @@ function buildMMLLessons(): MMLLesson[] {
       chapterEs: "Descomposiciones Matriciales",
       chapterNumber: 4,
       content: [
-        "The **singular value decomposition** (SVD) factors *any* matrix $A \\in \\mathbb{R}^{m\\times n}$ as $A = U\\Sigma V^\\top$, where $U \\in \\mathbb{R}^{m\\times m}$ and $V \\in \\mathbb{R}^{n\\times n}$ are orthogonal and $\\Sigma$ is a (rectangular) diagonal matrix with non-negative entries $\\sigma_1 \\geq \\sigma_2 \\geq \\dots \\geq 0$ called the **singular values**. Unlike eigendecomposition, SVD applies to rectangular and singular matrices — there is no 'diagonalizability' condition to worry about.",
+        "The **singular value decomposition** (SVD) factors *any* [[matrix]] $A \\in \\mathbb{R}^{m\\times n}$ as $A = U\\Sigma V^\\top$, where $U \\in \\mathbb{R}^{m\\times m}$ and $V \\in \\mathbb{R}^{n\\times n}$ are [[orthogonal]] and $\\Sigma$ is a (rectangular) diagonal matrix with non-negative entries $\\sigma_1 \\geq \\sigma_2 \\geq \\dots \\geq 0$ called the [[singular-value|singular values]]. Unlike eigendecomposition, SVD applies to rectangular and singular matrices — there is no 'diagonalizability' condition to worry about.",
         "Geometrically, every linear map factors as **rotate, scale, rotate**. $V^\\top$ rotates input space to align with the data's principal axes, $\\Sigma$ stretches each axis independently (possibly flattening some to zero), and $U$ rotates to output space. This decomposition is why SVD is so powerful: it reveals the intrinsic geometric action of any matrix.",
         "**Pitfall:** Do *not* confuse singular values with eigenvalues. Singular values are always **real and non-negative**; eigenvalues of a non-symmetric real matrix can be **complex**. For a symmetric positive semi-definite matrix they coincide, but in general $\\sigma_i = \\sqrt{\\lambda_i(A^\\top A)}$, *not* $\\lambda_i(A)$. Mixing them up is one of the most common mistakes in numerical linear algebra.",
         "Singular values relate to eigenvalues: the $\\sigma_i$ are the square roots of the eigenvalues of $A^\\top A$ (or of $AA^\\top$). The columns of $V$ are the corresponding eigenvectors of $A^\\top A$ (right singular vectors); the columns of $U$ are the eigenvectors of $AA^\\top$ (left singular vectors). For symmetric matrices, SVD and eigendecomposition coincide up to sign.",
@@ -2190,6 +2192,14 @@ function buildMMLLessons(): MMLLesson[] {
         "La SVD factoriza cualquier matriz como $A = U\Sigma V^\top$ — rotar, escalar, rotar.",
         "Los valores singulares revelan el rango, el número de condición y las normas matriciales.",
         "La SVD impulsa PCA, pseudo-inversa, aproximación de bajo rango y sistemas de recomendación.",
+      ],
+      concepts: [
+        "matrix",
+        "orthogonal",
+        "singular-value",
+        "eigenvalue",
+        "rank",
+        "transpose",
       ],
       annotatedFormulas: [
         {

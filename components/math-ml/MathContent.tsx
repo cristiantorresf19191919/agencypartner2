@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
+import { ConceptChip } from "./primitives/ConceptChip";
 
 interface MathContentProps {
   text: string;
@@ -29,7 +30,8 @@ function renderKaTeX(latex: string, displayMode: boolean): string {
 
 function parseContent(text: string): React.ReactNode[] {
   const nodes: React.ReactNode[] = [];
-  const pattern = /(\$\$[^$]+\$\$|\$[^$]+\$|\*\*[^*]+\*\*|`[^`]+`)/g;
+  const pattern =
+    /(\[\[[^\]|]+(?:\|[^\]]+)?\]\]|\$\$[^$]+\$\$|\$[^$]+\$|\*\*[^*]+\*\*|`[^`]+`)/g;
   const matches = Array.from(text.matchAll(pattern));
   let lastIndex = 0;
   let key = 0;
@@ -40,7 +42,15 @@ function parseContent(text: string): React.ReactNode[] {
       nodes.push(<span key={key++}>{text.slice(lastIndex, index)}</span>);
     }
     const raw = match[1];
-    if (raw.startsWith("$$") && raw.endsWith("$$")) {
+    if (raw.startsWith("[[") && raw.endsWith("]]")) {
+      const inner = raw.slice(2, -2);
+      const pipe = inner.indexOf("|");
+      const id = pipe === -1 ? inner.trim() : inner.slice(0, pipe).trim();
+      const display = pipe === -1 ? undefined : inner.slice(pipe + 1).trim();
+      nodes.push(
+        <ConceptChip key={key++} conceptId={id} displayText={display} />,
+      );
+    } else if (raw.startsWith("$$") && raw.endsWith("$$")) {
       const html = renderKaTeX(raw.slice(2, -2), true);
       nodes.push(
         <span

@@ -7,6 +7,7 @@ import { ConceptGame } from "./primitives/ConceptGame";
 import { AnnotatedFormula } from "./primitives/AnnotatedFormula";
 import { FormulaExplorer } from "./primitives/FormulaExplorer";
 import { RecapFlashcards } from "./primitives/RecapFlashcards";
+import { PrerequisitesRail } from "./primitives/PrerequisitesRail";
 import {
   AnalogyCard,
   PitfallCallout,
@@ -397,6 +398,10 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
           {lang === "es" ? "Lección" : "Lesson"} {lesson.step}
         </span>
       </div>
+
+      {lesson.concepts && lesson.concepts.length > 0 && (
+        <PrerequisitesRail conceptIds={lesson.concepts} />
+      )}
 
       {content.map((paragraph, i) => {
         const isIntro = i === 0;
