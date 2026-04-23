@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState, useCallback, type ComponentType } from "react";
 import dynamic from "next/dynamic";
+import { VizFrame } from "./primitives/VizFrame";
+import { ConceptGame } from "./primitives/ConceptGame";
 import type {
   MMLLesson,
   MMLVisualization,
@@ -152,19 +154,17 @@ function VisualizationBlock({ viz, lang }: VisualizationBlockProps) {
 
   const title = pickLang(lang, viz.titleEs, viz.title);
   const description = pickLang(lang, viz.descriptionEs, viz.description);
+  const fullscreenLabel = lang === "es" ? "Maximizar" : "Maximize";
 
   return (
-    <div className={styles.vizContainer}>
-      {title && <div className={styles.vizTitle}>{title}</div>}
-      {description && (
-        <div className={styles.vizDescription}>
-          <MathContent text={description} as="span" />
-        </div>
-      )}
-      <div className={bodyClass}>
-        <Component config={viz.config} />
-      </div>
-    </div>
+    <VizFrame
+      title={title}
+      description={description}
+      bodyClassName={bodyClass}
+      fullscreenLabel={fullscreenLabel}
+    >
+      <Component config={viz.config} />
+    </VizFrame>
   );
 }
 
@@ -347,6 +347,15 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
             />
           ))}
         </section>
+      )}
+
+      {lesson.exercises.length > 0 && (
+        <ConceptGame
+          exercises={lesson.exercises}
+          lang={lang}
+          title={title}
+          localizeExercise={localizeExercise}
+        />
       )}
 
       {keyTakeaways && keyTakeaways.length > 0 && (

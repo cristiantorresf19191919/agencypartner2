@@ -111,6 +111,138 @@
   min-height: 400px;
 }
 
+/* Fullscreen mode for any viz */
+.vizContainerFullscreen {
+  position: fixed !important;
+  inset: 16px !important;
+  z-index: 1000;
+  margin: 0 !important;
+  background:
+    radial-gradient(120% 90% at 30% 10%, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0) 55%),
+    radial-gradient(100% 80% at 85% 95%, rgba(96, 165, 250, 0.18), rgba(96, 165, 250, 0) 60%),
+    #020617 !important;
+  box-shadow: 0 60px 140px -20px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(16, 185, 129, 0.25) inset;
+  animation: vizMax 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+.vizContainerFullscreen::after {
+  /* kill the outline gradient border so the cinematic look is clean in FS */
+  display: none;
+}
+
+.vizContainerFullscreen::before {
+  /* fully opaque backdrop so content behind is hidden */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #020617;
+  z-index: -1;
+  border-radius: inherit;
+}
+
+.vizContainerFullscreen .vizBody,
+.vizContainerFullscreen .vizBody3D {
+  min-height: 0;
+  height: calc(100vh - 160px);
+  padding: 20px 28px 32px;
+}
+
+.vizContainerFullscreen .svdCanvasWrap {
+  height: calc(100vh - 280px) !important;
+}
+
+@keyframes vizMax {
+  from {
+    transform: scale(0.98);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Header row: title/desc on left, fullscreen button on right */
+.vizHeader {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0;
+}
+
+.vizHeaderText {
+  flex: 1;
+  min-width: 0;
+}
+
+.vizFullscreenBtn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  margin: 14px 16px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(2, 6, 23, 0.55);
+  color: #6EE7B7;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  z-index: 2;
+}
+
+.vizFullscreenBtn:hover {
+  transform: translateY(-1px);
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.55);
+}
+
+.vizFullscreenBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(2, 6, 23, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.vizFullscreenCloseFloating {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  z-index: 1010;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(15, 23, 42, 0.85);
+  color: #ECFDF5;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+.vizFullscreenCloseFloating:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #FCA5A5;
+}
+
+.vizCloseHint {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.04em;
+}
+
 .exerciseSection {
   margin-top: 40px;
   padding-top: 32px;
@@ -908,5 +1040,383 @@
     order: 3;
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* ===================================================================== */
+/* Concept Challenge — gamified lesson reinforcement                     */
+/* ===================================================================== */
+
+.gameSection {
+  margin: 40px 0 16px;
+}
+
+.gameCard,
+.gameCardIdle,
+.gameCardEnd {
+  position: relative;
+  border-radius: 20px;
+  border: 1px solid rgba(16, 185, 129, 0.24);
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(16, 185, 129, 0.14), rgba(16, 185, 129, 0) 55%),
+    radial-gradient(100% 80% at 100% 100%, rgba(96, 165, 250, 0.12), rgba(96, 165, 250, 0) 60%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.75) 0%, rgba(2, 6, 23, 0.9) 100%);
+  box-shadow:
+    0 30px 70px -30px rgba(0, 0, 0, 0.85),
+    inset 0 0 0 1px rgba(16, 185, 129, 0.08);
+  overflow: hidden;
+}
+
+.gameCardIdle,
+.gameCardEnd {
+  padding: 36px 28px;
+  text-align: center;
+}
+
+.gameCardIdle::before,
+.gameCardEnd::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, black 20%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.gameIconPulse {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: radial-gradient(80% 80% at 50% 20%, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.08));
+  color: #ECFDF5;
+  box-shadow: 0 0 40px -4px rgba(16, 185, 129, 0.7);
+  animation: gamePulse 2.4s ease-in-out infinite;
+}
+
+.gameIconPulse svg {
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes gamePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.gameIdleHeading {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6EE7B7;
+}
+
+.gameIdleSub {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(226, 232, 240, 0.75);
+  max-width: 480px;
+  margin: 10px auto 18px;
+}
+
+.gameIdleTitle {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #ECFDF5;
+  margin: 0 auto 12px;
+  max-width: 520px;
+  letter-spacing: -0.01em;
+}
+
+.gameIdleMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(226, 232, 240, 0.65);
+  margin-bottom: 24px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.gameIdleDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.5);
+}
+
+.gameStartBtn,
+.gameResetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(120deg, #10B981 0%, #34D399 50%, #60A5FA 100%);
+  color: #020617;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow:
+    0 10px 30px -8px rgba(16, 185, 129, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+.gameStartBtn:hover,
+.gameResetBtn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 42px -8px rgba(16, 185, 129, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.gameStartBtn:active,
+.gameResetBtn:active {
+  transform: translateY(0);
+}
+
+/* Play card */
+.gameCard {
+  padding: 0;
+}
+
+.gameHud {
+  display: grid;
+  grid-template-columns: auto 44px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(2, 6, 23, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.gameHudRound {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gameHudLabel {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.7);
+  font-weight: 700;
+}
+
+.gameHudValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ECFDF5;
+}
+
+.gameHudValueDim {
+  color: rgba(148, 163, 184, 0.5);
+  font-weight: 600;
+}
+
+.gameRingWrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gameRingTime {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ECFDF5;
+  gap: 2px;
+}
+
+.gameHudStreak,
+.gameHudScore {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.gameHudStreak {
+  justify-self: end;
+}
+
+.gameHudStreak svg {
+  color: #F59E0B;
+}
+
+.gameHudScore svg {
+  color: #FCD34D;
+}
+
+.gameRoundBody {
+  padding: 22px 24px 8px;
+}
+
+.gameRoundBody .exerciseCard {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gameResultBarCorrect,
+.gameResultBarWrong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 14px 22px;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.gameResultBarCorrect {
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
+  color: #A7F3D0;
+}
+
+.gameResultBarWrong {
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08));
+  color: #FCA5A5;
+}
+
+.gameResultText {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.02em;
+}
+
+.gameNextBtn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ECFDF5;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.gameNextBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(2px);
+}
+
+/* End screen */
+.gameTrophy {
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 18px currentColor);
+}
+
+.gameTrophy svg {
+  width: 56px;
+  height: 56px;
+}
+
+.gameEndHeading {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ECFDF5;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.gameEndRating {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.gameEndStats {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 16px 8px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  margin-bottom: 28px;
+}
+
+.gameStatBlock {
+  padding: 0 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.gameStatValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 24px;
+  font-weight: 800;
+  color: #ECFDF5;
+}
+
+.gameStatLabel {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.7);
+  font-weight: 700;
+}
+
+.gameStatDivider {
+  width: 1px;
+  background: rgba(148, 163, 184, 0.18);
+}
+
+@media (max-width: 640px) {
+  .gameHud {
+    grid-template-columns: auto 40px 1fr;
+    row-gap: 10px;
+  }
+  .gameHudScore {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    justify-content: center;
+  }
+  .gameRoundBody {
+    padding: 18px 16px 6px;
+  }
+  .gameEndStats {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .gameStatDivider {
+    width: 100%;
+    height: 1px;
   }
 }
