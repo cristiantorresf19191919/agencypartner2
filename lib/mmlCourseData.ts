@@ -364,6 +364,43 @@ function buildMMLLessons(): MMLLesson[] {
           ],
         },
       ],
+      tryYourOwn: [
+        {
+          id: "lin-sys-sandbox",
+          vizType: "matrix-transform-2d",
+          title: "Build your own coefficient matrix",
+          titleEs: "Construye tu propia matriz de coeficientes",
+          prompt:
+            "Type any numbers into $A$ below and watch how it warps the unit square — the determinant of your matrix appears live.",
+          promptEs:
+            "Escribe cualquier número en $A$ y observa cómo deforma el cuadrado unitario — el determinante aparece en vivo.",
+          input: { kind: "matrix", rows: 2, cols: 2, defaultMatrix: [[2, 1], [1, -1]] },
+          baseConfig: { animateFromIdentity: true, showBasis: true },
+          insertAfterParagraph: 6,
+        },
+      ],
+      mlConnection: {
+        technique: "Least-squares linear regression via the normal equations",
+        techniqueEs: "Regresión lineal por mínimos cuadrados vía ecuaciones normales",
+        summary:
+          "Training a linear model $X\\mathbf{w} = \\mathbf{y}$ when $X$ is tall-and-thin is exactly what this lesson is about — solving (or approximating) a linear system. scikit-learn's `LinearRegression` internally forms $X^\\top X$, tests it for rank, and solves with LU (or falls back to SVD when rank-deficient).",
+        summaryEs:
+          "Entrenar un modelo lineal $X\\mathbf{w} = \\mathbf{y}$ cuando $X$ es alto y estrecho es exactamente este tema — resolver (o aproximar) un sistema lineal. El `LinearRegression` de scikit-learn forma internamente $X^\\top X$, comprueba su rango y resuelve con LU (o recurre a SVD si hay deficiencia de rango).",
+        codeLanguage: "numpy",
+        codeSnippet: `# Solve the normal equations   X^T X w = X^T y
+import numpy as np
+
+X = np.array([[1, 0.5], [1, 1.2], [1, 2.1], [1, 3.0]])  # design matrix
+y = np.array([1.4, 2.0, 3.1, 4.2])
+
+# Closed-form least squares
+w, *_ = np.linalg.lstsq(X, y, rcond=None)
+print(w)  # [intercept, slope]`,
+        ifRemoved:
+          "Without a solid grasp of linear systems, regression becomes a black box: you can call `.fit(X, y)` but you cannot diagnose rank deficiency, multicollinearity, or ill-conditioning when the optimizer misbehaves.",
+        ifRemovedEs:
+          "Sin un dominio sólido de los sistemas lineales, la regresión es una caja negra: puedes llamar a `.fit(X, y)` pero no puedes diagnosticar deficiencia de rango, multicolinealidad ni mal condicionamiento cuando el optimizador falla.",
+      },
     },
 
     // =========================================================================
@@ -463,6 +500,47 @@ function buildMMLLessons(): MMLLesson[] {
         "La multiplicación de matrices es asociativa y distributiva pero **no conmutativa**.",
         "Las matrices especiales —identidad, diagonal, simétrica, ortogonal— tienen propiedades que simplifican los algoritmos de ML.",
       ],
+      tryYourOwn: [
+        {
+          id: "matrix-transform-sandbox",
+          vizType: "matrix-transform-2d",
+          title: "See any 2×2 matrix act on the plane",
+          titleEs: "Observa cualquier matriz 2×2 actuando sobre el plano",
+          prompt:
+            "Edit the four numbers — rotations, shears, reflections, scalings all appear as you type.",
+          promptEs:
+            "Edita los cuatro números — rotaciones, cizallas, reflexiones y escalados aparecen al tipear.",
+          input: {
+            kind: "matrix",
+            rows: 2,
+            cols: 2,
+            defaultMatrix: [[0.9, -0.5], [0.5, 0.9]],
+          },
+          baseConfig: { animateFromIdentity: true, showBasis: true },
+          insertAfterParagraph: 4,
+        },
+      ],
+      mlConnection: {
+        technique: "A single neural network layer is a matrix multiply",
+        techniqueEs: "Una capa de red neuronal es una multiplicación matricial",
+        summary:
+          "Every dense layer in a neural network computes $\\mathbf{h} = \\sigma(W\\mathbf{x} + \\mathbf{b})$ — a matrix multiply plus a bias, passed through a non-linearity. Stacking layers stacks matrix multiplications, and *backpropagation* walks the derivatives back through each matrix's transpose.",
+        summaryEs:
+          "Cada capa densa de una red neuronal calcula $\\mathbf{h} = \\sigma(W\\mathbf{x} + \\mathbf{b})$ — una multiplicación matricial más un sesgo, seguida de una no-linealidad. Apilar capas apila multiplicaciones matriciales, y la *retropropagación* camina las derivadas hacia atrás a través de la traspuesta de cada matriz.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch, torch.nn as nn
+
+layer = nn.Linear(in_features=4, out_features=3)
+# layer.weight is a (3, 4) matrix; layer.bias is a (3,) vector.
+
+x = torch.tensor([0.2, -0.1, 0.7, 1.3])  # input vector
+h = torch.relu(layer(x))                 # W x + b, then ReLU
+print(h.shape)  # torch.Size([3])`,
+        ifRemoved:
+          "Without matrix multiplication, there is no forward pass, no batching, no efficient use of the GPU — every deep-learning library is built on top of this one operation.",
+        ifRemovedEs:
+          "Sin multiplicación matricial no hay paso hacia adelante, no hay lotes, no hay uso eficiente de la GPU — toda biblioteca de deep learning se construye sobre esta operación.",
+      },
     },
 
     // =========================================================================
@@ -1097,6 +1175,66 @@ function buildMMLLessons(): MMLLesson[] {
         "$L_1$, $L_2$ y $L_\infty$ son las normas más usadas; sus bolas unidad tienen formas distintivas.",
         "La regularización elige una norma, y esa elección cambia la geometría de las soluciones (dispersa vs. suave).",
       ],
+      compares: [
+        {
+          id: "norm-l1-vs-l2",
+          title: "Diamond vs circle — L¹ vs L² unit balls",
+          titleEs: "Diamante vs círculo — bolas unidad L¹ vs L²",
+          description:
+            "Slide $r$ to scale both unit balls. Notice how the $L_1$ diamond has *corners* on the axes (drives sparsity) while the $L_2$ circle is smooth (shrinks toward the origin uniformly).",
+          descriptionEs:
+            "Desliza $r$ para escalar ambas bolas. Nota cómo el diamante $L_1$ tiene *esquinas* en los ejes (induce dispersión) mientras que el círculo $L_2$ es suave (encoge hacia el origen de forma uniforme).",
+          slider: {
+            key: "r",
+            label: "ball radius",
+            labelEs: "radio de la bola",
+            min: 0.3,
+            max: 1.8,
+            step: 0.05,
+            default: 1.0,
+          },
+          left: {
+            label: "L¹ — corners on axes",
+            labelEs: "L¹ — esquinas en los ejes",
+            vizType: "norm-balls",
+            makeConfig: (t) => ({
+              active: { l1: true, l2: false, linf: false },
+              radius: t,
+            }),
+          },
+          right: {
+            label: "L² — smooth circle",
+            labelEs: "L² — círculo suave",
+            vizType: "norm-balls",
+            makeConfig: (t) => ({
+              active: { l1: false, l2: true, linf: false },
+              radius: t,
+            }),
+          },
+          insertAfterParagraph: 4,
+        },
+      ],
+      mlConnection: {
+        technique: "L¹ (Lasso) vs L² (Ridge) regularization",
+        techniqueEs: "Regularización L¹ (Lasso) vs L² (Ridge)",
+        summary:
+          "Adding $\\lambda\\|\\mathbf{w}\\|_1$ to the loss pushes some weights to **exactly zero** — feature selection for free. Adding $\\lambda\\|\\mathbf{w}\\|_2^2$ shrinks them **uniformly** toward zero — numerical stability with all features retained. The choice of norm *is* the choice of prior.",
+        summaryEs:
+          "Añadir $\\lambda\\|\\mathbf{w}\\|_1$ a la pérdida empuja algunos pesos a **exactamente cero** — selección de características gratis. Añadir $\\lambda\\|\\mathbf{w}\\|_2^2$ los encoge **uniformemente** hacia cero — estabilidad numérica con todas las características retenidas. La elección de la norma *es* la elección del prior.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.linear_model import Lasso, Ridge
+
+# Same data, different norm in the regularizer
+lasso = Lasso(alpha=0.1).fit(X, y)    # L1 -> sparse w
+ridge = Ridge(alpha=0.1).fit(X, y)    # L2 -> small w
+
+print("L1 nonzero:", (lasso.coef_ != 0).sum())
+print("L2 nonzero:", (ridge.coef_ != 0).sum())`,
+        ifRemoved:
+          "Without the norm framework, regularization becomes a mystery knob. Which norm you pick controls sparsity, invariance, and numerical conditioning — and you cannot reason about any of it without this lesson.",
+        ifRemovedEs:
+          "Sin el marco de normas, la regularización es una perilla misteriosa. La norma que eliges controla la dispersión, la invarianza y el condicionamiento numérico — y no puedes razonar nada de eso sin esta lección.",
+      },
     },
 
     // =========================================================================
@@ -1184,6 +1322,27 @@ function buildMMLLessons(): MMLLesson[] {
         "Todo producto interno induce una norma vía $\|\mathbf{v}\| = \sqrt{\langle \mathbf{v}, \mathbf{v}\rangle}$.",
         "La similitud del coseno y los métodos de kernel en ML son aplicaciones directas de los productos internos.",
       ],
+      mlConnection: {
+        technique: "Cosine similarity in embeddings (search, retrieval, RAG)",
+        techniqueEs: "Similitud coseno en embeddings (búsqueda, retrieval, RAG)",
+        summary:
+          "Every embedding database — FAISS, Pinecone, pgvector — ranks results by $\\cos(\\theta) = \\frac{\\langle \\mathbf{u}, \\mathbf{v}\\rangle}{\\|\\mathbf{u}\\|\\,\\|\\mathbf{v}\\|}$. Normalize vectors once to the unit sphere and the inner product *is* the cosine similarity — one dot-product per comparison.",
+        summaryEs:
+          "Toda base de datos de embeddings — FAISS, Pinecone, pgvector — ordena los resultados por $\\cos(\\theta) = \\frac{\\langle \\mathbf{u}, \\mathbf{v}\\rangle}{\\|\\mathbf{u}\\|\\,\\|\\mathbf{v}\\|}$. Normaliza los vectores al vector unidad una vez y el producto interno *es* la similitud coseno — un producto punto por comparación.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+def cosine_sim(u, v):
+    return np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v) + 1e-9)
+
+# Top-k retrieval in an embedding index:
+scores = embeddings @ query            # one matmul = O(N) cosine
+top_k = np.argsort(-scores)[:10]`,
+        ifRemoved:
+          "No inner product, no cosine similarity, no kernel trick, no attention. Transformers literally compute softmax( Q K^T / √d ) · V — a matrix of inner products.",
+        ifRemovedEs:
+          "Sin producto interno, no hay similitud coseno, ni truco del kernel, ni atención. Los transformers literalmente calculan softmax( Q K^T / √d ) · V — una matriz de productos internos.",
+      },
     },
 
     // =========================================================================
@@ -1352,6 +1511,25 @@ function buildMMLLessons(): MMLLesson[] {
         "$\cos\theta = \langle \mathbf{u}, \mathbf{v}\rangle / (\|\mathbf{u}\|\|\mathbf{v}\|)$ define el ángulo entre vectores.",
         "Los vectores ortogonales tienen producto interno cero; las matrices ortogonales preservan longitudes y ángulos.",
         "La similitud del coseno y los mecanismos de atención usan esta geometría en el corazón del ML moderno.",
+      ],
+      visualProofs: [
+        {
+          id: "dot-as-projection",
+          title: "Why u·v = ‖u‖‖v‖cos θ",
+          titleEs: "Por qué u·v = ‖u‖‖v‖cos θ",
+          theorem:
+            "The dot product equals the length of $\\mathbf{v}$ projected onto $\\mathbf{u}$, times $\\|\\mathbf{u}\\|$.",
+          theoremEs:
+            "El producto punto es igual a la longitud de $\\mathbf{v}$ proyectada sobre $\\mathbf{u}$, multiplicada por $\\|\\mathbf{u}\\|$.",
+          kind: "dot-product-projection",
+          steps: [
+            { at: 0, caption: "Start with vectors u and v at angle θ.", captionEs: "Empieza con vectores u y v en ángulo θ." },
+            { at: 0.35, caption: "Drop a perpendicular from the tip of v onto the line of u.", captionEs: "Baja una perpendicular desde la punta de v sobre la recta de u." },
+            { at: 0.65, caption: "The projected length is ‖v‖ cos θ. This is the 'shadow' of v on u.", captionEs: "La longitud proyectada es ‖v‖ cos θ. Es la 'sombra' de v sobre u." },
+            { at: 0.95, caption: "Multiply by ‖u‖ and you get u·v. When θ = 90°, cos θ = 0 → orthogonal ⇒ zero dot product.", captionEs: "Multiplica por ‖u‖ y obtienes u·v. Cuando θ = 90°, cos θ = 0 → ortogonal ⇒ producto punto cero." },
+          ],
+          insertAfterParagraph: 3,
+        },
       ],
     },
 
@@ -1704,6 +1882,46 @@ function buildMMLLessons(): MMLLesson[] {
         "Las rotaciones 2D conmutan y forman $SO(2)$; las rotaciones 3D no conmutan.",
         "Las rotaciones aparecen en PCA, embeddings RoPE y normalizing flows del ML moderno.",
       ],
+      visualProofs: [
+        {
+          id: "rot-preserves-length",
+          title: "A rotation never changes length",
+          titleEs: "Una rotación nunca cambia la longitud",
+          theorem:
+            "For any orthogonal matrix $Q$ and vector $\\mathbf{v}$: $\\|Q\\mathbf{v}\\| = \\|\\mathbf{v}\\|$.",
+          theoremEs:
+            "Para cualquier matriz ortogonal $Q$ y vector $\\mathbf{v}$: $\\|Q\\mathbf{v}\\| = \\|\\mathbf{v}\\|$.",
+          kind: "orthogonal-preserves-length",
+          steps: [
+            { at: 0, caption: "Start with a ruler of length |v|.", captionEs: "Empieza con una regla de longitud |v|." },
+            { at: 0.25, caption: "Apply Q. The ruler rotates about the origin.", captionEs: "Aplica Q. La regla rota en torno al origen." },
+            { at: 0.55, caption: "Only the direction changes — both endpoints stay on the dashed circle.", captionEs: "Solo cambia la dirección — ambos extremos permanecen en el círculo punteado." },
+            { at: 0.85, caption: "Qᵀ Q = I ⇒ ‖Qv‖² = vᵀQᵀQv = vᵀv = ‖v‖². Length conserved.", captionEs: "Qᵀ Q = I ⇒ ‖Qv‖² = vᵀQᵀQv = vᵀv = ‖v‖². La longitud se conserva." },
+          ],
+          insertAfterParagraph: 3,
+        },
+      ],
+      mlConnection: {
+        technique: "Rotary Position Embeddings (RoPE) in modern transformers",
+        techniqueEs: "Rotary Position Embeddings (RoPE) en transformers modernos",
+        summary:
+          "RoPE rotates query and key vectors by a token-index-dependent angle before attention. The inner product between rotated queries and keys depends only on the *relative* position — exactly because rotations preserve length and behave cleanly under inner products.",
+        summaryEs:
+          "RoPE rota los vectores de consulta y clave por un ángulo que depende del índice del token antes de la atención. El producto interno entre las consultas y claves rotadas depende solo de la posición *relativa* — precisamente porque las rotaciones preservan la longitud y se comportan bien con productos internos.",
+        codeLanguage: "python",
+        codeSnippet: `def rotate_half(x):
+    x1, x2 = x.chunk(2, dim=-1)
+    return torch.cat((-x2, x1), dim=-1)
+
+def apply_rope(q, k, cos, sin):
+    q_rot = q * cos + rotate_half(q) * sin
+    k_rot = k * cos + rotate_half(k) * sin
+    return q_rot, k_rot   # ‖q_rot‖ = ‖q‖, ‖k_rot‖ = ‖k‖`,
+        ifRemoved:
+          "Without orthogonal / rotation matrices there is no QR decomposition, no Gram-Schmidt, no rotary embeddings, and no clean treatment of stability in deep networks.",
+        ifRemovedEs:
+          "Sin matrices ortogonales / de rotación no hay descomposición QR, ni Gram-Schmidt, ni rotary embeddings, ni un tratamiento claro de la estabilidad en redes profundas.",
+      },
     },
 
     // =========================================================================
@@ -1922,6 +2140,62 @@ function buildMMLLessons(): MMLLesson[] {
           ],
         },
       ],
+      tryYourOwn: [
+        {
+          id: "eigen-sandbox",
+          vizType: "matrix-transform-2d",
+          title: "Find the invariant directions of your own matrix",
+          titleEs: "Encuentra las direcciones invariantes de tu propia matriz",
+          prompt:
+            "Edit $A$ and watch the animation. The red basis vectors rotate when hit by $A$ — but lines through the eigendirections stay put (scaled only).",
+          promptEs:
+            "Edita $A$ y observa la animación. Los vectores base rojos rotan cuando $A$ los toca — pero las líneas por las eigendirecciones se quedan (solo escaladas).",
+          input: { kind: "matrix", rows: 2, cols: 2, defaultMatrix: [[3, 1], [0, 2]] },
+          baseConfig: { animateFromIdentity: true, showBasis: true },
+          insertAfterParagraph: 4,
+        },
+      ],
+      visualProofs: [
+        {
+          id: "eig-stay-on-line",
+          title: "Eigenvectors never leave their line",
+          titleEs: "Los autovectores nunca abandonan su recta",
+          theorem:
+            "For a symmetric $A$, the ellipse $\\{A\\mathbf{x} : \\|\\mathbf{x}\\| = 1\\}$ has axes *exactly* along the eigenvectors of $A$, with lengths $\\lambda_i$.",
+          theoremEs:
+            "Para $A$ simétrica, la elipse $\\{A\\mathbf{x} : \\|\\mathbf{x}\\| = 1\\}$ tiene ejes *exactamente* a lo largo de los autovectores de $A$, con longitudes $\\lambda_i$.",
+          kind: "eigenvectors-stay-on-line",
+          steps: [
+            { at: 0, caption: "Start with the unit circle.", captionEs: "Empieza con el círculo unitario." },
+            { at: 0.35, caption: "Apply A = diag(3, 2). Every point on the circle moves radially.", captionEs: "Aplica A = diag(3, 2). Cada punto del círculo se mueve radialmente." },
+            { at: 0.7, caption: "Eigenvectors e₁, e₂ trace the ellipse's axes — they never rotate off their lines.", captionEs: "Los autovectores e₁, e₂ trazan los ejes de la elipse — nunca se salen de su recta." },
+            { at: 1.0, caption: "Eigenvalues λ₁=3, λ₂=2 are the stretch factors.", captionEs: "Los autovalores λ₁=3, λ₂=2 son los factores de estiramiento." },
+          ],
+          insertAfterParagraph: 5,
+        },
+      ],
+      mlConnection: {
+        technique: "PCA, PageRank, and the Hessian's eigenvalues",
+        techniqueEs: "PCA, PageRank y los autovalores del Hessiano",
+        summary:
+          "PCA ranks data's directions by eigenvalues of the covariance matrix. PageRank is the dominant eigenvector of a stochastic matrix. The Hessian's eigenvalues tell an optimizer whether it's near a minimum (all positive), saddle (mixed signs), or maximum (all negative).",
+        summaryEs:
+          "El PCA ordena las direcciones de los datos por los autovalores de la matriz de covarianza. PageRank es el autovector dominante de una matriz estocástica. Los autovalores del Hessiano le dicen a un optimizador si está cerca de un mínimo (todos positivos), silla (signos mixtos) o máximo (todos negativos).",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+A = np.array([[3.0, 1.0],
+              [1.0, 3.0]])
+
+# Real eigenvalues + orthogonal eigenvectors (A is symmetric)
+eigvals, eigvecs = np.linalg.eigh(A)
+print("eigenvalues:", eigvals)          # [2. 4.]
+print("eigenvectors (columns):", eigvecs)`,
+        ifRemoved:
+          "No eigenvalues means no PCA, no spectral clustering, no convergence theory for iterative solvers, no stability analysis of dynamical systems or GANs.",
+        ifRemovedEs:
+          "Sin autovalores no hay PCA, ni agrupamiento espectral, ni teoría de convergencia para solucionadores iterativos, ni análisis de estabilidad de sistemas dinámicos o GANs.",
+      },
     },
 
     // =========================================================================
@@ -2238,6 +2512,44 @@ function buildMMLLessons(): MMLLesson[] {
           ],
         },
       ],
+      tryYourOwn: [
+        {
+          id: "svd-sandbox",
+          vizType: "svd-flow",
+          title: "Feed the SVD flow your own 2×2 matrix",
+          titleEs: "Alimenta el flujo SVD con tu propia matriz 2×2",
+          prompt:
+            "Change a single entry and watch $\\sigma_1, \\sigma_2$ recompute. Try $\\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$ for a rank-1 case (one σ collapses to zero).",
+          promptEs:
+            "Cambia una entrada y observa cómo se recalculan $\\sigma_1, \\sigma_2$. Prueba $\\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$ para un caso de rango 1 (un σ se colapsa a cero).",
+          input: { kind: "matrix", rows: 2, cols: 2, defaultMatrix: [[2, 1], [1, 2]] },
+          baseConfig: {},
+          insertAfterParagraph: 3,
+        },
+      ],
+      mlConnection: {
+        technique: "Low-rank approximation, pseudo-inverse, PCA, recommender systems",
+        techniqueEs: "Aproximación de bajo rango, pseudo-inversa, PCA, sistemas de recomendación",
+        summary:
+          "Truncated SVD is the universal *compress-and-approximate* tool. Keep the top-$k$ singular values of a user-item matrix → Netflix-style recommender. Keep the top-$k$ of a centered data matrix → PCA. Use $V\\Sigma^+U^\\top$ → Moore-Penrose pseudo-inverse for least squares.",
+        summaryEs:
+          "La SVD truncada es la herramienta universal de *comprimir-y-aproximar*. Mantén los $k$ mayores valores singulares de una matriz usuarios-items → recomendador estilo Netflix. Mantén los top $k$ de una matriz de datos centrada → PCA. Usa $V\\Sigma^+U^\\top$ → pseudo-inversa de Moore-Penrose para mínimos cuadrados.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+X = np.random.randn(100, 50)     # data, rows are samples
+
+U, S, Vt = np.linalg.svd(X, full_matrices=False)
+
+# Keep top-k components (k=10) — lossy compression
+k = 10
+X_approx = U[:, :k] @ np.diag(S[:k]) @ Vt[:k, :]
+print("energy kept:", (S[:k] ** 2).sum() / (S ** 2).sum())`,
+        ifRemoved:
+          "No SVD means no stable pseudo-inverse, no PCA, no truncated-SVD recommender, no low-rank LoRA adapters in modern LLMs, and no principled way to diagnose ill-conditioning.",
+        ifRemovedEs:
+          "Sin SVD no hay pseudo-inversa estable, no hay PCA, no hay recomendador de SVD truncado, no hay adaptadores LoRA de bajo rango en los LLMs modernos, y no hay forma principiada de diagnosticar el mal condicionamiento.",
+      },
     },
 
     // =========================================================================
@@ -2578,6 +2890,28 @@ function buildMMLLessons(): MMLLesson[] {
         "El gradiente las empaqueta en un vector que apunta en la dirección de máximo ascenso.",
         "Los puntos críticos donde $\nabla f = \mathbf{0}$ incluyen mínimos, máximos y (con frecuencia) puntos de silla.",
       ],
+      mlConnection: {
+        technique: "The training signal for every neural network is ∇L",
+        techniqueEs: "La señal de entrenamiento de toda red neuronal es ∇L",
+        summary:
+          "Backprop is just the chain rule applied to a computation graph of matrix multiplies and non-linearities. PyTorch and JAX automate this: you write the forward pass, they reverse-mode-differentiate to produce the gradient for every learnable tensor.",
+        summaryEs:
+          "La retropropagación es la regla de la cadena aplicada a un grafo de multiplicaciones matriciales y no-linealidades. PyTorch y JAX automatizan esto: escribes el paso hacia adelante y ellos diferencian en modo inverso para producir el gradiente de cada tensor aprendible.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch
+
+x = torch.tensor([1.0, 2.0], requires_grad=True)
+
+# f(x,y) = x^2 + 3 y^2
+f = x[0] ** 2 + 3 * x[1] ** 2
+
+f.backward()                  # autograd walks the graph
+print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
+        ifRemoved:
+          "No gradients, no autograd, no PyTorch, no training. Every modern ML library is an optimized gradient engine — this lesson is literally the foundation.",
+        ifRemovedEs:
+          "Sin gradientes no hay autograd, ni PyTorch, ni entrenamiento. Toda biblioteca moderna de ML es un motor de gradientes optimizado — esta lección es literalmente el fundamento.",
+      },
     },
 
     // =========================================================================
@@ -3367,6 +3701,45 @@ function buildMMLLessons(): MMLLesson[] {
         "Las gaussianas son cerradas bajo transformaciones afines, sumas, marginales y condicionales.",
         "Las gaussianas están detrás de la regresión lineal, los VAEs, los modelos de difusión y los procesos gaussianos.",
       ],
+      realData: [
+        {
+          id: "gauss-ellipse-iris",
+          dataset: "iris",
+          mode: "variance-ellipse",
+          title: "2σ covariance ellipse on real iris measurements",
+          titleEs: "Elipse de covarianza 2σ sobre medidas reales de iris",
+          description:
+            "Pick any two flower features — the green ellipse is the Gaussian fit: centered at the mean, axes along the eigenvectors of the covariance matrix, sized by $\\sqrt{\\lambda_i}$.",
+          descriptionEs:
+            "Elige dos características cualesquiera — la elipse verde es el ajuste gaussiano: centrado en la media, ejes a lo largo de los autovectores de la covarianza, tamaño $\\sqrt{\\lambda_i}$.",
+          featureX: 0,
+          featureY: 2,
+          insertAfterParagraph: 3,
+        },
+      ],
+      mlConnection: {
+        technique: "Gaussian Naive Bayes, VAEs, diffusion models, Gaussian processes",
+        techniqueEs: "Naive Bayes gaussiano, VAEs, modelos de difusión, procesos gaussianos",
+        summary:
+          "Almost every generative model assumes Gaussians somewhere: VAE posteriors, diffusion noise schedules, GP kernels, and Bayesian linear regression all rely on closed-form Gaussian identities. The reason is closure under addition, affine transforms, marginalization, and conditioning — unmatched by any other distribution.",
+        summaryEs:
+          "Casi todo modelo generativo supone gaussianas en algún sitio: las posteriores de VAEs, los schedules de ruido de los modelos de difusión, los kernels de GP y la regresión lineal bayesiana dependen de identidades cerradas gaussianas. La razón es la clausura bajo suma, transformaciones afines, marginalización y condicionamiento — incomparable con cualquier otra distribución.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+# Sample from a 2D Gaussian with a correlated covariance
+mu  = np.array([1.0, -0.5])
+Sig = np.array([[2.0, 1.2],
+                [1.2, 1.5]])
+
+L = np.linalg.cholesky(Sig)       # Sig = L L^T
+z = np.random.randn(1000, 2)
+x = z @ L.T + mu                   # x ~ N(mu, Sig)`,
+        ifRemoved:
+          "Remove the Gaussian and half of probabilistic ML goes dark: no VAE training objective, no DDPM noise forward process, no Kalman filter, no GP inference. It is the irreplaceable workhorse.",
+        ifRemovedEs:
+          "Elimina la gaussiana y la mitad del ML probabilístico se apaga: no hay objetivo de entrenamiento de VAE, ni proceso de ruido hacia adelante de DDPM, ni filtro de Kalman, ni inferencia GP. Es el caballo de batalla insustituible.",
+      },
     },
 
     // =========================================================================
@@ -3620,6 +3993,29 @@ function buildMMLLessons(): MMLLesson[] {
         "Momentum, Adam y variantes de SGD abordan el mal condicionamiento y la estocasticidad.",
         "El ruido de SGD actúa como regularizador y suele mejorar la generalización.",
       ],
+      mlConnection: {
+        technique: "Every optimizer in deep learning: SGD, Adam, RMSProp",
+        techniqueEs: "Todo optimizador en deep learning: SGD, Adam, RMSProp",
+        summary:
+          "Every weight in every neural network is updated by some variant of $\\mathbf{w}_{t+1} = \\mathbf{w}_t - \\eta_t \\nabla L(\\mathbf{w}_t)$. Adam adds per-parameter adaptive learning rates via running estimates of gradient mean and variance; SGD with momentum adds a velocity term. The core is unchanged: follow the downhill gradient.",
+        summaryEs:
+          "Cada peso de toda red neuronal se actualiza con alguna variante de $\\mathbf{w}_{t+1} = \\mathbf{w}_t - \\eta_t \\nabla L(\\mathbf{w}_t)$. Adam añade tasas de aprendizaje adaptativas por parámetro vía estimaciones móviles de media y varianza del gradiente; SGD con momento añade un término de velocidad. El núcleo no cambia: sigue el gradiente hacia abajo.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch
+
+w  = torch.zeros(10, requires_grad=True)
+opt = torch.optim.Adam([w], lr=1e-3)
+
+for step in range(1000):
+    loss = (w ** 2).sum()         # your real loss goes here
+    opt.zero_grad()
+    loss.backward()               # populates w.grad
+    opt.step()                    # w <- Adam update of -lr * grad`,
+        ifRemoved:
+          "No gradient descent means no training. Neural networks, logistic regression, matrix factorization, policy gradients in RL — every one of them grinds to a halt without this update rule.",
+        ifRemovedEs:
+          "Sin descenso por gradiente no hay entrenamiento. Las redes neuronales, la regresión logística, la factorización matricial, los policy gradients en RL — todos se detienen sin esta regla de actualización.",
+      },
     },
 
     // =========================================================================
@@ -4160,6 +4556,45 @@ function buildMMLLessons(): MMLLesson[] {
         "Mínimos cuadrados = MLE bajo ruido gaussiano; las transformaciones $\boldsymbol\phi(\mathbf{x})$ lo extienden a problemas no lineales.",
         "Ridge y Lasso regularizan añadiendo penalizaciones $\ell_2$ o $\ell_1$; ambos corresponden a MAP con priors específicos.",
       ],
+      realData: [
+        {
+          id: "linreg-housing",
+          dataset: "housing-sample",
+          mode: "regression-line",
+          title: "Fit a line through 20 real housing samples",
+          titleEs: "Ajusta una recta sobre 20 muestras reales de vivienda",
+          description:
+            "Rooms vs income — the emerald line is the closed-form least-squares solution $\\hat\\beta = (X^\\top X)^{-1}X^\\top \\mathbf{y}$.",
+          descriptionEs:
+            "Habitaciones vs ingreso — la línea esmeralda es la solución cerrada de mínimos cuadrados $\\hat\\beta = (X^\\top X)^{-1}X^\\top \\mathbf{y}$.",
+          featureX: 0,
+          featureY: 1,
+          insertAfterParagraph: 2,
+        },
+      ],
+      mlConnection: {
+        technique: "scikit-learn LinearRegression (and every GLM that follows)",
+        techniqueEs: "scikit-learn LinearRegression (y todo GLM que sigue)",
+        summary:
+          "Linear regression is the gateway model. Logistic regression, Poisson regression, Ridge, Lasso, ElasticNet, Bayesian linear regression, GLMs, and even the output layer of a classifier all reuse the same $X\\boldsymbol\\beta$ skeleton — differing only in the link function and the penalty.",
+        summaryEs:
+          "La regresión lineal es el modelo puerta de entrada. La regresión logística, Poisson, Ridge, Lasso, ElasticNet, regresión lineal bayesiana, GLMs e incluso la capa de salida de un clasificador reutilizan el mismo esqueleto $X\\boldsymbol\\beta$ — solo difieren en la función de enlace y la penalización.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+X = np.array([[3], [4], [5], [6], [7], [8]])
+y = np.array([1.5, 2.1, 2.4, 3.4, 4.0, 4.5])
+
+model = LinearRegression().fit(X, y)
+print("slope:",     model.coef_[0])
+print("intercept:", model.intercept_)
+print("R²:",        model.score(X, y))`,
+        ifRemoved:
+          "Without the closed-form and MLE view of least squares, you cannot derive Ridge, Lasso, Bayesian regression, Kalman filters, or the linear output layer of a neural network in any principled way.",
+        ifRemovedEs:
+          "Sin la solución cerrada y la vista MLE de mínimos cuadrados, no puedes derivar Ridge, Lasso, regresión bayesiana, filtros de Kalman ni la capa de salida lineal de una red neuronal de forma principiada.",
+      },
     },
 
     // =========================================================================
@@ -4416,6 +4851,46 @@ function buildMMLLessons(): MMLLesson[] {
         "Formulaciones equivalentes: máxima varianza o mínimo error de reconstrucción; ambas dan la misma solución.",
         "La SVD de $X$ es la vía numéricamente estable: los vectores singulares derechos son las componentes principales.",
       ],
+      realData: [
+        {
+          id: "pca-iris",
+          dataset: "iris",
+          mode: "pca-axes",
+          title: "PCA axes on real iris features",
+          titleEs: "Ejes PCA sobre características reales del iris",
+          description:
+            "Pick any two features — the amber/blue axes are the eigenvectors of the covariance matrix, and the ellipse is the 2σ contour. PC1 (amber) always aligns with the direction of greatest spread.",
+          descriptionEs:
+            "Elige dos características cualesquiera — los ejes ámbar/azul son los autovectores de la matriz de covarianza y la elipse es el contorno 2σ. PC1 (ámbar) se alinea siempre con la dirección de mayor dispersión.",
+          featureX: 2,
+          featureY: 3,
+          insertAfterParagraph: 3,
+        },
+      ],
+      mlConnection: {
+        technique: "sklearn.decomposition.PCA — the first dimensionality reducer to try",
+        techniqueEs: "sklearn.decomposition.PCA — el primer reductor de dimensión a probar",
+        summary:
+          "PCA is *the* default dimensionality reducer: visualizing high-D data in 2D, denoising, feature extraction before a classifier, initialization for nonlinear embeddings (UMAP / t-SNE), compression of tabular features in production pipelines.",
+        summaryEs:
+          "PCA es *el* reductor de dimensión predeterminado: visualizar datos alta-D en 2D, denoising, extracción de características antes de un clasificador, inicialización para embeddings no lineales (UMAP / t-SNE), compresión de características tabulares en pipelines de producción.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+X = ...                              # (N, D) raw data
+Xs = StandardScaler().fit_transform(X)   # always standardize!
+
+pca = PCA(n_components=2).fit(Xs)
+print("explained:", pca.explained_variance_ratio_)
+
+Z = pca.transform(Xs)                # (N, 2) — ready for plotting`,
+        ifRemoved:
+          "No PCA means no eigenfaces, no LSA topic model, no quick tabular pre-processing, and no intuitive way to decide 'which directions in my data actually matter'.",
+        ifRemovedEs:
+          "Sin PCA no hay eigenfaces, ni modelo de tópicos LSA, ni preprocesamiento tabular rápido, ni forma intuitiva de decidir 'qué direcciones de mis datos realmente importan'.",
+      },
     },
 
     // =========================================================================
@@ -4780,6 +5255,43 @@ function buildMMLLessons(): MMLLesson[] {
         "El margen blando permite violaciones con el hiperparámetro $C$; la forma dual depende solo de productos internos.",
         "La solución es dispersa — solo los vectores de soporte (puntos sobre o dentro del margen) tienen $\alpha_n > 0$.",
       ],
+      realData: [
+        {
+          id: "svm-gaussian",
+          dataset: "gaussian-clusters",
+          mode: "scatter",
+          title: "Two Gaussian clusters — find the max-margin line by eye",
+          titleEs: "Dos clústeres gaussianos — encuentra la recta de máximo margen a ojo",
+          description:
+            "40 synthetic points, two classes. Picture the fattest slab you can slide between the clouds without hitting a point — that is the margin SVM maximizes.",
+          descriptionEs:
+            "40 puntos sintéticos, dos clases. Imagina la franja más gruesa que puedas deslizar entre las nubes sin tocar un punto — ese es el margen que maximiza el SVM.",
+          featureX: 0,
+          featureY: 1,
+          insertAfterParagraph: 3,
+        },
+      ],
+      mlConnection: {
+        technique: "sklearn.svm.SVC — the classical large-margin classifier",
+        techniqueEs: "sklearn.svm.SVC — el clasificador clásico de máximo margen",
+        summary:
+          "SVMs were the state of the art on text and tabular classification for two decades and remain a strong baseline. Only the support vectors matter at inference — inference scales with number of support vectors, not training-set size. Kernelization (next lesson) lifts this to nonlinear boundaries.",
+        summaryEs:
+          "Los SVMs fueron el estado del arte en clasificación de texto y tabular durante dos décadas y siguen siendo una línea base sólida. Solo los vectores de soporte importan en inferencia — la inferencia escala con el número de vectores de soporte, no con el tamaño del entrenamiento. La kernelización (siguiente lección) lleva esto a fronteras no lineales.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
+clf = make_pipeline(StandardScaler(), SVC(kernel="linear", C=1.0))
+clf.fit(X_train, y_train)
+print("# support vectors:", clf[-1].n_support_)
+print("accuracy:", clf.score(X_test, y_test))`,
+        ifRemoved:
+          "No margin maximization, no support-vector sparsity, no principled reason to prefer one separator over another — generalization bounds fall apart.",
+        ifRemovedEs:
+          "Sin maximización del margen, sin la dispersión de vectores de soporte, no hay razón principiada para preferir un separador sobre otro — las cotas de generalización se desmoronan.",
+      },
     },
 
     // =========================================================================
