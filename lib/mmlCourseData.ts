@@ -149,6 +149,25 @@ function buildMMLLessons(): MMLLesson[] {
         "Todo algoritmo de ML puede rastrearse hasta objetos matemáticos concretos: vectores, matrices, funciones y distribuciones.",
         "Las matemáticas son una caja de herramientas para diagnóstico y diseño, no teoría por la teoría.",
       ],
+          concepts: ["vector", "matrix", "gradient", "probability-density"],
+          mlConnection: {
+        technique: "Linear regression — your first end-to-end ML model",
+        summary: "Even the simplest predictive model — fit a line through points — touches every pillar in this course: vectors (features), matrices (data), inner products (predictions), gradients (training), probability (uncertainty). Every chapter you read shows up explicitly here.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+# Tiny dataset: 4 samples, 1 feature
+X = np.array([[1.0], [2.0], [3.0], [4.0]])
+y = np.array([2.1, 3.9, 6.1, 8.0])
+
+# Closed-form least squares  (the goal of chapters 2–3)
+X_b = np.hstack([np.ones_like(X), X])     # add bias column
+w = np.linalg.lstsq(X_b, y, rcond=None)[0]
+
+# Prediction (an inner product — chapter 3)
+print("y_hat(2.5) =", np.dot(w, [1.0, 2.5]))`,
+        ifRemoved: "Without this math, a learner is reduced to memorizing API recipes — they can fit models but cannot diagnose, debug, or extend them.",
+      },
     },
 
     // =========================================================================
@@ -623,6 +642,21 @@ print(h.shape)  # torch.Size([3])`,
         "Las soluciones tienen la forma $\mathbf{x}_p + \mathbf{x}_h$: una solución particular más el espacio nulo.",
         "Los resolvedores reales usan descomposiciones LU o QR por estabilidad numérica y eficiencia.",
       ],
+          concepts: ["matrix", "rank", "linear-combination", "subspace"],
+          mlConnection: {
+        technique: "Closed-form least squares is solving a linear system",
+        summary: "Every linear regression library, every Kalman filter update, every step of an interior-point method ultimately calls a linear-system solver. NumPy, JAX, and SciPy all wrap LAPACK's `gesv` (LU) or `gels` (least squares) under the hood.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+A = np.array([[2., 3.],
+              [1., -1.]])
+b = np.array([7., 1.])
+
+x = np.linalg.solve(A, b)   # LU underneath
+print(x)                    # [2. 1.] — the unique intersection`,
+        ifRemoved: "Strip away the linear-system solver and you lose direct least squares, optimization step computation, and almost every classical ML algorithm.",
+      },
     },
 
     // =========================================================================
@@ -723,6 +757,20 @@ print(h.shape)  # torch.Size([3])`,
         "Un subespacio debe contener $\mathbf{0}$ y ser cerrado bajo las operaciones.",
         "Toda matriz tiene un espacio columna y un espacio nulo; sus dimensiones suman $n$ (rango-nulidad).",
       ],
+          concepts: ["vector", "subspace", "linear-combination", "basis"],
+          mlConnection: {
+        technique: "Word embeddings live in a vector space",
+        summary: "GloVe, word2vec, and modern transformer embeddings put meanings into a fixed-dimensional vector space. Adding two vectors corresponds to composing meanings; the famous 'king − man + woman ≈ queen' identity lives in exactly this kind of space.",
+        codeLanguage: "python",
+        codeSnippet: `# Vector-space arithmetic on word embeddings
+king   = embeddings["king"]
+man    = embeddings["man"]
+woman  = embeddings["woman"]
+
+candidate = king - man + woman          # vector addition
+nearest = top_k(candidate, embeddings)  # ~ 'queen' `,
+        ifRemoved: "No vector space → no embeddings → no semantic search, no recommendation, no transformer attention.",
+      },
     },
 
     // =========================================================================
@@ -823,6 +871,24 @@ print(h.shape)  # torch.Size([3])`,
         "Puedes comprobar independencia contando los pivotes de la matriz cuyas columnas son los vectores.",
         "Las características dependientes causan multicolinealidad y soluciones de regresión no únicas.",
       ],
+          concepts: ["vector", "linear-combination", "linear-independence", "basis"],
+          mlConnection: {
+        technique: "Multicollinearity in regression",
+        summary: "If two feature columns are linearly dependent, $X^\\top X$ is singular and the regression coefficients are not uniquely defined. scikit-learn warns with `LinAlgError`. The cure is to drop one column or use Ridge regression, which adds $\\lambda I$ to make the matrix full rank.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Two perfectly collinear features → underdetermined!
+X = np.array([[1, 2], [2, 4], [3, 6]], dtype=float)
+y = np.array([1.0, 2.0, 3.0])
+
+# Drop one or use Ridge (alpha > 0)
+from sklearn.linear_model import Ridge
+ridge = Ridge(alpha=1.0).fit(X, y)
+print(ridge.coef_)   # well-defined`,
+        ifRemoved: "Ignoring linear dependence in features means unstable coefficients, infinite confidence intervals, and predictions that flip sign with tiny noise.",
+      },
     },
 
     // =========================================================================
@@ -907,6 +973,21 @@ print(h.shape)  # torch.Size([3])`,
         "El rango de una matriz es la dimensión de su espacio columna (o fila).",
         "El rango gobierna la unicidad de soluciones en regresión y la capacidad efectiva de las representaciones aprendidas.",
       ],
+          concepts: ["basis", "linear-independence", "rank", "subspace"],
+          mlConnection: {
+        technique: "Effective number of parameters",
+        summary: "Rank tells you how many *truly independent* parameters your model has. A neural-network layer with 100 weights but rank 5 is a 5-parameter model wearing a 100-parameter costume — the explanation behind techniques like LoRA fine-tuning of LLMs.",
+        codeLanguage: "python",
+        codeSnippet: `import torch
+
+# LoRA — replace a big weight W by W + B @ A with low-rank A, B
+W      = torch.randn(4096, 4096)         # base layer (frozen)
+A_lora = torch.randn(8, 4096)            # rank 8
+B_lora = torch.randn(4096, 8)
+delta_W = B_lora @ A_lora                # rank-8 update
+# 4096 * 4096 = 16M params  vs.  2 * 8 * 4096 = 65k params`,
+        ifRemoved: "No rank → no PCA, no LoRA, no diagnosis of overparameterization, no understanding of why deep nets generalize despite huge parameter counts.",
+      },
     },
 
     // =========================================================================
@@ -1002,6 +1083,21 @@ print(h.shape)  # torch.Size([3])`,
         "Toda aplicación lineal tiene un núcleo y una imagen; sus dimensiones suman la dimensión del dominio.",
         "Las matrices semejantes $A' = P^{-1}AP$ describen el mismo mapa en distintas bases y comparten invariantes como rango y autovalores.",
       ],
+          concepts: ["matrix", "linear-map", "vector", "subspace"],
+          mlConnection: {
+        technique: "Each layer of a neural network is a linear map",
+        summary: "Stripped of the activation, every layer is $W\\mathbf{x} + \\mathbf{b}$ — a linear (affine) map. The whole forward pass is a composition of linear maps interleaved with non-linearities; the whole backward pass is the chain rule applied to that composition.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch.nn as nn
+
+# Three stacked linear maps (with biases) form an affine network
+net = nn.Sequential(
+    nn.Linear(784, 256), nn.ReLU(),
+    nn.Linear(256,  64), nn.ReLU(),
+    nn.Linear( 64,  10),
+)`,
+        ifRemoved: "Without a clean theory of linear maps, deep learning becomes inscrutable computation. Each layer is just matrices acting on vectors — it really is that simple.",
+      },
     },
 
     // =========================================================================
@@ -1096,6 +1192,7 @@ print(h.shape)  # torch.Size([3])`,
         "Las aplicaciones afines tienen la forma $A\mathbf{x} + \mathbf{t}$ — lineal más traslación.",
         "La regresión lineal con sesgo, las capas de redes neuronales y las fronteras de SVM son todos objetos afines.",
       ],
+          concepts: ["vector", "linear-map", "subspace", "hyperplane"],
     },
 
     // =========================================================================
@@ -1422,6 +1519,20 @@ top_k = np.argsort(-scores)[:10]`,
         "Distintas métricas (euclidiana, Manhattan, Mahalanobis) codifican geometrías distintas.",
         "Datos de alta dimensión o sin estandarizar exigen elegir cuidadosamente la distancia y preprocesar.",
       ],
+          concepts: ["norm", "dot-product", "vector"],
+          mlConnection: {
+        technique: "k-NN, clustering, and triplet loss",
+        summary: "k-Nearest Neighbors picks the $k$ training points closest to your query. K-means assigns each point to the nearest centroid. Face-recognition triplet loss pulls 'same person' embeddings closer and 'different person' farther. All three are *distances* in a vector space.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+def knn_predict(X_train, y_train, x, k=5):
+    d = np.linalg.norm(X_train - x, axis=1)   # Euclidean
+    idx = np.argpartition(d, k)[:k]
+    # majority vote among k nearest neighbors
+    return np.bincount(y_train[idx]).argmax()`,
+        ifRemoved: "No norm-induced distance, no notion of 'similar' — half of unsupervised ML and metric learning depends on this lesson.",
+      },
     },
 
     // =========================================================================
@@ -1619,6 +1730,18 @@ top_k = np.argsort(-scores)[:10]`,
         "Gram–Schmidt construye una base ortonormal a partir de cualquier base y fundamenta la descomposición QR.",
         "Las matrices ortogonales preservan productos internos y son numéricamente estables.",
       ],
+          concepts: ["basis", "orthogonal", "dot-product", "linear-combination"],
+          mlConnection: {
+        technique: "PCA produces an orthonormal basis of principal components",
+        summary: "Every PCA returns an orthonormal basis whose first axis captures the most variance, the second the most remaining, and so on. The orthonormal property is what lets you project, rotate, and reconstruct without distortion.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.decomposition import PCA
+
+pca = PCA(n_components=3).fit(X)
+basis = pca.components_      # rows are orthonormal!
+np.allclose(basis @ basis.T, np.eye(3))   # True`,
+        ifRemoved: "Without orthonormal bases, projections distort lengths, rotations stop being invertible cheaply, and PCA becomes numerically unstable.",
+      },
     },
 
     // =========================================================================
@@ -1703,6 +1826,7 @@ top_k = np.argsort(-scores)[:10]`,
         "Todo vector se descompone de forma única como $\mathbf{v}_U + \mathbf{v}_{U^\perp}$, y las dimensiones se suman.",
         "El espacio fila y el espacio nulo son complementos ortogonales — el corazón geométrico de mínimos cuadrados.",
       ],
+          concepts: ["subspace", "orthogonal", "basis"],
     },
 
     // =========================================================================
@@ -1787,6 +1911,23 @@ top_k = np.argsort(-scores)[:10]`,
         "Las matrices de proyección son simétricas e idempotentes: $P^\top = P$ y $P^2 = P$.",
         "Mínimos cuadrados, PCA y muchas técnicas de ML son proyecciones ortogonales.",
       ],
+          concepts: ["dot-product", "orthogonal", "linear-map", "subspace"],
+          mlConnection: {
+        technique: "Least squares = projecting onto the column space",
+        summary: "When you fit a line, you project the target vector $\\mathbf{y}$ onto the column space of $X$. The 'residual' is the component orthogonal to that subspace, and minimizing its norm is exactly OLS.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+
+X = np.random.randn(100, 5)
+y = np.random.randn(100)
+
+# Project y onto column space of X
+P = X @ np.linalg.pinv(X)         # projection matrix
+y_hat = P @ y                     # the regression prediction
+residual = y - y_hat              # orthogonal to col(X)
+np.allclose(X.T @ residual, 0)    # True`,
+        ifRemoved: "Strip projections away and least squares loses its geometric meaning; you can no longer reason about *why* the OLS solution is optimal.",
+      },
     },
 
     // =========================================================================
@@ -2010,6 +2151,17 @@ def apply_rope(q, k, cos, sin):
         "$\text{tr}(A)$ suma la diagonal y es invariante cíclica: $\text{tr}(AB) = \text{tr}(BA)$.",
         "Determinante = producto de autovalores; traza = suma de autovalores.",
       ],
+          concepts: ["matrix", "determinant", "eigenvalue"],
+          mlConnection: {
+        technique: "Determinants in normalizing flows; trace in Hessian-free optimization",
+        summary: "Normalizing-flow models track $\\log|\\det J|$ to keep probability densities normalized after invertible transformations. Trace shows up in Hutchinson's estimator for the diagonal of the Hessian — used to scale optimizers like Shampoo.",
+        codeLanguage: "pytorch",
+        codeSnippet: `# Log-determinant of a triangular Jacobian — cheap and numerically stable
+import torch
+J = torch.tril(torch.randn(8, 8) + torch.eye(8))
+log_det = torch.diag(J).abs().log().sum()  # O(n)`,
+        ifRemoved: "No determinant → no normalizing flows, no Jacobian-based change-of-variables, no MAP/ML formulas with priors.",
+      },
     },
 
     // =========================================================================
@@ -2281,6 +2433,7 @@ print("eigenvectors (columns):", eigvecs)`,
         "Resuelve sistemas en $O(n^3/3)$ — la mitad del coste de LU — y prueba definida positiva como efecto secundario.",
         "Permite muestreo gaussiano rápido y cálculo del logaritmo del determinante en ML bayesiano.",
       ],
+          concepts: ["matrix", "transpose", "eigenvalue"],
     },
 
     // =========================================================================
@@ -2370,6 +2523,17 @@ print("eigenvectors (columns):", eigvecs)`,
         "Las matrices simétricas se diagonalizan ortogonalmente: $A = QDQ^\top$.",
         "Potencias, exponenciales y funciones de matrices se simplifican en la base de autovectores.",
       ],
+          concepts: ["eigenvalue", "eigenvector", "basis", "orthogonal"],
+          mlConnection: {
+        technique: "Spectral methods: PageRank, GraphSAGE, normal-mode analysis",
+        summary: "Diagonalizing $A = QDQ^{-1}$ unlocks closed-form powers $A^k = QD^kQ^{-1}$ — the trick behind PageRank's stationary distribution and the spectral analysis of graph neural networks.",
+        codeLanguage: "numpy",
+        codeSnippet: `import numpy as np
+A = np.array([[3., 1.], [1., 3.]])
+D, Q = np.linalg.eigh(A)            # symmetric → orthogonal Q
+A100 = Q @ np.diag(D ** 100) @ Q.T  # cheap matrix power!`,
+        ifRemoved: "No diagonalization → no spectral clustering, no closed-form ODE solutions, no PageRank.",
+      },
     },
 
     // =========================================================================
@@ -2631,6 +2795,7 @@ print("energy kept:", (S[:k] ** 2).sum() / (S ** 2).sum())`,
         "El error de aproximación es igual a la norma de los valores singulares descartados.",
         "La aproximación de bajo rango impulsa compresión, PCA y fine-tuning eficiente en parámetros (LoRA).",
       ],
+          concepts: ["singular-value", "rank", "matrix", "norm"],
     },
 
     // =========================================================================
@@ -2802,6 +2967,20 @@ print("energy kept:", (S[:k] ** 2).sum() / (S ** 2).sum())`,
         "Linealidad, regla del producto y regla de la cadena resuelven casi todas las funciones elementales.",
         "Las derivadas identifican extremos ($f'=0$) y diagnostican concavidad vía $f''$.",
       ],
+          concepts: ["partial-derivative", "chain-rule"],
+          mlConnection: {
+        technique: "Activation functions and their derivatives drive gradient flow",
+        summary: "ReLU's derivative is the indicator $1_{x>0}$, sigmoid's is $\\sigma(x)(1-\\sigma(x))$, GELU's involves the Gaussian CDF. Choosing an activation is choosing a derivative shape — and derivatives shape the gradient signal that flows back through the network.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch
+import torch.nn.functional as F
+
+x = torch.tensor([-2., -0.5, 0., 0.5, 2.], requires_grad=True)
+y = F.gelu(x).sum()
+y.backward()
+print(x.grad)   # GELU derivative — smooth where ReLU is kinked`,
+        ifRemoved: "Pick an activation whose derivative is zero on too much of its domain (e.g. saturated sigmoid) and gradients vanish — the network refuses to learn.",
+      },
     },
 
     // =========================================================================
@@ -2912,6 +3091,7 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         ifRemovedEs:
           "Sin gradientes no hay autograd, ni PyTorch, ni entrenamiento. Toda biblioteca moderna de ML es un motor de gradientes optimizado — esta lección es literalmente el fundamento.",
       },
+          concepts: ["gradient", "partial-derivative", "vector"],
     },
 
     // =========================================================================
@@ -2992,6 +3172,7 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "Es la mejor aproximación lineal local: $f(\mathbf{x}+\Delta) \approx f(\mathbf{x}) + J_f \Delta$.",
         "Regla de la cadena: los jacobianos de composiciones se multiplican — la base de la retropropagación.",
       ],
+          concepts: ["gradient", "partial-derivative", "linear-map"],
     },
 
     // =========================================================================
@@ -3067,6 +3248,7 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "Identidades como $\nabla_{\mathbf{x}}(\mathbf{x}^\top A \mathbf{x}) = (A+A^\top)\mathbf{x}$ atajan las derivaciones.",
         "Los gradientes de pesos de redes neuronales son productos externos $\delta \mathbf{x}^\top$ — el núcleo de backprop.",
       ],
+          concepts: ["gradient", "matrix", "transpose"],
     },
 
     // =========================================================================
@@ -3145,6 +3327,21 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "Cada capa aporta un producto vector-jacobiano — nunca un jacobiano completo — haciendo que los gradientes escalen linealmente con el tamaño del grafo.",
         "Cuidado con los gradientes que se desvanecen o explotan; decisiones arquitectónicas (ReLU, residuos, clipping) los mitigan.",
       ],
+          concepts: ["chain-rule", "gradient", "partial-derivative"],
+          mlConnection: {
+        technique: "PyTorch / JAX autograd is the entire training engine",
+        summary: "Every `.backward()` call traverses your computation graph in reverse, applying the chain rule mechanically. This is the most important practical engineering achievement in modern ML — it's why deep learning scales.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch
+
+# Build a graph; autograd records every op
+x = torch.tensor(2.0, requires_grad=True)
+y = (x ** 2 + 3 * x + 1).log()
+y.backward()
+# dy/dx by hand: (2x + 3) / (x^2 + 3x + 1)  = 7/11 at x=2
+print(x.grad)   # 0.6364`,
+        ifRemoved: "No autograd → no PyTorch, no JAX, no TensorFlow. Deep learning grinds to a halt.",
+      },
     },
 
     // =========================================================================
@@ -3233,6 +3430,19 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "Hessiano definido positivo/negativo ⟹ mínimo/máximo local; indefinido ⟹ punto de silla.",
         "El número de condición de $H$ controla la dificultad de optimización — el método de Newton lo invierte para corregir el mal condicionamiento.",
       ],
+          concepts: ["partial-derivative", "gradient"],
+          mlConnection: {
+        technique: "Hessian: convex vs saddle, Newton's method, second-order optimizers",
+        summary: "The Hessian's eigenvalues distinguish local minima (all positive) from saddle points (mixed signs). Newton's method uses $H^{-1}\\nabla L$ to step directly toward the minimum; second-order optimizers (K-FAC, Shampoo) approximate this for huge models.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch
+
+x = torch.tensor([1., 2.], requires_grad=True)
+f = (x ** 2).sum()                    # convex bowl
+H = torch.autograd.functional.hessian(lambda v: (v ** 2).sum(), x)
+print(H)   # 2 * I — diagonal Hessian`,
+        ifRemoved: "No Hessian → no curvature analysis, no Newton step, no understanding of why some loss landscapes are easy and others terrible.",
+      },
     },
 
     // =========================================================================
@@ -3318,6 +3528,16 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "La linealización usa el gradiente; la aproximación cuadrática añade el hessiano.",
         "Las aproximaciones de Taylor fundamentan el descenso por gradiente, Newton, filtros de Kalman y aproximaciones de Laplace.",
       ],
+          concepts: ["partial-derivative", "gradient"],
+          mlConnection: {
+        technique: "First-order approximation drives gradient descent",
+        summary: "Taylor: $f(\\mathbf{x} + \\boldsymbol\\delta) \\approx f(\\mathbf{x}) + \\nabla f(\\mathbf{x})^\\top \\boldsymbol\\delta$. Choosing $\\boldsymbol\\delta = -\\eta \\nabla f$ guarantees the linear part decreases — that's *literally* why gradient descent works.",
+        codeLanguage: "python",
+        codeSnippet: `# Why does w <- w - η ∇L(w) decrease the loss?
+# Taylor:  L(w - η g) ≈ L(w) - η ‖g‖² + O(η²)
+# As long as η is small enough, the linear term dominates and L drops.`,
+        ifRemoved: "No Taylor series → no convergence proofs, no Newton's method, no Laplace approximation in Bayesian ML.",
+      },
     },
 
     // =========================================================================
@@ -3390,6 +3610,15 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "Las variables aleatorias trasladan probabilidad a $\mathbb{R}$; normalmente nos importa su distribución.",
         "La independencia significa que la probabilidad conjunta se factoriza: $P(A \cap B) = P(A) P(B)$.",
       ],
+          concepts: ["probability-density", "expected-value"],
+          mlConnection: {
+        technique: "Generative models define a probability over outputs",
+        summary: "Every generative model — VAE, GAN, diffusion — implicitly defines a probability space over images / text / audio. Sampling from the model is drawing from that space; training is shaping it to match the data distribution.",
+        codeLanguage: "python",
+        codeSnippet: `# A trained diffusion model samples from a learned probability space
+sample = model.sample(num_steps=50)   # one draw from p(x | trained weights)`,
+        ifRemoved: "Without a probability space, generative ML is hand-waving. Probability is the formal language for 'how likely is this output?'",
+      },
     },
 
     // =========================================================================
@@ -3472,6 +3701,20 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "La CDF $F(x) = P(X \leq x)$ existe para ambas y es universalmente útil.",
         "Las densidades son tasas — pueden superar 1; solo las integrales dan probabilidades.",
       ],
+          concepts: ["probability-density", "expected-value", "variance"],
+          mlConnection: {
+        technique: "Cross-entropy loss = log-likelihood of a discrete distribution",
+        summary: "When you train a classifier with cross-entropy, you are computing the negative log-likelihood under a categorical (discrete) distribution. When you train a regressor with MSE, you are computing log-likelihood under a Gaussian (continuous). Loss = − log p(data | model).",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch.nn.functional as F
+
+# Discrete: cross entropy on a categorical distribution
+loss_cls = F.cross_entropy(logits, labels)         # classification
+
+# Continuous: negative log-likelihood under N(μ, σ²)
+loss_reg = 0.5 * ((y - mu) / sigma) ** 2 + sigma.log()`,
+        ifRemoved: "No discrete/continuous distinction → no principled loss design, no calibrated uncertainty, no log-likelihoods.",
+      },
     },
 
     // =========================================================================
@@ -3551,6 +3794,19 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "Bayes: posterior ∝ verosimilitud × prior. La evidencia normaliza.",
         "Las falacias de tasa base están por todas partes — aplica siempre Bayes, no confíes en precisiones crudas.",
       ],
+          concepts: ["bayes-rule", "probability-density"],
+          mlConnection: {
+        technique: "Naive Bayes, Bayesian networks, posterior inference",
+        summary: "Every probabilistic ML method is built from these three rules. Naive Bayes uses the product rule with conditional independence; Bayesian networks factor joint distributions via the chain rule; posterior inference is Bayes' theorem.",
+        codeLanguage: "python",
+        codeSnippet: `# Naive Bayes by hand: p(y | x) ∝ p(y) ∏ p(x_j | y)
+import numpy as np
+
+def predict(x, prior, likelihood):
+    log_post = np.log(prior) + likelihood(x).sum(axis=1)  # log-domain
+    return np.argmax(log_post)`,
+        ifRemoved: "Without sum/product/Bayes, probability becomes a collection of formulas with no internal logic. These three rules are the entire calculus.",
+      },
     },
 
     // =========================================================================
@@ -3623,6 +3879,18 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
         "La esperanza es lineal; la varianza no lo es (eleva al cuadrado los factores de escalado).",
         "Las matrices de covarianza son simétricas semidefinidas positivas; la independencia implica covarianza cero pero no al revés.",
       ],
+          concepts: ["expected-value", "variance"],
+          mlConnection: {
+        technique: "Feature scaling, batch normalization, covariance shrinkage",
+        summary: "Every preprocessing pipeline standardizes features by their mean and standard deviation. Batch norm does it adaptively per layer. Robust covariance estimators shrink the empirical covariance toward a structured target. All three rely on this lesson.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler().fit(X_train)   # learns mean, std
+X_train = scaler.transform(X_train)      # zero mean, unit variance
+X_test  = scaler.transform(X_test)       # use TRAIN stats — don't peek`,
+        ifRemoved: "No mean/variance/covariance → no preprocessing, no batchnorm, no Mahalanobis distance, no Gaussian model.",
+      },
     },
 
     // =========================================================================
@@ -3740,6 +4008,7 @@ x = z @ L.T + mu                   # x ~ N(mu, Sig)`,
         ifRemovedEs:
           "Elimina la gaussiana y la mitad del ML probabilístico se apaga: no hay objetivo de entrenamiento de VAE, ni proceso de ruido hacia adelante de DDPM, ni filtro de Kalman, ni inferencia GP. Es el caballo de batalla insustituible.",
       },
+          concepts: ["probability-density", "expected-value", "variance", "matrix"],
     },
 
     // =========================================================================
@@ -3828,6 +4097,16 @@ x = z @ L.T + mu                   # x ~ N(mu, Sig)`,
         "La familia exponencial unifica muchas distribuciones comunes mediante estadísticos suficientes.",
         "Los GLM, la inferencia variacional y los modelos basados en energía viven dentro de este marco.",
       ],
+          concepts: ["bayes-rule", "probability-density"],
+          mlConnection: {
+        technique: "Variational inference and natural gradient descent",
+        summary: "When the variational posterior is exponential family, mean-field VI updates become coordinate-wise natural-parameter updates. Natural gradient descent uses Fisher information from the exponential family to scale steps — the foundation of TRPO and stochastic VI.",
+        codeLanguage: "python",
+        codeSnippet: `# Mean-field VI on a Gaussian-Gaussian model (closed form)
+sigma_post = 1.0 / (1/prior_sigma**2 + n / lik_sigma**2)
+mu_post    = sigma_post * (prior_mu/prior_sigma**2 + n*x_bar/lik_sigma**2)`,
+        ifRemoved: "No exponential family → no scalable VI, no GLMs, no clean theory of EM.",
+      },
     },
 
     // =========================================================================
@@ -3905,6 +4184,16 @@ x = z @ L.T + mu                   # x ~ N(mu, Sig)`,
         "El jacobiano corrige el escalado de volumen de $f$.",
         "Los normalizing flows encadenan transformaciones invertibles, sumando logaritmos de determinantes de jacobianos para estimar densidades de forma tratable.",
       ],
+          concepts: ["probability-density", "determinant"],
+          mlConnection: {
+        technique: "Normalizing flows literally apply this formula",
+        summary: "RealNVP, Glow, neural spline flows — every flow model is a stack of invertible transformations whose log-Jacobians compose. The change-of-variables formula is the model's likelihood.",
+        codeLanguage: "python",
+        codeSnippet: `# log p(x) = log p(z) + log |det J_T|
+# where  z = T(x)  is invertible and J_T is its Jacobian.
+log_p_x = log_p_z + log_det_jacobian   # one line per flow layer`,
+        ifRemoved: "Without change of variables, normalizing flows do not exist as a model class — and many MCMC tricks lose their justification.",
+      },
     },
 
     // =========================================================================
@@ -4016,6 +4305,7 @@ for step in range(1000):
         ifRemovedEs:
           "Sin descenso por gradiente no hay entrenamiento. Las redes neuronales, la regresión logística, la factorización matricial, los policy gradients en RL — todos se detienen sin esta regla de actualización.",
       },
+          concepts: ["gradient", "partial-derivative", "norm"],
     },
 
     // =========================================================================
@@ -4095,6 +4385,20 @@ for step in range(1000):
         "Las condiciones KKT generalizan esto a restricciones de desigualdad; el principio de holgura complementaria implica esparsidad en SVMs.",
         "La dualidad proporciona cotas, formulaciones alternativas y el truco del kernel en ML.",
       ],
+          concepts: ["gradient", "linear-combination"],
+          mlConnection: {
+        technique: "Hard-margin SVM and barrier methods",
+        summary: "The hard-margin SVM is a quadratic program with linear inequality constraints; the dual exposes the kernel trick. Interior-point methods solve constrained programs by approximating the constraint with a barrier (negative-log) inside an unconstrained gradient method.",
+        codeLanguage: "python",
+        codeSnippet: `# CVXPY: ergonomic constrained optimization
+import cvxpy as cp
+
+w = cp.Variable(d)
+obj = cp.Minimize(0.5 * cp.sum_squares(w))
+constraints = [y[i] * (X[i] @ w) >= 1 for i in range(n)]   # hard margin
+prob = cp.Problem(obj, constraints).solve()`,
+        ifRemoved: "No constrained optimization → no SVMs, no portfolio optimization, no LP/QP/SDP-based ML algorithms.",
+      },
     },
 
     // =========================================================================
@@ -4187,6 +4491,15 @@ for step in range(1000):
         "Mínimos cuadrados, regresión logística, SVMs, Lasso y Ridge son todos problemas convexos.",
         "Las redes neuronales son no convexas, pero la sobre-parametrización y SGD suelen dar paisajes benignos en la práctica.",
       ],
+          concepts: ["gradient", "norm"],
+          mlConnection: {
+        technique: "Convex losses guarantee a global minimum",
+        summary: "Logistic regression, Lasso, Ridge, SVM — all have convex losses and therefore unique global minima. This guarantee is the only reason classical ML can use stochastic gradient descent without worrying about local minima.",
+        codeLanguage: "python",
+        codeSnippet: `# Convex objective → any local min is global
+# Logistic regression: log(1 + exp(-y * w·x)) is convex in w`,
+        ifRemoved: "No convex theory → no convergence guarantees, no duality, no rigorous comparison of optimizers.",
+      },
     },
 
     // =========================================================================
@@ -4287,6 +4600,16 @@ for step in range(1000):
         "Riesgo esperado $\neq$ riesgo empírico; la brecha es el gap de generalización.",
         "La descomposición sesgo-varianza explica por qué más capacidad no siempre es mejor.",
       ],
+          concepts: ["expected-value", "probability-density"],
+          mlConnection: {
+        technique: "ERM and the bias-variance trade-off",
+        summary: "Empirical Risk Minimization fits a model by minimizing training loss; the bias-variance decomposition explains why this can overfit. Regularization adds a complexity penalty to balance the two.",
+        codeLanguage: "python",
+        codeSnippet: `# ERM in two lines
+loss = ((model(X_train) - y_train) ** 2).mean()        # empirical risk
+loss = loss + lambda_ * (weights ** 2).sum()           # + complexity penalty`,
+        ifRemoved: "No ERM framing → no precise definition of generalization, no understanding of overfitting, no principled regularization.",
+      },
     },
 
     // =========================================================================
@@ -4375,6 +4698,16 @@ for step in range(1000):
         "MAP añade un log-prior; prior gaussiano $\leftrightarrow$ Ridge, prior Laplace $\leftrightarrow$ Lasso.",
         "Ambos dan estimaciones puntuales; la inferencia bayesiana completa conserva el posterior y propaga la incertidumbre.",
       ],
+          concepts: ["bayes-rule", "expected-value", "probability-density"],
+          mlConnection: {
+        technique: "Train any probabilistic model",
+        summary: "MLE = maximize log p(data | θ). MAP = maximize log p(data | θ) + log p(θ). Almost every loss function in ML is one of these two with a specific likelihood and prior.",
+        codeLanguage: "python",
+        codeSnippet: `# Cross-entropy IS negative log likelihood under a categorical model
+# MSE      IS negative log likelihood under a Gaussian model
+# MAP      IS MLE + log-prior penalty (ridge, lasso, etc.)`,
+        ifRemoved: "No MLE/MAP → no derivation of any modern loss; you can train networks but cannot say *what* they actually optimize.",
+      },
     },
 
     // =========================================================================
@@ -4471,6 +4804,18 @@ for step in range(1000):
         "BIC y AIC son aproximaciones tratables del tipo verosimilitud más penalización usadas para comparar modelos.",
         "La validación cruzada estima directamente la generalización; el promedio bayesiano de modelos evita quedarse con un solo modelo.",
       ],
+          concepts: ["bayes-rule", "expected-value"],
+          mlConnection: {
+        technique: "Cross-validation, AIC, BIC, marginal likelihood",
+        summary: "Choosing the right model size is a probabilistic question. Cross-validation estimates generalization. AIC/BIC penalize complexity. Bayesian model evidence (marginal likelihood) automatically Occam-prefers simpler explanations.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.model_selection import cross_val_score
+import numpy as np
+
+scores = cross_val_score(model, X, y, cv=5, scoring="neg_log_loss")
+print("mean CV log-likelihood:", scores.mean())`,
+        ifRemoved: "No model-selection theory → you cannot decide between competing models without subjective taste.",
+      },
     },
 
     // =========================================================================
@@ -4682,6 +5027,7 @@ print("R²:",        model.score(X, y))`,
         "La media posterior = solución ridge; la covarianza posterior codifica la incertidumbre en los parámetros.",
         "Varianza predictiva = incertidumbre de parámetros + ruido; se reduce a $\sigma^2$ con datos suficientes.",
       ],
+          concepts: ["bayes-rule", "probability-density", "matrix", "linear-map"],
     },
 
     // =========================================================================
@@ -4771,6 +5117,16 @@ print("R²:",        model.score(X, y))`,
         "La hat matrix $P = X(X^\top X)^{-1} X^\top$ es simétrica e idempotente; su traza es la dimensión efectiva del modelo.",
         "Los residuales son ortogonales a las características — esto son las ecuaciones normales en forma geométrica.",
       ],
+          concepts: ["orthogonal", "subspace", "dot-product"],
+          mlConnection: {
+        technique: "Geometric view of regression",
+        summary: "Under Gaussian noise, the MLE for linear regression is exactly the orthogonal projection of $\\mathbf{y}$ onto the column space of $X$. The 'least squares' you trained as algebra is, secretly, geometry.",
+        codeLanguage: "python",
+        codeSnippet: `# OLS = projection
+y_hat = X @ np.linalg.pinv(X) @ y
+# residual y - y_hat lives in the orthogonal complement of col(X)`,
+        ifRemoved: "Without this geometric view, you can compute regression but cannot picture *why* it works.",
+      },
     },
 
     // =========================================================================
@@ -5070,6 +5426,7 @@ Z = pca.transform(Xs)                # (N, 2) — ready for plotting`,
         "EM alterna paso E (calcular responsabilidades) y paso M (actualizaciones MLE ponderadas); aumenta monótonamente la verosimilitud.",
         "EM converge a un óptimo local — inicializa con cuidado y regulariza las covarianzas para evitar singularidades.",
       ],
+          concepts: ["probability-density", "expected-value", "bayes-rule"],
     },
 
     // =========================================================================
@@ -5170,6 +5527,18 @@ Z = pca.transform(Xs)                # (N, 2) — ready for plotting`,
         "Las responsabilidades $r_{nk} = p(z_n = k \mid \mathbf{x}_n)$ son posteriores bayesianos sobre la pertenencia al cluster.",
         "La vista de variables latentes generaliza EM a HMMs, PPCA, VAEs y más.",
       ],
+          concepts: ["bayes-rule", "probability-density"],
+          mlConnection: {
+        technique: "Variational Autoencoders and discrete VI",
+        summary: "GMMs are the simplest latent-variable model. Once you understand the EM algorithm here, VAEs and amortized variational inference are just continuous-latent generalizations.",
+        codeLanguage: "python",
+        codeSnippet: `# VAE training step (simplified)
+mu, logvar = encoder(x)            # q(z | x) — Gaussian
+z = mu + (0.5 * logvar).exp() * torch.randn_like(mu)   # reparameterization
+x_hat = decoder(z)                 # p(x | z)
+loss = recon_loss(x, x_hat) + kl_div(mu, logvar)        # ELBO`,
+        ifRemoved: "No latent-variable view → no VAEs, no diffusion models with implicit latent paths, no amortized inference.",
+      },
     },
 
     // =========================================================================
@@ -5384,6 +5753,7 @@ print("accuracy:", clf.score(X_test, y_test))`,
         "Los kernels válidos son simétricos y PSD (Mercer); elecciones comunes: lineal, polinomial, RBF, sigmoide.",
         "Los SVM RBF con $(C, \sigma)$ validados por cross-validation son una línea base no lineal fuerte; escalan con Nyström o características aleatorias.",
       ],
+          concepts: ["dot-product", "hyperplane"],
     },
   ];
 

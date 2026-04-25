@@ -352,7 +352,7 @@ export default function SVDFlow({ config }: Props) {
           gl={{ antialias: true, toneMapping: 0, preserveDrawingBuffer: false, alpha: false }}
           flat
         >
-          <color attach="background" args={["#060b1a"]} />
+          <color attach="background" args={["#000000"]} />
           <ambientLight intensity={0.6} />
           <directionalLight position={[4, 5, 6]} intensity={0.8} />
 

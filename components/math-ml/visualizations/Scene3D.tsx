@@ -49,7 +49,7 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(120% 80% at 20% 10%, rgba(16,185,129,0.22) 0%, rgba(16,185,129,0) 55%), radial-gradient(100% 70% at 85% 90%, rgba(96,165,250,0.18) 0%, rgba(96,165,250,0) 60%), linear-gradient(180deg, #0b1224 0%, #040814 100%)",
+            "radial-gradient(80% 60% at 0% 0%, rgba(16,185,129,0.10) 0%, transparent 55%), #000000",
           pointerEvents: "none",
         }}
       />
@@ -60,7 +60,7 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
         flat
         style={{ position: "relative" }}
       >
-        <color attach="background" args={["#060b1a"]} />
+        <color attach="background" args={["#000000"]} />
         <ambientLight intensity={0.65} />
         <directionalLight position={[6, 8, 6]} intensity={0.9} />
         <directionalLight position={[-6, -4, -6]} intensity={0.25} />
@@ -103,7 +103,7 @@ export default function Scene3D({ config, children, height = 420 }: Props) {
           inset: 0,
           pointerEvents: "none",
           background:
-            "radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(2, 6, 23, 0.55) 100%)",
+            "radial-gradient(120% 90% at 50% 50%, transparent 60%, rgba(0, 0, 0, 0.7) 100%)",
         }}
       />
     </div>
