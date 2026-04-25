@@ -5,6 +5,9 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import { ConceptChip } from "./primitives/ConceptChip";
 import { tryEvalLatex } from "./primitives/numericEval";
+import { FormulaReveal } from "./formula-anim/FormulaReveal";
+import { FormulaChain } from "./formula-anim/FormulaChain";
+import { splitChainBlocks } from "./formula-anim/parseChainBlock";
 
 interface MathContentProps {
   text: string;
@@ -13,8 +16,20 @@ interface MathContentProps {
 }
 
 export function MathContent({ text, className, as: Tag = "p" }: MathContentProps) {
-  const rendered = useMemo(() => parseContent(text), [text]);
-  return <Tag className={className}>{rendered}</Tag>;
+  const segments = useMemo(() => splitChainBlocks(text), [text]);
+  const hasChain = segments.some((s) => s.kind === "chain");
+  const Wrapper = hasChain ? "div" : Tag;
+  const nodes: React.ReactNode[] = [];
+  segments.forEach((seg, i) => {
+    if (seg.kind === "chain") {
+      nodes.push(<FormulaChain key={`c-${i}`} spec={seg.value} />);
+    } else {
+      parseContent(seg.value).forEach((n, j) =>
+        nodes.push(<React.Fragment key={`t-${i}-${j}`}>{n}</React.Fragment>),
+      );
+    }
+  });
+  return <Wrapper className={className}>{nodes}</Wrapper>;
 }
 
 function formatNumeric(v: number): string {
@@ -59,12 +74,12 @@ function parseContent(text: string): React.ReactNode[] {
         <ConceptChip key={key++} conceptId={id} displayText={display} />,
       );
     } else if (raw.startsWith("$$") && raw.endsWith("$$")) {
-      const html = renderKaTeX(raw.slice(2, -2), true);
       nodes.push(
-        <span
+        <FormulaReveal
           key={key++}
+          latex={raw.slice(2, -2)}
+          displayMode
           className="mml-block-math"
-          dangerouslySetInnerHTML={{ __html: html }}
         />
       );
     } else if (raw.startsWith("$") && raw.endsWith("$")) {

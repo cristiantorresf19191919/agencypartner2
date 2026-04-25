@@ -15,7 +15,8 @@ export type MMLVizType =
   | "pca-3d"
   | "svd-3d"
   | "svd-flow"
-  | "kernel-projection-3d";
+  | "kernel-projection-3d"
+  | "formula-chain";
 
 export interface MMLVisualization {
   type: MMLVizType;
@@ -356,4 +357,27 @@ export interface RealDataCompanionSpec {
   featureX?: number;
   featureY?: number;
   insertAfterParagraph?: number;
+}
+
+// ----------------------------------------------------------------------------
+// Formula animations (FormulaChain / FormulaReveal)
+// ----------------------------------------------------------------------------
+
+export interface FormulaChainSpec {
+  /** Each entry is one LaTeX expression; the engine morphs between them. */
+  steps: string[];
+  /** stepIndex -> token symbol substrings to glow on that step. */
+  emphasize?: Record<number, string[]>;
+  /** "auto" uses default 700ms morph; otherwise per-transition ms. */
+  pacing?: "auto" | number[];
+  title?: string;
+  titleEs?: string;
+  caption?: string;
+  captionEs?: string;
+}
+
+export interface FormulaRevealSpec {
+  latex: string;
+  staggerMs?: number;
+  fadeMs?: number;
 }

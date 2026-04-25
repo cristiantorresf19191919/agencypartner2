@@ -60,6 +60,10 @@ const KernelProjection3D = dynamic(
 const SVDFlow = dynamic(() => import("../visualizations/SVDFlow"), {
   ssr: false,
 }) as VizComponent;
+const FormulaChainViz = dynamic(
+  () => import("../formula-anim/FormulaChain"),
+  { ssr: false },
+) as VizComponent;
 
 const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "vector-2d": VectorPlot2D,
@@ -79,6 +83,7 @@ const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "svd-3d": MatrixTransform3D,
   "svd-flow": SVDFlow,
   "kernel-projection-3d": KernelProjection3D,
+  "formula-chain": FormulaChainViz,
 };
 
 interface Props {
