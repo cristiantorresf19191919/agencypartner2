@@ -83,7 +83,12 @@ export function FormulaChain(props: Props) {
       const container = containerRef.current;
       if (!chain || !container) return;
       const target = Math.max(0, Math.min(chain.stepCount - 1, next));
-      if (target === stepIdxRef.current) return;
+      const fromIdx = stepIdxRef.current;
+      if (target === fromIdx) return;
+      // Optimistically advance the indicator so the dots reflect the destination
+      // for the duration of the morph (the DOM swaps to `target` immediately).
+      stepIdxRef.current = target;
+      setStepIdx(target);
       setAnimating(true);
       try {
         const dur =
@@ -92,14 +97,10 @@ export function FormulaChain(props: Props) {
             : spec.pacing[
                 Math.min(target - 1, spec.pacing.length - 1)
               ] ?? FORMULA_TIMING.morph;
-        await chain.morph(stepIdxRef.current, target, container, {
-          durationMs: dur,
-        });
+        await chain.morph(fromIdx, target, container, { durationMs: dur });
       } catch (err) {
         console.warn("FormulaChain: morph failed", err);
       } finally {
-        stepIdxRef.current = target;
-        setStepIdx(target);
         setAnimating(false);
       }
     },
