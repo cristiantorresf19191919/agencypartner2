@@ -11,9 +11,10 @@ import type { FormulaChainSpec } from "@/lib/mmlTypes";
  */
 export type ContentSegment =
   | { kind: "text"; value: string }
-  | { kind: "chain"; value: FormulaChainSpec };
+  | { kind: "chain"; value: FormulaChainSpec }
+  | { kind: "verify"; value: FormulaChainSpec };
 
-const OPEN_RE = /^::math-chain\s*([^\n]*)$/m;
+const OPEN_RE = /^::math-(chain|verify)\s*([^\n]*)$/m;
 const CLOSE_RE = /^::\s*$/m;
 const ATTR_RE = /(\w+)="([^"]*)"/g;
 
@@ -54,6 +55,7 @@ export function splitChainBlocks(text: string): ContentSegment[] {
     if (openMatch.index > 0) {
       segments.push({ kind: "text", value: rest.slice(0, openMatch.index) });
     }
+    const directive = openMatch[1] as "chain" | "verify";
     const afterOpen = openMatch.index + openMatch[0].length + 1; // skip newline
     const tail = rest.slice(afterOpen);
     const closeMatch = tail.match(CLOSE_RE);
@@ -63,27 +65,31 @@ export function splitChainBlocks(text: string): ContentSegment[] {
       break;
     }
     const body = tail.slice(0, closeMatch.index).replace(/\n+$/, "");
-    const attrs = parseAttrs(openMatch[1] ?? "");
+    const attrs = parseAttrs(openMatch[2] ?? "");
     const steps = body
       .split("\n")
       .map((l) => l.trim())
       .filter(Boolean);
     if (steps.length >= 1) {
-      segments.push({
-        kind: "chain",
-        value: {
-          steps,
-          emphasize: parseEmphasize(attrs.emphasize),
-          pacing: attrs.pacing === "auto" ? "auto" : undefined,
-          title: attrs.title,
-          titleEs: attrs.titleEs,
-          caption: attrs.caption,
-          captionEs: attrs.captionEs,
-        },
-      });
+      const value: FormulaChainSpec = {
+        steps,
+        emphasize: parseEmphasize(attrs.emphasize),
+        pacing: attrs.pacing === "auto" ? "auto" : undefined,
+        title: attrs.title,
+        titleEs: attrs.titleEs,
+        caption: attrs.caption,
+        captionEs: attrs.captionEs,
+      };
+      segments.push(
+        directive === "verify"
+          ? { kind: "verify", value }
+          : { kind: "chain", value },
+      );
     }
     cursor += afterOpen + closeMatch.index + closeMatch[0].length + 1;
   }
 
-  return segments.filter((s) => s.kind === "chain" || s.value.length > 0);
+  return segments.filter(
+    (s) => s.kind === "chain" || s.kind === "verify" || s.value.length > 0,
+  );
 }

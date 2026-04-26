@@ -7,6 +7,7 @@ import { ConceptChip } from "./primitives/ConceptChip";
 import { tryEvalLatex } from "./primitives/numericEval";
 import { FormulaReveal } from "./formula-anim/FormulaReveal";
 import { FormulaChain } from "./formula-anim/FormulaChain";
+import { FormulaVerify } from "./formula-anim/FormulaVerify";
 import { splitChainBlocks } from "./formula-anim/parseChainBlock";
 
 interface MathContentProps {
@@ -17,12 +18,16 @@ interface MathContentProps {
 
 export function MathContent({ text, className, as: Tag = "p" }: MathContentProps) {
   const segments = useMemo(() => splitChainBlocks(text), [text]);
-  const hasChain = segments.some((s) => s.kind === "chain");
-  const Wrapper = hasChain ? "div" : Tag;
+  const hasBlock = segments.some(
+    (s) => s.kind === "chain" || s.kind === "verify",
+  );
+  const Wrapper = hasBlock ? "div" : Tag;
   const nodes: React.ReactNode[] = [];
   segments.forEach((seg, i) => {
     if (seg.kind === "chain") {
       nodes.push(<FormulaChain key={`c-${i}`} spec={seg.value} />);
+    } else if (seg.kind === "verify") {
+      nodes.push(<FormulaVerify key={`v-${i}`} spec={seg.value} />);
     } else {
       parseContent(seg.value).forEach((n, j) =>
         nodes.push(<React.Fragment key={`t-${i}-${j}`}>{n}</React.Fragment>),
