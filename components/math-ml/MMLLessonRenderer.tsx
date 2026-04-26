@@ -105,6 +105,10 @@ const FormulaChainViz = dynamic(
   () => import("./formula-anim/FormulaChain"),
   { ssr: false }
 ) as VizComponent;
+const OptimizerRace = dynamic(
+  () => import("./visualizations/OptimizerRace"),
+  { ssr: false }
+) as VizComponent;
 
 // eigenspace-3d reuses VectorPlot3D (eigenvectors passed as vector configs)
 // svd-3d reuses MatrixTransform3D
@@ -127,6 +131,7 @@ const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "svd-flow": SVDFlow,
   "kernel-projection-3d": KernelProjection3D,
   "formula-chain": FormulaChainViz,
+  "optimizer-race": OptimizerRace,
 };
 
 // --- Dynamically imported exercise components (named exports) ---

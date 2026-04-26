@@ -66,6 +66,10 @@ const FormulaChainViz = dynamic(
   () => import("../formula-anim/FormulaChain"),
   { ssr: false },
 ) as VizComponent;
+const OptimizerRaceViz = dynamic(
+  () => import("../visualizations/OptimizerRace"),
+  { ssr: false },
+) as VizComponent;
 
 const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "vector-2d": VectorPlot2D,
@@ -86,6 +90,7 @@ const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "svd-flow": SVDFlow,
   "kernel-projection-3d": KernelProjection3D,
   "formula-chain": FormulaChainViz,
+  "optimizer-race": OptimizerRaceViz,
 };
 
 interface Props {

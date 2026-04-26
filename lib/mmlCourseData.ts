@@ -4243,6 +4243,16 @@ log_p_x = log_p_z + log_det_jacobian   # one line per flow layer`,
             learningRate: 0.001,
           },
         },
+        {
+          type: "optimizer-race",
+          title: "Optimizer race: SGD vs. Momentum vs. Adam",
+          description: "Three optimizers released from the same starting point on the same loss surface. Switch surfaces to see why Adam dominates on saddle points and Rosenbrock; tune η and β to find the limits of each. Click anywhere on the canvas to set a new starting point.",
+          config: {
+            surface: "saddle",
+            lr: 0.08,
+            beta: 0.85,
+          },
+        },
       ],
       exercises: [
         {
