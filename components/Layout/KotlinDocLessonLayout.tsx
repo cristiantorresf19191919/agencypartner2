@@ -6,6 +6,13 @@ import { PlayArrow as PlayIcon, Fullscreen as FullscreenIcon } from "@mui/icons-
 import type { DocTocItem, DocBlock } from "@/lib/coroutinesBasicsDoc";
 import { CoroutinesDiagram } from "./CoroutinesDiagrams";
 import { CoroutinesChallenge } from "./CoroutinesChallenge";
+import {
+  HeroStatsPanel,
+  ConcurrencyRace,
+  BuilderPicker,
+  BackpressureSimulator,
+  MiniQuiz,
+} from "./CoroutinesInteractive";
 import playStyles from "@/app/[locale]/developer-section/challenges/[slug]/ChallengePlay.module.css";
 
 const KOTLIN_KEYWORDS = new Set([
@@ -383,6 +390,29 @@ export default function KotlinDocLessonLayout({
                   solution={block.solution}
                 />
               );
+            }
+            if (block.type === "hero") {
+              return (
+                <HeroStatsPanel
+                  key={i}
+                  eyebrow={block.eyebrow}
+                  title={block.title}
+                  subtitle={block.subtitle}
+                  stats={block.stats}
+                />
+              );
+            }
+            if (block.type === "concurrency-race") {
+              return <ConcurrencyRace key={i} />;
+            }
+            if (block.type === "builder-picker") {
+              return <BuilderPicker key={i} />;
+            }
+            if (block.type === "backpressure") {
+              return <BackpressureSimulator key={i} />;
+            }
+            if (block.type === "quiz") {
+              return <MiniQuiz key={i} title={block.title} questions={block.questions} />;
             }
             if (block.type === "solution") {
               const idx = codeBlockIndex++;

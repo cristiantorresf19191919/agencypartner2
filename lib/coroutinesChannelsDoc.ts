@@ -610,9 +610,74 @@ fun main() = runBlocking {
   { type: "image", src: "/images/portfolio/channels/unlimited-channel.png", alt: "Unlimited channel" },
   { type: "image", src: "/images/portfolio/channels/buffered-channel.png", alt: "Buffered channel" },
   { type: "image", src: "/images/portfolio/channels/rendezvous-channel.png", alt: "Rendezvous channel" },
+  { type: "backpressure" },
   { type: "heading", level: 2, id: "task-7", text: "Task 7" },
   {
     type: "paragraph",
     text: "Implement loadContributorsChannels(): create a Channel<List<User>>(), for each repo launch a coroutine that loads contributors and sends the result to the channel, then receive from the channel repos.size times, aggregating and calling updateResults. Results appear as soon as each repo is ready.",
+  },
+  {
+    type: "quiz",
+    title: "Quick check — channels",
+    questions: [
+      {
+        id: "qc1",
+        question: "Which channel type drops everything except the most recent value?",
+        options: ["Rendezvous", "Buffered", "Unlimited", "Conflated"],
+        correct: 3,
+        explanation:
+          "Conflated channels keep only the most recent value — perfect for things like 'show me the latest sensor reading'.",
+      },
+      {
+        id: "qc2",
+        question: "What does channel.close() do for the receiver side?",
+        options: [
+          "Throws on the next call to receive().",
+          "Lets `for (x in channel)` end the loop after draining all sent items.",
+          "Blocks forever waiting for new senders.",
+          "Has no effect; close() only affects the sender.",
+        ],
+        correct: 1,
+        explanation:
+          "After close(), the receiver gets all already-sent items, then the for-loop terminates cleanly.",
+      },
+      {
+        id: "qc3",
+        question:
+          "Producer is faster than the consumer on a buffered channel. What happens once the buffer fills?",
+        options: [
+          "Items are dropped silently.",
+          "The producer's send() suspends until a slot frees up — back-pressure.",
+          "The runtime throws an OutOfMemoryError.",
+          "A new buffer slot is allocated automatically.",
+        ],
+        correct: 1,
+        explanation:
+          "Channels apply back-pressure: send() suspends when the buffer is full so the consumer can catch up.",
+      },
+      {
+        id: "qc4",
+        question:
+          "You launch three workers reading from the same channel. What's the term for that pattern?",
+        options: ["Pipeline", "Fan-out", "Fan-in", "Broadcast"],
+        correct: 1,
+        explanation:
+          "Fan-out: one channel, many consumers, items distributed round-robin.",
+      },
+      {
+        id: "qc5",
+        question:
+          "Which builder is the idiomatic way to expose a stream-of-values from a coroutine?",
+        options: [
+          "launch { … }",
+          "produce { … } returning a ReceiveChannel<T>",
+          "runBlocking { … }",
+          "withContext(IO) { … }",
+        ],
+        correct: 1,
+        explanation:
+          "produce { } is the channel builder — it returns a ReceiveChannel<T> that callers consume with consumeEach or for-in.",
+      },
+    ],
   },
 ];

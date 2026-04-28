@@ -17,6 +17,20 @@ export type DiagramKind =
   | "channel-pipe"
   | "fan-out-fan-in";
 
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct: number;
+  explanation: string;
+}
+
+export interface HeroStat {
+  value: string;
+  label: string;
+  accent?: "emerald" | "blue" | "violet" | "amber";
+}
+
 export type DocBlock =
   | { type: "heading"; level: 1 | 2 | 3; id: string; text: string }
   | { type: "paragraph"; text: string }
@@ -36,6 +50,11 @@ export type DocBlock =
       hint?: string;
       solution?: string;
     }
+  | { type: "hero"; eyebrow?: string; title: string; subtitle: string; stats: HeroStat[] }
+  | { type: "concurrency-race" }
+  | { type: "builder-picker" }
+  | { type: "backpressure" }
+  | { type: "quiz"; title?: string; questions: QuizQuestion[] }
   | { type: "solution"; taskNumber: number; id?: string; paragraphs?: string[]; steps?: string[]; code?: string; codeShowPlay?: boolean; paragraphAfterCode?: string };
 
 export const COROUTINES_BASICS_TOC: DocTocItem[] = [
@@ -261,11 +280,25 @@ fun main() {
 };
 
 export const COROUTINES_BASICS_BLOCKS: DocBlock[] = [
+  {
+    type: "hero",
+    eyebrow: "Coroutines · Deep Dive",
+    title: "Concurrency that reads like sequential code",
+    subtitle:
+      "Kotlin coroutines let you write asynchronous logic without callbacks, futures, or thread juggling. The runtime handles suspension, scheduling, and cancellation while you focus on the algorithm.",
+    stats: [
+      { value: "~200B", label: "memory per coroutine", accent: "emerald" },
+      { value: "~2 MB", label: "memory per JVM thread", accent: "amber" },
+      { value: "millions", label: "coroutines per JVM", accent: "blue" },
+      { value: "structured", label: "cancellation by default", accent: "violet" },
+    ],
+  },
   { type: "heading", level: 2, id: "coroutines-basics", text: "Coroutines basics" },
   {
     type: "paragraph",
     text: "To create applications that perform multiple tasks at once, a concept known as concurrency, Kotlin uses coroutines. A coroutine is a suspendable computation that lets you write concurrent code in a clear, sequential style. Coroutines can run concurrently with other coroutines and potentially in parallel.",
   },
+  { type: "concurrency-race" },
   {
     type: "paragraph",
     text: "On the JVM and in Kotlin/Native, all concurrent code, such as coroutines, runs on threads, managed by the operating system. Coroutines can suspend their execution instead of blocking a thread. This allows one coroutine to suspend while waiting for some data to arrive and another coroutine to run on the same thread, ensuring effective resource utilization.",
@@ -572,6 +605,7 @@ fun main() = runBlocking {
     text: "Use runBlocking() only when there is no other option to call suspending code from non-suspending code:",
   },
   { type: "code", code: CODE.runBlockingExample, showPlay: false },
+  { type: "builder-picker" },
   { type: "heading", level: 2, id: "coroutine-dispatchers", text: "Coroutine dispatchers" },
   {
     type: "paragraph",
@@ -687,6 +721,69 @@ fun main() = runBlocking {
   {
     type: "paragraph",
     text: "Depending on your operating system, JDK version, and settings, the JVM thread version may throw an out-of-memory error or slow down thread creation to avoid running too many threads at once.",
+  },
+  {
+    type: "quiz",
+    title: "Quick check — coroutines basics",
+    questions: [
+      {
+        id: "qb1",
+        question: "What does the suspend modifier do to a function?",
+        options: [
+          "Marks it as deprecated.",
+          "Allows it to pause and resume without blocking the calling thread.",
+          "Forces it to run on a background thread.",
+          "Makes it run only inside runBlocking.",
+        ],
+        correct: 1,
+        explanation:
+          "suspend means the function can be paused at suspension points (e.g. delay(), I/O) and resumed later — the thread is free in the meantime.",
+      },
+      {
+        id: "qb2",
+        question: "Which builder returns a Deferred<T> that you await for a value?",
+        options: ["launch", "async", "runBlocking", "withContext"],
+        correct: 1,
+        explanation:
+          "async starts a concurrent computation and returns a Deferred<T>. Use .await() to suspend until the value is ready.",
+      },
+      {
+        id: "qb3",
+        question:
+          "What happens to child coroutines when the parent coroutineScope is cancelled?",
+        options: [
+          "They keep running until they finish naturally.",
+          "They are recursively cancelled too.",
+          "Only the first child is cancelled.",
+          "They throw a deadlock exception.",
+        ],
+        correct: 1,
+        explanation:
+          "Structured concurrency: cancelling the parent scope cancels every child coroutine recursively.",
+      },
+      {
+        id: "qb4",
+        question:
+          "Which dispatcher should you pick for blocking I/O like network or disk?",
+        options: ["Dispatchers.Main", "Dispatchers.IO", "Dispatchers.Default", "Dispatchers.Unconfined"],
+        correct: 1,
+        explanation:
+          "Dispatchers.IO is sized for blocking I/O. Dispatchers.Default is for CPU-bound work; Main is for UI.",
+      },
+      {
+        id: "qb5",
+        question: "When should you reach for runBlocking { } in production code?",
+        options: [
+          "Anywhere — it's the simplest way to launch a coroutine.",
+          "Inside other coroutines, to wait for results.",
+          "Only at the entry point (main, tests) when bridging from non-suspending code.",
+          "Whenever you want true parallelism.",
+        ],
+        correct: 2,
+        explanation:
+          "runBlocking blocks the calling thread, which defeats the point of coroutines. Use it only at boundaries (main, tests, JNI callbacks).",
+      },
+    ],
   },
   { type: "heading", level: 2, id: "whats-next", text: "What's next" },
   {
