@@ -9,6 +9,14 @@ export interface DocTocItem {
   children?: { id: string; label: string }[];
 }
 
+export type DiagramKind =
+  | "structured-concurrency"
+  | "suspend-resume"
+  | "dispatchers"
+  | "launch-vs-async"
+  | "channel-pipe"
+  | "fan-out-fan-in";
+
 export type DocBlock =
   | { type: "heading"; level: 1 | 2 | 3; id: string; text: string }
   | { type: "paragraph"; text: string }
@@ -17,6 +25,17 @@ export type DocBlock =
   | { type: "code"; code: string; showPlay?: boolean; comment?: string }
   | { type: "image"; src: string; alt: string }
   | { type: "list"; items: string[] }
+  | { type: "diagram"; kind: DiagramKind; caption?: string }
+  | {
+      type: "challenge";
+      id: string;
+      title: string;
+      description: string;
+      starterCode: string;
+      expectedOutput: string;
+      hint?: string;
+      solution?: string;
+    }
   | { type: "solution"; taskNumber: number; id?: string; paragraphs?: string[]; steps?: string[]; code?: string; codeShowPlay?: boolean; paragraphAfterCode?: string };
 
 export const COROUTINES_BASICS_TOC: DocTocItem[] = [
@@ -280,6 +299,41 @@ export const COROUTINES_BASICS_BLOCKS: DocBlock[] = [
     text: "This example doesn't use concurrency yet, but by marking the functions with the suspend keyword, you allow them to call other suspending functions and run concurrent code inside.",
   },
   {
+    type: "diagram",
+    kind: "suspend-resume",
+    caption: "When a coroutine hits a suspension point (e.g. delay() or a network call), it releases the thread so other work can run. Later, the runtime resumes it on whatever thread is available.",
+  },
+  {
+    type: "challenge",
+    id: "basics-c1",
+    title: "Make it suspend",
+    description: "The function fetchUser tries to call delay() but won't compile. Add the suspend keyword so the program prints `Loaded: Ana`.",
+    starterCode: `import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+
+fun fetchUser(): String {
+    delay(50)
+    return "Ana"
+}
+
+fun main() = runBlocking {
+    println("Loaded: ${"$"}{fetchUser()}")
+}`,
+    expectedOutput: "Loaded: Ana",
+    hint: "delay() is a suspending function — only callable from another suspending function. Mark fetchUser with the `suspend` modifier.",
+    solution: `import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+
+suspend fun fetchUser(): String {
+    delay(50)
+    return "Ana"
+}
+
+fun main() = runBlocking {
+    println("Loaded: ${"$"}{fetchUser()}")
+}`,
+  },
+  {
     type: "paragraph",
     text: "While the suspend keyword is part of the core Kotlin language, most coroutine features are available through the kotlinx.coroutines library.",
   },
@@ -373,6 +427,11 @@ export const COROUTINES_BASICS_BLOCKS: DocBlock[] = [
     text: "A parent coroutine waits for its children to complete before it finishes. If the parent coroutine fails or gets canceled, all its child coroutines are recursively canceled too. Keeping coroutines connected this way makes cancellation and error handling predictable and safe.",
   },
   {
+    type: "diagram",
+    kind: "structured-concurrency",
+    caption: "Click 'Cancel parent' to watch cancellation cascade through the children — that's structured concurrency in action.",
+  },
+  {
     type: "paragraph",
     text: "To maintain structured concurrency, new coroutines can only be launched in a CoroutineScope that defines and manages their lifecycle. The CoroutineScope includes the coroutine context, which defines the dispatcher and other execution properties. When you start a coroutine inside another coroutine, it automatically becomes a child of its parent scope.",
   },
@@ -461,6 +520,48 @@ export const COROUTINES_BASICS_BLOCKS: DocBlock[] = [
     text: "The CoroutineScope.async() coroutine builder function is an extension function on CoroutineScope. It starts a concurrent computation inside an existing coroutine scope and returns a Deferred handle that represents an eventual result. Use the .await() function to suspend the code until the result is ready:",
   },
   { type: "code", code: CODE.asyncExample, showPlay: true, comment: "Target: JVM · Running on v.2.3.0" },
+  {
+    type: "diagram",
+    kind: "launch-vs-async",
+    caption: "launch fires off work and returns a Job; async returns a Deferred<T> you await for the value.",
+  },
+  {
+    type: "challenge",
+    id: "basics-c2",
+    title: "Parallel sum with async / await",
+    description: "fetchA() and fetchB() each take ~50 ms. Run them in parallel using async/await so the program prints 30 (= 10 + 20). Sequential calls would still work, but you must use async to stay parallel.",
+    starterCode: `import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+
+suspend fun fetchA(): Int { delay(50); return 10 }
+suspend fun fetchB(): Int { delay(50); return 20 }
+
+fun main() = runBlocking {
+    coroutineScope {
+        // TODO: launch both fetches in parallel and sum them
+        println(0)
+    }
+}`,
+    expectedOutput: "30",
+    hint: "val a = async { fetchA() }; val b = async { fetchB() }; println(a.await() + b.await())",
+    solution: `import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+
+suspend fun fetchA(): Int { delay(50); return 10 }
+suspend fun fetchB(): Int { delay(50); return 20 }
+
+fun main() = runBlocking {
+    coroutineScope {
+        val a = async { fetchA() }
+        val b = async { fetchB() }
+        println(a.await() + b.await())
+    }
+}`,
+  },
   { type: "heading", level: 3, id: "runblocking", text: "runBlocking()" },
   {
     type: "paragraph",
@@ -493,6 +594,11 @@ export const COROUTINES_BASICS_BLOCKS: DocBlock[] = [
   {
     type: "paragraph",
     text: "If the coroutine context doesn't include a dispatcher, coroutine builders use Dispatchers.Default.",
+  },
+  {
+    type: "diagram",
+    kind: "dispatchers",
+    caption: "Three lanes, three jobs: pick the dispatcher that matches the workload.",
   },
   {
     type: "paragraph",
@@ -544,6 +650,36 @@ export const COROUTINES_BASICS_BLOCKS: DocBlock[] = [
     text: "Now let's look at the same example using JVM threads:",
   },
   { type: "code", code: CODE.printPeriodsThreads, showPlay: true, comment: "Target: JVM · Running on v.2.3.0" },
+  {
+    type: "challenge",
+    id: "basics-c3",
+    title: "Bind two children with coroutineScope",
+    description: "Wrap the two launch calls in a coroutineScope so the parent waits for both children before printing 'done'. Without the scope, 'done' would print before the children — currently the program prints in the wrong order.",
+    starterCode: `import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    // TODO: bind these in a coroutineScope { } so 'done' prints LAST
+    launch { delay(40); println("a") }
+    launch { delay(20); println("b") }
+    println("done")
+}`,
+    expectedOutput: "b\na\ndone",
+    hint: "Wrap both launches inside `coroutineScope { ... }` and move println(\"done\") AFTER the scope so the parent waits.",
+    solution: `import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    coroutineScope {
+        launch { delay(40); println("a") }
+        launch { delay(20); println("b") }
+    }
+    println("done")
+}`,
+  },
   {
     type: "paragraph",
     text: "Running this version uses much more memory because each thread needs its own memory stack. For 50,000 threads, that can be up to 100 GB, compared to roughly 500 MB for the same number of coroutines.",

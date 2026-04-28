@@ -454,6 +454,157 @@ export const COROUTINES_CHANNELS_BLOCKS: DocBlock[] = [
     type: "paragraph",
     text: "Coroutines can share information by communication: one sends to a channel, another receives. A producer sends; a consumer receives. Multiple producers/consumers can use the same channel; each element is received by one consumer. Channel can suspend send() and receive() when full or empty. Types: unlimited (queue-like); buffered (fixed size); rendezvous (buffer 0); conflated (latest only).",
   },
+  {
+    type: "diagram",
+    kind: "channel-pipe",
+    caption: "A channel is a typed conduit between coroutines. Click 'Send' to push another item through.",
+  },
+  {
+    type: "challenge",
+    id: "channels-c1",
+    title: "Close the channel and iterate",
+    description: "Producer sends 1, 2, 3 then needs to close the channel. Consumer should iterate with `for x in channel` so it stops automatically. The expected output is `1 2 3`.",
+    starterCode: `import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val channel = Channel<Int>()
+    coroutineScope {
+        launch {
+            for (i in 1..3) channel.send(i)
+            // TODO: close the channel so the consumer stops
+        }
+        launch {
+            // TODO: iterate over the channel and print each value space-separated
+        }
+    }
+}`,
+    expectedOutput: "1 2 3",
+    hint: "Producer: call channel.close() after the for-loop. Consumer: `for (x in channel) print(\"$x \")` and finalise with println().",
+    solution: `import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val channel = Channel<Int>()
+    coroutineScope {
+        launch {
+            for (i in 1..3) channel.send(i)
+            channel.close()
+        }
+        launch {
+            val sb = StringBuilder()
+            for (x in channel) sb.append(x).append(" ")
+            print(sb.trim())
+        }
+    }
+    println()
+}`,
+  },
+  {
+    type: "diagram",
+    kind: "fan-out-fan-in",
+    caption: "Fan-out distributes work across workers; fan-in merges streams into one collector.",
+  },
+  {
+    type: "challenge",
+    id: "channels-c2",
+    title: "Fan-out: three workers consume from one channel",
+    description: "Three workers should consume from the same channel. The producer sends 1..6 then closes; each worker prints `worker-N got X`. The expected output line count is 6 (order may vary, but the sorted set of values printed must equal 1..6). For the autograder, just print the sum at the end — `sum=21`.",
+    starterCode: `import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.atomic.AtomicInteger
+
+fun main() = runBlocking {
+    val channel = Channel<Int>()
+    val total = AtomicInteger(0)
+    coroutineScope {
+        // producer
+        launch {
+            for (i in 1..6) channel.send(i)
+            // TODO: close the channel
+        }
+        // TODO: launch THREE workers that each consume from the channel
+        // and add the value to total. Use 'for (x in channel)'.
+    }
+    println("sum=${"$"}{total.get()}")
+}`,
+    expectedOutput: "sum=21",
+    hint: "After sending, call channel.close(). Then `repeat(3) { launch { for (x in channel) total.addAndGet(x) } }`.",
+    solution: `import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.atomic.AtomicInteger
+
+fun main() = runBlocking {
+    val channel = Channel<Int>()
+    val total = AtomicInteger(0)
+    coroutineScope {
+        launch {
+            for (i in 1..6) channel.send(i)
+            channel.close()
+        }
+        repeat(3) {
+            launch {
+                for (x in channel) total.addAndGet(x)
+            }
+        }
+    }
+    println("sum=${"$"}{total.get()}")
+}`,
+  },
+  {
+    type: "challenge",
+    id: "channels-c3",
+    title: "Build a number stream with produce { } / consumeEach { }",
+    description: "Use the channel coroutine builder `produce` to create a stream of squares 1, 4, 9, 16, 25 and consume them with consumeEach. Print them as a single space-separated line: `1 4 9 16 25`.",
+    starterCode: `import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun main() = runBlocking {
+    coroutineScope {
+        val squares: ReceiveChannel<Int> = produce {
+            // TODO: send the squares of 1..5
+        }
+        val sb = StringBuilder()
+        // TODO: use squares.consumeEach to append each value to sb followed by space
+        print(sb.toString().trim())
+    }
+    println()
+}`,
+    expectedOutput: "1 4 9 16 25",
+    hint: "Inside produce: `for (n in 1..5) send(n * n)`. Then `squares.consumeEach { sb.append(it).append(\" \") }`.",
+    solution: `import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun main() = runBlocking {
+    coroutineScope {
+        val squares: ReceiveChannel<Int> = produce {
+            for (n in 1..5) send(n * n)
+        }
+        val sb = StringBuilder()
+        squares.consumeEach { sb.append(it).append(" ") }
+        print(sb.toString().trim())
+    }
+    println()
+}`,
+  },
   { type: "image", src: "/images/portfolio/channels/using-channel.png", alt: "Using channels" },
   { type: "image", src: "/images/portfolio/channels/using-channel-many-coroutines.png", alt: "Using channels with many coroutines" },
   { type: "image", src: "/images/portfolio/channels/unlimited-channel.png", alt: "Unlimited channel" },

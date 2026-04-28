@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { PlayArrow as PlayIcon, Fullscreen as FullscreenIcon } from "@mui/icons-material";
 import type { DocTocItem, DocBlock } from "@/lib/coroutinesBasicsDoc";
+import { CoroutinesDiagram } from "./CoroutinesDiagrams";
+import { CoroutinesChallenge } from "./CoroutinesChallenge";
 import playStyles from "@/app/[locale]/developer-section/challenges/[slug]/ChallengePlay.module.css";
 
 const KOTLIN_KEYWORDS = new Set([
@@ -363,6 +365,23 @@ export default function KotlinDocLessonLayout({
                     <li key={j}>{highlightDocText(item, playStyles.inlineCode)}</li>
                   ))}
                 </ul>
+              );
+            }
+            if (block.type === "diagram") {
+              return <CoroutinesDiagram key={i} kind={block.kind} caption={block.caption} />;
+            }
+            if (block.type === "challenge") {
+              return (
+                <CoroutinesChallenge
+                  key={i}
+                  id={block.id}
+                  title={block.title}
+                  description={block.description}
+                  starterCode={block.starterCode}
+                  expectedOutput={block.expectedOutput}
+                  hint={block.hint}
+                  solution={block.solution}
+                />
               );
             }
             if (block.type === "solution") {
