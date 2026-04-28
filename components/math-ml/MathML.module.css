@@ -4327,3 +4327,138 @@
   outline: 2px solid var(--stage-accent);
   outline-offset: 2px;
 }
+
+/* ===================================================================
+   MML responsive polish — phones, small tablets
+   =================================================================== */
+@media (max-width: 720px) {
+  .lessonTitle {
+    font-size: clamp(1.6rem, 6vw, 2.1rem);
+    letter-spacing: -0.02em;
+  }
+  .lessonIntro {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .lessonIntro::first-letter {
+    font-size: 2.4rem;
+  }
+  .lessonParagraph {
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .lessonContent {
+    padding: 14px 12px 32px;
+  }
+  .lessonMetaBar {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .lessonMetaPill {
+    font-size: 11px;
+    padding: 3px 9px;
+  }
+
+  /* Viz frame on small screens */
+  .vizContainer {
+    border-radius: 14px;
+  }
+  .vizHeader {
+    padding: 12px;
+    gap: 8px;
+  }
+  .vizTitle {
+    font-size: 14.5px;
+  }
+  .vizDescription {
+    font-size: 12.5px;
+  }
+  .vizBody {
+    min-height: 220px;
+    padding: 10px;
+  }
+  .vizBody3D {
+    min-height: 280px;
+  }
+  .vizFullscreenBtn {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Mafs stage on small screens — tighter padding so the canvas dominates */
+  .mafsStage {
+    border-radius: 12px;
+  }
+
+  /* Narration captions — keep readable, never wider than ~78% */
+  .narrationBeat {
+    font-size: 11.5px;
+    padding: 5px 10px 5px 9px;
+    max-width: 78%;
+    line-height: 1.35;
+  }
+  .narrationTL { top: 10px; left: 10px; }
+  .narrationTR { top: 10px; right: 10px; }
+  .narrationBL { bottom: 10px; left: 10px; }
+  .narrationBR { bottom: 10px; right: 10px; }
+
+  /* Stack vertical offsets are tighter on phones */
+  .narrationLayer .narrationTL ~ .narrationTL { transform: translateY(28px); }
+  .narrationLayer .narrationTL ~ .narrationTL ~ .narrationTL { transform: translateY(56px); }
+  .narrationLayer .narrationTR ~ .narrationTR { transform: translateY(28px); }
+  .narrationLayer .narrationTR ~ .narrationTR ~ .narrationTR { transform: translateY(56px); }
+
+  /* Zoomable controls — easier touch target on phones */
+  .zoomControls {
+    bottom: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+  .zoomBtn {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lessonContent {
+    padding: 12px 10px 28px;
+  }
+  .lessonTitle {
+    font-size: 1.6rem;
+  }
+  .lessonIntro {
+    font-size: 14.5px;
+  }
+  .vizBody {
+    min-height: 200px;
+  }
+  .vizBody3D {
+    min-height: 240px;
+  }
+  .narrationBeat {
+    font-size: 11px;
+    max-width: 84%;
+  }
+  /* Hide non-primary narration beats on the smallest phones to avoid stacking issues */
+  .narrationLayer .narrationTL ~ .narrationTL ~ .narrationTL,
+  .narrationLayer .narrationTR ~ .narrationTR ~ .narrationTR {
+    display: none;
+  }
+}
+
+/* Phones in landscape with limited height — keep viz from eating the screen */
+@media (max-height: 520px) and (orientation: landscape) {
+  .vizBody { min-height: 200px; }
+  .vizBody3D { min-height: 240px; }
+}
+
+/* Touch-only — beef up tap targets across the lesson */
+@media (hover: none) {
+  .vizFullscreenBtn,
+  .zoomBtn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

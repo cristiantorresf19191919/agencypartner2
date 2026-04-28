@@ -349,22 +349,14 @@ export default function KotlinCourseLessonPage() {
                         }
                         if (item.type === "comparison") {
                           return (
-                            <div key={i} style={{ margin: "20px 0", display: "grid", gap: "16px" }}>
+                            <div key={i} className={playStyles.compareWrap}>
                               {item.title ? (
-                                <h4 className={playStyles.descSub} style={{ margin: 0 }}>{item.title}</h4>
+                                <h4 className={playStyles.compareTitle}>{item.title}</h4>
                               ) : null}
-                              <div
-                                style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
-                                  gap: "16px",
-                                }}
-                              >
+                              <div className={playStyles.compareGrid}>
                                 {item.blocks.map((b, j) => (
-                                  <div key={j} style={{ display: "grid", gap: "8px" }}>
-                                    <span style={{ fontSize: "13px", fontWeight: 600, color: "#9fc4ff", letterSpacing: "0.02em" }}>
-                                      {b.label}
-                                    </span>
+                                  <div key={j} className={playStyles.compareCell}>
+                                    <span className={playStyles.compareLabel}>{b.label}</span>
                                     <CodeEditor
                                       code={b.code}
                                       language="kotlin"
@@ -374,9 +366,7 @@ export default function KotlinCourseLessonPage() {
                                       maxCodeHeight={400}
                                     />
                                     {b.comment ? (
-                                      <p className={playStyles.conceptBody} style={{ margin: 0, fontSize: "13px", color: "#9fc4ff" }}>
-                                        {b.comment}
-                                      </p>
+                                      <p className={playStyles.compareCaption}>{b.comment}</p>
                                     ) : null}
                                   </div>
                                 ))}

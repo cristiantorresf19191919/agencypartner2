@@ -231,3 +231,26 @@
   margin: 0;
   line-height: 1.55;
 }
+
+/* ============================================================
+   RESPONSIVE — phones, small tablets
+   ============================================================ */
+@media (max-width: 720px) {
+  .figure { margin: 22px 0; }
+  .surface { border-radius: 14px; }
+  .surfaceInner { padding: 16px; }
+  .controls { gap: 10px; }
+  .helper { font-size: 12px; flex-basis: 100%; }
+  .dispGrid { grid-template-columns: 1fr; gap: 10px; }
+  .lvaGrid { grid-template-columns: 1fr; }
+  .fanGrid { grid-template-columns: 1fr; }
+  .lvaCode { font-size: 11.5px; }
+  .btn, .btnGhost { min-height: 44px; padding: 10px 14px; }
+}
+
+@media (max-width: 480px) {
+  .surfaceInner { padding: 14px; }
+  .dispLane { padding: 12px; }
+  .dispItem { font-size: 11.5px; padding: 5px 8px; }
+  .lvaCard { padding: 14px; }
+}
