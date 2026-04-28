@@ -20,7 +20,9 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { getReactorChallengeById, REACTOR_CHALLENGES } from "@/lib/reactorChallengesData";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
@@ -67,7 +69,7 @@ export default function ReactorChallengePlayPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const challenge = getReactorChallengeById(slug);
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
 
   const [code, setCode] = useState("");
@@ -299,7 +301,8 @@ export default function ReactorChallengePlayPage() {
                 <BoltIcon style={{ fontSize: 14 }} /> {challenge.topic}
               </span>
             </div>
-            <h1 className={styles.descTitle}>{challenge.title}</h1>
+            <h1 className={styles.descTitle}>{pickLang(language, challenge.titleEs, challenge.title)}</h1>
+            <TranslationPendingBadge show={language === "es"} />
             <div className={styles.descBody}>
               {challenge.description.split("\n").map((p, i) => (
                 <p key={i}>{p}</p>

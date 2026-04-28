@@ -7,7 +7,8 @@
 export interface ReactorTocItem {
   id: string;
   label: string;
-  children?: { id: string; label: string }[];
+  labelEs?: string;
+  children?: { id: string; label: string; labelEs?: string }[];
 }
 
 export type ReactorBlock =

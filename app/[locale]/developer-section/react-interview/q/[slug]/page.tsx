@@ -18,6 +18,8 @@ import Footer from "@/components/Footer/Footer";
 import { MarkdownAnswer } from "@/components/ui/MarkdownAnswer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import styles from "../../../challenges/ChallengesPage.module.css";
 import playStyles from "../../../challenges/[slug]/ChallengePlay.module.css";
 
@@ -25,7 +27,7 @@ export default function ReactInterviewQuestionPage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [srRated, setSrRated] = useState(false);
 
   const question = useMemo(() => getQuestionBySlug(slug), [slug]);
@@ -101,7 +103,7 @@ export default function ReactInterviewQuestionPage() {
             className={styles.difficulty}
             style={{ background: "rgba(167, 107, 249, 0.18)", color: "#c4a1ff" }}
           >
-            {category?.label ?? question.category}
+            {category ? pickLang(language, category.labelEs, category.label) : question.category}
           </span>
           <span style={{ fontSize: 13, color: "#9fc4ff" }}>
             #{question.num} · {t("react-interview-q-source")}
@@ -120,8 +122,9 @@ export default function ReactInterviewQuestionPage() {
             lineHeight: 1.25,
           }}
         >
-          {question.title}
+          {pickLang(language, question.titleEs, question.title)}
         </motion.h1>
+        <TranslationPendingBadge show={language === "es" && !question.titleEs} />
 
         <motion.article
           initial={{ opacity: 0, y: 12 }}

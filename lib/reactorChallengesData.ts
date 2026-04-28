@@ -22,6 +22,8 @@ export interface ReactorChallenge {
     description: string;
     validate: (code: string) => boolean;
   }[];
+  /** Optional Spanish overlay for the title. */
+  titleEs?: string;
 }
 
 export const REACTOR_TOPICS = [

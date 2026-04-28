@@ -17,7 +17,9 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { getChallengeById } from "@/lib/challengesData";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../ChallengesPage.module.css";
@@ -57,7 +59,7 @@ export default function ChallengePlayPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const challenge = getChallengeById(slug);
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
 
   const [lang, setLang] = useState<"typescript" | "kotlin">("typescript");
@@ -305,7 +307,8 @@ export default function ChallengePlayPage() {
               </span>
               <span className={playStyles.pts}>{challenge.maxScore} {t('challenge-pts')}</span>
             </div>
-            <h1 className={playStyles.descTitle}>{challenge.title}</h1>
+            <h1 className={playStyles.descTitle}>{pickLang(language, challenge.titleEs, challenge.title)}</h1>
+            <TranslationPendingBadge show={language === "es"} />
             <p className={playStyles.descBody}>{challenge.description}</p>
             <h4 className={playStyles.descSub}>{t('challenge-input')}</h4>
             <p className={playStyles.descBody}>{challenge.inputFormat}</p>

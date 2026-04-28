@@ -105,6 +105,8 @@ function getContentBasedHeight(code: string): number {
 const REACT_UMD = `
 <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script crossorigin src="https://unpkg.com/mobx@6/dist/mobx.umd.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/mobx-react-lite@4/dist/mobxreactlite.umd.production.min.js"></script>
 `;
 
 // Helper function to detect React usage and generate imports
@@ -530,9 +532,13 @@ export function CodeEditor({
       moduleFileNames.length === 0
         ? `if (name === "react") return window.React;
         if (name === "react-dom") return window.ReactDOM;
+        if (name === "mobx") return window.mobx;
+        if (name === "mobx-react-lite" || name === "mobx-react") return window.mobxReactLite;
         throw new Error("Module not found: " + name);`
         : `if (name === "react") return window.React;
         if (name === "react-dom") return window.ReactDOM;
+        if (name === "mobx") return window.mobx;
+        if (name === "mobx-react-lite" || name === "mobx-react") return window.mobxReactLite;
         var mods = window.__modules__ || {};
         var key = name.replace(/^\\.\\//, "").replace(/\\.(tsx?|jsx?)$/, "");
         for (var i = 0; i < moduleFileNames.length; i++) {

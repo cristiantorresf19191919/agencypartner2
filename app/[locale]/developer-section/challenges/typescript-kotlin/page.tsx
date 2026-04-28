@@ -3,6 +3,7 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from "react";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { CHALLENGES, type Challenge } from "@/lib/challengesData";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
@@ -40,7 +41,7 @@ function filterChallenges(
 
 export default function ChallengesListPage() {
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -234,7 +235,7 @@ export default function ChallengesListPage() {
                         {c.maxScore} {t("challenge-pts")}
                       </span>
                     </div>
-                    <h3 className={styles.cardTitle}>{c.title}</h3>
+                    <h3 className={styles.cardTitle}>{pickLang(language, c.titleEs, c.title)}</h3>
                     <p className={styles.cardCategory}>
                       {c.category === "Problem Solving (Basic)"
                         ? t("challenge-category-basic")

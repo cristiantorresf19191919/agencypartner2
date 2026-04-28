@@ -8,16 +8,32 @@ import { tryEvalLatex } from "./primitives/numericEval";
 import { FormulaReveal } from "./formula-anim/FormulaReveal";
 import { FormulaChain } from "./formula-anim/FormulaChain";
 import { FormulaVerify } from "./formula-anim/FormulaVerify";
-import { splitChainBlocks } from "./formula-anim/parseChainBlock";
+import {
+  autoChainifyTextSegments,
+  splitChainBlocks,
+} from "./formula-anim/parseChainBlock";
 
 interface MathContentProps {
   text: string;
   className?: string;
   as?: "p" | "span" | "div" | "li";
+  /**
+   * When `"worked"`, inline `$…=…=…$` chains are auto-promoted to animated
+   * FormulaChain blocks. Used for worked-example paragraphs.
+   */
+  mode?: "default" | "worked";
 }
 
-export function MathContent({ text, className, as: Tag = "p" }: MathContentProps) {
-  const segments = useMemo(() => splitChainBlocks(text), [text]);
+export function MathContent({
+  text,
+  className,
+  as: Tag = "p",
+  mode = "default",
+}: MathContentProps) {
+  const segments = useMemo(() => {
+    const base = splitChainBlocks(text);
+    return mode === "worked" ? autoChainifyTextSegments(base) : base;
+  }, [text, mode]);
   const hasBlock = segments.some(
     (s) => s.kind === "chain" || s.kind === "verify",
   );

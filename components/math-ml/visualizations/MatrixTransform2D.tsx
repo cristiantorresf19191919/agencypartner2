@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Mafs, Coordinates, Vector, Polygon } from "mafs";
+import { Coordinates, Vector, Polygon, Text } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { ZoomableMafs } from "../primitives/ZoomableMafs";
+import type { NarrationBeat } from "../primitives/Narration";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -14,6 +16,7 @@ interface MatrixTransform2DConfig {
   showBasis?: boolean;
   showGrid?: boolean;
   viewBox?: { x?: [number, number]; y?: [number, number] };
+  narration?: NarrationBeat[];
 }
 
 interface Props {
@@ -56,14 +59,23 @@ export default function MatrixTransform2D({ config }: Props) {
   const det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
   const height = useMafsHeight(340);
 
+  const autoSpan = useMemo(() => {
+    const corners = [e1, e2, [e1[0] + e2[0], e1[1] + e2[1]] as [number, number]];
+    let mx = 1.5;
+    for (const [x, y] of corners) {
+      mx = Math.max(mx, Math.abs(x), Math.abs(y));
+    }
+    return Math.max(3, Math.ceil(mx * 1.5));
+  }, [e1, e2]);
+  const view = {
+    x: viewBox.x ?? ([-autoSpan, autoSpan] as [number, number]),
+    y: viewBox.y ?? ([-autoSpan, autoSpan] as [number, number]),
+  };
+
   return (
     <>
-    <MafsStage accent="emerald">
-      <Mafs
-        viewBox={{ x: viewBox.x ?? [-5, 5], y: viewBox.y ?? [-5, 5] }}
-        preserveAspectRatio="contain"
-        height={height}
-      >
+    <MafsStage accent="emerald" narration={cfg.narration}>
+      <ZoomableMafs viewBox={view} height={height}>
         <Coordinates.Cartesian />
 
         <Polygon
@@ -76,17 +88,24 @@ export default function MatrixTransform2D({ config }: Props) {
           color={BLUE}
           fillOpacity={0.05}
           strokeOpacity={0.3}
+          weight={2}
         />
 
-        <Polygon points={square} color={EMERALD} fillOpacity={0.22} />
+        <Polygon points={square} color={EMERALD} fillOpacity={0.22} weight={2.5} />
 
         {showBasis && (
           <>
-            <Vector tip={e1} color={EMERALD} />
-            <Vector tip={e2} color={AMBER} />
+            <Vector tip={e1} color={EMERALD} weight={3} />
+            <Vector tip={e2} color={AMBER} weight={3} />
+            <Text x={e1[0]} y={e1[1]} attach="ne" attachDistance={14} color={EMERALD} size={14}>
+              e₁ →
+            </Text>
+            <Text x={e2[0]} y={e2[1]} attach="ne" attachDistance={14} color={AMBER} size={14}>
+              e₂ →
+            </Text>
           </>
         )}
-      </Mafs>
+      </ZoomableMafs>
     </MafsStage>
       <div
         style={{

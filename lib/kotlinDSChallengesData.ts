@@ -12,11 +12,16 @@ export interface DSTopic {
   whyLearn: string;
   realWorldUse: string;
   bigO: string;
+  /** Optional Spanish overlay for the topic name. */
+  nameEs?: string;
+  descriptionEs?: string;
 }
 
 export interface KotlinDSChallenge {
   id: string;
   title: string;
+  /** Optional Spanish overlay for the title. */
+  titleEs?: string;
   topicId: string;
   difficulty: "Easy" | "Medium" | "Hard";
   description: string;
@@ -39,7 +44,9 @@ export const DS_TOPICS: DSTopic[] = [
   {
     id: "arrays",
     name: "Arrays & Lists",
+    nameEs: "Arrays y listas",
     description: "Master array manipulation and list operations in Kotlin.",
+    descriptionEs: "Domina la manipulación de arrays y operaciones de listas en Kotlin.",
     icon: "📊",
     color: "#4caf50",
     whyLearn: "Arrays are the most fundamental data structure — nearly every algorithm starts with one.",

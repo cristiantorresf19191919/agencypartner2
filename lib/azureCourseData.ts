@@ -14,6 +14,7 @@
  */
 
 import type { WebCourseLesson, LessonSection } from "./webCourseTypes";
+import { AZURE_TITLES_ES } from "./courseShellTranslations";
 
 type RawLesson = Omit<WebCourseLesson, "id" | "step" | "nextStep" | "prevStep" | "content"> & {
   content: [string, string];
@@ -1131,6 +1132,7 @@ function buildAzureLessons(): WebCourseLesson[] {
       nextStep: i < raw.length - 1 ? `azure-${i + 2}` : undefined,
       prevStep: i > 0 ? `azure-${i}` : undefined,
       content: lesson.content,
+      titleEs: AZURE_TITLES_ES[id],
     };
   });
 }

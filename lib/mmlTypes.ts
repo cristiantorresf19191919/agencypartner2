@@ -1,6 +1,7 @@
 export type MMLVizType =
   | "vector-2d"
   | "matrix-transform-2d"
+  | "linear-system-2d"
   | "norm-balls"
   | "function-plot"
   | "gradient-field"

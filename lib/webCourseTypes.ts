@@ -13,6 +13,9 @@ export interface LessonSection {
   body: string;
   code?: string;
   badges?: string[];
+  // Optional Spanish overlays — renderer prefers these when locale is "es"
+  titleEs?: string;
+  bodyEs?: string;
 }
 
 export interface WebCourseLesson {
@@ -31,6 +34,9 @@ export interface WebCourseLesson {
   /** CSS only: base CSS for .item etc.; combined with user's CSS in preview. */
   initialCSS?: string;
   validationLogic: (code: string, logs: string[], renderedHTML?: string) => { success: boolean; message?: string };
+  // Optional Spanish overlays — renderer prefers these when locale is "es"
+  titleEs?: string;
+  contentEs?: string[];
 }
 
 export type WebCourseKind = "react" | "typescript" | "css";

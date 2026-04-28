@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Mafs, Coordinates, Plot, Point, Text, useMovablePoint } from "mafs";
+import { Coordinates, Plot, Point, Text, useMovablePoint } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { ZoomableMafs } from "../primitives/ZoomableMafs";
+import { LabeledMarker, type AccentName, type MarkerKind } from "../primitives/LabeledMarker";
+import type { NarrationBeat } from "../primitives/Narration";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -20,11 +23,25 @@ type FnKey =
   | "sigmoid"
   | "relu";
 
+interface MarkerSpec {
+  x: number;
+  y: number;
+  label: string;
+  kind?: MarkerKind;
+  accent?: AccentName;
+}
+
 interface FunctionPlotConfig {
   fn?: FnKey;
   domain?: [number, number];
   showTangent?: boolean;
   taylorOrder?: number;
+  /** Optional annotated points (minima, inflection, etc). */
+  markers?: MarkerSpec[];
+  /** Manim-style captions; fade in sequentially on scroll. */
+  narration?: NarrationBeat[];
+  /** Vertical viewport bounds; auto-fits to function range when omitted. */
+  yDomain?: [number, number];
 }
 
 interface Props {
@@ -101,6 +118,26 @@ function pickFn(k: FnKey | undefined) {
   }
 }
 
+function autoYDomain(
+  f: (x: number) => number,
+  domain: [number, number],
+): [number, number] {
+  let lo = Infinity;
+  let hi = -Infinity;
+  const steps = 80;
+  for (let i = 0; i <= steps; i++) {
+    const x = domain[0] + ((domain[1] - domain[0]) * i) / steps;
+    const y = f(x);
+    if (Number.isFinite(y)) {
+      lo = Math.min(lo, y);
+      hi = Math.max(hi, y);
+    }
+  }
+  if (!Number.isFinite(lo) || !Number.isFinite(hi)) return [-5, 5];
+  const pad = Math.max(0.5, (hi - lo) * 0.15);
+  return [lo - pad, hi + pad];
+}
+
 export default function FunctionPlot({ config }: Props) {
   const cfg = (config ?? {}) as FunctionPlotConfig;
   const domain: [number, number] = cfg.domain ?? [-5, 5];
@@ -124,24 +161,38 @@ export default function FunctionPlot({ config }: Props) {
   };
 
   const height = useMafsHeight(360);
+  const yDomain = useMemo(
+    () => cfg.yDomain ?? autoYDomain(f, domain),
+    [cfg.yDomain, f, domain],
+  );
 
   return (
-    <MafsStage accent="blue">
-      <Mafs viewBox={{ x: domain, y: [-5, 5] }} preserveAspectRatio="contain" height={height}>
+    <MafsStage accent="blue" narration={cfg.narration}>
+      <ZoomableMafs viewBox={{ x: domain, y: yDomain }} height={height}>
         <Coordinates.Cartesian />
-        <Plot.OfX y={f} domain={domain} color={BLUE} />
+        <Plot.OfX y={f} domain={domain} color={BLUE} weight={2.6} />
         {showTangent && (
-          <Plot.OfX y={tangentY} domain={domain} color={AMBER} style="dashed" />
+          <Plot.OfX y={tangentY} domain={domain} color={AMBER} style="dashed" weight={2.2} />
         )}
         {taylorOrder > 0 && (
-          <Plot.OfX y={taylor} domain={domain} color={VIOLET} />
+          <Plot.OfX y={taylor} domain={domain} color={VIOLET} weight={2.4} />
         )}
+        {(cfg.markers ?? []).map((m, i) => (
+          <LabeledMarker
+            key={`mk-${i}`}
+            x={m.x}
+            y={m.y}
+            label={m.label}
+            kind={m.kind ?? "star"}
+            accent={m.accent ?? "emerald"}
+          />
+        ))}
         <Point x={ax} y={fa} color={EMERALD} />
         {a.element}
         <Text x={ax} y={fa} attach="ne" attachDistance={14} color={EMERALD} size={14}>
-          {`a=${ax.toFixed(2)}`}
+          {`a=${ax.toFixed(2)},  f'(a)=${dfa.toFixed(2)}`}
         </Text>
-      </Mafs>
+      </ZoomableMafs>
     </MafsStage>
   );
 }

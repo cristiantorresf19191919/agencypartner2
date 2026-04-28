@@ -1,4 +1,5 @@
 import type { FormulaChainSpec } from "@/lib/mmlTypes";
+import { extractEquationChain } from "./extractEquationChain";
 
 /**
  * Splits a content string into ordered text and chain segments. Recognizes:
@@ -92,4 +93,52 @@ export function splitChainBlocks(text: string): ContentSegment[] {
   return segments.filter(
     (s) => s.kind === "chain" || s.kind === "verify" || s.value.length > 0,
   );
+}
+
+/**
+ * Post-processes text segments so that any inline `$…$` or display `$$…$$`
+ * containing two or more top-level equalities is promoted to an animated chain
+ * segment. Authors get cinematic, Manim-style morphing on every worked-example
+ * computation without having to hand-author `::math-chain` blocks.
+ *
+ * Non-extractable math (single equality or no equality) stays inline so the
+ * surrounding sentence flow is preserved.
+ */
+export function autoChainifyTextSegments(
+  segments: ContentSegment[],
+): ContentSegment[] {
+  const out: ContentSegment[] = [];
+  for (const seg of segments) {
+    if (seg.kind !== "text") {
+      out.push(seg);
+      continue;
+    }
+    out.push(...extractInlineChains(seg.value));
+  }
+  return out;
+}
+
+const INLINE_MATH_RE = /\$\$([^$]+)\$\$|\$([^$]+)\$/g;
+
+function extractInlineChains(text: string): ContentSegment[] {
+  const result: ContentSegment[] = [];
+  let lastIndex = 0;
+  for (const m of text.matchAll(INLINE_MATH_RE)) {
+    const start = m.index ?? 0;
+    const inner = m[1] ?? m[2] ?? "";
+    const steps = extractEquationChain(inner);
+    if (!steps) continue;
+    if (start > lastIndex) {
+      result.push({ kind: "text", value: text.slice(lastIndex, start) });
+    }
+    result.push({
+      kind: "chain",
+      value: { steps, pacing: "auto" },
+    });
+    lastIndex = start + m[0].length;
+  }
+  if (lastIndex < text.length) {
+    result.push({ kind: "text", value: text.slice(lastIndex) });
+  }
+  return result.length ? result : [{ kind: "text", value: text }];
 }

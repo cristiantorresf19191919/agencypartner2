@@ -14,7 +14,9 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { APOLLO_COURSE_LESSONS } from "@/lib/apolloCourseData";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import type { LessonSection, LessonSectionTag } from "@/lib/webCourseTypes";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
@@ -160,7 +162,7 @@ export default function ApolloGraphQLCourseLessonPage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const { locale, createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
   const lesson = APOLLO_COURSE_LESSONS.find((l) => l.id === slug);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -208,7 +210,7 @@ export default function ApolloGraphQLCourseLessonPage() {
           currentSlug={slug}
           collapsed={sidebarCollapsed}
           onToggle={setSidebarCollapsed}
-          getLessonTitle={(l) => l.title}
+          getLessonTitle={(l) => pickLang(language, l.titleEs, l.title)}
         />
 
         <div className={`${playStyles.courseMain} ${!sidebarCollapsed ? playStyles.courseSidebarOpen : ""}`}>
@@ -308,8 +310,10 @@ export default function ApolloGraphQLCourseLessonPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05, duration: 0.45 }}
                 >
-                  {lesson.title}
+                  {pickLang(language, lesson.titleEs, lesson.title)}
                 </motion.h1>
+
+                <TranslationPendingBadge show={language === "es" && !lesson.contentEs} />
 
                 {/* ─── Cascading section cards ─── */}
                 {lesson.sections && lesson.sections.length > 0 ? (

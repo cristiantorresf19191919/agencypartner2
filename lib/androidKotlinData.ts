@@ -11,6 +11,7 @@ export interface AndroidLesson {
   description: string;
   code: string;
   explanation: string;
+  titleEs?: string;
 }
 
 export const ANDROID_LESSONS: AndroidLesson[] = [
@@ -333,6 +334,13 @@ class MainActivity : ComponentActivity() { ... }`,
     explanation: `Hilt (built on Dagger) automates dependency injection. \`@Module\` defines how to create dependencies. \`@InstallIn\` specifies the component scope. \`@HiltAndroidApp\` initializes Hilt in the Application class. \`@AndroidEntryPoint\` enables field injection in Activities/Fragments.`,
   },
 ];
+
+// Apply Spanish title overlays without duplicating each definition
+import { ANDROID_TITLES_ES } from "./courseShellTranslations";
+for (const lesson of ANDROID_LESSONS) {
+  const es = ANDROID_TITLES_ES[lesson.id];
+  if (es) lesson.titleEs = es;
+}
 
 export function getAndroidLessonById(id: string): AndroidLesson | undefined {
   return ANDROID_LESSONS.find((lesson) => lesson.id === id);

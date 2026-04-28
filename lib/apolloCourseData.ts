@@ -4,6 +4,7 @@
  */
 
 import type { WebCourseLesson, LessonSection } from "./webCourseTypes";
+import { APOLLO_TITLES_ES } from "./courseShellTranslations";
 
 type RawLesson = Omit<WebCourseLesson, "id" | "step" | "nextStep" | "prevStep" | "content"> & {
   content: [string, string];
@@ -4231,6 +4232,7 @@ export default App;`,
       nextStep: next,
       prevStep: prev,
       content: lesson.content,
+      titleEs: APOLLO_TITLES_ES[id],
     };
   });
 }

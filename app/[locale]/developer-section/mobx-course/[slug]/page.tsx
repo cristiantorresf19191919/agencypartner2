@@ -14,7 +14,9 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { MOBX_COURSE_LESSONS } from "@/lib/mobxCourseData";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import type { LessonSection, LessonSectionTag } from "@/lib/webCourseTypes";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
@@ -132,7 +134,7 @@ export default function MobxCourseLessonPage() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
   const lesson = MOBX_COURSE_LESSONS.find((l) => l.id === slug);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -180,7 +182,7 @@ export default function MobxCourseLessonPage() {
           currentSlug={slug}
           collapsed={sidebarCollapsed}
           onToggle={setSidebarCollapsed}
-          getLessonTitle={(l) => l.title}
+          getLessonTitle={(l) => pickLang(language, l.titleEs, l.title)}
         />
 
         <div className={`${playStyles.courseMain} ${!sidebarCollapsed ? playStyles.courseSidebarOpen : ""}`}>
@@ -230,8 +232,10 @@ export default function MobxCourseLessonPage() {
                 </motion.div>
 
                 <motion.h1 className={playStyles.descTitle} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.45 }}>
-                  {lesson.title}
+                  {pickLang(language, lesson.titleEs, lesson.title)}
                 </motion.h1>
+
+                <TranslationPendingBadge show={language === "es" && !lesson.contentEs} />
 
                 {lesson.sections && lesson.sections.length > 0 ? (
                   <div className={playStyles.contentFontWrap}>

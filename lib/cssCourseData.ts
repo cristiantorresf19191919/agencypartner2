@@ -4,6 +4,7 @@
  */
 
 import type { WebCourseLesson } from "./webCourseTypes";
+import { CSS_TITLES_ES } from "./courseShellTranslations";
 
 function buildCssLessons(): WebCourseLesson[] {
   const raw: (Omit<WebCourseLesson, "id" | "step" | "nextStep" | "prevStep" | "content"> & {
@@ -134,6 +135,7 @@ function buildCssLessons(): WebCourseLesson[] {
       nextStep: i < raw.length - 1 ? `css-${i + 2}` : undefined,
       prevStep: i > 0 ? `css-${i}` : undefined,
       content: lesson.content,
+      titleEs: CSS_TITLES_ES[id],
     };
   });
 }

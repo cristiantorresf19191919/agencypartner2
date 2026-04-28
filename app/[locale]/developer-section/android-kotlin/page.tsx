@@ -2,6 +2,7 @@
 
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { ANDROID_LESSONS } from "@/lib/androidKotlinData";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
@@ -12,7 +13,7 @@ import styles from "../challenges/ChallengesPage.module.css";
 
 export default function AndroidKotlinLandingPage() {
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
     <main className={styles.page}>
@@ -76,7 +77,7 @@ export default function AndroidKotlinLandingPage() {
                     {t("android-level")} {lesson.level}
                   </span>
                 </div>
-                <h3 className={styles.cardTitle}>{lesson.title}</h3>
+                <h3 className={styles.cardTitle}>{pickLang(language, lesson.titleEs, lesson.title)}</h3>
                 <p className={styles.cardCategory} style={{ fontSize: "13px", color: "#9fc4ff" }}>
                   {lesson.concept}
                 </p>

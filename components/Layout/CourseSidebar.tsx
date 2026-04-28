@@ -15,6 +15,7 @@ interface CourseSidebarLesson {
   id: string;
   step: number;
   title: string;
+  titleEs?: string;
 }
 
 interface CourseSidebarProps {

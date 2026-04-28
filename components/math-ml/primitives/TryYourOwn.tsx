@@ -71,9 +71,15 @@ const OptimizerRaceViz = dynamic(
   { ssr: false },
 ) as VizComponent;
 
+const LineSystem2D = dynamic(
+  () => import("../visualizations/LineSystem2D"),
+  { ssr: false },
+) as VizComponent;
+
 const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "vector-2d": VectorPlot2D,
   "matrix-transform-2d": MatrixTransform2D,
+  "linear-system-2d": LineSystem2D,
   "norm-balls": NormBalls,
   "function-plot": FunctionPlot,
   "gradient-field": GradientField,

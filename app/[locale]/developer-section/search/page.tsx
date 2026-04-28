@@ -92,11 +92,11 @@ function SearchResultsContent() {
             {t("search-docs-title")}
           </Typography>
 
-          <Box className={styles.searchBarContainer}>
+          <div className={styles.searchBarContainer}>
             <div style={{ maxWidth: '500px', width: '100%' }}>
               <SearchBar />
             </div>
-          </Box>
+          </div>
 
           {query && (
             <Typography
@@ -191,7 +191,7 @@ function SearchResultsContent() {
                 transition={{ delay: groupIdx * 0.1 }}
                 className={styles.sectionGroup}
               >
-                <Box className={styles.sectionHeader}>
+                <div className={styles.sectionHeader}>
                   {sectionIcons[sectionKey]}
                   <Typography
                     variant="h6"
@@ -214,7 +214,7 @@ function SearchResultsContent() {
                       fontWeight: 600,
                     }}
                   />
-                </Box>
+                </div>
 
                 <div className={styles.resultsGrid}>
                   {items.map((item, idx) => {
@@ -247,21 +247,22 @@ function SearchResultsContent() {
                             }}
                           >
                             <CardContent sx={{ p: 2.5 }}>
-                              <Box
-                                sx={{
+                              <div
+                                style={{
                                   display: "flex",
                                   alignItems: "center",
-                                  mb: 1.5,
+                                  marginBottom: 12,
                                 }}
                               >
-                                <Box
-                                  sx={{
+                                <span
+                                  style={{
                                     width: 8,
                                     height: 8,
                                     borderRadius: "50%",
-                                    bgcolor: normalizedColor,
-                                    mr: 1.5,
+                                    background: normalizedColor,
+                                    marginRight: 12,
                                     boxShadow: `0 0 8px ${alpha(normalizedColor, 0.5)}`,
+                                    display: "inline-block",
                                   }}
                                 />
                                 <Typography
@@ -274,7 +275,7 @@ function SearchResultsContent() {
                                 >
                                   {item.title}
                                 </Typography>
-                              </Box>
+                              </div>
                               <Typography
                                 variant="body2"
                                 sx={{

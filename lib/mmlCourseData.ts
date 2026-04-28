@@ -51,6 +51,14 @@ function buildMMLLessons(): MMLLesson[] {
             fn: "x^2",
             domain: [-3, 3],
             showTangent: true,
+            markers: [
+              { x: 0, y: 0, label: "minimum", kind: "star", accent: "emerald" },
+            ],
+            narration: [
+              { text: "Blue curve: the loss L(w) = w².", textEs: "Curva azul: la pérdida L(w) = w²." },
+              { text: "Drag the green dot — the orange line is the gradient.", textEs: "Arrastra el punto verde — la línea naranja es el gradiente." },
+              { text: "Training walks downhill toward the star.", textEs: "Entrenar baja por la pendiente hacia la estrella." },
+            ],
           },
         },
         {
@@ -63,6 +71,10 @@ function buildMMLLessons(): MMLLesson[] {
             vectors: [[3, 2], [1, -1], [-2, 2]],
             labels: ["x₁", "x₂", "x₃"],
             showSum: false,
+            narration: [
+              { text: "Each arrow is a single data point.", textEs: "Cada flecha es un punto de datos." },
+              { text: "Coordinates = feature values.", textEs: "Coordenadas = valores de las características." },
+            ],
           },
         },
       ],
@@ -200,13 +212,21 @@ print("y_hat(2.5) =", np.dot(w, [1.0, 2.5]))`,
       ],
       visualizations: [
         {
-          type: "vector-2d",
+          type: "linear-system-2d",
           title: "Two equations, one intersection",
           description: "The equations $2x + 3y = 7$ and $x - y = 1$ meet at $(2, 1)$. Each line is one equation; their crossing point is the unique solution.",
           config: {
-            vectors: [[2, 1]],
-            labels: ["solution (2,1)"],
-            showSum: false,
+            lines: [
+              { a: 2, b: 3, c: 7, label: "2x + 3y = 7" },
+              { a: 1, b: -1, c: 1, label: "x − y = 1" },
+            ],
+            solution: [2, 1],
+            solutionLabel: "solution (2, 1)",
+            narration: [
+              { text: "Each equation traces a line.", textEs: "Cada ecuación traza una recta." },
+              { text: "Their unique meeting point is the solution.", textEs: "Su único punto de cruce es la solución." },
+              { text: "Parallel ⇒ no solution. Identical ⇒ infinitely many.", textEs: "Paralelas ⇒ sin solución. Idénticas ⇒ infinitas." },
+            ],
           },
         },
         {
@@ -219,6 +239,11 @@ print("y_hat(2.5) =", np.dot(w, [1.0, 2.5]))`,
               [1, -1],
             ],
             animateFromIdentity: true,
+            narration: [
+              { text: "The blue square is the input space.", textEs: "El cuadrado azul es el espacio de entrada." },
+              { text: "A maps it to the green parallelogram.", textEs: "A lo lleva al paralelogramo verde." },
+              { text: "Solving Ax = b runs the map in reverse.", textEs: "Resolver Ax = b ejecuta el mapa al revés." },
+            ],
           },
         },
       ],

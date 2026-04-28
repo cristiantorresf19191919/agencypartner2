@@ -3,6 +3,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useVizFullscreen } from "./VizFullscreenContext";
+import { Narration, type NarrationBeat } from "./Narration";
+import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "../MathML.module.css";
 
 export function useMafsHeight(defaultHeight: number, fullscreenMargin = 260): number {
@@ -58,11 +60,22 @@ function useParticles(count: number, seed = 7) {
 interface MafsStageProps {
   children: React.ReactNode;
   accent?: "emerald" | "blue" | "violet" | "amber";
+  /**
+   * Optional Manim-style caption overlay. Beats fade in sequentially when the
+   * stage scrolls into view.
+   */
+  narration?: NarrationBeat[];
 }
 
-export function MafsStage({ children, accent = "emerald" }: MafsStageProps) {
+export function MafsStage({
+  children,
+  accent = "emerald",
+  narration,
+}: MafsStageProps) {
   const isFullscreen = useVizFullscreen();
-  const particles = useParticles(24);
+  const particles = useParticles(14);
+  const { language } = useLanguage();
+  const lang: "en" | "es" = language === "es" ? "es" : "en";
 
   const accentClass =
     accent === "blue"
@@ -112,6 +125,9 @@ export function MafsStage({ children, accent = "emerald" }: MafsStageProps) {
         ))}
       </div>
       <div className={styles.mafsStageContent}>{children}</div>
+      {narration && narration.length > 0 ? (
+        <Narration beats={narration} lang={lang} />
+      ) : null}
       <div className={styles.mafsStageGlow} aria-hidden="true" />
       <div className={styles.mafsStageVignette} aria-hidden="true" />
     </div>

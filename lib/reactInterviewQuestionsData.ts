@@ -16,6 +16,8 @@ export interface ReactInterviewQuestion {
   num: number;
   /** Question heading (plain text, no formatting). */
   title: string;
+  /** Optional Spanish overlay for the title. */
+  titleEs?: string;
   /** Full markdown-formatted answer. */
   answer: string;
   /** Category id (see REACT_INTERVIEW_CATEGORIES). */
@@ -36,20 +38,22 @@ export type ReactInterviewCategoryId =
 export interface ReactInterviewCategory {
   id: ReactInterviewCategoryId;
   label: string;
+  /** Optional Spanish overlay. */
+  labelEs?: string;
   order: number;
   count: number;
 }
 
 export const REACT_INTERVIEW_CATEGORIES: ReactInterviewCategory[] = [
-  { id: "core", label: "Core React", order: 1, count: 78 },
-  { id: "router", label: "React Router", order: 2, count: 11 },
-  { id: "redux", label: "React Redux", order: 3, count: 34 },
-  { id: "testing", label: "React Testing", order: 4, count: 6 },
-  { id: "i18n", label: "Internationalization", order: 5, count: 6 },
-  { id: "native", label: "React Native", order: 6, count: 4 },
-  { id: "ecosystem", label: "Ecosystem", order: 7, count: 13 },
-  { id: "misc", label: "Miscellaneous", order: 8, count: 166 },
-  { id: "old", label: "Legacy (pre-Hooks)", order: 9, count: 89 },
+  { id: "core", label: "Core React", labelEs: "React esencial", order: 1, count: 78 },
+  { id: "router", label: "React Router", labelEs: "React Router", order: 2, count: 11 },
+  { id: "redux", label: "React Redux", labelEs: "React Redux", order: 3, count: 34 },
+  { id: "testing", label: "React Testing", labelEs: "Testing en React", order: 4, count: 6 },
+  { id: "i18n", label: "Internationalization", labelEs: "Internacionalización", order: 5, count: 6 },
+  { id: "native", label: "React Native", labelEs: "React Native", order: 6, count: 4 },
+  { id: "ecosystem", label: "Ecosystem", labelEs: "Ecosistema", order: 7, count: 13 },
+  { id: "misc", label: "Miscellaneous", labelEs: "Misceláneos", order: 8, count: 166 },
+  { id: "old", label: "Legacy (pre-Hooks)", labelEs: "Legacy (pre-Hooks)", order: 9, count: 89 },
 ];
 
 export const REACT_INTERVIEW_QUESTIONS: ReactInterviewQuestion[] = [

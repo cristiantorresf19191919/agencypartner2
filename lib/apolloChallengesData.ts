@@ -17,6 +17,7 @@ export interface ApolloChallenge {
     description: string;
     validate: (code: string) => boolean;
   }[];
+  titleEs?: string;
 }
 
 export const APOLLO_CHALLENGES: ApolloChallenge[] = [
@@ -1664,6 +1665,13 @@ export default ShoppingList;`,
     ],
   },
 ];
+
+// Apply Spanish title overlays
+import { APOLLO_CHALLENGE_TITLES_ES } from "./courseShellTranslations";
+for (const challenge of APOLLO_CHALLENGES) {
+  const es = APOLLO_CHALLENGE_TITLES_ES[challenge.id];
+  if (es) challenge.titleEs = es;
+}
 
 /** Get an Apollo challenge by id. */
 export function getApolloChallengeById(id: string): ApolloChallenge | undefined {

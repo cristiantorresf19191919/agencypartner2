@@ -4,6 +4,7 @@
  */
 
 import type { WebCourseLesson } from "./webCourseTypes";
+import { TS_TITLES_ES } from "./courseShellTranslations";
 
 function buildTypeScriptLessons(): WebCourseLesson[] {
   const raw: (Omit<WebCourseLesson, "id" | "step" | "nextStep" | "prevStep" | "content"> & { content: [string, string] })[] = [
@@ -138,6 +139,7 @@ function buildTypeScriptLessons(): WebCourseLesson[] {
       nextStep: i < raw.length - 1 ? `ts-${i + 2}` : undefined,
       prevStep: i > 0 ? `ts-${i}` : undefined,
       content: lesson.content,
+      titleEs: TS_TITLES_ES[id],
     };
   });
 }

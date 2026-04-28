@@ -23,6 +23,8 @@ export interface KotlinInteropLesson {
   codeExamples: { code: string; comment?: string }[];
   practice?: KotlinInteropPracticeChallenge[];
   defaultCode: string;
+  /** Optional Spanish overlay for the title. */
+  titleEs?: string;
 }
 
 export const KOTLIN_JAVA_INTEROP_LESSONS: KotlinInteropLesson[] = [
@@ -849,6 +851,13 @@ fun main() {
     practice: [],
   },
 ];
+
+// Apply Spanish title overlays
+import { KOTLIN_INTEROP_TITLES_ES } from "./courseShellTranslations";
+for (const lesson of KOTLIN_JAVA_INTEROP_LESSONS) {
+  const es = KOTLIN_INTEROP_TITLES_ES[lesson.id];
+  if (es) lesson.titleEs = es;
+}
 
 export function getKotlinInteropLessonById(id: string): KotlinInteropLesson | undefined {
   return KOTLIN_JAVA_INTEROP_LESSONS.find((l) => l.id === id);

@@ -18,7 +18,9 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { getApolloChallengeById } from "@/lib/apolloChallengesData";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
@@ -58,7 +60,7 @@ export default function ApolloChallengePage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const { createLocalizedPath } = useLocale();
   const challenge = getApolloChallengeById(slug);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
 
   const [code, setCode] = useState("");
@@ -832,7 +834,8 @@ export default function ApolloChallengePage() {
                 {challenge.difficulty}
               </span>
             </div>
-            <h1 className={playStyles.descTitle}>{challenge.title}</h1>
+            <h1 className={playStyles.descTitle}>{pickLang(language, challenge.titleEs, challenge.title)}</h1>
+            <TranslationPendingBadge show={language === "es"} />
             <div className={playStyles.descBody}>
               <p style={{ whiteSpace: "pre-wrap", marginBottom: "16px" }}>{challenge.description}</p>
 

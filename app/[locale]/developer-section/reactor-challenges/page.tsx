@@ -3,6 +3,7 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from "react";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { REACTOR_CHALLENGES, REACTOR_TOPICS, type ReactorChallenge } from "@/lib/reactorChallengesData";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
@@ -51,7 +52,7 @@ function getCompletedChallenges(): Set<string> {
 
 export default function ReactorChallengesPage() {
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>("all");
   const [topicFilter, setTopicFilter] = useState<TopicFilter>("all");
@@ -299,7 +300,7 @@ export default function ReactorChallengesPage() {
                               </span>
                               <span className={styles.challengeNumber}>#{i + 1}</span>
                             </div>
-                            <h3 className={styles.cardTitle}>{c.title}</h3>
+                            <h3 className={styles.cardTitle}>{pickLang(language, c.titleEs, c.title)}</h3>
                             <p className={styles.cardDesc}>{c.description.split("\n")[0]}</p>
                             <div className={styles.cardCta}>
                               <span>{isCompleted ? (t("reactor-review") || "Review") : (t("reactor-solve") || "Solve")}</span>

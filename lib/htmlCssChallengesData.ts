@@ -20,6 +20,8 @@ export interface HtmlCssChallenge {
   solutionCss: string;
   hints: string[];
   testCriteria: string[];
+  /** Optional Spanish overlay for the title; descriptions stay English. */
+  titleEs?: string;
 }
 
 export const HTML_CSS_CHALLENGES: HtmlCssChallenge[] = [

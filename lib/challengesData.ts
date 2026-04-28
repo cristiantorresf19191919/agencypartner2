@@ -21,6 +21,8 @@ export interface Challenge {
   sampleInput: string;
   sampleOutput: string;
   testCases: { input: string; output: string }[];
+  /** Optional Spanish overlay for the title; description/code stay English. */
+  titleEs?: string;
 }
 
 /** All challenges. Order preserved for list view. */

@@ -5,7 +5,9 @@ import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { getAndroidLessonById } from "@/lib/androidKotlinData";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import { CodeEditor } from "@/components/ui/CodeEditor";
 import styles from "../../challenges/ChallengesPage.module.css";
 import playStyles from "../../challenges/[slug]/ChallengePlay.module.css";
@@ -15,7 +17,7 @@ export default function AndroidKotlinLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const lesson = getAndroidLessonById(slug);
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   if (!lesson) {
     return (
@@ -45,7 +47,8 @@ export default function AndroidKotlinLessonPage() {
                 {t("course-level")} {lesson.level}
               </span>
             </div>
-            <h1 className={playStyles.descTitle}>{lesson.title}</h1>
+            <h1 className={playStyles.descTitle}>{pickLang(language, lesson.titleEs, lesson.title)}</h1>
+            <TranslationPendingBadge show={language === "es"} />
             <div className={playStyles.descBody}>
               <p style={{ marginBottom: "12px", color: "#7cf4ff", fontWeight: 600 }}>
                 {lesson.concept}

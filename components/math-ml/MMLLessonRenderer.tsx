@@ -48,6 +48,10 @@ const MatrixTransform2D = dynamic(
   () => import("./visualizations/MatrixTransform2D"),
   { ssr: false }
 ) as VizComponent;
+const LineSystem2D = dynamic(
+  () => import("./visualizations/LineSystem2D"),
+  { ssr: false }
+) as VizComponent;
 const NormBalls = dynamic(
   () => import("./visualizations/NormBalls"),
   { ssr: false }
@@ -115,6 +119,7 @@ const OptimizerRace = dynamic(
 const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "vector-2d": VectorPlot2D,
   "matrix-transform-2d": MatrixTransform2D,
+  "linear-system-2d": LineSystem2D,
   "norm-balls": NormBalls,
   "function-plot": FunctionPlot,
   "gradient-field": GradientField,
@@ -472,7 +477,12 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
             ) : pitfall ? (
               <PitfallCallout text={stripMarker(paragraph)} />
             ) : (
-              <MathContent text={textForNormal} as="p" className={className} />
+              <MathContent
+                text={textForNormal}
+                as="p"
+                className={className}
+                mode={isWorked ? "worked" : "default"}
+              />
             )}
             {extras.map((ex, k) => {
               if (ex.kind === "formula" && lesson.annotatedFormulas?.[ex.idx]) {

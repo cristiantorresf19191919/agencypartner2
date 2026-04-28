@@ -8,7 +8,9 @@ import Footer from "@/components/Footer/Footer";
 import CourseSidebar from "@/components/Layout/CourseSidebar";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { getCssLessonById, CSS_COURSE_LESSONS } from "@/lib/cssCourseData";
+import { TranslationPendingBadge } from "@/components/ui/TranslationPendingBadge";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
@@ -22,7 +24,7 @@ export default function CssCourseLessonPage() {
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const lesson = getCssLessonById(slug);
   const { createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { celebration, celebrate, onComplete } = useCelebration();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -92,6 +94,7 @@ export default function CssCourseLessonPage() {
           currentSlug={slug}
           collapsed={sidebarCollapsed}
           onToggle={setSidebarCollapsed}
+          getLessonTitle={(l) => pickLang(language, l.titleEs, l.title)}
         />
 
         <div className={`${playStyles.courseMain} ${!sidebarCollapsed ? playStyles.courseSidebarOpen : ""}`}>
@@ -103,7 +106,8 @@ export default function CssCourseLessonPage() {
                     {t("course-step").toUpperCase()} {lesson.step}
                   </span>
                 </div>
-                <h1 className={playStyles.descTitle}>{lesson.title}</h1>
+                <h1 className={playStyles.descTitle}>{pickLang(language, lesson.titleEs, lesson.title)}</h1>
+                <TranslationPendingBadge show={language === "es" && !lesson.contentEs} />
                 {lesson.content.map((paragraph, i) => (
                   <p key={i} className={playStyles.descBody}>
                     {paragraph}

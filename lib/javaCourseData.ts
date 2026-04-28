@@ -17,6 +17,7 @@
  */
 
 import type { WebCourseLesson, LessonSection } from "./webCourseTypes";
+import { JAVA_TITLES_ES } from "./courseShellTranslations";
 
 type RawLesson = Omit<WebCourseLesson, "id" | "step" | "nextStep" | "prevStep" | "content"> & {
   content: [string, string];
@@ -2350,6 +2351,7 @@ function buildJavaLessons(): WebCourseLesson[] {
       nextStep: i < raw.length - 1 ? `java-${i + 2}` : undefined,
       prevStep: i > 0 ? `java-${i}` : undefined,
       content: lesson.content,
+      titleEs: JAVA_TITLES_ES[id],
     };
   });
 }

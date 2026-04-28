@@ -3,6 +3,7 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickLang } from "@/lib/i18n";
 import { REACT19_LESSONS } from "@/lib/react19InterviewData";
 import { getReact19LessonForLocale } from "@/lib/reactInterviewTranslations";
 import {
@@ -74,7 +75,7 @@ function React19FeaturesShowcase({ t }: { t: (key: string) => string }) {
 
 export default function ReactInterviewLandingPage() {
   const { locale, createLocalizedPath } = useLocale();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const localizedLessons = REACT19_LESSONS.map((lesson) => {
     const translated = getReact19LessonForLocale(locale, lesson.id);
@@ -184,7 +185,7 @@ export default function ReactInterviewLandingPage() {
                 href={createLocalizedPath(`/developer-section/react-interview/q/${q.slug}`)}
                 style={dueLinkStyle}
               >
-                📘 {q.title}
+                📘 {pickLang(language, q.titleEs, q.title)}
               </Link>
             ))}
           </div>
@@ -312,7 +313,7 @@ export default function ReactInterviewLandingPage() {
           {REACT_INTERVIEW_CATEGORIES.filter((c) => c.count > 0).map((c) => (
             <FilterChip
               key={c.id}
-              label={`${c.label} (${c.count})`}
+              label={`${pickLang(language, c.labelEs, c.label)} (${c.count})`}
               active={activeCategory === c.id}
               onClick={() => setActiveCategory(c.id)}
             />
@@ -323,7 +324,10 @@ export default function ReactInterviewLandingPage() {
           <span className={styles.filterLabel}>
             {activeCategory === "all"
               ? t("react-interview-filter-all")
-              : REACT_INTERVIEW_CATEGORIES.find((c) => c.id === activeCategory)?.label}
+              : (() => {
+                  const cat = REACT_INTERVIEW_CATEGORIES.find((c) => c.id === activeCategory);
+                  return cat ? pickLang(language, cat.labelEs, cat.label) : "";
+                })()}
           </span>
           <span className={styles.count}>
             {filteredQuestions.length} {t("react-interview-questions-count")}
@@ -364,14 +368,17 @@ export default function ReactInterviewLandingPage() {
                         color: "#c4a1ff",
                       }}
                     >
-                      {REACT_INTERVIEW_CATEGORIES.find((c) => c.id === q.category)?.label}
+                      {(() => {
+                        const cat = REACT_INTERVIEW_CATEGORIES.find((c) => c.id === q.category);
+                        return cat ? pickLang(language, cat.labelEs, cat.label) : "";
+                      })()}
                     </span>
                     <span style={{ fontSize: 11, color: "rgba(255, 255, 255, 0.4)" }}>
                       #{q.num}
                     </span>
                   </div>
                   <h3 className={styles.cardTitle} style={{ fontSize: "1rem", lineHeight: 1.3 }}>
-                    {q.title}
+                    {pickLang(language, q.titleEs, q.title)}
                   </h3>
                   <div className={styles.cardCta}>
                     <span>{t("react-interview-view-answer")}</span>
