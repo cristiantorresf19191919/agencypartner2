@@ -347,6 +347,43 @@ export default function KotlinCourseLessonPage() {
                             </figure>
                           );
                         }
+                        if (item.type === "comparison") {
+                          return (
+                            <div key={i} style={{ margin: "20px 0", display: "grid", gap: "16px" }}>
+                              {item.title ? (
+                                <h4 className={playStyles.descSub} style={{ margin: 0 }}>{item.title}</h4>
+                              ) : null}
+                              <div
+                                style={{
+                                  display: "grid",
+                                  gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
+                                  gap: "16px",
+                                }}
+                              >
+                                {item.blocks.map((b, j) => (
+                                  <div key={j} style={{ display: "grid", gap: "8px" }}>
+                                    <span style={{ fontSize: "13px", fontWeight: 600, color: "#9fc4ff", letterSpacing: "0.02em" }}>
+                                      {b.label}
+                                    </span>
+                                    <CodeEditor
+                                      code={b.code}
+                                      language="kotlin"
+                                      height="auto"
+                                      compactToolbar
+                                      collapsePanelsByDefault
+                                      maxCodeHeight={400}
+                                    />
+                                    {b.comment ? (
+                                      <p className={playStyles.conceptBody} style={{ margin: 0, fontSize: "13px", color: "#9fc4ff" }}>
+                                        {b.comment}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
                         return null;
                       }
                       const s = item.trim();

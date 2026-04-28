@@ -15,7 +15,13 @@ export interface KotlinPracticeChallenge {
 
 export type KotlinLessonContentItem =
   | string
-  | { type: "image"; src: string; alt: string };
+  | { type: "image"; src: string; alt: string }
+  | {
+      type: "comparison";
+      title?: string;
+      /** 2 stacked code blocks (e.g. "Lambda with receiver" vs "Normal lambda"). */
+      blocks: { label: string; code: string; comment?: string }[];
+    };
 
 export interface KotlinLesson {
   id: string;
@@ -1248,6 +1254,42 @@ fun main() {
       "The syntax for a lambda expression with receiver is different when you define the function type. First, write the receiver that you want to extend. Next, put a . and then complete the rest of your function type definition. For example: MutableList<Int>.() -> Unit has MutableList<Int> as the receiver, no function parameters, and Unit as the return type.",
       "When you pass a lambda with receiver to a function, that function can create an instance of the receiver type, call the lambda on it (so inside the lambda you can call members without qualifying them), and return the instance or a result. This pattern is common in DSLs and builders.",
       "Lambda expressions with receiver are helpful when you want to create a domain-specific language (DSL). Since you have access to the receiver's member functions and properties without explicitly referencing the receiver, your code becomes leaner. Kotlin's ecosystem uses this in buildList(), buildString(), and many API builders.",
+      {
+        type: "comparison",
+        title: "Side-by-side: lambda with receiver vs normal lambda",
+        blocks: [
+          {
+            label: "Lambda with receiver",
+            code: `// Lambda with receiver
+fun buildString(action: StringBuilder.() -> Unit): String {
+    val sb = StringBuilder()
+    sb.action()
+    return sb.toString()
+}
+
+val result = buildString {
+    append("Hello")
+    append(" World")
+}`,
+            comment: "Inside the lambda, this is the StringBuilder — call append() directly without naming the receiver.",
+          },
+          {
+            label: "Normal lambda",
+            code: `// Normal lambda
+fun buildString(action: (StringBuilder) -> Unit): String {
+    val sb = StringBuilder()
+    action(sb)
+    return sb.toString()
+}
+
+val result = buildString { sb ->
+    sb.append("Hello")
+    sb.append(" World")
+}`,
+            comment: "Same behavior, but you name the parameter (sb) and qualify each call. More noise, less DSL feel.",
+          },
+        ],
+      },
     ],
     codeExamples: [
       {
@@ -1420,6 +1462,303 @@ fun main() {
     val originalList = listOf(1, 2, 3)
     val newList = originalList.incremented()
     println(newList)
+}`,
+      },
+      {
+        id: "lambda-receiver-ex4",
+        title: "Exercise 4 — convert normal lambda to receiver",
+        description: "Refactor renderTitle so the lambda is a `StringBuilder.() -> Unit` (lambda with receiver) instead of a `(StringBuilder) -> Unit`. The call site should drop the explicit `sb ->` parameter and just call append() directly. Output must be: # Welcome",
+        starterCode: `fun renderTitle(block: (StringBuilder) -> Unit): String {
+    val sb = StringBuilder()
+    block(sb)
+    return sb.toString()
+}
+
+fun main() {
+    val title = renderTitle { sb ->
+        sb.append("# ")
+        sb.append("Welcome")
+    }
+    println(title)
+}`,
+        testCases: [
+          { input: "", output: "# Welcome" },
+        ],
+        hint: "Change the parameter type to `StringBuilder.() -> Unit`, call `sb.block()` inside, and at the call site drop `sb ->` so you can call `append(...)` directly.",
+        solution: `fun renderTitle(block: StringBuilder.() -> Unit): String {
+    val sb = StringBuilder()
+    sb.block()
+    return sb.toString()
+}
+
+fun main() {
+    val title = renderTitle {
+        append("# ")
+        append("Welcome")
+    }
+    println(title)
+}`,
+      },
+      {
+        id: "lambda-receiver-ex5",
+        title: "Exercise 5 — html DSL",
+        description: "Complete the html { body { p(\"Hi\") } } DSL so the program prints `<html><body><p>Hi</p></body></html>`. Add the missing receiver-typed parameters and the calls to b.block() / h.block().",
+        starterCode: `class Body {
+    private val parts = StringBuilder()
+    fun p(text: String) { parts.append("<p>").append(text).append("</p>") }
+    override fun toString() = parts.toString()
+}
+
+class Html {
+    private val parts = StringBuilder()
+    fun body(block: Body./* TODO */) {
+        val b = Body()
+        // TODO call block on b and append "<body>...</body>"
+    }
+    override fun toString() = parts.toString()
+}
+
+fun html(block: Html./* TODO */): String {
+    val h = Html()
+    // TODO call block on h
+    return "<html>${"$"}h</html>"
+}
+
+fun main() {
+    println(html { body { p("Hi") } })
+}`,
+        testCases: [
+          { input: "", output: "<html><body><p>Hi</p></body></html>" },
+        ],
+        hint: "Both block parameters are `() -> Unit` lambdas with a receiver, e.g. `Body.() -> Unit`. Inside the function, call `b.block()` to apply the lambda to the receiver instance.",
+        solution: `class Body {
+    private val parts = StringBuilder()
+    fun p(text: String) { parts.append("<p>").append(text).append("</p>") }
+    override fun toString() = parts.toString()
+}
+
+class Html {
+    private val parts = StringBuilder()
+    fun body(block: Body.() -> Unit) {
+        val b = Body()
+        b.block()
+        parts.append("<body>").append(b).append("</body>")
+    }
+    override fun toString() = parts.toString()
+}
+
+fun html(block: Html.() -> Unit): String {
+    val h = Html()
+    h.block()
+    return "<html>${"$"}h</html>"
+}
+
+fun main() {
+    println(html { body { p("Hi") } })
+}`,
+      },
+      {
+        id: "lambda-receiver-ex6",
+        title: "Exercise 6 — counter DSL",
+        description: "Implement a Counter DSL so that `counter { increment(); increment(); increment(); decrement() }` returns `2`. The function should accept a `Counter.() -> Unit` lambda and return the final count.",
+        starterCode: `class Counter {
+    var count = 0
+    fun increment() { count++ }
+    fun decrement() { count-- }
+}
+
+fun counter(/* TODO */): Int {
+    // TODO build a Counter, apply the lambda with receiver, return count
+    return -1
+}
+
+fun main() {
+    val total = counter {
+        increment(); increment(); increment(); decrement()
+    }
+    println(total) // 2
+}`,
+        testCases: [
+          { input: "", output: "2" },
+        ],
+        hint: "Signature: `fun counter(block: Counter.() -> Unit): Int`. Inside, `val c = Counter(); c.block(); return c.count`.",
+        solution: `class Counter {
+    var count = 0
+    fun increment() { count++ }
+    fun decrement() { count-- }
+}
+
+fun counter(block: Counter.() -> Unit): Int {
+    val c = Counter()
+    c.block()
+    return c.count
+}
+
+fun main() {
+    val total = counter {
+        increment(); increment(); increment(); decrement()
+    }
+    println(total)
+}`,
+      },
+      {
+        id: "lambda-receiver-ex7",
+        title: "Exercise 7 — apply scope function",
+        description: "Use the apply scope function (which takes a `T.() -> T` lambda with receiver) to configure a Window in a single expression. The window should end up with title=\"Settings\" and width=480. Print `Settings@480`.",
+        starterCode: `class Window {
+    var title: String = ""
+    var width: Int = 0
+    override fun toString() = "${"$"}title@${"$"}width"
+}
+
+fun main() {
+    val w = Window()
+    // TODO use apply { ... } so the configured Window prints Settings@480
+    println(w)
+}`,
+        testCases: [
+          { input: "", output: "Settings@480" },
+        ],
+        hint: "`val w = Window().apply { title = \"Settings\"; width = 480 }`. Inside apply you can assign `title` and `width` directly because the receiver is the Window itself.",
+        solution: `class Window {
+    var title: String = ""
+    var width: Int = 0
+    override fun toString() = "${"$"}title@${"$"}width"
+}
+
+fun main() {
+    val w = Window().apply {
+        title = "Settings"
+        width = 480
+    }
+    println(w)
+}`,
+      },
+      {
+        id: "lambda-receiver-ex8",
+        title: "Exercise 8 — request builder",
+        description: "Finish the request DSL so that `request { url(\"/users\"); method(\"POST\") }` prints `POST /users`. The lambda parameter must use the Request receiver type so callers can call url() and method() without qualifying.",
+        starterCode: `class Request {
+    var url: String = ""
+    var method: String = "GET"
+    fun url(value: String) { this.url = value }
+    fun method(value: String) { this.method = value }
+}
+
+fun request(/* TODO */): Request {
+    // TODO build, configure, return the Request
+    return Request()
+}
+
+fun main() {
+    val r = request {
+        url("/users")
+        method("POST")
+    }
+    println("${"$"}r.method ${"$"}r.url")
+}`,
+        testCases: [
+          { input: "", output: "POST /users" },
+        ],
+        hint: "Signature: `fun request(block: Request.() -> Unit): Request`. Inside: `val r = Request(); r.block(); return r`.",
+        solution: `class Request {
+    var url: String = ""
+    var method: String = "GET"
+    fun url(value: String) { this.url = value }
+    fun method(value: String) { this.method = value }
+}
+
+fun request(block: Request.() -> Unit): Request {
+    val r = Request()
+    r.block()
+    return r
+}
+
+fun main() {
+    val r = request {
+        url("/users")
+        method("POST")
+    }
+    println("${"$"}{r.method} ${"$"}{r.url}")
+}`,
+      },
+      {
+        id: "lambda-receiver-ex9",
+        title: "Exercise 9 — calculator DSL",
+        description: "Implement a calc { add(5); subtract(2); multiply(3) } DSL that returns 9 (start at 0, then +5 → 5, −2 → 3, ×3 → 9). The function takes a Calculator.() -> Unit lambda and returns the final value.",
+        starterCode: `class Calculator {
+    var value = 0
+    fun add(n: Int) { value += n }
+    fun subtract(n: Int) { value -= n }
+    fun multiply(n: Int) { value *= n }
+}
+
+fun calc(/* TODO */): Int {
+    // TODO build a Calculator, apply the lambda with receiver, return value
+    return 0
+}
+
+fun main() {
+    val result = calc {
+        add(5); subtract(2); multiply(3)
+    }
+    println(result)
+}`,
+        testCases: [
+          { input: "", output: "9" },
+        ],
+        hint: "`fun calc(block: Calculator.() -> Unit): Int { val c = Calculator(); c.block(); return c.value }`",
+        solution: `class Calculator {
+    var value = 0
+    fun add(n: Int) { value += n }
+    fun subtract(n: Int) { value -= n }
+    fun multiply(n: Int) { value *= n }
+}
+
+fun calc(block: Calculator.() -> Unit): Int {
+    val c = Calculator()
+    c.block()
+    return c.value
+}
+
+fun main() {
+    val result = calc {
+        add(5); subtract(2); multiply(3)
+    }
+    println(result)
+}`,
+      },
+      {
+        id: "lambda-receiver-ex10",
+        title: "Exercise 10 — build your own buildString",
+        description: "Recreate Kotlin's standard buildString() yourself. Define `fun myBuildString(action: StringBuilder.() -> Unit): String` that creates a StringBuilder, applies the lambda, and returns the result. Use it to print `[42]`.",
+        starterCode: `// TODO declare myBuildString here
+
+fun main() {
+    val s = myBuildString {
+        append("[")
+        append(42)
+        append("]")
+    }
+    println(s)
+}`,
+        testCases: [
+          { input: "", output: "[42]" },
+        ],
+        hint: "Signature: `fun myBuildString(action: StringBuilder.() -> Unit): String`. Inside: `val sb = StringBuilder(); sb.action(); return sb.toString()`.",
+        solution: `fun myBuildString(action: StringBuilder.() -> Unit): String {
+    val sb = StringBuilder()
+    sb.action()
+    return sb.toString()
+}
+
+fun main() {
+    val s = myBuildString {
+        append("[")
+        append(42)
+        append("]")
+    }
+    println(s)
 }`,
       },
     ],
