@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Extension as ExtensionIcon } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
@@ -9,6 +9,7 @@ import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getReactLessonForLocale } from "@/lib/courseTranslations";
 import { REACT_COURSE_LESSONS } from "@/lib/reactCourseData";
+import { recordLessonVisit } from "@/lib/courseProgress";
 import type { LessonSection, LessonSectionTag } from "@/lib/webCourseTypes";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
@@ -115,6 +116,17 @@ export default function ReactCourseLessonPage() {
   // Ensure slug is valid and get lesson - if mismatch, fallback to slug-based lookup
   let lesson = getReactLessonForLocale(locale as "en" | "es", slug);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+
+  useEffect(() => {
+    if (lesson) {
+      recordLessonVisit("react-course", {
+        id: lesson.id,
+        title: lesson.title,
+        href: `/developer-section/react-course/${lesson.id}`,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lesson?.id]);
 
   const handleVerify = useCallback(
     (code: string) => {

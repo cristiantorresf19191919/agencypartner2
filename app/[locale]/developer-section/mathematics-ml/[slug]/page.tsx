@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Functions as FunctionsIcon } from "@mui/icons-material";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import Footer from "@/components/Footer/Footer";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MML_COURSE_LESSONS, getMMLLessonById } from "@/lib/mmlCourseData";
+import { recordLessonVisit } from "@/lib/courseProgress";
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
@@ -37,6 +38,17 @@ export default function MMLLessonPage() {
 
   const titleOf = (l: typeof lesson) =>
     l ? (lang === "es" && l.titleEs ? l.titleEs : l.title) : "";
+
+  useEffect(() => {
+    if (lesson) {
+      recordLessonVisit("mathematics-ml", {
+        id: lesson.id,
+        title: titleOf(lesson),
+        href: `/developer-section/mathematics-ml/${lesson.id}`,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lesson?.id]);
 
   if (!lesson) {
     return (

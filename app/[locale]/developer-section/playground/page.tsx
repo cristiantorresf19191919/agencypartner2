@@ -19,6 +19,7 @@ import {
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
+import { consumePendingCode } from "@/lib/playgroundHandoff";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -123,6 +124,23 @@ export default function PlaygroundPage() {
   const [aiCooldown, setAiCooldown] = useState(false);
   const monacoRef = useRef<any>(null);
   const editorRef = useRef<any>(null);
+
+  // Consume any code handed off from a course/blog "Open in playground" click.
+  useEffect(() => {
+    const pending = consumePendingCode();
+    if (!pending) return;
+    const langToExt: Record<string, string> = {
+      typescript: "ts",
+      javascript: "js",
+      tsx: "tsx",
+      jsx: "jsx",
+      react: "tsx",
+    };
+    const ext = langToExt[pending.language.toLowerCase()] ?? "ts";
+    const name = `pasted.${ext}`;
+    setFiles([{ name, code: pending.code, uri: `file:///src/${name}` }]);
+    setActiveFile(name);
+  }, []);
 
   const editorOptions = useMemo(
     () => ({

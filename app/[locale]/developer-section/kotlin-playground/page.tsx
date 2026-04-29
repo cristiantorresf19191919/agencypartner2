@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import Footer from "@/components/Footer/Footer";
+import { consumePendingCode } from "@/lib/playgroundHandoff";
 import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -105,6 +106,15 @@ export default function KotlinPlaygroundPage() {
   const [aiCooldown, setAiCooldown] = useState(false);
   const monacoRef = useRef<typeof import("monaco-editor") | null>(null);
   const editorRef = useRef<import("monaco-editor").editor.IStandaloneCodeEditor | null>(null);
+
+  // Consume any kotlin code handed off from a course "Open in playground" click.
+  useEffect(() => {
+    const pending = consumePendingCode();
+    if (!pending) return;
+    const name = "Pasted.kt";
+    setFiles([{ name, code: pending.code, uri: `file:///src/${name}` }]);
+    setActiveFile(name);
+  }, []);
 
   const editorOptions = useMemo(
     () => ({

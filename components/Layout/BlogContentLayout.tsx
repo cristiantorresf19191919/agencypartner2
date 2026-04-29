@@ -10,6 +10,8 @@ import SearchSection from "@/components/Search/SearchSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { TableOfContentsEntry } from "@/components/Sidebar/DocSidebar";
 import { getRelatedBlogPosts } from "@/lib/blogCategories";
+import { BlogReadingProgress } from "./BlogReadingProgress";
+import { BlogTLDR } from "./BlogTLDR";
 import styles from "./BlogContentLayout.module.css";
 
 // Dynamically import DocSidebar with error boundary
@@ -25,6 +27,13 @@ interface BlogContentLayoutProps {
   children: ReactNode;
   /** When provided, the sidebar shows a table of contents for the current page and highlights the section in view. */
   tableOfContents?: TableOfContentsEntry[];
+  /**
+   * Optional 3-bullet TL;DR rendered above the post content. Pass an empty
+   * array (or omit) to skip — feature is opt-in per page.
+   */
+  tldr?: string[];
+  /** Override the TL;DR card heading. Defaults to no heading. */
+  tldrHeading?: string;
 }
 
 // Create Material-UI theme for dark mode
@@ -69,7 +78,7 @@ function getBlogSlugFromPath(pathname: string | null): string | null {
   return match ? match[1] : null;
 }
 
-function BlogContentLayout({ children, tableOfContents }: BlogContentLayoutProps) {
+function BlogContentLayout({ children, tableOfContents, tldr, tldrHeading }: BlogContentLayoutProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -109,6 +118,7 @@ function BlogContentLayout({ children, tableOfContents }: BlogContentLayoutProps
   if (!mounted) {
     return (
       <main>
+        <BlogReadingProgress />
         <DeveloperHeader
           pageTitle={pageTitle}
           onOpenDrawer={() => setMobileDrawerOpen(true)}
@@ -122,6 +132,7 @@ function BlogContentLayout({ children, tableOfContents }: BlogContentLayoutProps
           <div className={styles.container}>
             <div className={styles.contentWrapper}>
               <div className={styles.mainContent}>
+                {tldr && tldr.length > 0 ? <BlogTLDR points={tldr} heading={tldrHeading} /> : null}
                 {children}
               </div>
             </div>
@@ -136,6 +147,7 @@ function BlogContentLayout({ children, tableOfContents }: BlogContentLayoutProps
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <main>
+        <BlogReadingProgress />
         <DeveloperHeader
           pageTitle={pageTitle}
           onOpenDrawer={() => setMobileDrawerOpen(true)}
@@ -159,6 +171,7 @@ function BlogContentLayout({ children, tableOfContents }: BlogContentLayoutProps
 
               {/* Main Content — ref for auto TOC extraction */}
               <div ref={mainContentRef} className={styles.mainContent}>
+                {tldr && tldr.length > 0 ? <BlogTLDR points={tldr} heading={tldrHeading} /> : null}
                 {children}
               </div>
             </div>

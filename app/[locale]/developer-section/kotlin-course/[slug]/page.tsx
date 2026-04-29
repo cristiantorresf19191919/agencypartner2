@@ -17,6 +17,7 @@ import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDeveloperSectionFont } from "@/contexts/DeveloperSectionFontContext";
 import { KOTLIN_COURSE_LESSONS, type KotlinPracticeChallenge } from "@/lib/kotlinCourseData";
+import { recordLessonVisit } from "@/lib/courseProgress";
 import { useCelebration } from "@/components/Celebration/useCelebration";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import styles from "../../challenges/ChallengesPage.module.css";
@@ -69,8 +70,13 @@ export default function KotlinCourseLessonPage() {
       setActivePractice(null);
       setActiveExampleIdx(null);
       setSnippetOutputs({});
+      recordLessonVisit("kotlin-course", {
+        id: lesson.id,
+        title: lesson.title,
+        href: `/developer-section/kotlin-course/${lesson.id}`,
+      });
     }
-  }, [lesson?.id]);
+  }, [lesson?.id, lesson?.title]);
 
   /* Reading mode: hide FABs when scrolling down, show when scrolling up */
   useEffect(() => {

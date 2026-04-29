@@ -11,6 +11,7 @@ import { Play, RotateCcw, Maximize2, Minimize2, Minus, Plus, Monitor, Terminal, 
 import * as Babel from "@babel/standalone";
 import { ensureEmmetJSX } from "@/lib/emmetMonaco";
 import { ensureKotlinLanguage } from "@/lib/kotlinMonaco";
+import { setPendingCode, playgroundPathForLanguage } from "@/lib/playgroundHandoff";
 import { ensureBashLanguage, registerBashCompletions } from "@/lib/bashMonaco";
 import { Highlight, themes } from "prism-react-renderer";
 import styles from "./CodeEditor.module.css";
@@ -314,6 +315,9 @@ export function CodeEditor({
   const normalizedLang = language.toLowerCase();
   const isKotlin = normalizedLang.includes("kotlin");
   const isReactLike = ["react", "tsx", "jsx"].includes(normalizedLang);
+  const playgroundEligible =
+    isKotlin ||
+    ["javascript", "typescript", "tsx", "jsx", "react"].includes(normalizedLang);
   const useCustomRun = !!onRunCustom;
   const isRunnable =
     !readOnly &&
@@ -893,6 +897,16 @@ export function solution() {
     }
   }, [currentCode]);
 
+  const handleOpenInPlayground = useCallback(() => {
+    const pathSegment = playgroundPathForLanguage(language ?? "");
+    setPendingCode({ language: language ?? "javascript", code: currentCode });
+    if (typeof window !== "undefined") {
+      const localePrefix = window.location.pathname.split("/")[1] || "es";
+      const isLocale = /^(en|es)$/.test(localePrefix);
+      window.location.href = `${isLocale ? "/" + localePrefix : ""}${pathSegment}`;
+    }
+  }, [currentCode, language]);
+
   const handleSelectAll = useCallback(() => {
     const editor = editorInstanceRef.current;
     if (!editor) return;
@@ -1088,6 +1102,17 @@ export function solution() {
           >
             {copyDone ? <Check className={`${styles.iconSm} ${styles.iconCyan}`} strokeWidth={2.5} /> : <Copy className={`${styles.iconSm} ${styles.iconCopyOpacity}`} strokeWidth={2} />}
           </button>
+          {playgroundEligible ? (
+            <button
+              type="button"
+              onClick={handleOpenInPlayground}
+              className={styles.btnCopyStatic}
+              aria-label="Open in playground"
+              title="Open in playground"
+            >
+              <Code2 className={styles.iconSm} strokeWidth={2} />
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={() => {

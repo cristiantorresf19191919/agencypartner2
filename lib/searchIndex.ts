@@ -4,6 +4,12 @@ import { KOTLIN_COURSE_LESSONS } from "./kotlinCourseData";
 import { CSS_COURSE_LESSONS } from "./cssCourseData";
 import { TYPESCRIPT_COURSE_LESSONS } from "./typescriptCourseData";
 import { APOLLO_COURSE_LESSONS } from "./apolloCourseData";
+import { MML_COURSE_LESSONS } from "./mmlCourseData";
+import { JAVA_COURSE_LESSONS } from "./javaCourseData";
+import { AZURE_COURSE_LESSONS } from "./azureCourseData";
+import { MOBX_COURSE_LESSONS } from "./mobxCourseData";
+import { ANDROID_LESSONS } from "./androidKotlinData";
+import { KOTLIN_JAVA_INTEROP_LESSONS } from "./kotlinJavaInteropData";
 
 export interface SearchItem {
   id: string;
@@ -481,6 +487,73 @@ export function getSearchIndex(t: (key: string) => string): SearchItem[] {
     ],
   }));
 
+  // Math for ML lessons (53 — biggest catalog)
+  const mmlCourseItems: SearchItem[] = MML_COURSE_LESSONS.map((lesson) => ({
+    id: `mml-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/mathematics-ml/${lesson.id}`,
+    section: "Math for ML",
+    sectionKey: "mathematics-ml",
+    color: "#C4B5FD",
+    keywords: ["math", "ml", "linear algebra", "calculus", lesson.chapter],
+  }));
+
+  const javaCourseItems: SearchItem[] = JAVA_COURSE_LESSONS.map((lesson) => ({
+    id: `java-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/java-course/${lesson.id}`,
+    section: "Java Course",
+    sectionKey: "java-course",
+    color: "#FB7185",
+    keywords: ["java", "jvm", "oop"],
+  }));
+
+  const azureCourseItems: SearchItem[] = AZURE_COURSE_LESSONS.map((lesson) => ({
+    id: `azure-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/azure-course/${lesson.id}`,
+    section: "Azure Course",
+    sectionKey: "azure-course",
+    color: "#5B8DEF",
+    keywords: ["azure", "cloud", "microsoft"],
+  }));
+
+  const mobxCourseItems: SearchItem[] = MOBX_COURSE_LESSONS.map((lesson) => ({
+    id: `mobx-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/mobx-course/${lesson.id}`,
+    section: "MobX Course",
+    sectionKey: "mobx-course",
+    color: "#EC4899",
+    keywords: ["mobx", "state", "observable", "reactivity"],
+  }));
+
+  const androidItems: SearchItem[] = ANDROID_LESSONS.map((lesson) => ({
+    id: `android-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/android-kotlin/${lesson.id}`,
+    section: "Android (Kotlin)",
+    sectionKey: "android-kotlin",
+    color: "#34D399",
+    keywords: ["android", "kotlin", "compose", "jetpack"],
+  }));
+
+  const interopItems: SearchItem[] = KOTLIN_JAVA_INTEROP_LESSONS.map((lesson) => ({
+    id: `kotlin-java-${lesson.id}`,
+    title: lesson.title,
+    titleKey: lesson.id,
+    href: `/developer-section/kotlin-java-interop/${lesson.id}`,
+    section: "Kotlin ↔ Java",
+    sectionKey: "kotlin-java-interop",
+    color: "#86EFAC",
+    keywords: ["kotlin", "java", "interop", "annotation"],
+  }));
+
   return [
     ...navigationItems,
     ...blogItems,
@@ -489,6 +562,12 @@ export function getSearchIndex(t: (key: string) => string): SearchItem[] {
     ...cssCourseItems,
     ...typescriptCourseItems,
     ...apolloCourseItems,
+    ...mmlCourseItems,
+    ...javaCourseItems,
+    ...azureCourseItems,
+    ...mobxCourseItems,
+    ...androidItems,
+    ...interopItems,
   ];
 }
 

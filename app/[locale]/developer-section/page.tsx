@@ -47,6 +47,7 @@ import {
 } from "@mui/icons-material";
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
+import { ContinueLearning } from "@/components/CourseProgress/ContinueLearning";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
 import {
@@ -734,6 +735,8 @@ export default function DeveloperSectionPage() {
               <HeroSearch />
             </div>
           </motion.div>
+
+          <ContinueLearning />
 
           {/* Stats Bar */}
           <motion.div
