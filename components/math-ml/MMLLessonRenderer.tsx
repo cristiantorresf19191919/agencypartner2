@@ -21,6 +21,9 @@ import {
 } from "./primitives/LearningCallouts";
 import { MMLLessonHero } from "./primitives/MMLLessonHero";
 import { MMLProgressDots } from "./primitives/MMLProgressDots";
+import { IntuitionCard } from "./primitives/IntuitionCard";
+import { DerivationFlow } from "./primitives/DerivationFlow";
+import { WhyItMatters } from "./primitives/WhyItMatters";
 import { getChapterAccent } from "@/lib/mmlChapterAccents";
 import type {
   MMLLesson,
@@ -361,7 +364,10 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
     | "predict"
     | "compare"
     | "proof"
-    | "realdata";
+    | "realdata"
+    | "intuition"
+    | "derivation"
+    | "why";
 
   const extrasByParagraph = new Map<number, Array<{ kind: ExtraKind; idx: number }>>();
   const pushExtra = (at: number, kind: ExtraKind, idx: number) => {
@@ -416,6 +422,25 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
         ? s.insertAfterParagraph
         : Math.max(0, content.length - 2);
     pushExtra(at, "realdata", idx);
+  });
+  (lesson.intuitions ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number" ? s.insertAfterParagraph : 1;
+    pushExtra(at, "intuition", idx);
+  });
+  (lesson.derivations ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number"
+        ? s.insertAfterParagraph
+        : Math.max(0, content.length - 2);
+    pushExtra(at, "derivation", idx);
+  });
+  (lesson.whyItMatters ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number"
+        ? s.insertAfterParagraph
+        : Math.max(0, content.length - 1);
+    pushExtra(at, "why", idx);
   });
 
   const contentCount = content.length;
@@ -565,6 +590,21 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
                     key={`rd-${i}-${k}`}
                     spec={lesson.realData[ex.idx]}
                   />
+                );
+              }
+              if (ex.kind === "intuition" && lesson.intuitions?.[ex.idx]) {
+                return (
+                  <IntuitionCard key={`it-${i}-${k}`} spec={lesson.intuitions[ex.idx]} />
+                );
+              }
+              if (ex.kind === "derivation" && lesson.derivations?.[ex.idx]) {
+                return (
+                  <DerivationFlow key={`df-${i}-${k}`} spec={lesson.derivations[ex.idx]} />
+                );
+              }
+              if (ex.kind === "why" && lesson.whyItMatters?.[ex.idx]) {
+                return (
+                  <WhyItMatters key={`wim-${i}-${k}`} spec={lesson.whyItMatters[ex.idx]} />
                 );
               }
               return null;

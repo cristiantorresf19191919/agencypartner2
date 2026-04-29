@@ -202,6 +202,9 @@ export interface MMLLesson {
   annotatedFormulas?: AnnotatedFormulaSpec[];
   formulaExplorers?: FormulaExplorerSpec[];
   stepSolutions?: StepSolutionSpec[];
+  intuitions?: IntuitionSpec[];
+  derivations?: DerivationSpec[];
+  whyItMatters?: WhyItMattersSpec[];
   analogy?: { en: string; es?: string };
   pitfall?: { en: string; es?: string };
   // Ids into lib/mmlConcepts.ts — rendered as a prerequisites rail at the top
@@ -382,4 +385,64 @@ export interface FormulaRevealSpec {
   latex: string;
   staggerMs?: number;
   fadeMs?: number;
+}
+
+/* ===================================================================
+   Explanatory primitives — added for the "deeper understanding" pass
+   =================================================================== */
+
+/** A relatable analogy + small visual hint, paired with a concise takeaway. */
+export interface IntuitionSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  /** The analogy text (e.g. "Think of a vector as an arrow…"). */
+  body: string;
+  bodyEs?: string;
+  /** Optional one-line key takeaway shown emphasized at the bottom. */
+  takeaway?: string;
+  takeawayEs?: string;
+  /** Built-in glyph slot (no per-lesson SVG required). */
+  glyph?:
+    | "arrow"        // single arrow — vectors
+    | "scale"        // balance — equality / norms
+    | "lens"         // magnifying glass — projections
+    | "spiral"       // spiral — eigenvectors / iteration
+    | "puzzle"       // puzzle piece — composition
+    | "compass"      // compass — direction / gradients
+    | "lightbulb";   // generic insight
+  insertAfterParagraph?: number;
+}
+
+/** A multi-step derivation where each line of math is paired with an
+ *  explanation that fades in alongside it. */
+export interface DerivationSpec {
+  id?: string;
+  title?: string;
+  titleEs?: string;
+  /** Optional short caption shown above the derivation. */
+  caption?: string;
+  captionEs?: string;
+  /** Each step has the LaTeX line + a 1-sentence "why we did this" note. */
+  steps: Array<{
+    latex: string;
+    explain: string;
+    explainEs?: string;
+  }>;
+  insertAfterParagraph?: number;
+}
+
+/** Concrete ML application — "this concept powers X / breaks Y". */
+export interface WhyItMattersSpec {
+  id?: string;
+  /** Anchor headline like "Why this matters in ML" or a custom title. */
+  title?: string;
+  titleEs?: string;
+  /** Body — 2-3 sentences max. */
+  body: string;
+  bodyEs?: string;
+  /** Bullets of 2-4 concrete consequences, each rendered as a small chip. */
+  bullets?: string[];
+  bulletsEs?: string[];
+  insertAfterParagraph?: number;
 }

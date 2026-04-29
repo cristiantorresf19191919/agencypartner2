@@ -1,0 +1,117 @@
+.card {
+  position: relative;
+  isolation: isolate;
+  margin: 24px 0;
+  padding: 18px 22px 18px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--mml-accent-soft, rgba(124, 244, 255, 0.30));
+  background:
+    linear-gradient(135deg, var(--mml-accent-soft, rgba(124, 244, 255, 0.10)), rgba(255, 255, 255, 0.02)),
+    rgba(8, 11, 18, 0.55);
+  box-shadow:
+    0 18px 36px -24px var(--mml-accent-glow, rgba(124, 244, 255, 0.35)),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.glyphSlot {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background:
+    radial-gradient(60% 60% at 50% 50%, var(--mml-accent-soft, rgba(124, 244, 255, 0.18)), transparent 70%),
+    rgba(8, 11, 18, 0.45);
+  border: 1px solid var(--mml-accent-soft, rgba(124, 244, 255, 0.20));
+}
+
+.body {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--mml-accent-soft, rgba(124, 244, 255, 0.18));
+  border: 1px solid var(--mml-accent-soft, rgba(124, 244, 255, 0.30));
+  color: var(--mml-accent, #7cf4ff);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f1f6ff;
+  letter-spacing: -0.005em;
+}
+
+.text {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #d4dcef;
+}
+
+.text :global(.mml-inline-math) {
+  margin: 0 1px;
+}
+
+.takeaway {
+  margin: 4px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--mml-accent-soft, rgba(124, 244, 255, 0.10));
+  border: 1px dashed var(--mml-accent-soft, rgba(124, 244, 255, 0.35));
+  color: #f1f6ff;
+  font-size: 13.5px;
+  line-height: 1.55;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.takeawayIcon {
+  color: var(--mml-accent, #7cf4ff);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .card {
+    padding: 14px 14px 14px 14px;
+    grid-template-columns: 44px 1fr;
+    gap: 12px;
+  }
+  .glyphSlot { width: 44px; height: 44px; }
+  .glyphSlot svg { width: 32px; height: 32px; }
+  .text { font-size: 14px; }
+}
+
+:global([data-theme="light"]) .card {
+  background:
+    linear-gradient(135deg, var(--mml-accent-soft, rgba(124, 244, 255, 0.18)), rgba(255, 255, 255, 0.94)),
+    rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 18px 36px -24px var(--mml-accent-glow, rgba(15, 23, 42, 0.18)),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+:global([data-theme="light"]) .title    { color: #0f172a; }
+:global([data-theme="light"]) .text     { color: #1e293b; }
+:global([data-theme="light"]) .takeaway { color: #0f172a; }
