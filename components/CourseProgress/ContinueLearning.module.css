@@ -130,3 +130,15 @@
     padding: 16px;
   }
 }
+
+:global([data-theme="light"]) .card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.86));
+}
+:global([data-theme="light"]) .cardTitle { color: #0f172a; }
+:global([data-theme="light"]) .timeAgo   { color: #475569; }
+:global([data-theme="light"]) .title {
+  background: linear-gradient(135deg, #0f172a 0%, #4338ca 60%, #0e7490 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}

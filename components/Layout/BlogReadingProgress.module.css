@@ -18,13 +18,22 @@
 .fill {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #7cf4ff 0%, #c4b5fd 60%, #fb7185 100%);
+  background: linear-gradient(
+    90deg,
+    var(--blog-accent, #7cf4ff) 0%,
+    rgba(196, 181, 253, 0.95) 60%,
+    rgba(251, 113, 133, 0.95) 100%
+  );
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 80ms linear;
-  box-shadow: 0 0 12px rgba(124, 244, 255, 0.6);
+  box-shadow: 0 0 12px var(--blog-accent-glow, rgba(124, 244, 255, 0.6));
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fill { transition: none; }
+}
+
+:global([data-theme="light"]) .bar {
+  background: rgba(15, 23, 42, 0.05);
 }

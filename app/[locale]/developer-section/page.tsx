@@ -48,6 +48,7 @@ import {
 import DeveloperHeader from "@/components/Header/DeveloperHeader";
 import HeroSearch from "@/components/Search/HeroSearch";
 import { ContinueLearning } from "@/components/CourseProgress/ContinueLearning";
+import { StreakXP } from "@/components/CourseProgress/StreakXP";
 import Footer from "@/components/Footer/Footer";
 import styles from "./DeveloperSection.module.css";
 import {
@@ -737,6 +738,7 @@ export default function DeveloperSectionPage() {
           </motion.div>
 
           <ContinueLearning />
+          <StreakXP />
 
           {/* Stats Bar */}
           <motion.div

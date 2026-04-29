@@ -1,0 +1,197 @@
+/* ============================================================
+   Key insight callout
+   ============================================================ */
+.insight {
+  position: relative;
+  isolation: isolate;
+  margin: 26px 0;
+  padding: 20px 22px 20px 28px;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg,
+      var(--blog-accent-soft, rgba(124, 244, 255, 0.10)),
+      rgba(255, 255, 255, 0.02)),
+    rgba(8, 11, 18, 0.55);
+  box-shadow:
+    0 16px 32px -22px var(--blog-accent-glow, rgba(124, 244, 255, 0.35)),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.insightAccent {
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--blog-accent, #7cf4ff),
+    rgba(196, 181, 253, 0.85)
+  );
+  box-shadow: 0 0 12px var(--blog-accent-glow, rgba(124, 244, 255, 0.5));
+}
+
+.insightContent {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+}
+
+.insightHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.insightLabel {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--blog-accent-soft, rgba(124, 244, 255, 0.12));
+  border: 1px solid var(--blog-accent-soft, rgba(124, 244, 255, 0.3));
+  color: var(--blog-accent, #7cf4ff);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.insightTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f6ff;
+  letter-spacing: -0.005em;
+  line-height: 1.4;
+}
+
+.insightBody {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #d4dcef;
+}
+.insightBody p {
+  margin: 0;
+}
+.insightBody p + p {
+  margin-top: 8px;
+}
+.insightBody code {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--blog-accent-soft, rgba(124, 244, 255, 0.10));
+  color: var(--blog-accent, #7cf4ff);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+/* ============================================================
+   Pull quote
+   ============================================================ */
+.quote {
+  position: relative;
+  margin: 32px 0;
+  padding: 22px 28px 22px 56px;
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(8, 11, 18, 0.45));
+  border-left: 3px solid var(--blog-accent, #7cf4ff);
+  box-shadow: 0 12px 28px -22px rgba(0, 0, 0, 0.6);
+}
+
+.quoteMark {
+  position: absolute;
+  top: 4px;
+  left: 16px;
+  font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: 4.5rem;
+  line-height: 1;
+  color: var(--blog-accent, #7cf4ff);
+  opacity: 0.6;
+  user-select: none;
+}
+
+.quoteBody {
+  margin: 0;
+  font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  line-height: 1.55;
+  font-weight: 500;
+  font-style: italic;
+  color: #f1f6ff;
+  letter-spacing: -0.005em;
+}
+
+.quoteBody p {
+  margin: 0 0 8px;
+}
+.quoteBody p:last-child {
+  margin-bottom: 0;
+}
+
+.quoteCite {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #9fb3d8;
+  letter-spacing: 0.01em;
+  font-style: normal;
+}
+
+.quoteCite a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--blog-accent-soft, rgba(124, 244, 255, 0.4));
+  text-underline-offset: 3px;
+  transition: text-decoration-color 160ms ease, color 160ms ease;
+}
+.quoteCite a:hover {
+  color: var(--blog-accent, #7cf4ff);
+  text-decoration-color: var(--blog-accent, #7cf4ff);
+}
+
+@media (max-width: 720px) {
+  .insight {
+    padding: 16px 16px 16px 22px;
+    border-radius: 12px;
+  }
+  .insightTitle {
+    font-size: 1rem;
+  }
+  .insightBody {
+    font-size: 14px;
+  }
+  .quote {
+    padding: 18px 18px 18px 44px;
+  }
+  .quoteMark {
+    font-size: 3.5rem;
+    top: 2px;
+    left: 12px;
+  }
+  .quoteBody {
+    font-size: 1.05rem;
+  }
+}
+
+:global([data-theme="light"]) .insight {
+  background:
+    linear-gradient(135deg, var(--blog-accent-soft, rgba(124, 244, 255, 0.18)), rgba(255, 255, 255, 0.92)),
+    rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 16px 32px -22px var(--blog-accent-glow, rgba(15, 23, 42, 0.18)),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+:global([data-theme="light"]) .insightTitle { color: #0f172a; }
+:global([data-theme="light"]) .insightBody  { color: #1e293b; }
+:global([data-theme="light"]) .quote {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+  box-shadow: 0 12px 28px -22px rgba(15, 23, 42, 0.20);
+}
+:global([data-theme="light"]) .quoteBody { color: #0f172a; }
+:global([data-theme="light"]) .quoteCite { color: #475569; }

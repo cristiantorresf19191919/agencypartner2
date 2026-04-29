@@ -12,6 +12,9 @@ import type { TableOfContentsEntry } from "@/components/Sidebar/DocSidebar";
 import { getRelatedBlogPosts } from "@/lib/blogCategories";
 import { BlogReadingProgress } from "./BlogReadingProgress";
 import { BlogTLDR } from "./BlogTLDR";
+import { BlogShareRail } from "./BlogShareRail";
+import { BlogHeadingFx } from "./BlogHeadingFx";
+import { getBlogAccentForSlug } from "@/lib/blogCategoryAccents";
 import styles from "./BlogContentLayout.module.css";
 
 // Dynamically import DocSidebar with error boundary
@@ -104,6 +107,17 @@ function BlogContentLayout({ children, tableOfContents, tldr, tldrHeading }: Blo
     () => (blogSlug ? getRelatedBlogPosts(blogSlug, 5) : []),
     [blogSlug]
   );
+  const accent = useMemo(
+    () => (blogSlug ? getBlogAccentForSlug(blogSlug) : null),
+    [blogSlug],
+  );
+  const accentVars = accent
+    ? ({
+        ["--blog-accent" as string]: accent.hex,
+        ["--blog-accent-soft" as string]: accent.soft,
+        ["--blog-accent-glow" as string]: accent.glow,
+      } as React.CSSProperties)
+    : undefined;
 
   const pageTitle = useMemo(() => {
     const normalized = pathname?.replace(/^\/[a-z]{2}\//, "/") ?? "";
@@ -117,7 +131,7 @@ function BlogContentLayout({ children, tableOfContents, tldr, tldrHeading }: Blo
   // Avoids hydration error from Emotion/CssBaseline producing different HTML on server vs client.
   if (!mounted) {
     return (
-      <main>
+      <main style={accentVars}>
         <BlogReadingProgress />
         <DeveloperHeader
           pageTitle={pageTitle}
@@ -146,8 +160,10 @@ function BlogContentLayout({ children, tableOfContents, tldr, tldrHeading }: Blo
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
-      <main>
+      <main style={accentVars}>
         <BlogReadingProgress />
+        <BlogHeadingFx />
+        {blogSlug ? <BlogShareRail slug={blogSlug} /> : null}
         <DeveloperHeader
           pageTitle={pageTitle}
           onOpenDrawer={() => setMobileDrawerOpen(true)}

@@ -1,0 +1,102 @@
+.section {
+  margin: 8px auto 24px;
+  padding: 0 24px;
+  max-width: 1280px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 12px;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid;
+  background:
+    linear-gradient(180deg, rgba(8, 11, 18, 0.65), rgba(8, 11, 18, 0.85));
+  box-shadow: 0 18px 32px -22px rgba(0, 0, 0, 0.55);
+}
+
+.tileFire {
+  --tone: 251, 146, 60;
+  border-color: rgba(var(--tone), 0.32);
+  color: rgb(var(--tone));
+}
+
+.tileTrophy {
+  --tone: 251, 191, 36;
+  border-color: rgba(var(--tone), 0.32);
+  color: rgb(var(--tone));
+}
+
+.tileXp {
+  --tone: 124, 244, 255;
+  border-color: rgba(var(--tone), 0.32);
+  color: rgb(var(--tone));
+}
+
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(60% 80% at 0% 0%, rgba(var(--tone), 0.16), transparent 70%);
+  pointer-events: none;
+}
+
+.icon {
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(var(--tone), 0.55));
+}
+
+.tileBody {
+  display: grid;
+  gap: 0;
+}
+
+.tileValue {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #f1f6ff;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.tileLabel {
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: 0 14px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .tile {
+    padding: 10px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .tileValue {
+    font-size: 1.2rem;
+  }
+  .tileLabel {
+    font-size: 10.5px;
+  }
+}
+
+:global([data-theme="light"]) .tile {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88));
+  box-shadow: 0 18px 32px -22px rgba(15, 23, 42, 0.20);
+}
+:global([data-theme="light"]) .tileValue { color: #0f172a; }
+:global([data-theme="light"]) .tileLabel { color: #475569; }

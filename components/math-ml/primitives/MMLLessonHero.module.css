@@ -181,3 +181,28 @@
     margin: 14px 0 12px;
   }
 }
+
+:global([data-theme="light"]) .hero {
+  background:
+    linear-gradient(135deg,
+      var(--mml-accent-soft),
+      rgba(255, 255, 255, 0.85) 60%,
+      rgba(255, 255, 255, 0.95)),
+    rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 32px 60px -32px var(--mml-accent-glow),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.06);
+}
+:global([data-theme="light"]) .title {
+  background: linear-gradient(135deg, #0f172a 0%, var(--mml-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+:global([data-theme="light"]) .chapter { color: rgba(15, 23, 42, 0.6); }
+:global([data-theme="light"]) .intro   { color: #1e293b; }
+:global([data-theme="light"]) .stat {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #1e293b;
+}
+:global([data-theme="light"]) .statLabel { color: #475569; }

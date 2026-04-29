@@ -10,6 +10,8 @@ import { useLocale } from "@/lib/useLocale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MML_COURSE_LESSONS, getMMLLessonById } from "@/lib/mmlCourseData";
 import { recordLessonVisit } from "@/lib/courseProgress";
+import { LessonNavCard } from "@/components/CourseNav/LessonNavCard";
+import { getChapterAccent } from "@/lib/mmlChapterAccents";
 import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
@@ -38,6 +40,20 @@ export default function MMLLessonPage() {
 
   const titleOf = (l: typeof lesson) =>
     l ? (lang === "es" && l.titleEs ? l.titleEs : l.title) : "";
+
+  const stripPreview = (raw: string): string => {
+    return raw
+      .replace(/\[\[[^\]|]+\|([^\]]+)\]\]/g, "$1")
+      .replace(/\[\[([^\]]+)\]\]/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\$\$([^$]+)\$\$/g, "$1")
+      .replace(/\$([^$]+)\$/g, "$1")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\\([a-zA-Z]+)/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 140);
+  };
 
   useEffect(() => {
     if (lesson) {
@@ -90,57 +106,63 @@ export default function MMLLessonPage() {
       <div className={playStyles.courseMain}>
         <MMLLessonRenderer lesson={lesson} />
 
-        <nav className={mmlStyles.lessonNavFancy}>
-          {prevLesson ? (
-            <Link
-              href={createLocalizedPath(
-                `/developer-section/mathematics-ml/${prevLesson.id}`
-              )}
-              className={mmlStyles.lessonNavCard}
-            >
-              <span className={mmlStyles.lessonNavCardLabel}>
-                <ArrowBackIcon style={{ fontSize: 14 }} />
-                {lang === "es" ? "Lección anterior" : "Previous lesson"}
-              </span>
-              <span className={mmlStyles.lessonNavCardTitle}>
-                {titleOf(prevLesson)}
-              </span>
-            </Link>
-          ) : (
-            <span className={mmlStyles.lessonNavCardEmpty} />
-          )}
-          {nextLesson ? (
-            <Link
-              href={createLocalizedPath(
-                `/developer-section/mathematics-ml/${nextLesson.id}`
-              )}
-              className={`${mmlStyles.lessonNavCard} ${mmlStyles.lessonNavCardNext}`}
-            >
-              <span className={mmlStyles.lessonNavCardLabel}>
-                {lang === "es" ? "Siguiente lección" : "Next lesson"}
-                <ArrowForwardIcon style={{ fontSize: 14 }} />
-              </span>
-              <span className={mmlStyles.lessonNavCardTitle}>
-                {titleOf(nextLesson)}
-              </span>
-            </Link>
-          ) : (
-            <Link
-              href={createLocalizedPath("/developer-section/mathematics-ml")}
-              className={`${mmlStyles.lessonNavCard} ${mmlStyles.lessonNavCardNext}`}
-            >
-              <span className={mmlStyles.lessonNavCardLabel}>
-                <MenuBookIcon style={{ fontSize: 14 }} />
-                {lang === "es" ? "Volver al curso" : "Back to course"}
-              </span>
-              <span className={mmlStyles.lessonNavCardTitle}>
-                {lang === "es"
-                  ? "Índice de capítulos"
-                  : "Chapter index"}
-              </span>
-            </Link>
-          )}
-        </nav>
+        <LessonNavCard
+          prev={
+            prevLesson
+              ? {
+                  href: createLocalizedPath(
+                    `/developer-section/mathematics-ml/${prevLesson.id}`,
+                  ),
+                  title: titleOf(prevLesson),
+                  step: prevLesson.step,
+                  preview:
+                    (lang === "es" && prevLesson.contentEs?.[0]) ||
+                    prevLesson.content?.[0]
+                      ? stripPreview(
+                          (lang === "es" && prevLesson.contentEs?.[0]) ||
+                            prevLesson.content[0],
+                        )
+                      : undefined,
+                  accent: getChapterAccent(prevLesson.chapterNumber).hex,
+                }
+              : null
+          }
+          next={
+            nextLesson
+              ? {
+                  href: createLocalizedPath(
+                    `/developer-section/mathematics-ml/${nextLesson.id}`,
+                  ),
+                  title: titleOf(nextLesson),
+                  step: nextLesson.step,
+                  preview:
+                    (lang === "es" && nextLesson.contentEs?.[0]) ||
+                    nextLesson.content?.[0]
+                      ? stripPreview(
+                          (lang === "es" && nextLesson.contentEs?.[0]) ||
+                            nextLesson.content[0],
+                        )
+                      : undefined,
+                  accent: getChapterAccent(nextLesson.chapterNumber).hex,
+                }
+              : {
+                  href: createLocalizedPath(
+                    "/developer-section/mathematics-ml",
+                  ),
+                  title:
+                    lang === "es"
+                      ? "Índice de capítulos"
+                      : "Chapter index",
+                  preview:
+                    lang === "es"
+                      ? "Has llegado al final del curso. Vuelve a la portada."
+                      : "You've reached the end of the course. Head back to the index.",
+                  accent: getChapterAccent(lesson.chapterNumber).hex,
+                }
+          }
+          prevLabel={lang === "es" ? "Anterior" : "Previous"}
+          nextLabel={lang === "es" ? "Siguiente" : "Next"}
+        />
       </div>
 
       <Footer />
