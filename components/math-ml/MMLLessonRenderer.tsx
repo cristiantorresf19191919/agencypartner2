@@ -19,6 +19,9 @@ import {
   PitfallCallout,
   StepwiseSolution,
 } from "./primitives/LearningCallouts";
+import { MMLLessonHero } from "./primitives/MMLLessonHero";
+import { MMLProgressDots } from "./primitives/MMLProgressDots";
+import { getChapterAccent } from "@/lib/mmlChapterAccents";
 import type {
   MMLLesson,
   MMLVisualization,
@@ -33,6 +36,22 @@ import styles from "./MathML.module.css";
 
 function pickLang<T>(lang: string, es: T | undefined, en: T): T {
   return lang === "es" && es !== undefined ? es : en;
+}
+
+function stripIntroMarkup(text: string): string {
+  // Strip the most common inline markup so the hero subtitle reads cleanly.
+  // Concept chips → display text, **bold** → text, $math$ → "math", `code` → "code".
+  return text
+    .replace(/\[\[[^\]|]+\|([^\]]+)\]\]/g, "$1")
+    .replace(/\[\[([^\]]+)\]\]/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\$\$([^$]+)\$\$/g, "$1")
+    .replace(/\$([^$]+)\$/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\\([a-zA-Z]+)/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 300);
 }
 
 // --- Dynamically imported visualization components (ssr: false) ---
@@ -419,8 +438,19 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
     return map;
   })();
 
+  const accent = getChapterAccent(lesson.chapterNumber);
+  const introParagraph = content[0] ?? "";
+
   return (
-    <div className={styles.lessonContent} ref={rootRef}>
+    <div
+      className={styles.lessonContent}
+      ref={rootRef}
+      style={{
+        ["--mml-accent" as string]: accent.hex,
+        ["--mml-accent-soft" as string]: accent.soft,
+        ["--mml-accent-glow" as string]: accent.glow,
+      }}
+    >
       <div className={styles.readingProgress} aria-hidden="true">
         <div
           className={styles.readingProgressFill}
@@ -428,30 +458,19 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
         />
       </div>
 
-      <div className={styles.chapterBadge}>
-        {chapterPrefix} {lesson.chapterNumber} — {chapter}
-      </div>
+      <MMLLessonHero
+        chapter={chapter}
+        chapterNumber={lesson.chapterNumber}
+        title={title}
+        intro={stripIntroMarkup(introParagraph)}
+        step={lesson.step}
+        readMinutes={readMinutes}
+        vizCount={vizCount}
+        exerciseCount={exerciseCount}
+        lang={lang}
+      />
 
-      <h1 className={styles.lessonTitle}>{title}</h1>
-
-      <div className={styles.lessonMetaBar} aria-hidden="false">
-        <span className={styles.lessonMetaPill}>
-          ⏱ {readMinutes} {minLabel}
-        </span>
-        {vizCount > 0 && (
-          <span className={`${styles.lessonMetaPill} ${styles.lessonMetaPillAccent}`}>
-            ◇ {vizCount} {vizLabel}
-          </span>
-        )}
-        {exerciseCount > 0 && (
-          <span className={styles.lessonMetaPill}>
-            ✓ {exerciseCount} {exLabel}
-          </span>
-        )}
-        <span className={styles.lessonMetaTrail}>
-          {lang === "es" ? "Lección" : "Lesson"} {lesson.step}
-        </span>
-      </div>
+      <MMLProgressDots count={content.length} />
 
       {lesson.concepts && lesson.concepts.length > 0 && (
         <PrerequisitesRail conceptIds={lesson.concepts} />
@@ -472,18 +491,20 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
         const extras = extrasByParagraph.get(i) ?? [];
         return (
           <React.Fragment key={`content-${i}`}>
-            {analogy ? (
-              <AnalogyCard text={stripMarker(paragraph)} />
-            ) : pitfall ? (
-              <PitfallCallout text={stripMarker(paragraph)} />
-            ) : (
-              <MathContent
-                text={textForNormal}
-                as="p"
-                className={className}
-                mode={isWorked ? "worked" : "default"}
-              />
-            )}
+            <div data-mml-paragraph={i}>
+              {analogy ? (
+                <AnalogyCard text={stripMarker(paragraph)} />
+              ) : pitfall ? (
+                <PitfallCallout text={stripMarker(paragraph)} />
+              ) : (
+                <MathContent
+                  text={textForNormal}
+                  as="p"
+                  className={className}
+                  mode={isWorked ? "worked" : "default"}
+                />
+              )}
+            </div>
             {extras.map((ex, k) => {
               if (ex.kind === "formula" && lesson.annotatedFormulas?.[ex.idx]) {
                 return (

@@ -4462,3 +4462,15 @@
     min-height: 44px;
   }
 }
+
+/* ===================================================================
+   Lesson hero hand-off — let chapter accent flow into MafsStage etc.
+   =================================================================== */
+.lessonContent[style*="--mml-accent"] .mafsStage {
+  border-color: var(--mml-accent-soft, rgba(255, 255, 255, 0.07));
+}
+
+/* Lift the prerequisites rail accent so it matches the chapter color. */
+.lessonContent[style*="--mml-accent"] :global(.mml-prereq-rail-accent) {
+  color: var(--mml-accent);
+}
