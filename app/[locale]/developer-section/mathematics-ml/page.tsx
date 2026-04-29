@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import styles from "../challenges/ChallengesPage.module.css";
 import mmlStyles from "@/components/math-ml/MathML.module.css";
+import { ChapterOverviewGrid } from "@/components/math-ml/landing/ChapterOverviewGrid";
 
 interface ChapterGroup {
   number: number;
@@ -144,6 +145,39 @@ export default function MathMLLandingPage() {
         </div>
       </section>
 
+      <ChapterOverviewGrid
+        chapters={chapters.map((c) => ({
+          number: c.number,
+          name: c.name,
+          lessonIds: c.lessons.map((l) => l.id),
+          blurb: c.lessons[0]?.content?.[0]
+            ? c.lessons[0].content[0]
+                .replace(/\*\*([^*]+)\*\*/g, "$1")
+                .replace(/\$([^$]+)\$/g, "")
+                .replace(/\[\[[^\]|]+\|([^\]]+)\]\]/g, "$1")
+                .replace(/\[\[([^\]]+)\]\]/g, "$1")
+                .replace(/\\([a-zA-Z]+)/g, "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, 140)
+            : undefined,
+        }))}
+        onSelect={(num) => {
+          // Open the matching accordion + scroll into view.
+          setOpenChapters((prev) => {
+            const next = new Set(prev);
+            next.add(num);
+            return next;
+          });
+          if (typeof document !== "undefined") {
+            window.requestAnimationFrame(() => {
+              const target = document.querySelector<HTMLElement>(`[data-chapter-anchor="${num}"]`);
+              if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+          }
+        }}
+      />
+
       <section className={styles.listSection}>
         <div className={styles.filterBar}>
           <span className={styles.filterLabel}>{t("course-steps-label")}</span>
@@ -162,10 +196,12 @@ export default function MathMLLandingPage() {
               <div
                 key={chapter.number}
                 className={mmlStyles.chapterAccordion}
+                data-chapter-anchor={chapter.number}
                 style={{
                   ["--chapter-accent" as string]: accent.hue,
                   ["--chapter-accent-soft" as string]: accentSoft,
                   ["--chapter-accent-ghost" as string]: accentGhost,
+                  scrollMarginTop: "100px",
                 }}
               >
                 <button

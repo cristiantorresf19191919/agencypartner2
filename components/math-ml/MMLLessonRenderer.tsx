@@ -24,6 +24,8 @@ import { MMLProgressDots } from "./primitives/MMLProgressDots";
 import { IntuitionCard } from "./primitives/IntuitionCard";
 import { DerivationFlow } from "./primitives/DerivationFlow";
 import { WhyItMatters } from "./primitives/WhyItMatters";
+import { TheoremCard } from "./primitives/TheoremCard";
+import { LessonDivider } from "./primitives/LessonDivider";
 import { getChapterAccent } from "@/lib/mmlChapterAccents";
 import type {
   MMLLesson,
@@ -33,6 +35,7 @@ import type {
 } from "@/lib/mmlTypes";
 import { MathContent } from "./MathContent";
 import { useCelebration } from "@/components/Celebration/useCelebration";
+import { recordLessonCompletion } from "@/lib/courseProgress";
 import { CelebrationOverlay } from "@/components/Celebration/CelebrationOverlay";
 import { useLanguage } from "@/contexts/LanguageContext";
 import styles from "./MathML.module.css";
@@ -274,22 +277,36 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
     new Set()
   );
 
+  const [lessonComplete, setLessonComplete] = useState(false);
+
+  const fireLessonComplete = useCallback(() => {
+    if (lessonComplete) return;
+    setLessonComplete(true);
+    recordLessonCompletion("mathematics-ml", lesson.id);
+    celebrate("multi-burst");
+  }, [lessonComplete, lesson.id, celebrate]);
+
   const handleExerciseCorrect = useCallback(
     (index: number) => {
       setCompletedIndexes((prev) => {
         if (prev.has(index)) return prev;
         const next = new Set(prev);
         next.add(index);
+        // Fire the lesson-complete cinematic when every exercise is solved.
+        if (
+          lesson.exercises.length > 0 &&
+          next.size >= lesson.exercises.length
+        ) {
+          // Defer one tick so the simple celebration fires first.
+          setTimeout(fireLessonComplete, 600);
+        }
         return next;
       });
       celebrate("simple");
     },
-    [celebrate]
+    [celebrate, fireLessonComplete, lesson.exercises.length]
   );
 
-  // Reference completedIndexes so tooling doesn't flag it as unused;
-  // it's kept in state for future progress features.
-  void completedIndexes;
 
   const title = pickLang(lang, lesson.titleEs, lesson.title);
   const chapter = pickLang(lang, lesson.chapterEs, lesson.chapter);
@@ -346,6 +363,28 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
     };
   }, []);
 
+  // Auto-fire lesson completion when the reader scrolls past ~90% of the
+  // article (covers lessons without exercises and "I just want to read"
+  // sessions). Bails as soon as it fires once.
+  useEffect(() => {
+    if (lessonComplete) return;
+    const onScroll = () => {
+      const el = rootRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const total = Math.max(1, rect.height - vh);
+      const scrolled = Math.min(total, Math.max(0, -rect.top));
+      const fraction = total > vh ? scrolled / total : 0;
+      if (fraction >= 0.9) {
+        fireLessonComplete();
+        window.removeEventListener("scroll", onScroll);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [lessonComplete, fireLessonComplete]);
+
   const isWorkedExample = (p: string) =>
     /^\s*\*\*(Worked example|Ejemplo (resuelto|trabajado))/i.test(p);
 
@@ -367,7 +406,8 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
     | "realdata"
     | "intuition"
     | "derivation"
-    | "why";
+    | "why"
+    | "theorem";
 
   const extrasByParagraph = new Map<number, Array<{ kind: ExtraKind; idx: number }>>();
   const pushExtra = (at: number, kind: ExtraKind, idx: number) => {
@@ -441,6 +481,11 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
         ? s.insertAfterParagraph
         : Math.max(0, content.length - 1);
     pushExtra(at, "why", idx);
+  });
+  (lesson.theorems ?? []).forEach((s, idx) => {
+    const at =
+      typeof s.insertAfterParagraph === "number" ? s.insertAfterParagraph : 1;
+    pushExtra(at, "theorem", idx);
   });
 
   const contentCount = content.length;
@@ -607,6 +652,11 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
                   <WhyItMatters key={`wim-${i}-${k}`} spec={lesson.whyItMatters[ex.idx]} />
                 );
               }
+              if (ex.kind === "theorem" && lesson.theorems?.[ex.idx]) {
+                return (
+                  <TheoremCard key={`thm-${i}-${k}`} spec={lesson.theorems[ex.idx]} />
+                );
+              }
               return null;
             })}
             {vizIdx !== null && lesson.visualizations[vizIdx] && (
@@ -617,7 +667,7 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
               />
             )}
             {!isWorked && !analogy && !pitfall && i < content.length - 1 && (i + 1) % 3 === 0 && (
-              <div className={styles.lessonDivider} aria-hidden="true" />
+              <LessonDivider index={i} />
             )}
           </React.Fragment>
         );
@@ -672,6 +722,16 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
         celebration={celebration}
         onComplete={onComplete}
       />
+
+      {lessonComplete ? (
+        <div className={styles.completionToast} role="status" aria-live="polite">
+          <span className={styles.completionGlyph} aria-hidden="true">✓</span>
+          <span className={styles.completionBody}>
+            <strong>{lang === "es" ? "¡Lección completada!" : "Lesson complete!"}</strong>{" "}
+            <span>+25 XP</span>
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }

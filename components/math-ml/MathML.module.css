@@ -4474,3 +4474,80 @@
 .lessonContent[style*="--mml-accent"] :global(.mml-prereq-rail-accent) {
   color: var(--mml-accent);
 }
+
+/* ===================================================================
+   Lesson-complete toast — fires when user solves all exercises or
+   reads past 90% of the lesson body.
+   =================================================================== */
+@keyframes mml-toast-in {
+  from { opacity: 0; transform: translate(-50%, 12px) scale(0.95); }
+  to   { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.completionToast {
+  position: fixed;
+  left: 50%;
+  bottom: 110px;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px 12px 14px;
+  border-radius: 999px;
+  background: rgba(8, 11, 18, 0.92);
+  border: 1px solid var(--mml-accent-soft, rgba(124, 244, 255, 0.40));
+  box-shadow:
+    0 28px 48px -22px rgba(0, 0, 0, 0.7),
+    0 0 24px var(--mml-accent-glow, rgba(124, 244, 255, 0.5)),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  color: #f1f6ff;
+  font-size: 14px;
+  letter-spacing: 0.005em;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: mml-toast-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.completionGlyph {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mml-accent, #34d399);
+  color: #04101e;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px var(--mml-accent-glow, rgba(52, 211, 153, 0.6));
+}
+
+.completionBody strong {
+  font-weight: 700;
+}
+
+.completionBody span {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--mml-accent-soft, rgba(124, 244, 255, 0.12));
+  color: var(--mml-accent, #7cf4ff);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .completionToast {
+    bottom: 88px;
+    font-size: 13px;
+    padding: 10px 14px 10px 12px;
+  }
+}
+
+:global([data-theme="light"]) .completionToast {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  border-color: var(--mml-accent-soft, rgba(15, 23, 42, 0.10));
+}

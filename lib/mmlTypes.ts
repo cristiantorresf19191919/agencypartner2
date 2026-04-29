@@ -205,6 +205,7 @@ export interface MMLLesson {
   intuitions?: IntuitionSpec[];
   derivations?: DerivationSpec[];
   whyItMatters?: WhyItMattersSpec[];
+  theorems?: TheoremSpec[];
   analogy?: { en: string; es?: string };
   pitfall?: { en: string; es?: string };
   // Ids into lib/mmlConcepts.ts — rendered as a prerequisites rail at the top
@@ -444,5 +445,23 @@ export interface WhyItMattersSpec {
   /** Bullets of 2-4 concrete consequences, each rendered as a small chip. */
   bullets?: string[];
   bulletsEs?: string[];
+  insertAfterParagraph?: number;
+}
+
+/** Boxed math callout — Theorem, Definition, Lemma, or Corollary, with an
+ *  optional collapsible proof. */
+export interface TheoremSpec {
+  id?: string;
+  /** Visual variant — drives the glyph + accent flavour. */
+  kind: "theorem" | "definition" | "lemma" | "corollary";
+  /** Short label shown next to the kind badge (e.g. "Cauchy–Schwarz"). */
+  name?: string;
+  nameEs?: string;
+  /** The statement of the theorem / definition. Supports MathContent markup. */
+  statement: string;
+  statementEs?: string;
+  /** Optional collapsible proof. */
+  proof?: string;
+  proofEs?: string;
   insertAfterParagraph?: number;
 }

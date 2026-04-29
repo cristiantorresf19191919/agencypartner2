@@ -1,0 +1,176 @@
+.card {
+  --theorem-tone: var(--mml-accent, #7cf4ff);
+  position: relative;
+  isolation: isolate;
+  margin: 26px 0;
+  padding: 18px 22px 18px 24px;
+  border-radius: 16px;
+  border: 1px solid;
+  border-color: color-mix(in srgb, var(--theorem-tone) 32%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theorem-tone) 10%, transparent),
+      rgba(8, 11, 18, 0.45) 60%,
+      rgba(8, 11, 18, 0.65)
+    );
+  box-shadow:
+    0 22px 44px -28px color-mix(in srgb, var(--theorem-tone) 35%, black),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--theorem-tone),
+    color-mix(in srgb, var(--theorem-tone) 50%, transparent)
+  );
+  box-shadow: 0 0 14px color-mix(in srgb, var(--theorem-tone) 40%, transparent);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.glyph {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--theorem-tone);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--theorem-tone) 50%, transparent));
+}
+
+.kind {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theorem-tone) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theorem-tone) 30%, transparent);
+  color: var(--theorem-tone);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f6ff;
+  letter-spacing: -0.005em;
+  font-style: italic;
+}
+
+.statement {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #d4dcef;
+}
+
+.statement :global(.mml-block-math) {
+  margin: 0.4em 0;
+}
+
+.proofToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  margin-top: 12px;
+  border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--theorem-tone) 32%, transparent);
+  background: color-mix(in srgb, var(--theorem-tone) 8%, transparent);
+  color: var(--theorem-tone);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.proofToggle:hover {
+  background: color-mix(in srgb, var(--theorem-tone) 14%, transparent);
+  border-color: color-mix(in srgb, var(--theorem-tone) 50%, transparent);
+}
+
+.proofChevron {
+  transition: transform 200ms ease;
+  font-size: 11px;
+  display: inline-block;
+}
+
+.proofChevron[data-open="true"] {
+  transform: rotate(90deg);
+}
+
+.proof {
+  overflow: hidden;
+}
+
+.proofInner {
+  position: relative;
+  margin-top: 10px;
+  padding: 14px 16px 18px;
+  border-radius: 12px;
+  background: rgba(8, 11, 18, 0.55);
+  border: 1px dashed color-mix(in srgb, var(--theorem-tone) 25%, rgba(255, 255, 255, 0.10));
+  font-size: 14px;
+  line-height: 1.65;
+  color: #c6d5ff;
+}
+
+.proofLabel {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--theorem-tone) 70%, white);
+}
+
+.qed {
+  position: absolute;
+  bottom: 8px;
+  right: 14px;
+  font-size: 18px;
+  color: var(--theorem-tone);
+}
+
+@media (max-width: 720px) {
+  .card { padding: 16px 18px 16px 20px; border-radius: 14px; }
+  .name { font-size: 1rem; }
+  .statement { font-size: 14px; }
+  .proofInner { font-size: 13.5px; padding: 12px 14px 16px; }
+}
+
+:global([data-theme="light"]) .card {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theorem-tone) 16%, transparent),
+      rgba(255, 255, 255, 0.92) 60%,
+      rgba(255, 255, 255, 0.96)
+    );
+  box-shadow:
+    0 22px 44px -28px color-mix(in srgb, var(--theorem-tone) 30%, rgba(15, 23, 42, 0.4)),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+:global([data-theme="light"]) .name      { color: #0f172a; }
+:global([data-theme="light"]) .statement { color: #1e293b; }
+:global([data-theme="light"]) .proofInner {
+  background: rgba(255, 255, 255, 0.85);
+  color: #1e293b;
+}
