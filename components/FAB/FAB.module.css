@@ -85,3 +85,18 @@
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
+@media (max-width: 720px) {
+  .fab {
+    width: 52px;
+    height: 52px;
+  }
+  .fabMenu {
+    bottom: 70px;
+    right: 0;
+  }
+}
+
+@media (hover: none) {
+  .fab { min-width: 48px; min-height: 48px; }
+  .fabMenuItem { min-height: 48px; }
+}

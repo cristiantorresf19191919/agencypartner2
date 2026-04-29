@@ -254,3 +254,93 @@ body[data-doc-reading-scroll="down"] .floatingActionsWrapper {
     padding-bottom: 120px;
   }
 }
+/* ===================================================================
+   Responsive baseline — applies site-wide. Mobile-first overrides.
+   =================================================================== */
+
+/* Fluid typography & sane root sizing — lets clamp() shine site-wide. */
+:root {
+  font-size: clamp(15px, 1vw + 13px, 17px);
+}
+
+/* Defensive: every image / video / svg should never overflow its parent. */
+img, picture, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+svg { display: block; }
+
+/* Pre / code blocks scroll horizontally on narrow viewports rather than blow
+ * out the page width. */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tables scroll horizontally inside their parent. */
+.table-scroll, .responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Anchor scroll target gets breathing room from the sticky header. */
+:target {
+  scroll-margin-top: 96px;
+}
+
+/* Touch devices: bigger tap targets where it counts. */
+@media (hover: none) {
+  button,
+  a[role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    min-height: 40px;
+  }
+}
+
+/* Coarse pointer + small viewport: tighter floating actions stack. */
+@media (max-width: 480px) {
+  .floatingActionsWrapper {
+    bottom: max(0.85rem, env(safe-area-inset-bottom, 0px));
+    right: max(0.85rem, env(safe-area-inset-right, 0px));
+    gap: 6px;
+  }
+}
+
+/* Notch-aware page padding for fullscreen hero regions. */
+.safeAreaPadX {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Phones in landscape with limited height: reclaim vertical room. */
+@media (max-height: 520px) and (orientation: landscape) {
+  body[data-mobile-menu-open="true"] .floatingActionsWrapper {
+    visibility: visible;
+  }
+}
+
+/* Reduce motion globally for users who request it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High-contrast / forced colors mode: don't kill our gradient text. */
+@media (forced-colors: active) {
+  [class*="gradientText"], [class*="title"][style*="background-clip: text"] {
+    color: CanvasText !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+  }
+}

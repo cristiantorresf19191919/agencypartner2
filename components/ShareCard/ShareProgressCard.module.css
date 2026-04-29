@@ -118,3 +118,16 @@
   border-color: rgba(52, 211, 153, 0.3);
   color: #34d399;
 }
+
+@media (max-width: 720px) {
+  .modal {
+    width: calc(100% - 24px) !important;
+    max-width: 420px;
+    margin: 0 12px;
+    padding: 18px;
+    border-radius: 18px;
+  }
+  .stat { font-size: 13.5px; }
+  .actions { flex-direction: column; align-items: stretch; }
+  .actions button, .actions a { width: 100%; min-height: 44px; }
+}

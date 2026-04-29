@@ -11,3 +11,12 @@
   text-align: center;
   font-weight: 500;
 }
+
+@media (max-width: 720px) {
+  .banner {
+    padding: 8px 12px;
+    font-size: 12.5px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}

@@ -176,3 +176,46 @@
 .mainContent ol {
   max-width: var(--blog-text-max);
 }
+/* ===================================================================
+   Blog post — narrow-screen polish (appended)
+   =================================================================== */
+@media (max-width: 1024px) {
+  .container { padding: 0 18px; }
+}
+
+@media (max-width: 720px) {
+  .container { padding: 0 12px; }
+  .contentWrapper { gap: 16px; }
+  .mainContent {
+    padding: 16px 4px 32px;
+    font-size: 15.5px;
+  }
+  .mainContent h1 { font-size: clamp(1.7rem, 7.2vw, 2.2rem); line-height: 1.18; }
+  .mainContent h2 { font-size: 1.3rem; margin-top: 2rem; }
+  .mainContent h3 { font-size: 1.1rem; }
+  .mainContent p { line-height: 1.65; margin-bottom: 1.25rem; }
+  .mainContent pre {
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12.5px;
+  }
+  .mainContent code {
+    word-break: break-word;
+  }
+  .mainContent ul,
+  .mainContent ol {
+    padding-left: 18px;
+  }
+  .mainContent img,
+  .mainContent video,
+  .mainContent iframe {
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 8px; }
+  .mainContent { padding: 12px 4px 28px; }
+  .mainContent h1 { font-size: 1.6rem; }
+  .mainContent h2 { font-size: 1.2rem; }
+}

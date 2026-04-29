@@ -96,3 +96,14 @@
   color: rgba(255, 255, 255, 0.98);
   font-weight: 600;
 }
+
+@media (max-width: 1024px) {
+  .wrapper { grid-template-columns: 1fr; gap: 16px; }
+}
+
+@media (max-width: 720px) {
+  .wrapper { gap: 12px; }
+  .noticeCard { padding: 12px; border-radius: 12px; }
+  .noticeLabel { font-size: 11px; }
+  .noticeItem { font-size: 13px; line-height: 1.5; }
+}

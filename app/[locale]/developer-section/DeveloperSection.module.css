@@ -1862,3 +1862,26 @@
   outline-offset: 3px;
   box-shadow: 0 0 0 6px rgba(160, 106, 249, 0.1);
 }
+
+/* ===================================================================
+   Narrow-screen responsive polish — appended defensively
+   =================================================================== */
+@media (max-width: 640px) {
+  .pill { font-size: 11px; padding: 4px 12px; }
+  .title { font-size: clamp(1.6rem, 7vw, 2.4rem); line-height: 1.1; }
+  .subtitle { font-size: 14.5px; line-height: 1.55; }
+  .heroSearchWrapper { padding: 0 4px; }
+  .statsBar {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .statItem { padding: 12px 10px; }
+  .statValue { font-size: 1.25rem; }
+  .statLabel { font-size: 10.5px; letter-spacing: 0.04em; }
+  .shareStatsBtn { font-size: 12px; padding: 8px 12px; }
+}
+
+@media (max-width: 420px) {
+  .statsBar { grid-template-columns: 1fr 1fr; }
+  .statValue { font-size: 1.1rem; }
+}
