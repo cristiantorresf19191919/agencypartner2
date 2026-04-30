@@ -1,0 +1,101 @@
+.bar {
+  --bar-accent: #7cf4ff;
+  --bar-accent-soft: rgba(124, 244, 255, 0.12);
+  --bar-accent-glow: rgba(124, 244, 255, 0.30);
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  z-index: 75;
+  margin: 0 auto;
+  max-width: 760px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px 10px 18px;
+  border-radius: 999px;
+  background: rgba(8, 11, 18, 0.85);
+  border: 1px solid var(--bar-accent-soft);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 24px 44px -22px rgba(0, 0, 0, 0.65),
+    0 0 22px var(--bar-accent-glow),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bar-accent);
+  box-shadow: 0 0 12px var(--bar-accent-glow);
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1 1 auto;
+  display: grid;
+  gap: 0;
+  min-width: 0;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bar-accent);
+}
+
+.title {
+  font-size: 13.5px;
+  color: #f1f6ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--bar-accent);
+  color: #04101e;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cta:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 720px) {
+  .bar {
+    padding: 8px 10px 8px 14px;
+    gap: 10px;
+  }
+  .cta span {
+    display: none;
+  }
+}
+
+/* Hide the bar in landscape phones with limited height — too cramped. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .bar { display: none; }
+}
+
+:global([data-theme="light"]) .bar {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(15, 23, 42, 0.10);
+  box-shadow:
+    0 24px 44px -22px rgba(15, 23, 42, 0.25),
+    0 0 22px var(--bar-accent-glow),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+:global([data-theme="light"]) .title { color: #0f172a; }

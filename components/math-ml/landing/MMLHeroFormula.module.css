@@ -1,0 +1,51 @@
+.band {
+  position: relative;
+  isolation: isolate;
+  margin: 12px auto 4px;
+  max-width: 780px;
+  padding: 0 16px;
+}
+
+.aurora {
+  position: absolute;
+  inset: -40% -10% -40% -10%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 60% at 30% 50%, rgba(96, 165, 250, 0.12), transparent 70%),
+    radial-gradient(40% 60% at 70% 50%, rgba(196, 181, 253, 0.10), transparent 70%);
+  filter: blur(40px);
+  opacity: 0.7;
+}
+
+.frame {
+  /* The FormulaChain renders its own canvas — strip the heavy padding so it
+   * sits flush within the hero. */
+  --hero-frame: 1;
+}
+
+.frame :global(.formulaCanvas),
+.frame [class*="canvas"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(1.4rem, 2.8vw, 1.85rem) !important;
+}
+
+.frame :global(.formulaSlot),
+.frame [class*="formulaSlot"] {
+  min-height: 80px !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.frame :global(.controls),
+.frame [class*="controls"] {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .band { margin-top: 8px; padding: 0 8px; }
+}

@@ -21,6 +21,10 @@ import Link from "next/link";
 import styles from "../challenges/ChallengesPage.module.css";
 import mmlStyles from "@/components/math-ml/MathML.module.css";
 import { ChapterOverviewGrid } from "@/components/math-ml/landing/ChapterOverviewGrid";
+import { MMLResumePanel } from "@/components/math-ml/landing/MMLResumePanel";
+import { MMLResumeBar } from "@/components/math-ml/landing/MMLResumeBar";
+import { MMLHeroFormula } from "@/components/math-ml/landing/MMLHeroFormula";
+import { getLessonBadges, BADGE_META } from "@/lib/mmlLessonBadges";
 
 interface ChapterGroup {
   number: number;
@@ -122,28 +126,10 @@ export default function MathMLLandingPage() {
         >
           {t("mml-course-subtitle")}
         </motion.p>
-        <div className={`${styles.heroBadges} ${mmlStyles.mmlHeroBadges}`}>
-          <span className={`${styles.badge} ${mmlStyles.mmlBadgeEmerald}`}>
-            <AutoAwesomeIcon fontSize="small" />
-            {lang === "es" ? "Matemáticas interactivas" : "Interactive Math"}
-          </span>
-          <span className={`${styles.badge} ${mmlStyles.mmlBadgeBlue}`}>
-            <ViewInArIcon fontSize="small" />
-            {totalViz} {lang === "es" ? "visualizaciones" : "visualizations"}
-          </span>
-          <span className={`${styles.badge} ${mmlStyles.mmlBadgeViolet}`}>
-            <QuizIcon fontSize="small" />
-            {totalExercises} {lang === "es" ? "ejercicios" : "exercises"}
-          </span>
-          <span className={`${styles.badge} ${mmlStyles.mmlBadgeAmber}`}>
-            <FunctionsIcon fontSize="small" />
-            {MML_COURSE_LESSONS.length} {t("course-step")}
-          </span>
-          <span className={`${styles.badge} ${mmlStyles.mmlBadgeGhost}`}>
-            {chapters.length} {lang === "es" ? "capítulos" : "chapters"}
-          </span>
-        </div>
+        <MMLHeroFormula />
       </section>
+
+      <MMLResumePanel />
 
       <ChapterOverviewGrid
         chapters={chapters.map((c) => ({
@@ -252,6 +238,7 @@ export default function MathMLLandingPage() {
                           {chapter.lessons.map((lesson, i) => {
                             const vizCount = lesson.visualizations.length;
                             const exCount = lesson.exercises.length;
+                            const badges = getLessonBadges(lesson);
                             return (
                               <motion.li
                                 key={lesson.id}
@@ -305,6 +292,28 @@ export default function MathMLLandingPage() {
                                       )}
                                     </div>
                                   </div>
+                                  {badges.length > 0 ? (
+                                    <div className={mmlStyles.lessonBadgeRow}>
+                                      {badges.map((b) => {
+                                        const meta = BADGE_META[b];
+                                        return (
+                                          <span
+                                            key={b}
+                                            className={mmlStyles.lessonBadge}
+                                            style={{
+                                              borderColor: `${meta.tone}55`,
+                                              color: meta.tone,
+                                            }}
+                                          >
+                                            <span className={mmlStyles.lessonBadgeGlyph}>
+                                              {meta.glyph}
+                                            </span>
+                                            {meta.label[lang]}
+                                          </span>
+                                        );
+                                      })}
+                                    </div>
+                                  ) : null}
                                   <h3 className={styles.cardTitle}>
                                     {lesson.title}
                                   </h3>
@@ -351,6 +360,7 @@ export default function MathMLLandingPage() {
       </div>
 
       <Footer />
+      <MMLResumeBar />
     </main>
   );
 }
