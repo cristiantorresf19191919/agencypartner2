@@ -121,7 +121,7 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
     const ghostLayer = document.createElement("div");
     ghostLayer.setAttribute("data-formula-ghosts", "true");
     ghostLayer.style.cssText =
-      "position:absolute;inset:0;pointer-events:none;overflow:visible;";
+      "position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:2;";
     const prevPosition = container.style.position;
     if (!prevPosition || prevPosition === "static") {
       container.style.position = "relative";
@@ -142,6 +142,11 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
       container.appendChild(ghostLayer);
     }
 
+    // Tag the formula slot so the canvas can dim its surroundings during
+    // the transition (a soft visual cue that the morph is in flight).
+    const slot = container.closest<HTMLElement>("[data-formula-slot]");
+    slot?.setAttribute("data-morphing", "true");
+
     // Build pairing: destination DOM index -> source key for FLIP lookup.
     const fromTokens = from.tokens;
     const pairToFromKey = new Map<number, string>();
@@ -153,7 +158,31 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
     const animations: Promise<unknown>[] = [];
     const morphSec = duration / 1000;
 
-    // Exit ghosts — fade + slide up + scale down (front-loaded).
+    /* ───────────────────────────────────────────────────────────────
+     * Three sequential phases — exits clear before entries land:
+     *
+     *   Phase A  exits      0.00 → 0.45 of morph  (fade + slide up)
+     *   Phase B  matched    0.05 → 1.00           (FLIP smooth)
+     *   Phase C  entries    0.55 → 1.00           (fade + slide up)
+     *
+     * The 10ms overlap between B start and A start gives matched tokens
+     * a head start so the eye has something to track while the leavers
+     * dissolve, but the entries are gated until exits are essentially gone.
+     * ─────────────────────────────────────────────────────────────── */
+
+    // Pre-hide every new-only token so they don't flash before phase C.
+    container
+      .querySelectorAll<HTMLElement>("[data-tok-id]")
+      .forEach((el, domIdx) => {
+        const fromKey = pairToFromKey.get(domIdx);
+        if (!fromKey || !firstRects.has(fromKey)) {
+          el.style.opacity = "0";
+          el.style.transform = "translateY(8px) scale(0.88)";
+          el.style.transformOrigin = "center";
+        }
+      });
+
+    // PHASE A — exit ghosts.
     ghostLayer
       .querySelectorAll<HTMLElement>("[data-tok-id]")
       .forEach((el) => {
@@ -164,10 +193,10 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
               opacity: [1, 0],
               transform: [
                 "translateY(0px) scale(1)",
-                "translateY(-14px) scale(0.7)",
+                "translateY(-12px) scale(0.78)",
               ],
             },
-            { duration: morphSec * 0.55, ease: EXIT_EASE },
+            { duration: morphSec * 0.45, ease: EXIT_EASE },
           ).then(() => undefined),
         );
       });
@@ -180,7 +209,7 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
         const lastRect = el.getBoundingClientRect();
         const fromKey = pairToFromKey.get(domIdx);
         if (fromKey && firstRects.has(fromKey)) {
-          // Matched — drift smoothly from old position to new.
+          // PHASE B — matched FLIP
           const first = firstRects.get(fromKey)!;
           const dx = first.left - lastRect.left;
           const dy = first.top - lastRect.top;
@@ -192,30 +221,31 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
             animate(
               el,
               { transform: "translate(0px, 0px) scale(1, 1)" },
-              { duration: morphSec, ease: SMOOTH_EASE },
+              {
+                duration: morphSec * 0.95,
+                delay: morphSec * 0.05,
+                ease: SMOOTH_EASE,
+              },
             ).then(() => {
               el.style.transform = "";
               el.style.transformOrigin = "";
             }),
           );
         } else {
-          // New — slide up with a fade-in, slightly delayed so leavers clear.
-          el.style.opacity = "0";
-          el.style.transform = "translateY(10px) scale(0.85)";
-          el.style.transformOrigin = "center";
+          // PHASE C — entry slide-in (waits for exits to clear)
           animations.push(
             animate(
               el,
               {
                 opacity: [0, 1],
                 transform: [
-                  "translateY(10px) scale(0.85)",
+                  "translateY(8px) scale(0.88)",
                   "translateY(0px) scale(1)",
                 ],
               },
               {
-                duration: morphSec * 0.55,
-                delay: morphSec * 0.45,
+                duration: morphSec * 0.45,
+                delay: morphSec * 0.55,
                 ease: ENTER_EASE,
               },
             ).then(() => {
@@ -227,14 +257,14 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
         }
         if (emphasize.some((e) => sym.includes(e))) {
           el.style.color = EMERALD;
-          el.style.textShadow = `0 0 12px ${EMERALD}66`;
+          el.style.textShadow = `0 0 14px ${EMERALD}aa`;
           animations.push(
             animate(
               el,
               { transform: ["scale(1)", "scale(1.18)", "scale(1)"] },
               {
                 duration: 0.55,
-                delay: morphSec * 0.55,
+                delay: morphSec * 0.95,
                 ease: "easeInOut",
               },
             ).then(() => undefined),
@@ -246,6 +276,7 @@ export function buildChain(spec: FormulaChainSpec): BuiltChain {
       await Promise.all(animations);
     } finally {
       ghostLayer.remove();
+      slot?.removeAttribute("data-morphing");
       if (!prevPosition || prevPosition === "static") {
         container.style.position = prevPosition;
       }

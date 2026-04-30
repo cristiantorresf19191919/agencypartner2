@@ -15,7 +15,9 @@ export function FormulaCanvas({ title, caption, children, controls }: Props) {
     <div className={styles.canvas}>
       {title ? <p className={styles.title}>{title}</p> : null}
       {caption ? <p className={styles.caption}>{caption}</p> : null}
-      <div className={styles.formulaSlot}>{children}</div>
+      <div className={styles.formulaSlot} data-formula-slot="true">
+        <div className={styles.formulaSlotInner}>{children}</div>
+      </div>
       {controls ? <div className={styles.controls}>{controls}</div> : null}
     </div>
   );

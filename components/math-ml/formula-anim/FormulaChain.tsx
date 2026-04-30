@@ -192,6 +192,8 @@ export function FormulaChain(props: Props) {
 
   const isAtEnd = stepIdx >= spec.steps.length - 1;
 
+  const totalSteps = spec.steps.length;
+  const progressFraction = totalSteps > 1 ? stepIdx / (totalSteps - 1) : 0;
   const controls = (
     <>
       <button
@@ -205,7 +207,7 @@ export function FormulaChain(props: Props) {
       </button>
       <button
         type="button"
-        className={styles.btn}
+        className={`${styles.btn} ${styles.btnPrimary}`}
         onClick={() => {
           if (animating) return;
           if (isAtEnd) {
@@ -228,13 +230,24 @@ export function FormulaChain(props: Props) {
       >
         Next
       </button>
-      <div className={styles.dots} role="presentation">
-        {spec.steps.map((_, i) => (
+      <div
+        className={styles.stepIndicator}
+        role="progressbar"
+        aria-valuemin={1}
+        aria-valuemax={totalSteps}
+        aria-valuenow={stepIdx + 1}
+      >
+        <span className={styles.stepBadge}>
+          <span className={styles.stepCurrent}>{stepIdx + 1}</span>
+          <span className={styles.stepSep}>/</span>
+          <span className={styles.stepTotal}>{totalSteps}</span>
+        </span>
+        <span className={styles.stepRail}>
           <span
-            key={i}
-            className={`${styles.dot} ${i === stepIdx ? styles.dotActive : ""}`}
+            className={styles.stepFill}
+            style={{ transform: `scaleX(${progressFraction})` }}
           />
-        ))}
+        </span>
       </div>
     </>
   );
