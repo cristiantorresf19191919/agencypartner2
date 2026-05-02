@@ -26,6 +26,7 @@ import { DerivationFlow } from "./primitives/DerivationFlow";
 import { WhyItMatters } from "./primitives/WhyItMatters";
 import { TheoremCard } from "./primitives/TheoremCard";
 import { LessonDivider } from "./primitives/LessonDivider";
+import { BigIdea } from "./primitives/BigIdea";
 import { getChapterAccent } from "@/lib/mmlChapterAccents";
 import type {
   MMLLesson,
@@ -138,6 +139,10 @@ const OptimizerRace = dynamic(
   () => import("./visualizations/OptimizerRace"),
   { ssr: false }
 ) as VizComponent;
+const MathSceneViz = dynamic(
+  () => import("./scenes/MathSceneDispatcher"),
+  { ssr: false }
+) as VizComponent;
 
 // eigenspace-3d reuses VectorPlot3D (eigenvectors passed as vector configs)
 // svd-3d reuses MatrixTransform3D
@@ -162,6 +167,7 @@ const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "kernel-projection-3d": KernelProjection3D,
   "formula-chain": FormulaChainViz,
   "optimizer-race": OptimizerRace,
+  "math-scene": MathSceneViz,
 };
 
 // --- Dynamically imported exercise components (named exports) ---
@@ -545,6 +551,8 @@ export function MMLLessonRenderer({ lesson }: MMLLessonRendererProps) {
       {lesson.concepts && lesson.concepts.length > 0 && (
         <PrerequisitesRail conceptIds={lesson.concepts} />
       )}
+
+      <BigIdea lesson={lesson} lang={lang} />
 
       {content.map((paragraph, i) => {
         const isIntro = i === 0;

@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
-import { Coordinates, Vector, Point, Line, Text } from "mafs";
+import React, { useMemo } from "react";
+import { Vector, Point, Line, Text } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 import { ZoomableMafs } from "../primitives/ZoomableMafs";
+import { SmartAxes, fitContent } from "../primitives/SmartAxes";
 import { LabeledMarker, type AccentName, type MarkerKind } from "../primitives/LabeledMarker";
 import type { NarrationBeat } from "../primitives/Narration";
 
@@ -33,20 +34,6 @@ interface VectorPlot2DConfig {
   narration?: NarrationBeat[];
 }
 
-function autoViewBoxFromVectors(
-  vectors: [number, number][],
-): { x: [number, number]; y: [number, number] } {
-  if (vectors.length === 0) return { x: [-6, 6], y: [-6, 6] };
-  let xMax = 0;
-  let yMax = 0;
-  for (const v of vectors) {
-    xMax = Math.max(xMax, Math.abs(v[0]));
-    yMax = Math.max(yMax, Math.abs(v[1]));
-  }
-  const span = Math.max(2, Math.ceil(Math.max(xMax, yMax) * 1.4));
-  return { x: [-span, span], y: [-span, span] };
-}
-
 interface Props {
   config: Record<string, unknown>;
 }
@@ -59,23 +46,43 @@ export default function VectorPlot2D({ config }: Props) {
   const labels = cfg.labels ?? [];
   const showSum = Boolean(cfg.showSum);
   const showSpan = Boolean(cfg.showSpan);
-  const auto = autoViewBoxFromVectors(vectors);
-  const viewBox = {
-    x: cfg.viewBox?.x ?? auto.x,
-    y: cfg.viewBox?.y ?? auto.y,
-  };
 
   const sum: [number, number] = vectors.reduce<[number, number]>(
     (acc, v) => [acc[0] + v[0], acc[1] + v[1]],
     [0, 0]
   );
 
+  const auto = useMemo(() => {
+    const items = vectors.map(([x, y]) => ({ x, y }));
+    if (showSum) items.push({ x: sum[0], y: sum[1] });
+    return fitContent(items, {
+      padding: 0.18,
+      minHalfSpanX: 1.5,
+      minHalfSpanY: 1.5,
+      centerOnZero: true,
+      includeOrigin: true,
+    });
+  }, [vectors, showSum, sum]);
+
+  const viewBox = {
+    x: cfg.viewBox?.x ?? auto.x,
+    y: cfg.viewBox?.y ?? auto.y,
+  };
+
+  // Vector tip labels are placed at v * 1.08 — suppress axis ticks there.
+  const hideXNear = vectors.map(([x]) => x * 1.08);
+  const hideYNear = vectors.map(([, y]) => y * 1.08);
+  if (showSum) {
+    hideXNear.push(sum[0] * 1.08);
+    hideYNear.push(sum[1] * 1.08);
+  }
+
   const height = useMafsHeight(360);
 
   return (
     <MafsStage accent="emerald" narration={cfg.narration}>
       <ZoomableMafs viewBox={viewBox} height={height}>
-        <Coordinates.Cartesian />
+        <SmartAxes hideXNear={hideXNear} hideYNear={hideYNear} />
 
         {showSpan && vectors[0] && (
           <Line.ThroughPoints

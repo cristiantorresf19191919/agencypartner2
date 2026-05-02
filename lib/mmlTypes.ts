@@ -18,7 +18,8 @@ export type MMLVizType =
   | "svd-flow"
   | "kernel-projection-3d"
   | "formula-chain"
-  | "optimizer-race";
+  | "optimizer-race"
+  | "math-scene";
 
 export interface MMLVisualization {
   type: MMLVizType;

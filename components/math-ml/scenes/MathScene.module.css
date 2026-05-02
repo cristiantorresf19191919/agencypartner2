@@ -1,0 +1,417 @@
+/* MathScene shell — wraps a Mafs/R3F figure + a synced formula + caption + scrub. */
+
+.scene {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 16px 0 24px;
+}
+
+.captionBar {
+  position: relative;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.55) 0%,
+    rgba(2, 6, 23, 0.7) 100%
+  );
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.captionDot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
+}
+
+.captionText {
+  flex: 1 1 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.captionPhase {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: rgba(209, 250, 229, 0.65);
+  letter-spacing: 0.04em;
+}
+
+/* Synchronised formula block — sits directly below the figure. */
+.formulaWrap {
+  margin-top: 4px;
+}
+
+.formulaShell {
+  position: relative;
+  background: #000;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 14px;
+  padding: 22px 22px 16px;
+  overflow: hidden;
+}
+
+.formulaShell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(16, 185, 129, 0.07),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.formulaSlot {
+  position: relative;
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  color: #fff;
+  padding: 8px;
+  border-radius: 10px;
+  background: radial-gradient(
+      60% 80% at 50% 50%,
+      rgba(16, 185, 129, 0.04),
+      transparent 70%
+    ),
+    rgba(0, 0, 0, 0.25);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.formulaSlot :global(.katex) {
+  color: #fff;
+  font-size: inherit;
+}
+
+/* ─── Controls row ───────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+}
+
+.btn {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.32);
+  color: #d1fae5;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.02em;
+}
+.btn:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.6);
+  color: #ecfdf5;
+}
+.btn:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+.btn:focus-visible {
+  outline: 2px solid #10B981;
+  outline-offset: 2px;
+}
+
+.btnPrimary {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.55);
+  color: #ecfdf5;
+}
+.btnPrimary:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.3);
+  border-color: rgba(16, 185, 129, 0.78);
+}
+
+.scrubWrap {
+  flex: 1 1 220px;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scrubRail {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: visible;
+  cursor: pointer;
+}
+
+.scrubFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10B981 0%, #34D399 100%);
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+  transition: width 80ms linear;
+}
+
+.scrubMarkers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.scrubMarker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(15, 23, 42, 0.8);
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.scrubMarkerActive {
+  background: #34D399;
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
+}
+
+.scrubInput {
+  position: absolute;
+  inset: -8px 0;
+  width: 100%;
+  height: calc(100% + 16px);
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+
+.stepBadge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.32);
+  color: #d1fae5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.stepCurrent { color: #34d399; }
+.stepSep    { opacity: 0.4; padding: 0 2px; }
+.stepTotal  { opacity: 0.7; }
+
+/* ─── Speed selector ───────────────────────────────────────── */
+
+.speedGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  flex-shrink: 0;
+}
+
+.speedBtn {
+  background: transparent;
+  border: none;
+  color: rgba(209, 250, 229, 0.6);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 120ms ease, color 120ms ease;
+}
+.speedBtn:hover {
+  color: #ecfdf5;
+  background: rgba(16, 185, 129, 0.12);
+}
+.speedBtnActive {
+  background: rgba(16, 185, 129, 0.25);
+  color: #ecfdf5;
+}
+.speedBtn:focus-visible {
+  outline: 2px solid #10B981;
+  outline-offset: 1px;
+}
+
+/* ─── Phase transcript ─────────────────────────────────────── */
+
+.transcriptToggle {
+  background: transparent;
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  color: rgba(209, 250, 229, 0.78);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.transcriptToggle:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.45);
+  color: #ecfdf5;
+}
+.transcriptToggle:focus-visible {
+  outline: 2px solid #10B981;
+  outline-offset: 2px;
+}
+
+.transcriptChevron {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  transition: transform 200ms ease;
+}
+.transcriptChevronOpen {
+  transform: rotate(180deg);
+}
+
+.copyBtnCopied {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(52, 211, 153, 0.6);
+  color: #ecfdf5;
+}
+
+.transcript {
+  margin-top: 12px;
+  border-top: 1px solid rgba(16, 185, 129, 0.14);
+  padding-top: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.transcriptItem {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  font-family: inherit;
+}
+.transcriptItem:hover {
+  background: rgba(16, 185, 129, 0.06);
+  border-color: rgba(16, 185, 129, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+}
+.transcriptItemActive {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #ecfdf5;
+  box-shadow: inset 2px 0 0 #34D399;
+}
+.transcriptItem:focus-visible {
+  outline: 2px solid #10B981;
+  outline-offset: 2px;
+}
+
+.transcriptIdx {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(52, 211, 153, 0.75);
+  padding-top: 2px;
+}
+.transcriptItemActive .transcriptIdx {
+  color: #34D399;
+}
+
+.transcriptText {
+  display: block;
+}
+
+.transcriptLabel {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.85);
+  margin-bottom: 1px;
+}
+.transcriptItemActive .transcriptLabel {
+  color: rgba(167, 243, 208, 0.95);
+}
+
+/* When the user reduces motion, snap the fill instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .scrubFill,
+  .scrubMarker {
+    transition: none;
+  }
+  .transcriptChevron {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .scene { gap: 12px; }
+  .formulaShell { padding: 18px 14px 14px; }
+  .formulaSlot { min-height: 76px; font-size: 1.15rem; }
+  .captionBar { font-size: 13px; padding: 8px 12px; }
+}

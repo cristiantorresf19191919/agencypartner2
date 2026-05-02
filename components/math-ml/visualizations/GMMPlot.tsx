@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Mafs, Coordinates, Point, Ellipse } from "mafs";
+import { Mafs, Point, Ellipse } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { SmartAxes, ViewBoxProvider } from "../primitives/SmartAxes";
 
 const PALETTE = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#A78BFA"];
 
@@ -124,7 +125,8 @@ export default function GMMPlot({ config }: Props) {
         preserveAspectRatio="contain"
         height={height}
       >
-        <Coordinates.Cartesian />
+        <ViewBoxProvider value={{ x: viewBox.x ?? [-4, 4], y: viewBox.y ?? [-4, 4] }}>
+        <SmartAxes />
 
         {/* Gaussian ellipses (isotropic approximation, 2σ boundary) */}
         {means.map((m, k) => {
@@ -165,6 +167,7 @@ export default function GMMPlot({ config }: Props) {
         {means.map((m, k) => (
           <Point key={`mu-${k}`} x={m[0]} y={m[1]} color={PALETTE[k % PALETTE.length]} />
         ))}
+        </ViewBoxProvider>
       </Mafs>
     </MafsStage>
       <div

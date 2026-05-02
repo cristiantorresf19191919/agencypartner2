@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Mafs, Coordinates, Plot, Text } from "mafs";
+import { Mafs, Plot, Text } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { SmartAxes, ViewBoxProvider } from "../primitives/SmartAxes";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -76,8 +77,9 @@ export default function BayesUpdater({ config }: Props) {
   return (
     <>
     <MafsStage accent="violet">
-      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio="contain" height={height}>
-        <Coordinates.Cartesian />
+      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio={false} height={height}>
+        <ViewBoxProvider value={{ x: domain, y: [0, yMax] }}>
+        <SmartAxes hideXNear={[mu]} />
         <Plot.OfX y={priorPdf} domain={domain} color={BLUE} style="dashed" />
         <Plot.OfX y={postPdf} domain={domain} color={EMERALD} />
         {seen.map((x, i) => (
@@ -88,6 +90,7 @@ export default function BayesUpdater({ config }: Props) {
         <Text x={mu} y={gaussianPdf(mu, mu, sigma)} color={EMERALD} size={12} attach="n" attachDistance={10}>
           {`μ=${mu.toFixed(2)}, σ=${sigma.toFixed(2)}`}
         </Text>
+        </ViewBoxProvider>
       </Mafs>
     </MafsStage>
       <div

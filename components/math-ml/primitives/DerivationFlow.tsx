@@ -24,7 +24,7 @@ export function DerivationFlow({ spec }: Props) {
   const reduced = useReducedMotion() ?? false;
 
   const ref = useRef<HTMLElement | null>(null);
-  const [revealed, setRevealed] = useState(reduced ? spec.steps.length : 0);
+  const [revealed, setRevealed] = useState(0);
 
   useEffect(() => {
     if (reduced) {
@@ -87,7 +87,7 @@ export function DerivationFlow({ spec }: Props) {
                   opacity: visible ? 1 : 0.18,
                   x: visible ? 0 : -6,
                 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: reduced ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
               >
                 <span className={styles.stepNum}>{i + 1}</span>
                 <div className={styles.stepBody}>

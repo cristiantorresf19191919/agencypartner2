@@ -74,6 +74,11 @@ const LineSystem2D = dynamic(
   { ssr: false },
 ) as VizComponent;
 
+const MathSceneViz = dynamic(
+  () => import("../scenes/MathSceneDispatcher"),
+  { ssr: false },
+) as VizComponent;
+
 const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "vector-2d": VectorPlot2D,
   "matrix-transform-2d": MatrixTransform2D,
@@ -95,6 +100,7 @@ const VIZ_MAP: Record<MMLVizType, VizComponent> = {
   "kernel-projection-3d": KernelProjection3D,
   "formula-chain": FormulaChainViz,
   "optimizer-race": OptimizerRaceViz,
+  "math-scene": MathSceneViz,
 };
 
 interface Props {

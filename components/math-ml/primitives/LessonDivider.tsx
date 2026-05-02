@@ -24,18 +24,18 @@ export function LessonDivider({ index }: Props) {
     <motion.div
       className={styles.divider}
       aria-hidden="true"
-      initial={reduced ? { opacity: 1 } : { opacity: 0 }}
+      initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: reduced ? 0 : 0.6, ease: "easeOut" }}
     >
       <span className={styles.line} />
       <motion.span
         className={styles.glyph}
-        initial={reduced ? { scale: 1 } : { scale: 0.6, rotate: -20 }}
-        whileInView={reduced ? {} : { scale: [0.6, 1.15, 1], rotate: [-20, 4, 0] }}
+        initial={{ scale: 0.6, rotate: -20 }}
+        whileInView={reduced ? { scale: 1, rotate: 0 } : { scale: [0.6, 1.15, 1], rotate: [-20, 4, 0] }}
         viewport={{ once: true }}
-        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: reduced ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }}
       >
         {glyph}
       </motion.span>

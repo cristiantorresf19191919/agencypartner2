@@ -4199,17 +4199,22 @@
 
 
 /* ===================================================================
-   Narration overlay — cinematic captions inside a viz stage
+   Narration strip — cinematic captions ABOVE the viz canvas
+   (Previously rendered as an overlay on the plot — moved out so beats
+   never collide with curves, vectors, or axis labels.)
    =================================================================== */
 .narrationLayer {
-  position: absolute;
-  inset: 0;
+  position: relative;
   z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px 10px;
   pointer-events: none;
 }
 
 .narrationBeat {
-  position: absolute;
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -4226,7 +4231,7 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 999px;
-  max-width: min(340px, 76%);
+  max-width: min(420px, 100%);
   line-height: 1.4;
   white-space: normal;
 }
@@ -4239,21 +4244,6 @@
   box-shadow: 0 0 10px var(--stage-accent-glow);
   flex-shrink: 0;
 }
-
-/* Anchors — stack vertically with a 6px gap when anchored to the same corner */
-.narrationTL { top: 14px;    left: 14px; }
-.narrationTR { top: 14px;    right: 14px; }
-.narrationBL { bottom: 14px; left: 14px; }
-.narrationBR { bottom: 14px; right: 14px; }
-
-.narrationLayer .narrationTL ~ .narrationTL { transform: translateY(34px); }
-.narrationLayer .narrationTL ~ .narrationTL ~ .narrationTL { transform: translateY(68px); }
-.narrationLayer .narrationTR ~ .narrationTR { transform: translateY(34px); }
-.narrationLayer .narrationTR ~ .narrationTR ~ .narrationTR { transform: translateY(68px); }
-.narrationLayer .narrationBL ~ .narrationBL { transform: translateY(-34px); }
-.narrationLayer .narrationBL ~ .narrationBL ~ .narrationBL { transform: translateY(-68px); }
-.narrationLayer .narrationBR ~ .narrationBR { transform: translateY(-34px); }
-.narrationLayer .narrationBR ~ .narrationBR ~ .narrationBR { transform: translateY(-68px); }
 
 /* ===================================================================
    Bolder Mafs strokes — push curves and vectors above the grid
@@ -4390,23 +4380,16 @@
     border-radius: 12px;
   }
 
-  /* Narration captions — keep readable, never wider than ~78% */
+  /* Narration strip — tighter padding on phones */
+  .narrationLayer {
+    padding: 10px 10px 8px;
+    gap: 6px;
+  }
   .narrationBeat {
     font-size: 11.5px;
     padding: 5px 10px 5px 9px;
-    max-width: 78%;
     line-height: 1.35;
   }
-  .narrationTL { top: 10px; left: 10px; }
-  .narrationTR { top: 10px; right: 10px; }
-  .narrationBL { bottom: 10px; left: 10px; }
-  .narrationBR { bottom: 10px; right: 10px; }
-
-  /* Stack vertical offsets are tighter on phones */
-  .narrationLayer .narrationTL ~ .narrationTL { transform: translateY(28px); }
-  .narrationLayer .narrationTL ~ .narrationTL ~ .narrationTL { transform: translateY(56px); }
-  .narrationLayer .narrationTR ~ .narrationTR { transform: translateY(28px); }
-  .narrationLayer .narrationTR ~ .narrationTR ~ .narrationTR { transform: translateY(56px); }
 
   /* Zoomable controls — easier touch target on phones */
   .zoomControls {
@@ -4439,11 +4422,10 @@
   }
   .narrationBeat {
     font-size: 11px;
-    max-width: 84%;
   }
-  /* Hide non-primary narration beats on the smallest phones to avoid stacking issues */
-  .narrationLayer .narrationTL ~ .narrationTL ~ .narrationTL,
-  .narrationLayer .narrationTR ~ .narrationTR ~ .narrationTR {
+  /* On the smallest phones, hide overflow beats — strip wrapping handles
+     the rest gracefully. */
+  .narrationLayer .narrationBeat:nth-child(n + 4) {
     display: none;
   }
 }

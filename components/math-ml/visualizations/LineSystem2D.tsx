@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Coordinates, Line, Text } from "mafs";
+import { Line, Text } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 import { ZoomableMafs } from "../primitives/ZoomableMafs";
+import { SmartAxes } from "../primitives/SmartAxes";
 import { LabeledMarker } from "../primitives/LabeledMarker";
 import type { NarrationBeat } from "../primitives/Narration";
 
@@ -51,8 +52,11 @@ function autoViewBox(
 ): { x: [number, number]; y: [number, number] } {
   const cx = solution ? solution[0] : 0;
   const cy = solution ? solution[1] : 0;
-  const span = Math.max(4, Math.abs(cx) + Math.abs(cy) + 4);
-  return { x: [cx - span, cx + span], y: [cy - span, cy + span] };
+  // Tight viewport: cover origin + solution + small padding. Aspect ratio is
+  // not preserved, so x/y can stay independent.
+  const halfX = Math.max(3, Math.abs(cx) + 2.5);
+  const halfY = Math.max(3, Math.abs(cy) + 2.5);
+  return { x: [cx - halfX, cx + halfX], y: [cy - halfY, cy + halfY] };
 }
 
 export default function LineSystem2D({ config }: Props) {
@@ -66,17 +70,35 @@ export default function LineSystem2D({ config }: Props) {
   };
   const height = useMafsHeight(360);
 
+  const hideXNear = solution ? [solution[0]] : [];
+  const hideYNear = solution ? [solution[1]] : [];
+
   return (
     <MafsStage accent="emerald" narration={cfg.narration}>
-      <ZoomableMafs viewBox={view} height={height}>
-        <Coordinates.Cartesian />
+      <ZoomableMafs
+        viewBox={view}
+        height={height}
+        preserveAspectRatio={false}
+      >
+        <SmartAxes hideXNear={hideXNear} hideYNear={hideYNear} />
         {lines.map((line, i) => {
           const [p1, p2] = endpointsForLine(line);
           const color = PALETTE[i % PALETTE.length];
+          // Stagger label x-positions across lines so multi-line systems don't
+          // stack labels on top of each other near the intersection.
+          const labelX =
+            view.x[0] + ((i + 1) * (view.x[1] - view.x[0])) / (lines.length + 1);
           return (
             <React.Fragment key={`line-${i}`}>
               <Line.ThroughPoints point1={p1} point2={p2} color={color} weight={2.6} />
-              {line.label ? <LabelOnLine line={line} color={color} /> : null}
+              {line.label ? (
+                <LabelOnLine
+                  line={line}
+                  color={color}
+                  preferX={labelX}
+                  avoid={solution}
+                />
+              ) : null}
             </React.Fragment>
           );
         })}
@@ -98,16 +120,31 @@ export default function LineSystem2D({ config }: Props) {
 }
 
 /**
- * Labels a line near a comfortable point — slightly offset from the y-axis so
- * the caption is always visible regardless of slope.
+ * Labels a line at `preferX`, but nudges away if too close to the system's
+ * intersection point so equation labels don't collide with the solution dot.
  */
-function LabelOnLine({ line, color }: { line: LineSpec; color: string }) {
+function LabelOnLine({
+  line,
+  color,
+  preferX,
+  avoid,
+}: {
+  line: LineSpec;
+  color: string;
+  preferX: number;
+  avoid?: [number, number];
+}) {
   const { a, b, c, label } = line;
-  // Pick an x slightly off the y-axis; compute y from the equation.
-  const x = Math.abs(b) > 1e-9 ? 1.6 : c / Math.max(a, 1e-9);
-  const y = Math.abs(b) > 1e-9 ? (c - a * x) / b : 0;
+  let x = preferX;
+  if (avoid && Math.abs(x - avoid[0]) < 1.2) {
+    // Push at least 1.5 units away from the intersection point.
+    x = x < avoid[0] ? avoid[0] - 1.8 : avoid[0] + 1.8;
+  }
+  const isVertical = Math.abs(b) < 1e-9;
+  const px = isVertical ? c / Math.max(a, 1e-9) : x;
+  const py = isVertical ? 0 : (c - a * x) / b;
   return (
-    <Text x={x} y={y} attach="ne" attachDistance={10} color={color} size={14}>
+    <Text x={px} y={py} attach="ne" attachDistance={10} color={color} size={14}>
       {label ?? ""}
     </Text>
   );

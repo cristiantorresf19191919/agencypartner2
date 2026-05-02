@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Coordinates, Vector, Polygon, Text } from "mafs";
+import { Vector, Polygon, Text } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 import { ZoomableMafs } from "../primitives/ZoomableMafs";
+import { SmartAxes, fitContent } from "../primitives/SmartAxes";
 import type { NarrationBeat } from "../primitives/Narration";
 
 const EMERALD = "#10B981";
@@ -41,7 +42,7 @@ export default function MatrixTransform2D({ config }: Props) {
     [1, 2],
   ];
   const showBasis = cfg.showBasis ?? true;
-  const viewBox = cfg.viewBox ?? { x: [-5, 5], y: [-5, 5] };
+  const viewBox = cfg.viewBox;
 
   const [t, setT] = useState(1);
 
@@ -57,26 +58,41 @@ export default function MatrixTransform2D({ config }: Props) {
   ];
 
   const det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
-  const height = useMafsHeight(340);
+  const height = useMafsHeight(360);
 
-  const autoSpan = useMemo(() => {
-    const corners = [e1, e2, [e1[0] + e2[0], e1[1] + e2[1]] as [number, number]];
-    let mx = 1.5;
-    for (const [x, y] of corners) {
-      mx = Math.max(mx, Math.abs(x), Math.abs(y));
-    }
-    return Math.max(3, Math.ceil(mx * 1.5));
+  // Cover the unit square (always shown), the transformed parallelogram, and a
+  // little padding. Centered on origin so the geometry stays balanced.
+  const auto = useMemo(() => {
+    const corners: Array<{ x: number; y: number }> = [
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+      { x: e1[0], y: e1[1] },
+      { x: e2[0], y: e2[1] },
+      { x: e1[0] + e2[0], y: e1[1] + e2[1] },
+    ];
+    return fitContent(corners, {
+      padding: 0.22,
+      minHalfSpanX: 1.6,
+      minHalfSpanY: 1.6,
+      centerOnZero: true,
+    });
   }, [e1, e2]);
   const view = {
-    x: viewBox.x ?? ([-autoSpan, autoSpan] as [number, number]),
-    y: viewBox.y ?? ([-autoSpan, autoSpan] as [number, number]),
+    x: viewBox?.x ?? auto.x,
+    y: viewBox?.y ?? auto.y,
   };
+
+  // Suppress tick labels under the vector-tip captions.
+  const hideXNear = useMemo(() => [e1[0], e2[0]], [e1, e2]);
+  const hideYNear = useMemo(() => [e1[1], e2[1]], [e1, e2]);
 
   return (
     <>
     <MafsStage accent="emerald" narration={cfg.narration}>
       <ZoomableMafs viewBox={view} height={height}>
-        <Coordinates.Cartesian />
+        <SmartAxes hideXNear={hideXNear} hideYNear={hideYNear} />
 
         <Polygon
           points={[

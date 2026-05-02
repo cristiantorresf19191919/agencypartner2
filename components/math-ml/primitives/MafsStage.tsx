@@ -124,10 +124,10 @@ export function MafsStage({
           />
         ))}
       </div>
-      <div className={styles.mafsStageContent}>{children}</div>
       {narration && narration.length > 0 ? (
         <Narration beats={narration} lang={lang} />
       ) : null}
+      <div className={styles.mafsStageContent}>{children}</div>
       <div className={styles.mafsStageGlow} aria-hidden="true" />
       <div className={styles.mafsStageVignette} aria-hidden="true" />
     </div>

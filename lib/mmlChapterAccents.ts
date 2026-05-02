@@ -57,6 +57,7 @@ const CHAPTER_TABLE: Record<
   10: { name: "violet",  glyph: "ellipse",       tagline: { en: "Principal Component Analysis", es: "PCA" } },
   11: { name: "amber",   glyph: "clusters",      tagline: { en: "Gaussian Mixture Models", es: "Mezclas gaussianas" } },
   12: { name: "rose",    glyph: "hyperplane",    tagline: { en: "Support Vector Machines", es: "SVM" } },
+  13: { name: "blue",    glyph: "gradient",      tagline: { en: "Deep Learning Foundations", es: "Fundamentos de Deep Learning" } },
 };
 
 const FALLBACK = CHAPTER_TABLE[2];

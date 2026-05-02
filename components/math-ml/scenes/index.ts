@@ -1,0 +1,12 @@
+export { default as LinearSystemScene } from "./LinearSystemScene";
+export { default as MatrixTransformScene } from "./MatrixTransformScene";
+export { default as EigenStretchScene } from "./EigenStretchScene";
+export { default as DotProductScene } from "./DotProductScene";
+export { default as ProjectionScene } from "./ProjectionScene";
+export { default as GradientDescentScene } from "./GradientDescentScene";
+export { default as GaussianScene } from "./GaussianScene";
+export { default as NormBallsScene } from "./NormBallsScene";
+export { default as ChainRuleScene } from "./ChainRuleScene";
+export { default as TaylorScene } from "./TaylorScene";
+export { MathScene, type MathScenePhase } from "./MathScene";
+export { useScenePlayer } from "./useScenePlayer";

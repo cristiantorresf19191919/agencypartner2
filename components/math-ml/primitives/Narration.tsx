@@ -9,7 +9,10 @@ export interface NarrationBeat {
   text: string;
   /** Spanish overlay; renderer picks based on lesson locale (handled upstream). */
   textEs?: string;
-  /** Where to anchor the beat. Defaults to top-left. */
+  /**
+   * Legacy anchor — kept for backwards compatibility but no longer affects
+   * placement. Beats now render in a strip above the canvas.
+   */
   anchor?: "tl" | "tr" | "bl" | "br";
 }
 
@@ -37,7 +40,7 @@ export function Narration({
 }: NarrationProps) {
   const reduced = useReducedMotion() ?? false;
   const ref = useRef<HTMLDivElement | null>(null);
-  const [visibleCount, setVisibleCount] = useState(reduced ? beats.length : 0);
+  const [visibleCount, setVisibleCount] = useState(0);
 
   useEffect(() => {
     if (reduced || beats.length === 0) {
@@ -81,12 +84,11 @@ export function Narration({
     <div ref={ref} className={styles.narrationLayer} aria-live="polite">
       {beats.map((beat, i) => {
         const text = lang === "es" && beat.textEs ? beat.textEs : beat.text;
-        const anchor = beat.anchor ?? "tl";
         const visible = i < visibleCount;
         return (
           <motion.span
             key={`beat-${i}`}
-            className={`${styles.narrationBeat} ${anchorClass(anchor)}`}
+            className={styles.narrationBeat}
             initial={false}
             animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : -4 }}
             transition={{ duration: fadeMs / 1000, ease: "easeOut" }}
@@ -98,19 +100,6 @@ export function Narration({
       })}
     </div>
   );
-}
-
-function anchorClass(a: NarrationBeat["anchor"]): string {
-  switch (a) {
-    case "tr":
-      return styles.narrationTR;
-    case "bl":
-      return styles.narrationBL;
-    case "br":
-      return styles.narrationBR;
-    default:
-      return styles.narrationTL;
-  }
 }
 
 export default Narration;

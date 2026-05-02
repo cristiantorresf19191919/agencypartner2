@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Mafs, Coordinates, Plot, Point, Polyline } from "mafs";
+import { Mafs, Plot, Point, Polyline } from "mafs";
+import { SmartAxes, ViewBoxProvider } from "../primitives/SmartAxes";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 
@@ -469,7 +470,8 @@ export default function OptimizerRace({ config }: Props) {
             preserveAspectRatio="contain"
             height={height}
           >
-            <Coordinates.Cartesian />
+            <ViewBoxProvider value={surface.viewBox}>
+            <SmartAxes />
             {levelLines}
             {rosenValley}
             {trailLine(trajectories.sgd, COLORS.sgd)}
@@ -491,6 +493,7 @@ export default function OptimizerRace({ config }: Props) {
               y={stateRef.current.adam.pos[1]}
               color={COLORS.adam}
             />
+            </ViewBoxProvider>
           </Mafs>
         </div>
 

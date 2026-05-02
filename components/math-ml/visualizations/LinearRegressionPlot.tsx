@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Mafs, Coordinates, Plot, Point, Line } from "mafs";
+import { Plot, Point, Line } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { ZoomableMafs } from "../primitives/ZoomableMafs";
+import { SmartAxes, fitContent } from "../primitives/SmartAxes";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -53,7 +55,14 @@ export default function LinearRegressionPlot({ config }: Props) {
   ];
   const pts: [number, number][] = raw.map((p) => [Number(p[0]) || 0, Number(p[1]) || 0]);
   const showResiduals = cfg.showResiduals ?? true;
-  const viewBox = cfg.viewBox ?? { x: [-5, 5], y: [-5, 5] };
+  const auto = useMemo(
+    () => fitContent(pts.map(([x, y]) => ({ x, y })), { padding: 0.18 }),
+    [pts],
+  );
+  const viewBox = {
+    x: cfg.viewBox?.x ?? auto.x,
+    y: cfg.viewBox?.y ?? auto.y,
+  };
 
   const { slope, intercept } = useMemo(() => ordinaryLeastSquares(pts), [pts]);
 
@@ -74,13 +83,13 @@ export default function LinearRegressionPlot({ config }: Props) {
   return (
     <>
     <MafsStage accent="blue">
-      <Mafs
-        viewBox={{ x: viewBox.x ?? [-5, 5], y: viewBox.y ?? [-5, 5] }}
-        preserveAspectRatio="contain"
+      <ZoomableMafs
+        viewBox={viewBox}
+        preserveAspectRatio={false}
         height={height}
       >
-        <Coordinates.Cartesian />
-        <Plot.OfX y={fitLine} domain={viewBox.x ?? [-5, 5]} color={EMERALD} />
+        <SmartAxes />
+        <Plot.OfX y={fitLine} domain={viewBox.x} color={EMERALD} />
         {showResiduals &&
           pts.map((p, i) => (
             <Line.Segment
@@ -95,7 +104,7 @@ export default function LinearRegressionPlot({ config }: Props) {
         {pts.map((p, i) => (
           <Point key={`pt-${i}`} x={p[0]} y={p[1]} color={BLUE} />
         ))}
-      </Mafs>
+      </ZoomableMafs>
     </MafsStage>
       <div
         style={{

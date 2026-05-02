@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Mafs, Coordinates, Plot, Point, Line } from "mafs";
+import { Mafs, Plot, Point, Line } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { SmartAxes, ViewBoxProvider } from "../primitives/SmartAxes";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -99,10 +100,11 @@ export default function SVMPlot({ config }: Props) {
     <MafsStage accent="emerald">
       <Mafs
         viewBox={{ x: viewBox.x ?? [-4, 4], y: viewBox.y ?? [-4, 4] }}
-        preserveAspectRatio="contain"
+        preserveAspectRatio={false}
         height={height}
       >
-        <Coordinates.Cartesian />
+        <ViewBoxProvider value={{ x: viewBox.x ?? [-4, 4], y: viewBox.y ?? [-4, 4] }}>
+        <SmartAxes />
 
         <Plot.OfX y={decision} domain={viewBox.x ?? [-4, 4]} color={EMERALD} />
         {showMargin && (
@@ -127,6 +129,7 @@ export default function SVMPlot({ config }: Props) {
 
         {/* explicit ref to Line so import is used even in odd configs */}
         {false && <Line.Segment point1={[0, 0]} point2={[1, 1]} color={EMERALD} />}
+        </ViewBoxProvider>
       </Mafs>
     </MafsStage>
       <div

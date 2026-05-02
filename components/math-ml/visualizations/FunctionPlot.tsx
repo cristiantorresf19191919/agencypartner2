@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Coordinates, Plot, Point, Text, useMovablePoint } from "mafs";
+import { Plot, Point, Text, useMovablePoint } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
 import { ZoomableMafs } from "../primitives/ZoomableMafs";
+import { SmartAxes } from "../primitives/SmartAxes";
 import { LabeledMarker, type AccentName, type MarkerKind } from "../primitives/LabeledMarker";
 import type { NarrationBeat } from "../primitives/Narration";
 
@@ -134,7 +135,7 @@ function autoYDomain(
     }
   }
   if (!Number.isFinite(lo) || !Number.isFinite(hi)) return [-5, 5];
-  const pad = Math.max(0.5, (hi - lo) * 0.15);
+  const pad = Math.max(0.5, (hi - lo) * 0.12);
   return [lo - pad, hi + pad];
 }
 
@@ -166,10 +167,25 @@ export default function FunctionPlot({ config }: Props) {
     [cfg.yDomain, f, domain],
   );
 
+  const hideXNear = useMemo(() => {
+    const xs = [ax];
+    (cfg.markers ?? []).forEach((m) => xs.push(m.x));
+    return xs;
+  }, [ax, cfg.markers]);
+  const hideYNear = useMemo(() => {
+    const ys = [fa];
+    (cfg.markers ?? []).forEach((m) => ys.push(m.y));
+    return ys;
+  }, [fa, cfg.markers]);
+
   return (
     <MafsStage accent="blue" narration={cfg.narration}>
-      <ZoomableMafs viewBox={{ x: domain, y: yDomain }} height={height}>
-        <Coordinates.Cartesian />
+      <ZoomableMafs
+        viewBox={{ x: domain, y: yDomain }}
+        height={height}
+        preserveAspectRatio={false}
+      >
+        <SmartAxes hideXNear={hideXNear} hideYNear={hideYNear} />
         <Plot.OfX y={f} domain={domain} color={BLUE} weight={2.6} />
         {showTangent && (
           <Plot.OfX y={tangentY} domain={domain} color={AMBER} style="dashed" weight={2.2} />

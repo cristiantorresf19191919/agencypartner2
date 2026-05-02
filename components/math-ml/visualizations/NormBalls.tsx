@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mafs, Coordinates, Circle, Polygon, Text } from "mafs";
+import { Mafs, Circle, Polygon, Text } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { SmartAxes, ViewBoxProvider } from "../primitives/SmartAxes";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -54,7 +55,8 @@ export default function NormBalls({ config }: Props) {
     <>
     <MafsStage accent="amber">
       <Mafs viewBox={{ x: [-2, 2], y: [-2, 2] }} preserveAspectRatio="contain" height={height}>
-        <Coordinates.Cartesian />
+        <ViewBoxProvider value={{ x: [-2, 2], y: [-2, 2] }}>
+        <SmartAxes />
         {active.l1 && (
           <>
             <Polygon points={l1Points} color={AMBER} fillOpacity={0.18} />
@@ -79,6 +81,7 @@ export default function NormBalls({ config }: Props) {
             </Text>
           </>
         )}
+        </ViewBoxProvider>
       </Mafs>
     </MafsStage>
       <div

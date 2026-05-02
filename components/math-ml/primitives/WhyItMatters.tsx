@@ -26,10 +26,10 @@ export function WhyItMatters({ spec }: Props) {
   return (
     <motion.aside
       className={styles.card}
-      initial={reduced ? { opacity: 1 } : { opacity: 0, y: 14 }}
+      initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: reduced ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className={styles.glow} aria-hidden="true" />
       <header className={styles.head}>

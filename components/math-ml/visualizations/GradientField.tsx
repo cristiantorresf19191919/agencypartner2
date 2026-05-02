@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Mafs, Coordinates, Plot, Line, Point } from "mafs";
+import { Mafs, Plot, Line, Point } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { SmartAxes, ViewBoxProvider } from "../primitives/SmartAxes";
 
 const EMERALD = "#10B981";
 const AMBER = "#F59E0B";
@@ -90,7 +91,8 @@ export default function GradientField({ config }: Props) {
         preserveAspectRatio="contain"
         height={height}
       >
-        <Coordinates.Cartesian />
+        <ViewBoxProvider value={{ x: viewBox.x ?? [-4, 4], y: viewBox.y ?? [-4, 4] }}>
+        <SmartAxes />
         <Plot.VectorField xy={fieldFn} step={0.6} color={EMERALD} />
 
         {showTraj &&
@@ -111,6 +113,7 @@ export default function GradientField({ config }: Props) {
         {showTraj && trajectory[0] && (
           <Point x={trajectory[0][0]} y={trajectory[0][1]} color={RED} />
         )}
+        </ViewBoxProvider>
       </Mafs>
     </MafsStage>
       <div

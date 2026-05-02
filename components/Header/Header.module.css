@@ -540,15 +540,30 @@
   font-weight: 500;
   font-size: 0.9375rem;
   letter-spacing: 0.01em;
-  transition:
-    color 0.25s ease,
-    background 0.25s ease,
-    box-shadow 0.25s ease;
+  isolation: isolate;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.developerNavLinks .gradientLink::before {
+  content: '';
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, rgba(160, 106, 249, 0.14), rgba(53, 228, 178, 0.10));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .developerNavLinks .gradientLink:hover {
-  background: rgba(167, 139, 250, 0.1);
-  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.15);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.22);
+  transform: translateY(-1px);
+}
+
+.developerNavLinks .gradientLink:hover::before {
+  opacity: 1;
 }
 
 .developerNavLinks .gradientLink::after {

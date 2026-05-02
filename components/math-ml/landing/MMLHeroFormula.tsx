@@ -56,9 +56,9 @@ export function MMLHeroFormula() {
     <motion.div
       ref={ref}
       className={styles.band}
-      initial={reduced ? { opacity: 1 } : { opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: reduced ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
       aria-hidden="true"
     >
       <div className={styles.aurora} />

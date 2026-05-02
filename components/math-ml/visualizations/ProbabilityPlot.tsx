@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Mafs, Coordinates, Plot } from "mafs";
+import { Mafs, Plot } from "mafs";
 import "mafs/core.css";
 import { MafsStage, useMafsHeight } from "../primitives/MafsStage";
+import { SmartAxes, ViewBoxProvider } from "../primitives/SmartAxes";
 
 const EMERALD = "#10B981";
 const BLUE = "#3B82F6";
@@ -95,10 +96,12 @@ export default function ProbabilityPlot({ config }: Props) {
   return (
     <>
     <MafsStage accent="violet">
-      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio="contain" height={height}>
-        <Coordinates.Cartesian />
+      <Mafs viewBox={{ x: domain, y: [0, yMax] }} preserveAspectRatio={false} height={height}>
+        <ViewBoxProvider value={{ x: domain, y: [0, yMax] }}>
+        <SmartAxes />
         <Plot.OfX y={pdf} domain={domain} color={EMERALD} />
         <Plot.Inequality y={{ "<": pdf, ">": () => 0 }} color={EMERALD} fillOpacity={0.15} />
+        </ViewBoxProvider>
       </Mafs>
     </MafsStage>
       <div

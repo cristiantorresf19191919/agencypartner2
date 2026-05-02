@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { Mafs } from "mafs";
 import "mafs/core.css";
+import { ViewBoxProvider } from "./SmartAxes";
 import styles from "../MathML.module.css";
 
 export interface ViewBox {
@@ -118,57 +119,85 @@ export function ZoomableMafs({
     return () => el.removeEventListener("wheel", onWheel);
   }, [minSpan, maxSpan]);
 
-  // Drag to pan
+  // Drag to pan. We install document-level move/up listeners only while a drag
+  // is active. React pointer events + setPointerCapture were unreliable when
+  // the pointer crosses Mafs' inner SVG — release events sometimes never made
+  // it back to the container, so the canvas stayed glued to the cursor.
   const dragRef = useRef<{
     startX: number;
     startY: number;
     startVB: ViewBox;
     width: number;
     height: number;
+    cleanup: () => void;
   } | null>(null);
 
+  const stopDrag = useCallback(() => {
+    const drag = dragRef.current;
+    if (!drag) return;
+    dragRef.current = null;
+    drag.cleanup();
+  }, []);
+
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    // Skip if user clicked a Mafs interactive (movable point) or our buttons
+    // Only respond to the primary (left) mouse button. Touch/pen report 0.
+    if (e.button !== 0) return;
+    // Skip if user clicked a Mafs interactive (movable point) or our buttons.
     const target = e.target as HTMLElement;
     if (target.closest("button") || target.closest("[data-mafs-movable]")) return;
     const el = containerRef.current;
     if (!el) return;
+
+    // Tear down any prior drag (defensive — should already be null).
+    if (dragRef.current) dragRef.current.cleanup();
+
     const rect = el.getBoundingClientRect();
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      startVB: viewBox,
-      width: rect.width,
-      height: rect.height,
-    };
-    el.setPointerCapture(e.pointerId);
-  }, [viewBox]);
+    const startVB = viewBox;
+    const width = rect.width;
+    const height = rect.height;
+    const startX = e.clientX;
+    const startY = e.clientY;
 
-  const onPointerMove = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      const drag = dragRef.current;
-      if (!drag) return;
-      const dxPx = e.clientX - drag.startX;
-      const dyPx = e.clientY - drag.startY;
-      const xRange = drag.startVB.x[1] - drag.startVB.x[0];
-      const yRange = drag.startVB.y[1] - drag.startVB.y[0];
-      const dx = -(dxPx / drag.width) * xRange;
-      const dy = (dyPx / drag.height) * yRange; // y flipped
-      setViewBox(panVB(drag.startVB, dx, dy));
-    },
-    [],
-  );
-
-  const onPointerUp = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      dragRef.current = null;
-      const el = containerRef.current;
-      if (el && el.hasPointerCapture(e.pointerId)) {
-        el.releasePointerCapture(e.pointerId);
+    const handleMove = (ev: PointerEvent) => {
+      // Bail if mouse buttons were released outside the document (e.g. context
+      // menu, dragged into another window). Touch/pen leave buttons === 0.
+      if (ev.pointerType === "mouse" && ev.buttons === 0) {
+        stopDrag();
+        return;
       }
-    },
-    [],
-  );
+      const dxPx = ev.clientX - startX;
+      const dyPx = ev.clientY - startY;
+      const xRange = startVB.x[1] - startVB.x[0];
+      const yRange = startVB.y[1] - startVB.y[0];
+      const dx = -(dxPx / width) * xRange;
+      const dy = (dyPx / height) * yRange; // y flipped
+      setViewBox(panVB(startVB, dx, dy));
+    };
+
+    const handleUp = () => stopDrag();
+
+    document.addEventListener("pointermove", handleMove);
+    document.addEventListener("pointerup", handleUp);
+    document.addEventListener("pointercancel", handleUp);
+    window.addEventListener("blur", handleUp);
+
+    dragRef.current = {
+      startX,
+      startY,
+      startVB,
+      width,
+      height,
+      cleanup: () => {
+        document.removeEventListener("pointermove", handleMove);
+        document.removeEventListener("pointerup", handleUp);
+        document.removeEventListener("pointercancel", handleUp);
+        window.removeEventListener("blur", handleUp);
+      },
+    };
+  }, [viewBox, stopDrag]);
+
+  // Clean up dangling listeners if the component unmounts mid-drag.
+  useEffect(() => () => stopDrag(), [stopDrag]);
 
   // Pinch zoom on touch (basic two-finger gesture)
   const pinchRef = useRef<{ startDist: number; startVB: ViewBox } | null>(null);
@@ -208,9 +237,6 @@ export function ZoomableMafs({
       ref={containerRef}
       className={styles.zoomableMafs}
       onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -222,7 +248,7 @@ export function ZoomableMafs({
         preserveAspectRatio={preserveAspectRatio}
         height={height}
       >
-        {memoChildren}
+        <ViewBoxProvider value={viewBox}>{memoChildren}</ViewBoxProvider>
       </Mafs>
 
       <div className={styles.zoomControls} aria-hidden="false">

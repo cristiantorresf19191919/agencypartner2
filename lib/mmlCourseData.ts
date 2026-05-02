@@ -269,6 +269,20 @@ print("y_hat(2.5) =", np.dot(w, [1.0, 2.5]))`,
       ],
       visualizations: [
         {
+          type: "math-scene",
+          title: "From two lines to Ax = b — animated",
+          titleEs: "De dos rectas a Ax = b — animado",
+          description:
+            "Six choreographed phases: lines draw on, the intersection pulses in, coordinate guides drop to the axes, and the system snaps into matrix form.",
+          descriptionEs:
+            "Seis fases coreografiadas: las rectas se dibujan, la intersección emerge, los ejes muestran las coordenadas y el sistema se reacomoda en forma matricial.",
+          config: {
+            kind: "linear-system",
+            line1: { a: 2, b: 3, c: 7 },
+            line2: { a: 1, b: -1, c: 1 },
+          },
+        },
+        {
           type: "linear-system-2d",
           title: "Two equations, one intersection",
           description: "The equations $2x + 3y = 7$ and $x - y = 1$ meet at $(2, 1)$. Each line is one equation; their crossing point is the unique solution.",
@@ -577,6 +591,22 @@ print(w)  # [intercept, slope]`,
         "**Worked example — inverse of a 2×2:** For $A = \\begin{pmatrix}a & b \\\\ c & d\\end{pmatrix}$ with $ad - bc \\neq 0$, $A^{-1} = \\frac{1}{ad-bc}\\begin{pmatrix}d & -b \\\\ -c & a\\end{pmatrix}$. For $A = \\begin{pmatrix}2 & 1 \\\\ 1 & 1\\end{pmatrix}$, $\\det = 2 - 1 = 1$, so $A^{-1} = \\begin{pmatrix}1 & -1 \\\\ -1 & 2\\end{pmatrix}$. Verify: $AA^{-1} = \\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix} = I$ ✓.",
       ],
       visualizations: [
+        {
+          type: "math-scene",
+          title: "Read A column-by-column — animated",
+          titleEs: "Lee A columna a columna — animado",
+          description:
+            "The basis vectors e₁ and e₂ slide to the columns of A while the unit square morphs into the parallelogram, ending on det A.",
+          descriptionEs:
+            "Los vectores base e₁ y e₂ se desplazan a las columnas de A mientras el cuadrado unidad se convierte en el paralelogramo, terminando en det A.",
+          config: {
+            kind: "matrix-transform",
+            matrix: [
+              [2, 1],
+              [1, 2],
+            ],
+          },
+        },
         {
           type: "matrix-transform-2d",
           title: "A matrix is a linear transformation",
@@ -1384,6 +1414,18 @@ net = nn.Sequential(
       ],
       visualizations: [
         {
+          type: "math-scene",
+          title: "L¹ → L² → L∞ — animated unit balls",
+          titleEs: "L¹ → L² → L∞ — bolas unitarias animadas",
+          description:
+            "Five phases: build the diamond, swap to the circle, then the square, finally overlay all three. Each ball is the set of vectors of length 1 under that norm.",
+          descriptionEs:
+            "Cinco fases: construye el rombo, pasa al círculo, luego al cuadrado, finalmente superpón los tres. Cada bola es el conjunto de vectores de longitud 1 bajo esa norma.",
+          config: {
+            kind: "norm-balls",
+          },
+        },
+        {
           type: "norm-balls",
           title: "Unit balls of $L_1$, $L_2$, $L_\\infty$",
           description: "The set $\\{\\mathbf{x} : \\|\\mathbf{x}\\|_p = 1\\}$ — a diamond, circle, and square respectively. Same vectors, different definitions of length.",
@@ -1565,6 +1607,20 @@ print("L2 nonzero:", (ridge.coef_ != 0).sum())`,
         "In ML, inner products are the atom of **similarity**. Cosine similarity $\\frac{\\langle \\mathbf{u}, \\mathbf{v}\\rangle}{\\|\\mathbf{u}\\|\\|\\mathbf{v}\\|}$ measures how aligned two vectors are regardless of magnitude — central to word embeddings and retrieval. **Kernel methods** (like the kernel trick in SVMs) replace the standard dot product with $\\kappa(\\mathbf{u}, \\mathbf{v}) = \\langle \\phi(\\mathbf{u}), \\phi(\\mathbf{v})\\rangle$ where $\\phi$ implicitly maps data into a higher-dimensional feature space, never computing $\\phi$ directly.",
       ],
       visualizations: [
+        {
+          type: "math-scene",
+          title: "Dot product, two ways — animated",
+          titleEs: "Producto punto, dos formas — animado",
+          description:
+            "Five phases connect the algebra (multiply matching coords) to the geometry (project a onto b, then ‖a‖‖b‖cos θ).",
+          descriptionEs:
+            "Cinco fases conectan el álgebra (multiplica coordenadas) con la geometría (proyecta a sobre b, luego ‖a‖‖b‖cos θ).",
+          config: {
+            kind: "dot-product",
+            a: [3, 1],
+            b: [2, 3],
+          },
+        },
         {
           type: "vector-2d",
           title: "Dot product as alignment",
@@ -2105,6 +2161,20 @@ np.allclose(basis @ basis.T, np.eye(3))   # True`,
       ],
       visualizations: [
         {
+          type: "math-scene",
+          title: "Project v onto u — animated decomposition",
+          titleEs: "Proyecta v sobre u — descomposición animada",
+          description:
+            "Six phases: extend u into a line, drop the perpendicular, reveal the projection foot, close the residual triangle, and read off (v·u)/(u·u).",
+          descriptionEs:
+            "Seis fases: extiende u en una recta, traza la perpendicular, revela el pie de proyección, cierra el triángulo del residuo y lee (v·u)/(u·u).",
+          config: {
+            kind: "projection",
+            v: [3, 2],
+            u: [4, 1],
+          },
+        },
+        {
           type: "vector-2d",
           title: "Projecting a vector onto a line",
           description: "$\\mathbf{v} = (3, 2)$ projects onto the line $\\text{span}(1, 1)$ giving $\\pi(\\mathbf{v}) = (2.5, 2.5)$. The residual $\\mathbf{v} - \\pi(\\mathbf{v})$ is perpendicular to the line.",
@@ -2440,6 +2510,22 @@ log_det = torch.diag(J).abs().log().sum()  # O(n)`,
         "Eigenvalues unlock enormous parts of ML. **PCA** extracts the top eigenvectors of the covariance matrix as principal directions. **Spectral clustering** uses eigenvectors of the graph Laplacian. **Google's PageRank** is the dominant eigenvector of a stochastic matrix. Even the stability of a neural-network dynamical system hinges on whether the Jacobian's eigenvalues lie inside the unit disk.",
       ],
       visualizations: [
+        {
+          type: "math-scene",
+          title: "Av = λv — five animated phases",
+          titleEs: "Av = λv — cinco fases animadas",
+          description:
+            "A fan of unit vectors transforms under A; most rotate and stretch, but two special directions only stretch — those are the eigenvectors, and λ are their stretch factors.",
+          descriptionEs:
+            "Un abanico de vectores unitarios se transforma bajo A; la mayoría rota y se estira, pero dos direcciones especiales sólo se estiran — son los autovectores, y λ son sus factores de estiramiento.",
+          config: {
+            kind: "eigen-stretch",
+            matrix: [
+              [3, 1],
+              [1, 3],
+            ],
+          },
+        },
         {
           type: "matrix-transform-2d",
           title: "Eigenvectors: directions that don't bend",
@@ -3526,6 +3612,19 @@ print(x.grad)                 # tensor([2., 12.])  =  ∇f at (1, 2)`,
       ],
       visualizations: [
         {
+          type: "math-scene",
+          title: "Chain rule, animated — every backprop step lives here",
+          titleEs: "Regla de la cadena, animada — cada paso de backprop vive aquí",
+          description:
+            "Six phases: build g, build f, compose to f(g(x)) = sin(2x), then watch tangent slopes multiply at a sliding x to recover (f∘g)′(x) = f′(g(x))·g′(x).",
+          descriptionEs:
+            "Seis fases: construye g, construye f, compón a f(g(x)) = sin(2x), luego observa cómo se multiplican las pendientes tangentes en una x móvil para recuperar (f∘g)′(x) = f′(g(x))·g′(x).",
+          config: {
+            kind: "chain-rule",
+            sampleX: 0.6,
+          },
+        },
+        {
           type: "function-plot",
           title: "Vanishing gradient: sigmoid saturation",
           description: "$\\sigma'(x)$ is near zero for $|x| > 4$, so deep sigmoid networks lose gradient through the chain. ReLU fixes this for $x > 0$.",
@@ -3719,6 +3818,19 @@ print(H)   # 2 * I — diagonal Hessian`,
         "**Worked example — quadratic Taylor model for optimization:** Let $f(x,y) = e^{x+y}$. At the point $\\mathbf{a} = (0,0)$ we have $f(\\mathbf{a}) = 1$, $\\nabla f(\\mathbf{a}) = (1, 1)$, and $H_f(\\mathbf{a}) = \\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix}$. The 2nd-order model is $m(\\mathbf{x}) = 1 + x + y + \\tfrac{1}{2}(x+y)^2$. For $(x,y) = (0.1, 0.1)$: $m = 1 + 0.2 + 0.02 = 1.22$ versus true $e^{0.2} \\approx 1.2214$ — within 0.1%.",
       ],
       visualizations: [
+        {
+          type: "math-scene",
+          title: "Taylor in motion — T₁ → T₃ → T₅ → T₇",
+          titleEs: "Taylor en movimiento — T₁ → T₃ → T₅ → T₇",
+          description:
+            "Six phases: sin(x) appears, then the tangent line, then the cubic, the quintic, the septic — each extending the agreement zone outward from x = 0.",
+          descriptionEs:
+            "Seis fases: aparece sin(x), luego la recta tangente, luego la cúbica, la quíntica, la séptica — cada una ampliando la zona de coincidencia desde x = 0.",
+          config: {
+            kind: "taylor",
+            center: 0,
+          },
+        },
         {
           type: "function-plot",
           title: "Taylor approximation of $\\sin(x)$",
@@ -4169,6 +4281,20 @@ X_test  = scaler.transform(X_test)       # use TRAIN stats — don't peek`,
       ],
       visualizations: [
         {
+          type: "math-scene",
+          title: "Build a Gaussian — μ then σ then 68/95/99.7",
+          titleEs: "Construye una Gaussiana — μ, luego σ, luego 68/95/99.7",
+          description:
+            "Five phases: standard normal → shift μ → widen σ → reveal area = 1 → color the σ bands.",
+          descriptionEs:
+            "Cinco fases: normal estándar → desplaza μ → ensancha σ → revela área = 1 → colorea las bandas σ.",
+          config: {
+            kind: "gaussian",
+            mu: 1.5,
+            sigma: 1.5,
+          },
+        },
+        {
           type: "probability-plot",
           title: "Gaussian densities with different $\\sigma$",
           description: "Larger $\\sigma$ = wider and shorter bell. Smaller $\\sigma$ = narrower and taller. Both integrate to 1.",
@@ -4470,6 +4596,23 @@ log_p_x = log_p_z + log_det_jacobian   # one line per flow layer`,
         "**Worked example — divergence with too-large $\\eta$:** For the same $f(x) = x^2$ with $\\eta = 1.1$, the update is $x_{k+1} = (1 - 2.2)x_k = -1.2\\, x_k$. Starting at $x_0 = 1$: $x_1 = -1.2$, $x_2 = 1.44$, $x_3 = -1.728$ — oscillating and growing. The stability bound is $\\eta < 1/\\lambda_{\\max} = 1/2 \\cdot 2 = 1$ (using $\\eta \\le 2/\\lambda_{\\max}$), confirming $\\eta = 1.1$ is too aggressive.",
       ],
       visualizations: [
+        {
+          type: "math-scene",
+          title: "Gradient descent — six animated phases",
+          titleEs: "Descenso por gradiente — seis fases animadas",
+          description:
+            "Contours fade in → drop the optimiser → gradient points uphill → step opposite the gradient → iterate to the minimum → reveal the update rule.",
+          descriptionEs:
+            "Aparecen las curvas de nivel → cae el optimizador → el gradiente apunta cuesta arriba → da un paso opuesto → itera hasta el mínimo → se revela la regla de actualización.",
+          config: {
+            kind: "gradient-descent",
+            ax: 1,
+            ay: 3,
+            start: [4, 2],
+            alpha: 0.12,
+            steps: 18,
+          },
+        },
         {
           type: "gradient-field",
           title: "GD on a bowl",
@@ -6019,6 +6162,928 @@ print("accuracy:", clf.score(X_test, y_test))`,
         "Los SVM RBF con $(C, \sigma)$ validados por cross-validation son una línea base no lineal fuerte; escalan con Nyström o características aleatorias.",
       ],
           concepts: ["dot-product", "hyperplane"],
+    },
+
+    // =========================================================================
+    // LESSON 54 — Chapter 13.1: Softmax & Cross-Entropy Loss
+    // =========================================================================
+    {
+      title: "Softmax and Cross-Entropy",
+      titleEs: "Softmax y entropía cruzada",
+      chapter: "Deep Learning Foundations",
+      chapterEs: "Fundamentos de Deep Learning",
+      chapterNumber: 13,
+      content: [
+        "Every classifier in modern deep learning ends with the same two-step ritual: turn raw scores into probabilities with **softmax**, then measure the gap to the true label with **cross-entropy**. Together they form the most-used loss function on the planet — present in every image classifier, every transformer, every language-model head. The combination is not arbitrary; it is the principled outcome of fitting a categorical distribution by maximum likelihood, and the math falls out beautifully.",
+        "Given raw logits $\\mathbf{z} = (z_1, \\ldots, z_K) \\in \\mathbb{R}^K$, the **softmax** maps them to a probability vector: $$\\mathrm{softmax}(\\mathbf{z})_k = \\frac{e^{z_k}}{\\sum_{j=1}^K e^{z_j}}.$$ Each output is positive and they sum to one. Two intuitions are essential. First, softmax is a smooth approximation of argmax — large logits dominate the sum, near-ties get split. Second, **only differences between logits matter**: adding a constant to every $z_k$ changes nothing, because the constant cancels between numerator and denominator. This shift-invariance is what makes the **log-sum-exp trick** numerically stable: subtract $\\max_j z_j$ from every logit before exponentiating to prevent overflow.",
+        "**Cross-entropy** measures how surprised the model is by the true label. For a one-hot target $\\mathbf{y}$ with $y_c = 1$ marking the correct class, $$H(\\mathbf{y}, \\hat{\\mathbf{y}}) = -\\sum_{k=1}^K y_k \\log \\hat{y}_k = -\\log \\hat{y}_c.$$ It is just the negative log-probability the model assigns to the right answer. Combined with softmax, the loss for a single example reduces to $\\ell(\\mathbf{z}, c) = -z_c + \\log \\sum_j e^{z_j}$ — the **log-sum-exp** form, which is convex in $\\mathbf{z}$ and stable to differentiate.",
+        "Now the magic. The gradient of softmax-plus-cross-entropy with respect to the logits is the cleanest formula in machine learning: $$\\frac{\\partial \\ell}{\\partial \\mathbf{z}} = \\hat{\\mathbf{y}} - \\mathbf{y}.$$ Predicted minus true. That is it. Every quadratic term that you would expect from differentiating a softmax cancels against the cross-entropy. This is *why* the pair is universal: backprop through this final layer costs one subtraction per logit, and the gradient is exactly the prediction error in probability space.",
+        "From an information-theory angle, minimizing cross-entropy is equivalent to minimizing the **Kullback-Leibler divergence** $\\mathrm{KL}(p_{\\text{data}} \\,\\|\\, p_{\\text{model}})$ between the empirical distribution and the model. KL is always non-negative and zero only when distributions match — so cross-entropy training pushes the model's probabilities toward the data-generating distribution. From a Bayesian angle, it is maximum likelihood under a categorical observation model. Three viewpoints, one objective.",
+        "**Worked example — softmax on three logits:** $\\mathbf{z} = (2, 1, 0)$. Exponentiate: $(e^2, e^1, e^0) \\approx (7.389, 2.718, 1.000)$. Sum: $11.107$. Softmax: $(0.665, 0.245, 0.090)$. Add the same constant to every logit, say $-2$, giving $(0, -1, -2)$ — the softmax is **identical**. Now subtract the max for stability: $(0, -1, -2)$ → $(e^0, e^{-1}, e^{-2}) = (1, 0.368, 0.135)$, sum $1.503$, softmax $(0.665, 0.245, 0.090)$. ✓",
+        "**Worked example — gradient is just $\\hat{\\mathbf{y}} - \\mathbf{y}$:** Same logits, true class is $c = 0$ so $\\mathbf{y} = (1, 0, 0)$. Loss $\\ell = -\\log 0.665 \\approx 0.408$. Gradient: $\\hat{\\mathbf{y}} - \\mathbf{y} = (0.665 - 1, 0.245 - 0, 0.090 - 0) = (-0.335, 0.245, 0.090)$. Negative on the correct class (push that logit *up*), positive on the wrong classes (push them *down*). Backprop just multiplies this by the upstream Jacobians — no softmax-derivative tangle.",
+      ],
+      contentEs: [
+        "Cada clasificador en deep learning moderno termina con el mismo ritual de dos pasos: convertir puntajes en probabilidades con **softmax**, y medir la distancia a la etiqueta verdadera con **entropía cruzada**. Juntos forman la función de pérdida más usada del planeta — presente en cada clasificador de imágenes, cada transformer, cada cabeza de modelo de lenguaje. La combinación no es arbitraria; es el resultado principiado de ajustar una distribución categórica por máxima verosimilitud, y la matemática sale hermosa.",
+        "Dados logits crudos $\\mathbf{z} = (z_1, \\ldots, z_K) \\in \\mathbb{R}^K$, el **softmax** los mapea a un vector de probabilidades: $$\\mathrm{softmax}(\\mathbf{z})_k = \\frac{e^{z_k}}{\\sum_{j=1}^K e^{z_j}}.$$ Cada salida es positiva y suman uno. Dos intuiciones son esenciales. Primero, softmax es una aproximación suave de argmax — los logits grandes dominan, los empates se reparten. Segundo, **solo importan las diferencias entre logits**: sumar una constante a todos los $z_k$ no cambia nada. Esta invarianza es la base del **truco log-sum-exp** para estabilidad numérica.",
+        "La **entropía cruzada** mide cuán sorprendido está el modelo por la etiqueta verdadera. Para un objetivo one-hot $\\mathbf{y}$ con $y_c = 1$, $$H(\\mathbf{y}, \\hat{\\mathbf{y}}) = -\\sum_{k=1}^K y_k \\log \\hat{y}_k = -\\log \\hat{y}_c.$$ Es el log-probabilidad negativo que el modelo asigna a la respuesta correcta. Combinado con softmax, la pérdida se reduce a $\\ell(\\mathbf{z}, c) = -z_c + \\log \\sum_j e^{z_j}$ — la forma **log-sum-exp**, convexa y estable.",
+        "Y aquí la magia. El gradiente de softmax más entropía cruzada respecto a los logits es la fórmula más limpia del machine learning: $$\\frac{\\partial \\ell}{\\partial \\mathbf{z}} = \\hat{\\mathbf{y}} - \\mathbf{y}.$$ Predicho menos verdadero. Eso es todo. Todo término cuadrático esperado al derivar el softmax se cancela contra la entropía cruzada. Por eso el par es universal: el backprop por esta última capa cuesta una resta por logit.",
+        "Desde teoría de la información, minimizar entropía cruzada equivale a minimizar la **divergencia de Kullback-Leibler** $\\mathrm{KL}(p_{\\text{datos}} \\,\\|\\, p_{\\text{modelo}})$. KL es no-negativa y cero solo cuando las distribuciones coinciden. Desde la óptica bayesiana, es máxima verosimilitud bajo un modelo de observación categórico. Tres puntos de vista, un mismo objetivo.",
+        "**Ejemplo trabajado — softmax sobre tres logits:** $\\mathbf{z} = (2, 1, 0)$. Exponencia: $(7.389, 2.718, 1.000)$. Suma: $11.107$. Softmax: $(0.665, 0.245, 0.090)$. Resta el máximo por estabilidad y obtienes el mismo resultado.",
+        "**Ejemplo trabajado — el gradiente es $\\hat{\\mathbf{y}} - \\mathbf{y}$:** Mismos logits, clase verdadera $c = 0$ con $\\mathbf{y} = (1, 0, 0)$. Pérdida $\\ell \\approx 0.408$. Gradiente: $(-0.335, 0.245, 0.090)$. Negativo en la clase correcta, positivo en las incorrectas.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "Softmax over a single logit (binary case)",
+          titleEs: "Softmax sobre un solo logit (caso binario)",
+          description: "With two classes, softmax collapses to the sigmoid $\\sigma(z) = 1/(1+e^{-z})$. Slide $z$ to feel how confidence saturates.",
+          descriptionEs: "Con dos clases, softmax colapsa a la sigmoide $\\sigma(z) = 1/(1+e^{-z})$.",
+          config: {
+            fn: "1 / (1 + exp(-x))",
+            domain: [-6, 6],
+            markers: [
+              { x: 0, y: 0.5, label: "tied", kind: "dot", accent: "amber" },
+            ],
+          },
+        },
+        {
+          type: "formula-chain",
+          title: "Building the softmax + cross-entropy gradient",
+          titleEs: "Construyendo el gradiente de softmax + entropía cruzada",
+          description: "Watch every term cancel until only $\\hat{y} - y$ remains.",
+          descriptionEs: "Mira cómo cada término se cancela hasta que solo queda $\\hat{y} - y$.",
+          config: {
+            steps: [
+              "\\ell = -\\log \\hat{y}_c",
+              "\\ell = -z_c + \\log \\sum_j e^{z_j}",
+              "\\frac{\\partial \\ell}{\\partial z_k} = -\\mathbb{1}[k=c] + \\frac{e^{z_k}}{\\sum_j e^{z_j}}",
+              "\\frac{\\partial \\ell}{\\partial z_k} = \\hat{y}_k - y_k",
+            ],
+            pacing: "auto",
+          },
+        },
+      ],
+      annotatedFormulas: [
+        {
+          id: "softmax-tokens",
+          title: "Softmax — labeled",
+          titleEs: "Softmax — etiquetado",
+          tokens: [
+            { text: "\\mathrm{softmax}(\\mathbf{z})_k", size: "xl", color: "#7cf4ff", label: "probability of class k", labelEs: "probabilidad de la clase k" },
+            { text: "=", size: "xl" },
+            { text: "\\dfrac{e^{z_k}}{\\sum_j e^{z_j}}", size: "xl", color: "#fbbf24", label: "normalized exponential", labelEs: "exponencial normalizada", shape: "[K]" },
+          ],
+          caption: "Each output is positive; the K outputs sum to 1.",
+          captionEs: "Cada salida es positiva; las K salidas suman 1.",
+          insertAfterParagraph: 1,
+        },
+        {
+          id: "ce-tokens",
+          title: "Cross-entropy — labeled",
+          titleEs: "Entropía cruzada — etiquetada",
+          tokens: [
+            { text: "H(\\mathbf{y},\\hat{\\mathbf{y}})", size: "xl", color: "#fb7185", label: "cross-entropy loss", labelEs: "pérdida" },
+            { text: "=", size: "xl" },
+            { text: "-", size: "xl", color: "#fbbf24" },
+            { text: "\\sum_k", size: "l", color: "#c4b5fd", label: "sum over classes", labelEs: "suma sobre clases" },
+            { text: "y_k", size: "xl", color: "#34d399", label: "true label (one-hot)", labelEs: "etiqueta verdadera" },
+            { text: "\\log \\hat{y}_k", size: "xl", color: "#60a5fa", label: "log of predicted prob", labelEs: "log de prob. predicha" },
+          ],
+          caption: "For one-hot y, this collapses to $-\\log \\hat y_c$ — the negative log-likelihood of the right class.",
+          captionEs: "Para y one-hot, esto colapsa a $-\\log \\hat y_c$.",
+          insertAfterParagraph: 2,
+        },
+      ],
+      derivations: [
+        {
+          id: "softmax-grad",
+          title: "Why the gradient is just $\\hat{y} - y$",
+          titleEs: "Por qué el gradiente es $\\hat{y} - y$",
+          steps: [
+            { latex: "\\ell = -\\log \\hat{y}_c = -z_c + \\log \\sum_j e^{z_j}", explain: "Substitute softmax into cross-entropy and use $\\log(a/b) = \\log a - \\log b$.", explainEs: "Sustituye softmax y usa $\\log(a/b) = \\log a - \\log b$." },
+            { latex: "\\frac{\\partial}{\\partial z_k} \\log \\sum_j e^{z_j} = \\frac{e^{z_k}}{\\sum_j e^{z_j}} = \\hat{y}_k", explain: "The derivative of log-sum-exp is the softmax itself — a beautiful identity.", explainEs: "La derivada de log-sum-exp es el propio softmax." },
+            { latex: "\\frac{\\partial \\ell}{\\partial z_k} = -\\mathbb{1}[k=c] + \\hat{y}_k", explain: "$-z_c$ contributes $-1$ exactly when $k=c$.", explainEs: "$-z_c$ aporta $-1$ cuando $k=c$." },
+            { latex: "\\frac{\\partial \\ell}{\\partial z_k} = \\hat{y}_k - y_k", explain: "Recognize $\\mathbb{1}[k=c]$ as the one-hot label $y_k$.", explainEs: "Reconoce $\\mathbb{1}[k=c]$ como $y_k$." },
+          ],
+          insertAfterParagraph: 3,
+        },
+      ],
+      theorems: [
+        {
+          id: "ce-eq-kl",
+          kind: "theorem",
+          name: "Cross-entropy = KL up to a constant",
+          nameEs: "Entropía cruzada = KL salvo una constante",
+          statement: "For a fixed empirical distribution $p_{\\text{data}}$, minimizing cross-entropy $H(p_{\\text{data}}, p_\\theta)$ over $\\theta$ is equivalent to minimizing $\\mathrm{KL}(p_{\\text{data}} \\,\\|\\, p_\\theta)$.",
+          statementEs: "Minimizar la entropía cruzada equivale a minimizar la divergencia KL.",
+          proof: "$H(p, q) = \\mathrm{KL}(p \\,\\|\\, q) + H(p)$. The entropy of the data $H(p_{\\text{data}})$ does not depend on $\\theta$, so $\\arg\\min H(p_{\\text{data}}, p_\\theta) = \\arg\\min \\mathrm{KL}(p_{\\text{data}} \\,\\|\\, p_\\theta)$.",
+          proofEs: "$H(p, q) = \\mathrm{KL}(p \\,\\|\\, q) + H(p)$. El segundo término no depende de $\\theta$.",
+          insertAfterParagraph: 4,
+        },
+      ],
+      intuitions: [
+        {
+          id: "softmax-temp",
+          title: "Softmax has a temperature dial",
+          titleEs: "El softmax tiene una perilla de temperatura",
+          glyph: "compass",
+          body: "Replace $\\mathbf{z}$ with $\\mathbf{z}/T$ before softmaxing. As $T \\to 0$ the output sharpens to a hard argmax. As $T \\to \\infty$ it flattens to uniform. Sampling text from a language model uses exactly this knob — low temperature = confident, high temperature = creative.",
+          bodyEs: "Reemplaza $\\mathbf{z}$ por $\\mathbf{z}/T$. Cuando $T \\to 0$ la salida se afila a argmax. Cuando $T \\to \\infty$ se aplana a uniforme. Muestrear texto de un LLM usa esta perilla — baja temperatura = confiado, alta = creativo.",
+          takeaway: "Temperature controls the gap between argmax and uniform.",
+          takeawayEs: "La temperatura controla la brecha entre argmax y uniforme.",
+          insertAfterParagraph: 1,
+        },
+      ],
+      whyItMatters: [
+        {
+          title: "Why this matters in ML",
+          titleEs: "Por qué importa en ML",
+          body: "Every classifier with more than two classes — image recognition, language modeling, recommendation, fraud detection — uses softmax + cross-entropy. The miraculous cancellation means a million-class output layer backprops in $O(K)$ time per example, with a numerically stable, convex loss in the logits.",
+          bodyEs: "Cada clasificador multiclase usa softmax + entropía cruzada. La cancelación milagrosa hace que una capa de salida con un millón de clases entrene en $O(K)$.",
+          bullets: [
+            "ImageNet 1000-class classification",
+            "Language model next-token prediction (50k+ vocab)",
+            "Speech recognition phoneme posteriors",
+            "Reinforcement learning policy heads",
+          ],
+          bulletsEs: [
+            "Clasificación ImageNet 1000 clases",
+            "Predicción del siguiente token en LLMs",
+            "Posteriores fonéticos en ASR",
+            "Cabezas de política en RL",
+          ],
+          insertAfterParagraph: 4,
+        },
+      ],
+      mlConnection: {
+        technique: "torch.nn.CrossEntropyLoss — fused softmax + log + NLL",
+        techniqueEs: "torch.nn.CrossEntropyLoss — softmax + log + NLL fusionados",
+        summary: "PyTorch fuses softmax, log, and NLL into one numerically stable kernel. You feed it raw logits and integer labels — never call softmax yourself before the loss, or you will lose precision.",
+        summaryEs: "PyTorch fusiona softmax, log y NLL en un kernel numéricamente estable. Pasa logits crudos y etiquetas enteras — nunca llames softmax antes de la pérdida.",
+        codeLanguage: "python",
+        codeSnippet: `import torch
+import torch.nn.functional as F
+
+logits = torch.tensor([[2.0, 1.0, 0.0]])   # raw scores, shape (B, K)
+target = torch.tensor([0])                 # class indices, shape (B,)
+
+loss = F.cross_entropy(logits, target)     # internally: log_softmax + NLL
+loss.backward()                            # gradient is exactly y_hat - y
+print(logits.grad)                         # tensor([[-0.3349, 0.2447, 0.0900]])`,
+        ifRemoved: "Without softmax + cross-entropy, multi-class classification needs ad-hoc loss functions, hand-derived gradients, and per-task numerical-stability tricks.",
+        ifRemovedEs: "Sin softmax + entropía cruzada, la clasificación multiclase necesitaría pérdidas ad-hoc y gradientes a mano.",
+      },
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why is the gradient of softmax + cross-entropy exactly $\\hat{\\mathbf{y}} - \\mathbf{y}$?",
+          questionEs: "¿Por qué el gradiente es exactamente $\\hat{\\mathbf{y}} - \\mathbf{y}$?",
+          options: [
+            "It is an approximation that holds when the loss is small.",
+            "Because $\\frac{\\partial}{\\partial z_k} \\log \\sum_j e^{z_j} = \\hat{y}_k$, and $-z_c$ contributes $-1$ at the true class — every other term cancels.",
+            "Because softmax is linear.",
+            "Because $\\hat y$ and $y$ are both unit vectors.",
+          ],
+          optionsEs: [
+            "Es una aproximación válida cuando la pérdida es pequeña.",
+            "Porque $\\frac{\\partial}{\\partial z_k} \\log \\sum_j e^{z_j} = \\hat{y}_k$ y $-z_c$ aporta $-1$ en la clase correcta — todo lo demás se cancela.",
+            "Porque softmax es lineal.",
+            "Porque $\\hat y$ y $y$ son vectores unitarios.",
+          ],
+          correctIndex: 1,
+          hint: "Differentiate the log-sum-exp form term-by-term.",
+          hintEs: "Deriva la forma log-sum-exp término a término.",
+          explanation: "The two messy parts compose into $\\hat y - y$. This is why frameworks fuse the two ops — the gradient never needs the full Jacobian.",
+          explanationEs: "Las dos partes complejas se componen en $\\hat y - y$. Por eso los frameworks fusionan ambas operaciones.",
+        },
+        {
+          type: "numeric-input",
+          question: "Logits $\\mathbf{z} = (3, 1, -1)$. What is $\\mathrm{softmax}(\\mathbf{z})_1$? (Round to 3 decimals.)",
+          questionEs: "Logits $\\mathbf{z} = (3, 1, -1)$. ¿Cuál es $\\mathrm{softmax}(\\mathbf{z})_1$?",
+          answer: 0.867,
+          tolerance: 0.02,
+          hint: "$e^3 \\approx 20.09$, $e^1 \\approx 2.72$, $e^{-1} \\approx 0.37$.",
+          hintEs: "$e^3 \\approx 20.09$, $e^1 \\approx 2.72$, $e^{-1} \\approx 0.37$.",
+          explanation: "Sum $\\approx 23.18$. $\\hat y_1 = 20.09 / 23.18 \\approx 0.867$. The largest logit dominates exponentially.",
+          explanationEs: "Suma $\\approx 23.18$. $\\hat y_1 \\approx 0.867$.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match each property to the formula it follows from.",
+          questionEs: "Empareja cada propiedad con la fórmula de la que se deriva.",
+          leftItems: [
+            "Outputs sum to 1",
+            "Shift-invariance (constants cancel)",
+            "Numerical stability via $\\log\\sum e^{z}$",
+            "Backprop costs only $O(K)$",
+          ],
+          rightItems: [
+            "Softmax denominator $\\sum_j e^{z_j}$",
+            "$e^{z+c} = e^c \\cdot e^z$",
+            "Subtracting $\\max z$ before exponentiating",
+            "$\\partial \\ell / \\partial \\mathbf{z} = \\hat{\\mathbf{y}} - \\mathbf{y}$",
+          ],
+          correctPairs: [[0, 0], [1, 1], [2, 2], [3, 3]],
+          explanation: "These four properties are why softmax + cross-entropy is the universal classifier loss.",
+          explanationEs: "Estas cuatro propiedades son la razón de que softmax + entropía cruzada sea la pérdida universal.",
+        },
+      ],
+      keyTakeaways: [
+        "Softmax turns logits into a probability vector; only differences between logits matter.",
+        "Cross-entropy with a one-hot target reduces to $-\\log \\hat y_c$.",
+        "The fused gradient $\\partial \\ell / \\partial \\mathbf{z} = \\hat{\\mathbf{y}} - \\mathbf{y}$ is why this pair powers virtually every deep-learning classifier.",
+      ],
+      keyTakeawaysEs: [
+        "Softmax convierte logits en un vector de probabilidades; solo importan las diferencias.",
+        "La entropía cruzada con un objetivo one-hot se reduce a $-\\log \\hat y_c$.",
+        "El gradiente fusionado $\\hat{\\mathbf{y}} - \\mathbf{y}$ potencia casi todo clasificador en deep learning.",
+      ],
+      concepts: ["probability-density", "expected-value", "gradient"],
+    },
+
+    // =========================================================================
+    // LESSON 55 — Chapter 13.2: Regularization (L1, L2, Elastic Net)
+    // =========================================================================
+    {
+      title: "Regularization: L1, L2, and Elastic Net",
+      titleEs: "Regularización: L1, L2 y Elastic Net",
+      chapter: "Deep Learning Foundations",
+      chapterEs: "Fundamentos de Deep Learning",
+      chapterNumber: 13,
+      content: [
+        "Models that fit training data perfectly often fail in production. The cause is **overfitting**: when a model has more capacity than the data warrants, it memorizes noise instead of pattern. **Regularization** is the umbrella term for all the ways we add a *prior preference for simpler models* to the loss, fighting overfitting without throwing away data. It is the single most important practical technique in supervised learning, and almost all of it is built from two norms — $L_1$ and $L_2$.",
+        "Add a penalty term to the loss: $$\\mathcal{L}_{\\text{reg}}(\\boldsymbol\\theta) = \\mathcal{L}_{\\text{data}}(\\boldsymbol\\theta) + \\lambda\\, \\Omega(\\boldsymbol\\theta).$$ The hyperparameter $\\lambda \\geq 0$ trades off fitting the data against keeping $\\boldsymbol\\theta$ small. **Ridge regression** uses $\\Omega = \\|\\boldsymbol\\theta\\|_2^2$ (sum of squares); **Lasso** uses $\\Omega = \\|\\boldsymbol\\theta\\|_1$ (sum of absolute values); **Elastic Net** mixes both. The choice of norm changes the geometry of the optimum dramatically.",
+        "Ridge has a closed-form solution: $\\hat{\\boldsymbol\\theta}_{\\text{ridge}} = (\\mathbf{X}^\\top \\mathbf{X} + \\lambda \\mathbf{I})^{-1} \\mathbf{X}^\\top \\mathbf{y}$. The $\\lambda \\mathbf{I}$ term guarantees the matrix is invertible *even when* $\\mathbf{X}^\\top \\mathbf{X}$ is rank-deficient — this is why ridge is the workhorse for ill-conditioned regressions. Lasso has no closed form (the absolute value is non-differentiable at zero), but coordinate descent and proximal gradient methods solve it efficiently and the resulting solutions are **sparse** — many coordinates are exactly zero.",
+        "Why does $L_1$ produce sparsity but $L_2$ does not? Picture the level sets. The unconstrained loss has elliptical contours; the regularizer's level sets are **balls** in the chosen norm. The optimum is where the loss contour first touches the ball as it grows. The $L_2$ ball is a sphere — contact is generic and the touchpoint has all coordinates non-zero. The $L_1$ ball is a *cross-polytope* with sharp corners on the coordinate axes. Contours overwhelmingly first meet the $L_1$ ball at a corner, where some coordinates are exactly zero. Geometry forces sparsity.",
+        "From the Bayesian view, regularization is a **prior** on parameters and the regularized loss is the negative log-posterior. $L_2$ corresponds to a Gaussian prior $\\boldsymbol\\theta \\sim \\mathcal{N}(\\mathbf{0}, \\sigma^2 \\mathbf{I})$; $L_1$ corresponds to a Laplace prior. Maximum a posteriori (MAP) inference under these priors gives ridge and lasso exactly. Tuning $\\lambda$ is tuning the prior strength.",
+        "**Worked example — ridge shrinks coefficients:** Tiny dataset $\\mathbf{X}$ has columns $(1, 1, 1)^\\top$ and $(1, 2, 3)^\\top$, target $\\mathbf{y} = (2, 3, 5)^\\top$. The OLS solution is $\\hat{\\boldsymbol\\theta} = (0.333, 1.5)^\\top$. With $\\lambda = 1$, ridge gives $\\approx (0.591, 1.154)^\\top$. Both coefficients shrank — toward zero but not all the way.",
+        "**Worked example — soft-thresholding is the Lasso update:** Single-feature lasso reduces to $\\hat\\theta = S_\\lambda(\\theta_{\\text{ols}})$ where $S_\\lambda(z) = \\mathrm{sign}(z) \\cdot \\max(|z| - \\lambda, 0)$. With $\\theta_{\\text{ols}} = 0.4, \\lambda = 0.5$: $\\hat\\theta = 0$. With $\\lambda = 0.3$: $\\hat\\theta = 0.1$. Sparsity in action.",
+      ],
+      contentEs: [
+        "Modelos que ajustan perfectamente los datos de entrenamiento suelen fallar en producción. La causa es el **sobreajuste**. La **regularización** añade una *preferencia previa por modelos más simples*. Casi toda se construye con dos normas — $L_1$ y $L_2$.",
+        "Añade un término de penalización: $\\mathcal{L}_{\\text{reg}} = \\mathcal{L}_{\\text{datos}} + \\lambda \\Omega(\\boldsymbol\\theta)$. **Ridge** usa $\\|\\boldsymbol\\theta\\|_2^2$; **Lasso** usa $\\|\\boldsymbol\\theta\\|_1$; **Elastic Net** mezcla ambos.",
+        "Ridge tiene solución cerrada: $\\hat{\\boldsymbol\\theta} = (\\mathbf{X}^\\top \\mathbf{X} + \\lambda \\mathbf{I})^{-1} \\mathbf{X}^\\top \\mathbf{y}$. El término $\\lambda \\mathbf{I}$ garantiza invertibilidad incluso si $\\mathbf{X}^\\top \\mathbf{X}$ es rango-deficiente. Lasso no tiene forma cerrada pero produce soluciones **dispersas**.",
+        "¿Por qué $L_1$ produce dispersión y $L_2$ no? La bola $L_2$ es lisa — contacto genérico. La bola $L_1$ tiene esquinas en los ejes — contornos casi siempre tocan en una esquina, donde algunas coordenadas son cero. La geometría fuerza la dispersión.",
+        "Bayesianamente, regularizar es un **prior** sobre los parámetros. $L_2$ ↔ prior gaussiano. $L_1$ ↔ prior de Laplace. MAP bajo estos priors da exactamente ridge y lasso.",
+        "**Ejemplo trabajado — ridge encoge coeficientes:** OLS da $(0.333, 1.5)$. Con $\\lambda = 1$, ridge da $\\approx (0.591, 1.154)$. Ambos encogidos.",
+        "**Ejemplo trabajado — umbral suave:** $\\hat\\theta = S_\\lambda(\\theta_{\\text{ols}})$. Con $\\theta_{\\text{ols}} = 0.4, \\lambda = 0.5$ → $\\hat\\theta = 0$. Con $\\lambda = 0.3$ → $\\hat\\theta = 0.1$.",
+      ],
+      visualizations: [
+        {
+          type: "norm-balls",
+          title: "$L_1$ vs $L_2$ unit balls",
+          titleEs: "Bolas unidad $L_1$ vs $L_2$",
+          description: "The corners of the $L_1$ ball lie on the axes — touching the loss contour there forces some coordinates to zero.",
+          descriptionEs: "Las esquinas de la bola $L_1$ están sobre los ejes — fuerzan coordenadas a cero.",
+          config: {
+            norms: ["L1", "L2"],
+          },
+        },
+        {
+          type: "formula-chain",
+          title: "Ridge solution: derive the closed form",
+          titleEs: "Ridge: derivar la forma cerrada",
+          description: "Set the gradient to zero and solve.",
+          descriptionEs: "Iguala el gradiente a cero y resuelve.",
+          config: {
+            steps: [
+              "\\mathcal{L} = \\|\\mathbf{y} - \\mathbf{X}\\boldsymbol\\theta\\|^2 + \\lambda \\|\\boldsymbol\\theta\\|^2",
+              "\\nabla_{\\boldsymbol\\theta} \\mathcal{L} = -2\\mathbf{X}^\\top(\\mathbf{y} - \\mathbf{X}\\boldsymbol\\theta) + 2\\lambda \\boldsymbol\\theta",
+              "(\\mathbf{X}^\\top\\mathbf{X} + \\lambda\\mathbf{I})\\boldsymbol\\theta = \\mathbf{X}^\\top \\mathbf{y}",
+              "\\hat{\\boldsymbol\\theta} = (\\mathbf{X}^\\top\\mathbf{X} + \\lambda\\mathbf{I})^{-1} \\mathbf{X}^\\top \\mathbf{y}",
+            ],
+            pacing: "auto",
+          },
+        },
+      ],
+      annotatedFormulas: [
+        {
+          id: "ridge-tokens",
+          title: "Ridge — every term labeled",
+          titleEs: "Ridge — cada término etiquetado",
+          tokens: [
+            { text: "\\mathcal{L}_{\\text{ridge}}", size: "xl", color: "#7cf4ff", label: "regularized loss", labelEs: "pérdida regularizada" },
+            { text: "=", size: "xl" },
+            { text: "\\|\\mathbf{y} - \\mathbf{X}\\boldsymbol\\theta\\|^2", size: "xl", color: "#34d399", label: "data fit", labelEs: "ajuste a los datos" },
+            { text: "+", size: "xl" },
+            { text: "\\lambda", size: "xl", color: "#fbbf24", label: "regularization strength", labelEs: "fuerza de regularización" },
+            { text: "\\|\\boldsymbol\\theta\\|_2^2", size: "xl", color: "#fb7185", label: "complexity penalty (L2)", labelEs: "penalización (L2)" },
+          ],
+          caption: "Larger $\\lambda$ → simpler model. $\\lambda = 0$ recovers OLS.",
+          captionEs: "$\\lambda$ mayor → modelo más simple.",
+          insertAfterParagraph: 1,
+        },
+      ],
+      formulaExplorers: [
+        {
+          id: "shrink-explorer",
+          title: "How $\\lambda$ shrinks the line",
+          titleEs: "Cómo $\\lambda$ encoge la recta",
+          description: "Slide the slope to feel the shrinkage; ridge would push it toward 0.",
+          descriptionEs: "Desliza la pendiente y siente el encogimiento.",
+          formula: "y = m \\cdot x + b",
+          kind: "linear",
+          slots: [
+            { key: "m", label: "slope (∝ 1/(1+λ))", labelEs: "pendiente", min: 0, max: 2, step: 0.05, default: 1, color: "#fbbf24" },
+            { key: "b", label: "intercept", labelEs: "intercepto", min: -1, max: 1, step: 0.1, default: 0, color: "#7cf4ff" },
+          ],
+          plot: { xDomain: [-3, 3], yDomain: [-3, 3] },
+          insertAfterParagraph: 3,
+        },
+      ],
+      theorems: [
+        {
+          id: "ridge-unique",
+          kind: "theorem",
+          name: "Ridge always has a unique solution",
+          nameEs: "Ridge siempre tiene solución única",
+          statement: "For any $\\lambda > 0$, the matrix $\\mathbf{X}^\\top \\mathbf{X} + \\lambda \\mathbf{I}$ is symmetric positive definite, hence invertible — even when $\\mathbf{X}$ is rank-deficient.",
+          statementEs: "Para cualquier $\\lambda > 0$, $\\mathbf{X}^\\top \\mathbf{X} + \\lambda \\mathbf{I}$ es definida positiva — invertible incluso si $\\mathbf{X}$ es rango-deficiente.",
+          proof: "$\\mathbf{X}^\\top \\mathbf{X}$ has eigenvalues $\\sigma_i^2 \\geq 0$. Adding $\\lambda \\mathbf{I}$ shifts them to $\\sigma_i^2 + \\lambda > 0$. All eigenvalues positive ⇒ invertible.",
+          proofEs: "Los autovalores son $\\sigma_i^2 + \\lambda > 0$.",
+          insertAfterParagraph: 2,
+        },
+      ],
+      intuitions: [
+        {
+          id: "reg-as-prior",
+          title: "Regularization is a Bayesian prior in disguise",
+          titleEs: "La regularización es un prior bayesiano disfrazado",
+          glyph: "scale",
+          body: "Multiply $\\mathcal{L}_{\\text{reg}} = \\mathrm{NLL} + \\lambda \\Omega$ by $-1$ — it is a log-posterior. $\\Omega$ becomes the negative log-prior. Gaussian prior gives $L_2$, Laplace gives $L_1$. Choosing $\\lambda$ is choosing how strongly we *a priori* believe the parameters should be small.",
+          bodyEs: "Multiplica $\\mathcal{L}_{\\text{reg}}$ por $-1$ y obtienes una log-posterior. $\\Omega$ es el log-prior negativo. Gaussiano → $L_2$, Laplace → $L_1$.",
+          takeaway: "MAP under Gaussian prior = ridge. MAP under Laplace prior = lasso.",
+          takeawayEs: "MAP gaussiano = ridge. MAP Laplace = lasso.",
+          insertAfterParagraph: 4,
+        },
+      ],
+      whyItMatters: [
+        {
+          title: "Why this matters in ML",
+          titleEs: "Por qué importa en ML",
+          body: "Regularization is not optional. Ridge stabilizes ill-conditioned regressions; lasso selects features; weight decay prevents deep nets from memorizing noise; dropout, early stopping, and data augmentation are all regularization in disguise.",
+          bodyEs: "La regularización no es opcional. Ridge estabiliza, lasso selecciona variables, weight decay evita memorización, dropout y early stopping son regularización disfrazada.",
+          bullets: [
+            "Weight decay in every PyTorch optimizer",
+            "Lasso for high-dimensional genomics / NLP feature selection",
+            "Ridge as the default for ill-conditioned linear regression",
+            "Equivalent to Bayesian MAP",
+          ],
+          bulletsEs: [
+            "Weight decay en todo optimizador",
+            "Lasso para selección en alta dimensión",
+            "Ridge predeterminado para regresión mal condicionada",
+            "Equivalente a MAP bayesiano",
+          ],
+          insertAfterParagraph: 4,
+        },
+      ],
+      mlConnection: {
+        technique: "torch.optim weight_decay & sklearn Ridge / Lasso / ElasticNet",
+        techniqueEs: "torch.optim weight_decay y sklearn Ridge / Lasso / ElasticNet",
+        summary: "Setting `weight_decay=1e-4` is exactly L2 with $\\lambda = 10^{-4}$. For sparse linear models, sklearn's Lasso and ElasticNet use coordinate descent with soft-thresholding.",
+        summaryEs: "`weight_decay=1e-4` es exactamente L2 con $\\lambda = 10^{-4}$. Lasso/ElasticNet usan descenso por coordenadas con umbral suave.",
+        codeLanguage: "python",
+        codeSnippet: `from sklearn.linear_model import Ridge, Lasso, ElasticNet
+
+ridge = Ridge(alpha=1.0).fit(X, y)        # L2: shrinks all coefficients
+lasso = Lasso(alpha=0.1).fit(X, y)        # L1: shrinks AND zeros out
+enet  = ElasticNet(alpha=0.1, l1_ratio=0.5).fit(X, y)
+
+# Deep learning: weight_decay == L2 regularization
+import torch
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)`,
+        ifRemoved: "Without regularization, deep networks memorize noise, lasso cannot do feature selection, and many regression problems become numerically unsolvable.",
+        ifRemovedEs: "Sin regularización las redes memorizan ruido y muchos problemas de regresión se vuelven imposibles.",
+      },
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why does $L_1$ produce exactly-zero coefficients while $L_2$ does not?",
+          questionEs: "¿Por qué $L_1$ produce coeficientes cero y $L_2$ no?",
+          options: [
+            "Because $L_1$ is always larger than $L_2$.",
+            "The $L_1$ unit ball has corners on the coordinate axes; loss contours typically meet the ball at a corner where some coordinates vanish. The smooth $L_2$ ball has no such corners.",
+            "Because the gradient of $L_1$ is zero.",
+            "Random chance.",
+          ],
+          optionsEs: [
+            "Porque $L_1$ siempre es mayor.",
+            "La bola $L_1$ tiene esquinas en los ejes coordenados; los contornos tocan ahí, anulando coordenadas. La bola $L_2$ es lisa.",
+            "Porque el gradiente de $L_1$ es cero.",
+            "Por azar.",
+          ],
+          correctIndex: 1,
+          hint: "Geometry of unit balls.",
+          hintEs: "Geometría de bolas unitarias.",
+          explanation: "The $L_1$ ball is a cross-polytope with $2K$ corners on the axes. Contours preferentially touch corners → sparsity. $L_2$ is rotationally symmetric.",
+          explanationEs: "La bola $L_1$ es un cross-politopo con esquinas en los ejes. Los contornos prefieren esquinas → dispersión.",
+        },
+        {
+          type: "numeric-input",
+          question: "Soft-threshold $S_\\lambda(0.7)$ with $\\lambda = 0.5$. (2 decimals.)",
+          questionEs: "Umbral suave $S_\\lambda(0.7)$ con $\\lambda = 0.5$.",
+          answer: 0.2,
+          tolerance: 0.01,
+          hint: "$S_\\lambda(z) = \\mathrm{sign}(z) \\cdot \\max(|z| - \\lambda, 0)$.",
+          hintEs: "$S_\\lambda(z) = \\mathrm{sign}(z) \\cdot \\max(|z| - \\lambda, 0)$.",
+          explanation: "$|0.7| - 0.5 = 0.2 > 0$, sign $+$. $S_{0.5}(0.7) = 0.2$.",
+          explanationEs: "$|0.7| - 0.5 = 0.2$. $S = 0.2$.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match each regularizer to its prior interpretation.",
+          questionEs: "Empareja cada regularizador con su prior.",
+          leftItems: [
+            "Ridge ($L_2$)",
+            "Lasso ($L_1$)",
+            "Elastic Net",
+            "No regularization",
+          ],
+          rightItems: [
+            "Gaussian prior on $\\boldsymbol\\theta$",
+            "Laplace prior on $\\boldsymbol\\theta$",
+            "Mixture of Gaussian + Laplace priors",
+            "Improper uniform prior",
+          ],
+          correctPairs: [[0, 0], [1, 1], [2, 2], [3, 3]],
+          explanation: "Each penalty is the negative log of a prior density.",
+          explanationEs: "Cada penalización es el log-densidad negativa de un prior.",
+        },
+      ],
+      keyTakeaways: [
+        "Regularization adds $\\lambda \\Omega(\\boldsymbol\\theta)$ to the loss, trading data fit against complexity.",
+        "Ridge ($L_2$) has a closed form and stabilizes ill-conditioned regressions; Lasso ($L_1$) produces sparse solutions via geometry.",
+        "Both are MAP estimates under Gaussian / Laplace priors — regularization is Bayesian inference in disguise.",
+      ],
+      keyTakeawaysEs: [
+        "La regularización añade $\\lambda \\Omega(\\boldsymbol\\theta)$, equilibrando ajuste y complejidad.",
+        "Ridge tiene forma cerrada; Lasso produce soluciones dispersas.",
+        "Ambos son MAP bajo priors gaussiano/Laplace.",
+      ],
+      concepts: ["norm", "gradient"],
+    },
+
+    // =========================================================================
+    // LESSON 56 — Chapter 13.3: Backpropagation Through Layers
+    // =========================================================================
+    {
+      title: "Backpropagation Through Layers",
+      titleEs: "Retropropagación a través de capas",
+      chapter: "Deep Learning Foundations",
+      chapterEs: "Fundamentos de Deep Learning",
+      chapterNumber: 13,
+      content: [
+        "Training a neural network is just gradient descent on a very deeply nested function. The miracle is that the gradient — through possibly hundreds of layers and billions of parameters — can be computed in time *linear* in the size of the network, using the **chain rule applied in reverse**. That algorithm is **backpropagation**, and understanding it is the difference between using deep learning and *engineering* deep learning.",
+        "A feed-forward network is a composition: $\\mathbf{a}^{(L)} = f_L \\circ f_{L-1} \\circ \\cdots \\circ f_1(\\mathbf{x})$, where each layer $f_\\ell$ takes the previous activation, applies a linear map $\\mathbf{z}^{(\\ell)} = \\mathbf{W}^{(\\ell)} \\mathbf{a}^{(\\ell-1)} + \\mathbf{b}^{(\\ell)}$, and a non-linearity $\\mathbf{a}^{(\\ell)} = \\sigma(\\mathbf{z}^{(\\ell)})$. The loss $\\mathcal{L}$ at the end is a scalar function of all the parameters $\\boldsymbol\\theta = \\{\\mathbf{W}^{(\\ell)}, \\mathbf{b}^{(\\ell)}\\}$, and we want $\\partial \\mathcal{L} / \\partial \\boldsymbol\\theta$.",
+        "The chain rule says $\\partial \\mathcal{L} / \\partial \\mathbf{a}^{(\\ell)} = \\partial \\mathcal{L} / \\partial \\mathbf{a}^{(\\ell+1)} \\cdot \\partial \\mathbf{a}^{(\\ell+1)} / \\partial \\mathbf{a}^{(\\ell)}$. Define the **upstream gradient** $\\boldsymbol\\delta^{(\\ell)} = \\partial \\mathcal{L} / \\partial \\mathbf{z}^{(\\ell)}$. Then the entire backward pass is two recursions: $$\\boldsymbol\\delta^{(\\ell)} = \\big( (\\mathbf{W}^{(\\ell+1)})^\\top \\boldsymbol\\delta^{(\\ell+1)} \\big) \\odot \\sigma'(\\mathbf{z}^{(\\ell)}),$$ and the parameter gradients $\\partial \\mathcal{L}/\\partial \\mathbf{W}^{(\\ell)} = \\boldsymbol\\delta^{(\\ell)} (\\mathbf{a}^{(\\ell-1)})^\\top$.",
+        "The genius of backprop is that we never form a giant Jacobian. We only ever multiply a *vector* by a Jacobian — a **vector-Jacobian product (VJP)** — which is cheap because each layer's Jacobian has known structure (diagonal for elementwise non-linearities, $\\mathbf{W}^\\top$ for linear layers). This is the reverse-mode autodiff that PyTorch, JAX, and TensorFlow all implement.",
+        "Two failure modes haunt backprop in deep networks. **Vanishing gradients**: if every layer's Jacobian shrinks magnitudes by $<1$, $\\boldsymbol\\delta^{(\\ell)}$ exponentially decays going backward, and early layers stop learning. Sigmoid and tanh activations cause this. **Exploding gradients**: the opposite. Cure: ReLU activations, residual connections, batch normalization, careful initialization, gradient clipping. These tricks are why we can now train 100-layer networks.",
+        "**Worked example — backprop through one layer:** Two-layer net, $\\mathbf{x} = (1, 2)$, $\\mathbf{W}^{(1)} = \\begin{pmatrix} 0.5 & -0.5 \\\\ 1 & 0 \\end{pmatrix}$, $\\sigma = \\mathrm{ReLU}$. Forward: $\\mathbf{z}^{(1)} = (-0.5, 1)$, $\\mathbf{a}^{(1)} = (0, 1)$. Upstream $\\boldsymbol\\delta^{(2)} = (1, -1)$, $\\mathbf{W}^{(2)} = \\mathbf{I}$. Then $\\sigma'(\\mathbf{z}^{(1)}) = (0, 1)$ (ReLU's derivative), so $\\boldsymbol\\delta^{(1)} = (1, -1) \\odot (0, 1) = (0, -1)$. The dead ReLU **kills the gradient on its row**.",
+        "**Worked example — gradient with respect to $\\mathbf{W}^{(1)}$:** $\\partial \\mathcal{L}/\\partial \\mathbf{W}^{(1)} = \\boldsymbol\\delta^{(1)} \\mathbf{x}^\\top = (0, -1)^\\top (1, 2) = \\begin{pmatrix} 0 & 0 \\\\ -1 & -2 \\end{pmatrix}$. Only the second row updates — the inactive neuron's parameters do not move. **Dead ReLUs** never recover.",
+      ],
+      contentEs: [
+        "Entrenar una red neuronal es descenso por gradiente sobre una función muy profundamente anidada. El milagro es que el gradiente se calcula en tiempo *lineal* en el tamaño de la red, usando la **regla de la cadena en reverso**. Ese algoritmo es la **retropropagación**.",
+        "Una red feed-forward es una composición $\\mathbf{a}^{(L)} = f_L \\circ \\cdots \\circ f_1(\\mathbf{x})$ con $\\mathbf{z}^{(\\ell)} = \\mathbf{W}^{(\\ell)} \\mathbf{a}^{(\\ell-1)} + \\mathbf{b}^{(\\ell)}$ y $\\mathbf{a}^{(\\ell)} = \\sigma(\\mathbf{z}^{(\\ell)})$.",
+        "Define $\\boldsymbol\\delta^{(\\ell)} = \\partial \\mathcal{L} / \\partial \\mathbf{z}^{(\\ell)}$. La recursión es $\\boldsymbol\\delta^{(\\ell)} = ((\\mathbf{W}^{(\\ell+1)})^\\top \\boldsymbol\\delta^{(\\ell+1)}) \\odot \\sigma'(\\mathbf{z}^{(\\ell)})$, y $\\partial \\mathcal{L}/\\partial \\mathbf{W}^{(\\ell)} = \\boldsymbol\\delta^{(\\ell)} (\\mathbf{a}^{(\\ell-1)})^\\top$.",
+        "Backprop nunca forma una Jacobiana gigante. Solo multiplica vectores por Jacobianas (VJPs). Esto es autodiff en modo reverso — PyTorch, JAX, TF lo implementan.",
+        "Dos modos de fallo: **gradientes que se desvanecen** (sigmoide/tanh) y **gradientes que explotan**. Curas: ReLU, conexiones residuales, batch norm, inicialización cuidadosa, recorte de gradientes.",
+        "**Ejemplo trabajado — backprop por una capa:** $\\mathbf{x} = (1, 2)$, ReLU, upstream $(1, -1)$, $\\mathbf{W}^{(2)} = \\mathbf{I}$. Una ReLU muerta da $\\boldsymbol\\delta^{(1)} = (0, -1)$.",
+        "**Ejemplo trabajado — gradiente respecto a $\\mathbf{W}^{(1)}$:** $\\partial \\mathcal{L}/\\partial \\mathbf{W}^{(1)} = \\begin{pmatrix} 0 & 0 \\\\ -1 & -2 \\end{pmatrix}$. Solo la segunda fila se actualiza.",
+      ],
+      visualizations: [
+        {
+          type: "gradient-field",
+          title: "Loss landscape and gradient direction",
+          titleEs: "Paisaje de pérdida y dirección del gradiente",
+          description: "Each arrow is $-\\nabla \\mathcal{L}$ at that point — the direction backprop pushes the parameters.",
+          descriptionEs: "Cada flecha es $-\\nabla \\mathcal{L}$ — la dirección en que backprop empuja los parámetros.",
+          config: {},
+        },
+        {
+          type: "formula-chain",
+          title: "Forward pass → Backward pass",
+          titleEs: "Forward → Backward",
+          description: "Same composition, traversed in two directions.",
+          descriptionEs: "La misma composición, recorrida en dos direcciones.",
+          config: {
+            steps: [
+              "\\mathbf{z}^{(\\ell)} = \\mathbf{W}^{(\\ell)} \\mathbf{a}^{(\\ell-1)} + \\mathbf{b}^{(\\ell)}",
+              "\\mathbf{a}^{(\\ell)} = \\sigma(\\mathbf{z}^{(\\ell)})",
+              "\\boldsymbol\\delta^{(L)} = \\nabla_{\\mathbf{a}^{(L)}} \\mathcal{L} \\odot \\sigma'(\\mathbf{z}^{(L)})",
+              "\\boldsymbol\\delta^{(\\ell)} = \\big( (\\mathbf{W}^{(\\ell+1)})^\\top \\boldsymbol\\delta^{(\\ell+1)} \\big) \\odot \\sigma'(\\mathbf{z}^{(\\ell)})",
+              "\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{W}^{(\\ell)}} = \\boldsymbol\\delta^{(\\ell)} (\\mathbf{a}^{(\\ell-1)})^\\top",
+            ],
+            pacing: "auto",
+          },
+        },
+      ],
+      annotatedFormulas: [
+        {
+          id: "backprop-tokens",
+          title: "Backprop step — every term labeled",
+          titleEs: "Paso de backprop — cada término etiquetado",
+          tokens: [
+            { text: "\\boldsymbol\\delta^{(\\ell)}", size: "xl", color: "#7cf4ff", label: "upstream gradient", labelEs: "gradiente upstream", shape: "[d_l]" },
+            { text: "=", size: "xl" },
+            { text: "(\\mathbf{W}^{(\\ell+1)})^\\top", size: "l", color: "#fbbf24", label: "transposed weight", labelEs: "peso transpuesto" },
+            { text: "\\boldsymbol\\delta^{(\\ell+1)}", size: "l", color: "#fb7185", label: "next layer gradient", labelEs: "gradiente siguiente capa" },
+            { text: "\\odot", size: "l" },
+            { text: "\\sigma'(\\mathbf{z}^{(\\ell)})", size: "l", color: "#34d399", label: "local nonlinearity gradient", labelEs: "gradiente de la activación" },
+          ],
+          caption: "Two ops per layer: a transposed-weight matvec, then an elementwise multiply.",
+          captionEs: "Dos operaciones por capa: matvec transpuesto, luego producto elemento a elemento.",
+          insertAfterParagraph: 2,
+        },
+      ],
+      derivations: [
+        {
+          id: "vjp-derive",
+          title: "Why backprop is reverse-mode autodiff",
+          titleEs: "Por qué backprop es autodiff en modo reverso",
+          steps: [
+            { latex: "\\mathcal{L} = f_L(f_{L-1}(\\cdots f_1(\\mathbf{x})))", explain: "The network is a composition.", explainEs: "La red es una composición." },
+            { latex: "\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{x}} = J_L \\cdot J_{L-1} \\cdots J_1", explain: "Chain rule: gradient is a product of Jacobians.", explainEs: "Regla de la cadena: producto de Jacobianas." },
+            { latex: "\\text{Forward mode: } J_L (J_{L-1} (\\cdots (J_1 v)))", explain: "Carry a tangent left-to-right — fast for low-dim input.", explainEs: "Lleva el tangente de izquierda a derecha." },
+            { latex: "\\text{Reverse mode: } ((u^\\top J_L) J_{L-1}) \\cdots J_1", explain: "Carry a cotangent right-to-left — fast for scalar output (every loss).", explainEs: "Lleva el cotangente de derecha a izquierda — rápido si la salida es escalar." },
+            { latex: "\\text{cost} = O(E)", explain: "Linear in graph size, regardless of parameter count.", explainEs: "Lineal en el tamaño del grafo." },
+          ],
+          insertAfterParagraph: 3,
+        },
+      ],
+      theorems: [
+        {
+          id: "backprop-cost",
+          kind: "theorem",
+          name: "Backprop has linear cost",
+          nameEs: "Backprop tiene costo lineal",
+          statement: "For any scalar function expressed as a DAG with $E$ edges and primitive ops with $O(1)$ VJP cost, reverse-mode autodiff computes the gradient with respect to *all* inputs in $O(E)$ time and $O(E)$ memory.",
+          statementEs: "Para una función escalar como DAG con $E$ aristas y VJPs $O(1)$, el modo reverso calcula el gradiente respecto a *todas* las entradas en $O(E)$.",
+          proof: "Forward: visit each node once → $O(E)$. Backward: per edge, multiply by VJP and accumulate → another $O(E)$.",
+          proofEs: "Forward $O(E)$ + backward $O(E)$.",
+          insertAfterParagraph: 3,
+        },
+      ],
+      intuitions: [
+        {
+          id: "blame-prop",
+          title: "Backprop is blame propagation",
+          titleEs: "Backprop es propagación de culpa",
+          glyph: "spiral",
+          body: "The output's blame goes to its inputs in proportion to the weights it used. Those inputs blame their inputs the same way. Repeat until you reach the parameters: each weight gets the share of blame that flowed through it. That share is the gradient.",
+          bodyEs: "La culpa de la salida va a sus entradas según los pesos. Esas entradas culpan a las suyas. Cada peso recibe la fracción de culpa que pasó por él — eso es el gradiente.",
+          takeaway: "The gradient at a parameter is the share of blame that flowed through it.",
+          takeawayEs: "El gradiente en un parámetro es la fracción de culpa que pasó por él.",
+          insertAfterParagraph: 4,
+        },
+      ],
+      whyItMatters: [
+        {
+          title: "Why this matters in ML",
+          titleEs: "Por qué importa en ML",
+          body: "Backprop is *the* algorithm that made deep learning possible. Every framework — PyTorch, TensorFlow, JAX — is built around an autodiff engine that implements this. Without backprop, training a 100-layer transformer with billions of parameters would require numerical differentiation costing $O(\\text{params})$ forward passes per gradient step.",
+          bodyEs: "Backprop hizo posible el deep learning. Todo framework se construye en torno a autodiff. Sin backprop, entrenar un transformer de 100B parámetros sería inviable.",
+          bullets: [
+            "PyTorch autograd, JAX grad, TF GradientTape",
+            "ResNet/LSTM research is fundamentally about controlling backprop",
+            "Activation checkpointing trades memory for recomputation",
+            "Higher-order optimization builds on backprop",
+          ],
+          bulletsEs: [
+            "autograd de PyTorch, grad de JAX",
+            "Investigación ResNet/LSTM = controlar backprop",
+            "Checkpointing intercambia memoria por recómputo",
+            "Optimización de orden superior se construye sobre backprop",
+          ],
+          insertAfterParagraph: 4,
+        },
+      ],
+      mlConnection: {
+        technique: "torch.autograd — the engine behind every PyTorch model",
+        techniqueEs: "torch.autograd — el motor de PyTorch",
+        summary: "PyTorch builds the computation graph dynamically as you call ops on tensors with `requires_grad=True`. Calling `.backward()` runs reverse-mode autodiff, populating `.grad`.",
+        summaryEs: "PyTorch construye el grafo dinámicamente. `.backward()` corre autodiff en reverso y llena `.grad`.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch
+
+# Build a 2-layer net by hand to see backprop in action
+W1 = torch.randn(3, 2, requires_grad=True)
+W2 = torch.randn(1, 3, requires_grad=True)
+x  = torch.tensor([1.0, 2.0])
+y  = torch.tensor([1.0])
+
+z1 = W1 @ x         # forward
+a1 = torch.relu(z1)
+z2 = W2 @ a1
+loss = (z2 - y).pow(2).sum()
+
+loss.backward()      # reverse-mode autodiff
+print("dL/dW1 =", W1.grad)   # exactly delta^(1) @ x^T
+print("dL/dW2 =", W2.grad)`,
+        ifRemoved: "Without backprop, neural networks past 2-3 layers are untrainable in practice.",
+        ifRemovedEs: "Sin backprop, redes con más de 2-3 capas son inentrenables.",
+      },
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why is backpropagation linear in the number of edges, while naive numerical differentiation is linear in the number of parameters?",
+          questionEs: "¿Por qué backprop es lineal en aristas y la diferenciación numérica lineal en parámetros?",
+          options: [
+            "Backprop uses fewer floating-point operations.",
+            "Backprop reuses intermediate activations and computes one VJP per primitive — it differentiates the whole graph in one reverse pass; numerical differentiation requires one forward evaluation per parameter.",
+            "Backprop is approximate and numerical differentiation is exact.",
+            "Numerical differentiation is faster on GPUs.",
+          ],
+          optionsEs: [
+            "Backprop usa menos operaciones.",
+            "Backprop reusa activaciones y calcula una VJP por primitiva en un paso reverso; la numérica requiere una forward por parámetro.",
+            "Backprop es aproximada y la numérica exacta.",
+            "La numérica es más rápida en GPUs.",
+          ],
+          correctIndex: 1,
+          hint: "Reverse mode shares work across all parameters.",
+          hintEs: "El modo reverso comparte trabajo entre parámetros.",
+          explanation: "Numerical differentiation perturbs each parameter once → $O(P \\cdot \\text{forward})$. Reverse-mode → $O(\\text{forward})$. For 100M params, that's seconds vs months.",
+          explanationEs: "Numérica $O(P \\cdot \\text{forward})$ vs reverso $O(\\text{forward})$.",
+        },
+        {
+          type: "multiple-choice",
+          question: "What causes 'dead ReLUs'?",
+          questionEs: "¿Qué causa las 'ReLUs muertas'?",
+          options: [
+            "ReLU outputs become NaN.",
+            "When a neuron's pre-activation is negative on every training example, $\\sigma'(z) = 0$ on every step → its gradient is always zero → its weights never update.",
+            "GPUs cannot compute ReLU.",
+            "Weight decay is too high.",
+          ],
+          optionsEs: [
+            "Las salidas se vuelven NaN.",
+            "Cuando la pre-activación es siempre negativa, $\\sigma'(z) = 0$ siempre → gradiente cero → pesos no actualizan.",
+            "Las GPUs no pueden computar ReLU.",
+            "El weight decay es demasiado alto.",
+          ],
+          correctIndex: 1,
+          hint: "ReLU's derivative is zero for negative inputs.",
+          hintEs: "La derivada de ReLU es cero para entradas negativas.",
+          explanation: "Once permanently inactive, $\\boldsymbol\\delta^{(\\ell)}$ multiplies by zero forever. Cures: Leaky ReLU, GELU, He init, lower learning rate.",
+          explanationEs: "Una vez inactiva, multiplica por cero para siempre. Curas: Leaky ReLU, GELU, He init.",
+        },
+        {
+          type: "vector-input",
+          question: "Compute $\\boldsymbol\\delta^{(1)}$ given $\\sigma'(\\mathbf{z}^{(1)}) = (1, 0)$, $\\mathbf{W}^{(2)} = \\mathbf{I}$, $\\boldsymbol\\delta^{(2)} = (3, -2)$.",
+          questionEs: "Calcula $\\boldsymbol\\delta^{(1)}$ con $\\sigma'(\\mathbf{z}^{(1)}) = (1, 0)$, $\\mathbf{W}^{(2)} = \\mathbf{I}$, $\\boldsymbol\\delta^{(2)} = (3, -2)$.",
+          dimensions: 2,
+          answer: [3, 0],
+          tolerance: 0.001,
+          hint: "$\\boldsymbol\\delta^{(1)} = (\\mathbf{W}^{(2)\\top} \\boldsymbol\\delta^{(2)}) \\odot \\sigma'(\\mathbf{z}^{(1)})$.",
+          hintEs: "$\\boldsymbol\\delta^{(1)} = (\\mathbf{W}^{(2)\\top} \\boldsymbol\\delta^{(2)}) \\odot \\sigma'(\\mathbf{z}^{(1)})$.",
+          explanation: "$\\mathbf{I}^\\top (3, -2) = (3, -2)$. Elementwise multiply by $(1, 0)$ → $(3, 0)$.",
+          explanationEs: "$(3, -2) \\odot (1, 0) = (3, 0)$.",
+        },
+      ],
+      keyTakeaways: [
+        "Backprop is the chain rule applied in reverse — every layer contributes a transpose-weight matvec and a non-linearity-gradient elementwise multiply.",
+        "Reverse-mode autodiff computes the full gradient in $O(E)$ time vs $O(P \\cdot E)$ for numerical differentiation.",
+        "Vanishing/exploding gradients are the recursion's failure modes; ReLU, residual connections, and good initialization fix them.",
+      ],
+      keyTakeawaysEs: [
+        "Backprop es la regla de la cadena en reverso.",
+        "El modo reverso calcula el gradiente en $O(E)$.",
+        "Gradientes que se desvanecen/explotan: ReLU, residuales y buena inicialización los resuelven.",
+      ],
+      concepts: ["gradient", "chain-rule", "partial-derivative"],
+    },
+
+    // =========================================================================
+    // LESSON 57 — Chapter 13.4: Attention Mechanism Math
+    // =========================================================================
+    {
+      title: "Attention: Q, K, V and Scaled Dot-Product",
+      titleEs: "Atención: Q, K, V y producto-punto escalado",
+      chapter: "Deep Learning Foundations",
+      chapterEs: "Fundamentos de Deep Learning",
+      chapterNumber: 13,
+      content: [
+        "**Attention** is the operation that powers every modern transformer — the architecture behind GPT, Claude, BERT, and essentially every state-of-the-art language and vision model. At its mathematical core, attention is astonishingly simple: a soft-weighted lookup in a learned key-value store. Once you see it as scaled dot-products plus a softmax, the mystique evaporates and the linear-algebra structure becomes obvious.",
+        "Start with three sets of vectors derived from the input: **queries** $\\mathbf{Q} \\in \\mathbb{R}^{n \\times d_k}$, **keys** $\\mathbf{K} \\in \\mathbb{R}^{m \\times d_k}$, and **values** $\\mathbf{V} \\in \\mathbb{R}^{m \\times d_v}$. Each query $\\mathbf{q}_i$ asks 'which keys best match me?' by computing dot products $\\mathbf{q}_i^\\top \\mathbf{k}_j$ — a similarity score for every key. Softmax these scores into a probability distribution over keys, then take the value-weighted average. The whole operation is one formula: $$\\mathrm{Attention}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V}) = \\mathrm{softmax}\\!\\left(\\frac{\\mathbf{Q}\\mathbf{K}^\\top}{\\sqrt{d_k}}\\right) \\mathbf{V}.$$",
+        "Why divide by $\\sqrt{d_k}$? When $\\mathbf{q}, \\mathbf{k}$ have iid components with unit variance, $\\mathrm{Var}(\\mathbf{q}^\\top \\mathbf{k}) = d_k$ — dot products grow linearly with dimension. Without scaling, large $d_k$ pushes softmax into saturated regions where one entry is $\\approx 1$ and the rest $\\approx 0$, killing gradients. Dividing by $\\sqrt{d_k}$ keeps the dot-product variance constant ($= 1$) regardless of dimension.",
+        "**Multi-head attention** replicates this operation $h$ times in parallel with different projections, then concatenates: $\\mathrm{MultiHead}(\\mathbf{X}) = [\\mathrm{head}_1; \\ldots; \\mathrm{head}_h] \\mathbf{W}^O$. Each head learns to attend to a different relational pattern — syntax, semantics, position. Total compute is the same as one full-dimension head, but the model gets multiple specialized attentions.",
+        "Two structural facts shape what attention can and cannot do. Attention is **permutation-equivariant**: shuffling the rows of $\\mathbf{X}$ shuffles the rows of the output identically, so vanilla attention has no notion of order. Transformers fix this with **positional encodings**. Attention is also **quadratic**: $\\mathbf{Q}\\mathbf{K}^\\top$ costs $O(n m d_k)$ — fine for small contexts, bottleneck for million-token inputs. The race for sub-quadratic attention (Performer, FlashAttention, Mamba) is the most active topic in efficient ML.",
+        "**Worked example — single-query attention:** $\\mathbf{q} = (1, 0)$, two keys $\\mathbf{k}_1 = (1, 0), \\mathbf{k}_2 = (0, 1)$, two values $\\mathbf{v}_1 = (10, 0), \\mathbf{v}_2 = (0, 10)$, $d_k = 2$. Scores: $1, 0$. Scaled: $1/\\sqrt{2} \\approx 0.707, 0$. Softmax: $\\approx (0.670, 0.330)$. Output: $0.670 \\mathbf{v}_1 + 0.330 \\mathbf{v}_2 = (6.70, 3.30)$.",
+        "**Worked example — variance check on the scaling:** Generate $d_k = 64$ vectors with iid $\\mathcal{N}(0, 1)$ entries. Without scaling, $\\mathbf{q}^\\top \\mathbf{k}$ has variance $64$ → std $8$. Differences $> 5$ are common, saturating softmax. With $/\\sqrt{64} = 8$, std drops to $1$. This single scalar made attention trainable.",
+      ],
+      contentEs: [
+        "La **atención** potencia todo transformer moderno — la arquitectura detrás de GPT, Claude, BERT. En su núcleo es una búsqueda con pesos suaves en un almacén clave-valor aprendido.",
+        "Tres conjuntos de vectores: **consultas** $\\mathbf{Q}$, **claves** $\\mathbf{K}$, **valores** $\\mathbf{V}$. Cada consulta computa similitud $\\mathbf{q}_i^\\top \\mathbf{k}_j$ con cada clave; softmax da una distribución; el promedio ponderado de valores es la salida. $$\\mathrm{Atención}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V}) = \\mathrm{softmax}\\!\\left(\\frac{\\mathbf{Q}\\mathbf{K}^\\top}{\\sqrt{d_k}}\\right) \\mathbf{V}.$$",
+        "¿Por qué $\\sqrt{d_k}$? $\\mathrm{Var}(\\mathbf{q}^\\top \\mathbf{k}) = d_k$. Sin escalar, dimensiones grandes saturan el softmax. Con $/\\sqrt{d_k}$, varianza $= 1$ siempre.",
+        "**Multi-cabeza** replica la operación $h$ veces con proyecciones distintas. Cada cabeza atiende un patrón distinto.",
+        "La atención es **equivariante a permutaciones** (no tiene orden — codificaciones posicionales lo arreglan) y **cuadrática** ($O(nm d_k)$). Sub-cuadrática (FlashAttention, Mamba) es tema activo.",
+        "**Ejemplo trabajado — una consulta:** $\\mathbf{q} = (1, 0)$, claves $(1,0), (0,1)$, valores $(10,0), (0,10)$, $d_k = 2$. Salida $\\approx (6.70, 3.30)$.",
+        "**Ejemplo trabajado — varianza:** $d_k = 64$, sin escalar std $= 8$, con escalar std $= 1$.",
+      ],
+      visualizations: [
+        {
+          type: "function-plot",
+          title: "How softmax saturates without $\\sqrt{d_k}$ scaling",
+          titleEs: "Cómo el softmax se satura sin escalar",
+          description: "Sigmoid is the binary case of softmax. As inputs grow, the slope flattens and gradients vanish.",
+          descriptionEs: "Sigmoide es el caso binario; con entradas grandes la pendiente se aplana.",
+          config: {
+            fn: "1 / (1 + exp(-x))",
+            domain: [-10, 10],
+          },
+        },
+        {
+          type: "formula-chain",
+          title: "Building scaled dot-product attention",
+          titleEs: "Construyendo la atención producto-punto escalado",
+          description: "Same formula, four progressive lenses.",
+          descriptionEs: "La misma fórmula, cuatro lentes progresivas.",
+          config: {
+            steps: [
+              "\\mathbf{S} = \\mathbf{Q}\\mathbf{K}^\\top",
+              "\\mathbf{S} = \\frac{\\mathbf{Q}\\mathbf{K}^\\top}{\\sqrt{d_k}}",
+              "\\mathbf{A} = \\mathrm{softmax}(\\mathbf{S})",
+              "\\mathrm{Attention} = \\mathbf{A}\\mathbf{V}",
+            ],
+            pacing: "auto",
+          },
+        },
+      ],
+      annotatedFormulas: [
+        {
+          id: "attn-tokens",
+          title: "Attention — token by token",
+          titleEs: "Atención — token a token",
+          tokens: [
+            { text: "\\mathrm{Attention}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V})", size: "xl", color: "#7cf4ff", label: "soft lookup output", labelEs: "salida de búsqueda suave" },
+            { text: "=", size: "xl" },
+            { text: "\\mathrm{softmax}", size: "l", color: "#fbbf24", label: "row-wise probabilities", labelEs: "probabilidades por fila" },
+            { text: "\\!\\left(", size: "xl" },
+            { text: "\\dfrac{\\mathbf{Q}\\mathbf{K}^\\top}{\\sqrt{d_k}}", size: "xl", color: "#fb7185", label: "scaled scores", labelEs: "puntajes escalados" },
+            { text: "\\right)", size: "xl" },
+            { text: "\\mathbf{V}", size: "xl", color: "#34d399", label: "values to mix", labelEs: "valores a mezclar" },
+          ],
+          caption: "Each query gets a probability over keys, then mixes the values.",
+          captionEs: "Cada consulta obtiene una probabilidad sobre claves y mezcla los valores.",
+          insertAfterParagraph: 1,
+        },
+      ],
+      derivations: [
+        {
+          id: "scale-derive",
+          title: "Why divide by $\\sqrt{d_k}$",
+          titleEs: "Por qué dividir por $\\sqrt{d_k}$",
+          steps: [
+            { latex: "\\mathbf{q}^\\top \\mathbf{k} = \\sum_{i=1}^{d_k} q_i k_i", explain: "Each component is iid with mean 0 and variance 1.", explainEs: "Cada componente es iid con media 0 y varianza 1." },
+            { latex: "\\mathbb{E}[q_i k_i] = 0, \\quad \\mathrm{Var}(q_i k_i) = 1", explain: "Independence + zero mean → product variance is 1.", explainEs: "Independencia + media cero." },
+            { latex: "\\mathrm{Var}(\\mathbf{q}^\\top \\mathbf{k}) = d_k", explain: "Sum of $d_k$ iid unit-variance terms.", explainEs: "Suma de $d_k$ términos." },
+            { latex: "\\mathrm{Var}\\!\\left(\\frac{\\mathbf{q}^\\top \\mathbf{k}}{\\sqrt{d_k}}\\right) = 1", explain: "Dividing by $\\sqrt{d_k}$ restores unit variance.", explainEs: "Restaura varianza 1." },
+          ],
+          insertAfterParagraph: 2,
+        },
+      ],
+      theorems: [
+        {
+          id: "attn-perm",
+          kind: "theorem",
+          name: "Attention is permutation-equivariant",
+          nameEs: "La atención es equivariante a permutaciones",
+          statement: "For any permutation matrix $\\mathbf{P}$, $\\mathrm{Attention}(\\mathbf{P}\\mathbf{Q}, \\mathbf{K}, \\mathbf{V}) = \\mathbf{P}\\, \\mathrm{Attention}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V})$.",
+          statementEs: "Para cualquier matriz de permutación $\\mathbf{P}$, $\\mathrm{Atención}(\\mathbf{P}\\mathbf{Q}, \\mathbf{K}, \\mathbf{V}) = \\mathbf{P}\\, \\mathrm{Atención}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V})$.",
+          proof: "$\\mathbf{P}\\mathbf{Q}\\mathbf{K}^\\top = \\mathbf{P}(\\mathbf{Q}\\mathbf{K}^\\top)$ permutes rows. Softmax acts row-wise, so commutes with row permutation. Multiplying by $\\mathbf{V}$ preserves row order.",
+          proofEs: "$\\mathbf{P}\\mathbf{Q}\\mathbf{K}^\\top$ permuta filas; softmax conmuta con permutación por fila.",
+          insertAfterParagraph: 4,
+        },
+      ],
+      intuitions: [
+        {
+          id: "soft-dict",
+          title: "Attention is a soft dictionary lookup",
+          titleEs: "La atención es una búsqueda en diccionario suave",
+          glyph: "lens",
+          body: "A regular dictionary takes a key, returns one value. Attention takes a *query*, computes similarity to every key, returns a *blend* of all values weighted by similarity. Names — query, key, value — come straight from databases.",
+          bodyEs: "Un diccionario regular toma una clave y devuelve un valor. La atención toma una consulta y devuelve una mezcla ponderada de todos los valores. Los nombres vienen de bases de datos.",
+          takeaway: "Attention = softmax-weighted average of values, where weights come from query-key similarity.",
+          takeawayEs: "Atención = promedio ponderado por softmax de valores, con pesos por similitud consulta-clave.",
+          insertAfterParagraph: 1,
+        },
+      ],
+      whyItMatters: [
+        {
+          title: "Why this matters in ML",
+          titleEs: "Por qué importa en ML",
+          body: "Transformers replaced RNNs in NLP, then jumped to vision (ViT), audio (Whisper), code (Codex), proteins (AlphaFold). Almost every frontier model in 2026 — including the one writing this lesson — has scaled dot-product attention as its core operation.",
+          bodyEs: "Los transformers reemplazaron a los RNN y saltaron a visión, audio, código, proteínas. Casi todo modelo frontera de 2026 tiene atención escalada como núcleo.",
+          bullets: [
+            "GPT / Claude / Llama: stacked self-attention",
+            "Vision Transformers: attention over image patches",
+            "AlphaFold: attention over protein residues",
+            "Speech: attention bridges encoder–decoder",
+          ],
+          bulletsEs: [
+            "GPT/Claude/Llama: auto-atención apilada",
+            "ViT: atención sobre parches",
+            "AlphaFold: atención sobre residuos",
+            "Voz: atención conecta encoder–decoder",
+          ],
+          insertAfterParagraph: 4,
+        },
+      ],
+      mlConnection: {
+        technique: "torch.nn.functional.scaled_dot_product_attention — fused, hardware-aware",
+        techniqueEs: "torch.nn.functional.scaled_dot_product_attention — fusionado",
+        summary: "PyTorch ships a fused attention kernel that picks the fastest backend (FlashAttention, memory-efficient, math) at runtime. Same numerics, $O(n^2)$ memory dropped to $O(n)$.",
+        summaryEs: "PyTorch trae un kernel fusionado que elige el backend más rápido. Misma matemática, memoria $O(n)$ en hardware compatible.",
+        codeLanguage: "pytorch",
+        codeSnippet: `import torch
+import torch.nn.functional as F
+
+# Q, K, V shape: (batch, heads, seq_len, d_k)
+B, H, N, D = 2, 4, 64, 32
+Q = torch.randn(B, H, N, D)
+K = torch.randn(B, H, N, D)
+V = torch.randn(B, H, N, D)
+
+# Naive math
+scores  = (Q @ K.transpose(-2, -1)) / (D ** 0.5)
+weights = F.softmax(scores, dim=-1)
+out_manual = weights @ V
+
+# Fused kernel (FlashAttention when available)
+out_fused = F.scaled_dot_product_attention(Q, K, V)
+assert torch.allclose(out_manual, out_fused, atol=1e-4)`,
+        ifRemoved: "Without attention, transformers don't exist. RNNs and CNNs would still be state of the art, with all the limits that implies for long-range dependencies.",
+        ifRemovedEs: "Sin atención, no hay transformers. RNN y CNN seguirían siendo state of the art.",
+      },
+      exercises: [
+        {
+          type: "multiple-choice",
+          question: "Why is the scaling factor $1/\\sqrt{d_k}$ used in scaled dot-product attention?",
+          questionEs: "¿Por qué se usa $1/\\sqrt{d_k}$?",
+          options: [
+            "To make attention values fit in float32.",
+            "Without it, $\\mathrm{Var}(\\mathbf{q}^\\top \\mathbf{k}) = d_k$ — for large $d_k$ the softmax saturates, gradients vanish, and training breaks.",
+            "It improves accuracy by 2%.",
+            "It is required for FlashAttention.",
+          ],
+          optionsEs: [
+            "Para que los valores quepan en float32.",
+            "Sin él, $\\mathrm{Var}(\\mathbf{q}^\\top \\mathbf{k}) = d_k$ — el softmax se satura y el entrenamiento se rompe.",
+            "Mejora la precisión un 2%.",
+            "Es requerido por FlashAttention.",
+          ],
+          correctIndex: 1,
+          hint: "Variance grows with dimension.",
+          hintEs: "La varianza crece con la dimensión.",
+          explanation: "Dividing by $\\sqrt{d_k}$ keeps score variance constant ($= 1$) regardless of dimension. Key invention of 'Attention Is All You Need'.",
+          explanationEs: "Dividir por $\\sqrt{d_k}$ mantiene la varianza en 1. Invención clave del paper original.",
+        },
+        {
+          type: "numeric-input",
+          question: "Single-query attention: $\\mathbf{q} = (1, 1)$, keys $\\mathbf{k}_1 = (2, 0), \\mathbf{k}_2 = (0, 2)$, $d_k = 2$. The two scaled scores are equal — what is each one? (3 decimals.)",
+          questionEs: "Atención: $\\mathbf{q} = (1, 1)$, claves $(2, 0), (0, 2)$, $d_k = 2$. ¿Cuál es cada puntaje escalado?",
+          answer: 1.414,
+          tolerance: 0.01,
+          hint: "$\\mathbf{q}^\\top \\mathbf{k}_1 = 2$. Divide by $\\sqrt{2}$.",
+          hintEs: "$\\mathbf{q}^\\top \\mathbf{k}_1 = 2$. Divide por $\\sqrt{2}$.",
+          explanation: "Both dot products equal $2$. $2 / \\sqrt{2} \\approx 1.414$. Softmax of equal scores → $(0.5, 0.5)$.",
+          explanationEs: "$2/\\sqrt{2} \\approx 1.414$. Softmax → $(0.5, 0.5)$.",
+        },
+        {
+          type: "drag-to-match",
+          question: "Match each attention concept to its role.",
+          questionEs: "Empareja cada concepto con su rol.",
+          leftItems: [
+            "Query $\\mathbf{Q}$",
+            "Key $\\mathbf{K}$",
+            "Value $\\mathbf{V}$",
+            "Softmax",
+            "$\\sqrt{d_k}$ scaling",
+          ],
+          rightItems: [
+            "What each token is asking",
+            "What each token offers as a match target",
+            "What each token contributes if selected",
+            "Turns scores into attention weights",
+            "Keeps score variance constant across dimensions",
+          ],
+          correctPairs: [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]],
+          explanation: "Q-K-V is the three-role split: query asks, key advertises, value provides. Softmax chooses, scaling stabilizes.",
+          explanationEs: "Q-K-V: la consulta pregunta, la clave anuncia, el valor entrega.",
+        },
+      ],
+      keyTakeaways: [
+        "Attention = softmax over scaled query-key dot products, then weighted sum of values.",
+        "$\\sqrt{d_k}$ scaling keeps softmax in a non-saturated regime; without it, large dimensions break training.",
+        "Multi-head attention runs the operation in parallel with different projections, attending to multiple patterns at once.",
+      ],
+      keyTakeawaysEs: [
+        "Atención = softmax sobre productos escalados, luego suma ponderada de valores.",
+        "El escalado por $\\sqrt{d_k}$ mantiene al softmax en régimen no saturado.",
+        "Multi-cabeza corre la operación en paralelo con proyecciones distintas.",
+      ],
+      concepts: ["dot-product", "matrix", "linear-map"],
     },
   ];
 

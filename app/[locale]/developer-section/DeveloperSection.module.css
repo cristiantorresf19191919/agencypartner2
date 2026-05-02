@@ -63,30 +63,87 @@
   z-index: 10;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 6rem 1rem 3rem;
+  padding: 4.5rem 1rem 3rem;
 }
 
 @media (min-width: 768px) {
   .content {
-    padding: 10rem 2rem 8rem;
+    padding: 5.5rem 2rem 6rem;
   }
 }
 
 @media (min-width: 1024px) {
   .content {
-    padding: 11rem 3rem 10rem;
+    padding: 6.5rem 3rem 8rem;
   }
 }
 
 /* ============ Header Section ============ */
 .headerSection {
+  position: relative;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+  padding-top: 1.25rem;
 }
 
 @media (min-width: 768px) {
   .headerSection {
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+  }
+}
+
+/* Decorative orbs framing the hero — give the empty top area visual life */
+.headerSection::before,
+.headerSection::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+  opacity: 0.55;
+  z-index: -1;
+}
+
+.headerSection::before {
+  left: 8%;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.45), transparent 70%);
+  animation: floatOrbA 14s ease-in-out infinite;
+}
+
+.headerSection::after {
+  right: 8%;
+  background: radial-gradient(circle, rgba(53, 228, 178, 0.32), transparent 70%);
+  animation: floatOrbB 18s ease-in-out infinite;
+}
+
+@keyframes floatOrbA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, 30px) scale(1.08); }
+}
+
+@keyframes floatOrbB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-25px, 35px) scale(1.05); }
+}
+
+@media (max-width: 767px) {
+  .headerSection::before,
+  .headerSection::after {
+    width: 140px;
+    height: 140px;
+  }
+  .headerSection::before { left: -2%; }
+  .headerSection::after { right: -2%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headerSection::before,
+  .headerSection::after {
+    animation: none;
   }
 }
 
